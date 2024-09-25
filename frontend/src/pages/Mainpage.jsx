@@ -1,9 +1,24 @@
-import Login from "../AuthComponents/login"
+import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } from "react-router-dom";
+
+//Components
+import Login from '../AuthComponents/login'
+
 
 const Mainpage = () => {
+
+
+  const router = createBrowserRouter(
+    createRoutesFromElements(
+      <Route>
+        <Route index element={<Login />} />
+
+      </Route>
+    )
+  );
+
   return (
     <main className="h-screen w-full flex items-center justify-center font-poppins overflow-y-hidden">
-        <Login/>
+      <RouterProvider router={router} />
     </main>
   )
 }
