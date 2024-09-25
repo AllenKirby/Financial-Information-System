@@ -4,12 +4,13 @@ import bgImage from '../assets/images/NIAimg.png';
 
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
-    const [data, setData] = useState({username: '', password: ''})
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
     const {login, isLoading, error} = useLogin()
 
     const handleLogin = async(e) => {
         e.preventDefault()
-        await login(data)
+        await login(email, password)
     }
     
   return (
@@ -26,7 +27,7 @@ const Login = () => {
             type="text" 
             placeholder="Username" 
             required 
-            onChange={(e) => setData({...data, username: e.target.value})}/>
+            onChange={(e) => setEmail(e.target.value)}/>
         </div>
         <div className="w-full flex items-center py-2 px-2 gap-2">
             <input 
@@ -34,7 +35,7 @@ const Login = () => {
             type={!isChecked ? 'password' : 'text'} 
             placeholder="Password" 
             required 
-            onChange={(e) => setData({...data, password: e.target.value})}/>
+            onChange={(e) => setPassword(e.target.value)}/>
         </div>
         <div className="w-full flex gap-1 my-1 px-1"> 
             <input type="checkbox" onClick={() => setIsChecked(!isChecked)}/>
