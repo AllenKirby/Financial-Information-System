@@ -1,19 +1,19 @@
 import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } from "react-router-dom";
-
 //Components
 import Login from '../AuthComponents/login'
+import {AuthRole} from "../components/AuthRole";
 
 
 const Mainpage = () => {
 
-
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route>
-        <Route index element={<Login />} />
+        <Route index element={<AuthRole/>} />
 
       </Route>
     )
+    
   );
 
   return (
