@@ -1,14 +1,8 @@
 const express = require('express')
 
 const router = express.Router()
-const {
-    loginUser,
-    signupUser,
-    tokenVerifier
-} = require('../controller/UserController')
+const requireAuth = require('../middleware/requireAuth')
 
-router.post('/login', loginUser)
-router.post('/signup', signupUser)
-router.post('/protected', tokenVerifier)
+router.use(requireAuth)
 
 module.exports = router
