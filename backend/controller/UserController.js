@@ -34,9 +34,12 @@ const tokenVerifier = async (req, res) => {
 
   const token = authHeader.split(' ')[1];
   try{
-    console.log('Token Received: ', token);
     const decodedToken = await admin.auth().verifyIdToken(token);
-    req.user = decodedToken;
+    req.user = {
+      uid: decodedToken.uid,
+      email: decodedToken.email,
+      
+    }
     console.log('Decoded Token: ', decodedToken)
     return res.status(200).json({success: true, message: 'Access granted to protected route', user: req.user});
 
