@@ -25,7 +25,7 @@ const loginUser = async (req, res) => {
 };
 
 const tokenVerifier = async (req, res) => {
-  const authHeader = req.headers.autorization;
+  const authHeader = req.headers.authorization;
   console.log('Headers: ', req.headers);
 
   if(!authHeader || !authHeader.startsWith('Bearer ')){
