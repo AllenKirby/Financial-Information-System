@@ -1,15 +1,13 @@
 const express = require('express');
 
-const {createAccount} = require('../controller/UserController');
-
 const router = express.Router()
 
-const {requireAuth, setRole} = require('../middleware/requireAuth')
+const requireAuth = require('../middleware/requireAuth')
+const login = require('../controller/UserController');
 
-
-router.use(requireAuth)
-
-router.get('/admin', setRole([1]))
-router.post('/create', createAccount)
+router.post('/login',requireAuth, login)
+//login
+//return fname, lname, role
+//httponly(token)
 
 module.exports = router
