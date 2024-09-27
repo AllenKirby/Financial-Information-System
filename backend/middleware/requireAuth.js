@@ -32,7 +32,7 @@ const requireAuth = async (req, res, next) => {
             role: decodedToken.role || 0
           };
         console.log(req.user)
-        res.status(200).json({success: true, role: req.user.role})
+        res.status(200).json({success: true, role: req.user.role, token: token})
         next()
     }catch(error){
         return res.status(401).json({ success: false, message: 'Unauthorized: Invalid Token' });

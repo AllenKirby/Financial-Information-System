@@ -18,10 +18,9 @@ export const useLogin = () => {
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const token = await userCredential.user.getIdToken();
           const data = {
-            uid: userCredential.user.uid,
-            role: 'admin'
+            uid: userCredential.user.uid
           }
-          const response = await axios.post('http://localhost:4000/api/user/', data, {
+          const response = await axios.post('http://localhost:4000/', data, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}` 

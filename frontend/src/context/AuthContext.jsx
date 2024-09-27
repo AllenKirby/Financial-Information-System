@@ -20,7 +20,7 @@ export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, { user: null });
 
     useEffect(() => {
-      const userCookie = cookies.get('user'); // Get the cookie
+      const userCookie = cookies.get('user');
         if (userCookie) {
           dispatch({ type: 'LOGIN', payload: userCookie });
         }
