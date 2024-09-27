@@ -5,6 +5,7 @@ const cors = require('cors')
 // const UserRoutes = require('./routes/UserRoutes')
 const AdminRoutes = require('./routes/AdminRoutes');
 const requireAuth = require('./middleware/requireAuth');
+const UserRoutes = require('./routes/UserRoutes')
 
 const app = express()
 
@@ -15,6 +16,8 @@ app.use((req, res, next) => {
     console.log(req.path, req.method)
    next() 
 })
+
+app.use('/user',UserRoutes)
 
 app.use(requireAuth)
 
