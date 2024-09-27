@@ -6,7 +6,7 @@ export const AuthRole = () => {
     const {user} = useAuthContext();
     if(!user){
         return <Login/>
-    }else if(user.role === 'admin'){
+    }else if(user.role === '1'){
         return <AdminPage/>
     }else{
         return <div>asdasdasd</div>

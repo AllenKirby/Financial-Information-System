@@ -1,8 +1,8 @@
-
 const admin  = require('../firebase')
 
 const createAccount = async (req, res) => {
     const {uid, role} = req.body;
+
   try{
     
      await admin.auth().setCustomUserClaims(uid, { role });
@@ -18,10 +18,9 @@ const createAccount = async (req, res) => {
       message: 'Error creating user', 
       error: error.message 
     });
+
   }
-}
 
 module.exports = {
-
   createAccount
 };

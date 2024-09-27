@@ -3,25 +3,24 @@ import axios from "axios"
 import { useAuthContext } from "./useAuthContext"
 import {auth} from '../config/firebase-config';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import Cookies from 'universal-cookie';
 
 export const useLogin = () => {
     const {dispatch} = useAuthContext()
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const cookies = new Cookies();
 
     const login = async (email, password) => {
         setIsLoading(true)
         setError(null)
         try{
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          console.log(`user credential: ${JSON.stringify(userCredential, null, 2)}`)
           const token = await userCredential.user.getIdToken();
-          console.log(`credential token: ${token}`)
           const data = {
-            uid: userCredential.user.uid,
-            role: 'admin'
+            uid: userCredential.user.uid
           }
-          const response = await axios.post('http://localhost:4000/api/user/', data, {
+          const response = await axios.post('http://localhost:4000/', data, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}` 
@@ -31,14 +30,16 @@ export const useLogin = () => {
           console.log(response)
           if (response.status === 200) {
             console.log("success")
+            cookies.set('user', JSON.stringify(response.data), { path: '/', maxAge: 86400, secure: true, sameSite: 'strict' });
             dispatch({type: 'LOGIN', payload: response.data})
             setIsLoading(false)
           } 
         }
         catch(error){
           setIsLoading(false)
-          setError(error);
-          console.error(error)
+          const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+          setError(errorMessage);
+          console.log(error)
         }
     }
     return {login, isLoading, error}

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import bgImage from '../assets/images/NIAimg.png';
-import { useAuthContext } from "../hooks/useAuthContext";
 
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
@@ -13,8 +12,6 @@ const Login = () => {
         e.preventDefault()
         await login(email, password)
     }
-    
-   
 
   return (
     <form action="#" onSubmit={handleLogin} className="w-80 p-7 h-auto rounded-md shadow-md shadow-black bg-white">
@@ -52,7 +49,7 @@ const Login = () => {
             >Login</button>
         </div>
         {error && (<div className="w-full text-center">
-            <h4 className="text-lg text-red-600">{error}</h4>
+            <h4 className="text-sm text-red-600">{error}</h4>
         </div>)}
     </form>
   )
