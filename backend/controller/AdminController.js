@@ -1,6 +1,9 @@
+
 const admin  = require('../firebase')
 
 const createAccount = async (req, res) => {
+
+
     const {uid, role, displayName} = req.body;
 
   try{
@@ -17,10 +20,10 @@ const createAccount = async (req, res) => {
       message: 'Error creating user', 
       error: error.message 
     });
-
   }
 }
 
 module.exports = {
+
   createAccount
 };

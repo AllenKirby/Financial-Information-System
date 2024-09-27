@@ -1,8 +1,6 @@
 const admin  = require('../firebase')
 
 const requireAuth = async (req, res, next) => {
-    
-    console.log(req.body)
 
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith('Bearer ')) {

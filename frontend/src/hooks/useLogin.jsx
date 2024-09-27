@@ -2,7 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import { useAuthContext } from "./useAuthContext"
 import {auth} from '../config/firebase-config';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import Cookies from 'universal-cookie';
 
 export const useLogin = () => {
@@ -24,12 +24,14 @@ export const useLogin = () => {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}` 
-            }
+            },
+            
           });
           
           console.log(response)
           if (response.status === 200) {
             console.log("success")
+            console.log(response.data)
             cookies.set('user', JSON.stringify(response.data), { path: '/', maxAge: 86400, secure: true, sameSite: 'strict' });
             dispatch({type: 'LOGIN', payload: response.data})
             setIsLoading(false)
