@@ -2,7 +2,9 @@ require('dotenv').config()
 
 const express = require('express')
 const cors = require('cors')
-const UserRoutes = require('./routes/UserRoutes')
+// const UserRoutes = require('./routes/UserRoutes')
+const AdminRoutes = require('./routes/AdminRoutes');
+const requireAuth = require('./middleware/requireAuth');
 
 const app = express()
 
@@ -14,7 +16,9 @@ app.use((req, res, next) => {
    next() 
 })
 
-app.use('/api/user', UserRoutes)
+app.use(requireAuth)
+
+app.use('/admin', AdminRoutes)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
