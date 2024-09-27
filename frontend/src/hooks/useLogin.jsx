@@ -20,7 +20,7 @@ export const useLogin = () => {
           const data = {
             uid: userCredential.user.uid
           }
-          const response = await axios.post('http://localhost:4000/', data, {
+          const response = await axios.post('http://localhost:4000/user/login', data, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}` 

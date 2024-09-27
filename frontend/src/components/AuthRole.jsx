@@ -9,6 +9,6 @@ export const AuthRole = () => {
     }else if(user.role === '1'){
         return <AdminPage/>
     }else{
-        return <div>asdasdasd</div>
+        return <div>snaiksankd</div>
     }
 }
