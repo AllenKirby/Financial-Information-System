@@ -2,10 +2,12 @@
 const admin  = require('../firebase')
 
 const createAccount = async (req, res) => {
-    const {uid, role} = req.body;
+
+
+    const {uid, role, displayName} = req.body;
+
   try{
-    
-     await admin.auth().setCustomUserClaims(uid, { role });
+     await admin.auth().setCustomUserClaims(uid, { role, displayName });
 
      return res.status(200).json({ 
       success: true, 

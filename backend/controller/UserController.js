@@ -1,4 +1,5 @@
 const login = (req, res) => {
+
     try{
         const role = req.user.role;
         const token = req.headers.authorization.split(' ')[1];
