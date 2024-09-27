@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import bgImage from '../assets/images/NIAimg.png';
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)

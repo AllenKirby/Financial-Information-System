@@ -6,7 +6,6 @@ import AdminPage from "./AdminPage";
 import UserManagement from "../components/UserManagement"
 import Dashboard from "../components/Dashboard";
 
-
 const Mainpage = () => {
 
   const router = createBrowserRouter(
@@ -18,7 +17,6 @@ const Mainpage = () => {
           <Route path="dashboard" element={<Dashboard />}/>
           <Route path="usermanagement" element={<UserManagement />}/>
         </Route>
-
       </Route>
     )
     
