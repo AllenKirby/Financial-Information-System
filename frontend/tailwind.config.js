@@ -10,8 +10,12 @@ export default {
         poppins: ['Poppins', 'sans-serif'], // Add Poppins to the font family list
       },
       colors: {
-        customgreen: '#009933'
-      }
+        customgreen: '#009933',
+        customFontColor: '#013237'
+      },
+      boxShadow: {
+        'customShadowStyle': '2px 0 10px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.19)',
+      },
     },
   },
   plugins: [],

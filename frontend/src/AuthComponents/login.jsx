@@ -12,7 +12,7 @@ const Login = () => {
         e.preventDefault()
         await login(email, password)
     }
-    
+
   return (
     <form action="#" onSubmit={handleLogin} className="w-80 p-7 h-auto rounded-md shadow-md shadow-black bg-white">
         <div className="w-full flex items-center justify-center py-3">
@@ -49,7 +49,7 @@ const Login = () => {
             >Login</button>
         </div>
         {error && (<div className="w-full text-center">
-            <h4 className="text-lg text-red-600">{error}</h4>
+            <h4 className="text-sm text-red-600">{error}</h4>
         </div>)}
     </form>
   )
