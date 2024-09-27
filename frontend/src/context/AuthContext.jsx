@@ -1,38 +1,40 @@
-import {createContext, useReducer, useEffect} from 'react'
-import PropTypes from 'prop-types'
-export const AuthContext = createContext()
+import { createContext, useReducer, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import Cookies from 'universal-cookie';
+
+export const AuthContext = createContext();
+
 export const authReducer = (state, action) => {
-    switch(action.type){
+    switch (action.type) {
         case 'LOGIN':
-            return {user: action.payload}
+            return { user: action.payload };
         case 'LOGOUT':
-            return {user: null}
+            return { user: null };
         default:
-            return state
+            return state;
     }
-}
-export const  AuthContextProvider = ({children}) => {
-    const [state, dispatch] = useReducer(authReducer, {
-        user: null
-    })
+};
 
-    
-    useEffect(() =>{
-        const user = JSON.parse(localStorage.getItem('user'))
-        if(user){
-            dispatch({type: 'LOGIN', payload: user})
+export const AuthContextProvider = ({ children }) => {
+    const cookies = new Cookies();
+    const [state, dispatch] = useReducer(authReducer, { user: null });
+
+    useEffect(() => {
+      const userCookie = cookies.get('user'); // Get the cookie
+        if (userCookie) {
+          dispatch({ type: 'LOGIN', payload: userCookie });
         }
-    }, [])
+    }, []);
 
-    console.log('AuthContext state:', state)
+    console.log('AuthContext state:', state);
 
     return (
-        <AuthContext.Provider value={{...state, dispatch}}>
+        <AuthContext.Provider value={{ ...state, dispatch }}>
             {children}
         </AuthContext.Provider>
-    )
-}
+    );
+};
 
 AuthContextProvider.propTypes = {
-    children: PropTypes.node.isRequired
-}
+    children: PropTypes.node.isRequired,
+};
