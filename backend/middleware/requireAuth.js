@@ -2,11 +2,16 @@ const admin  = require('../firebase')
 
 const requireAuth = async (req, res, next) => {
 
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ success: false, message: 'Unauthorized: no token provided' });
+    let token = req.cookies.token
+    if(!token){
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            
+            return res.status(401).json({ success: false, message: 'Unauthorized: no token provided' });
+        }
+        token = authHeader.split(' ')[1];
     }
-    const token = authHeader.split(' ')[1];
+
     try{
         const decodedToken = await admin.auth().verifyIdToken(token);
         req.user = {
@@ -16,8 +21,8 @@ const requireAuth = async (req, res, next) => {
             role: decodedToken.role || 0,
             token: token
           };
-        console.log(req.user)
-
+        console.log('authentication passed')
+        // const user = await admin.auth().getUser(req.user.uid)
         next()
     }catch(error){
         return res.status(401).json({ success: false, message: 'Unauthorized: Invalid Token' });
