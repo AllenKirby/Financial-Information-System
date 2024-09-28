@@ -3,6 +3,7 @@ const admin  = require('../firebase')
 
 const createAccount = async (req, res) => {
 
+
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
       
@@ -15,9 +16,9 @@ const createAccount = async (req, res) => {
   const uid = decodedToken.uid
   console.log(`role in createaccount ${role}`)
   console.log('creating acc')
+
   try{
-    
-     await admin.auth().setCustomUserClaims(uid, { role });
+     await admin.auth().setCustomUserClaims(uid, { role, displayName });
 
      return res.status(200).json({ 
       success: true, 

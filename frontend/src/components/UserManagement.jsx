@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useCreateAcc } from "../hooks/useCreateAcc"
 import DisbursementVoucher from "./DisbursementVoucher"
 
@@ -19,6 +19,10 @@ const UserManagement = () => {
 
     await createAcc(userData)
   }
+
+  useEffect(()=>{
+    console.log(userData.role)
+  }, [userData.role])
 
   return (
     <section className="h-full w-full flex">
@@ -42,7 +46,10 @@ const UserManagement = () => {
         </div>
         <h1 className="py-3 font-semibold">Account Details</h1>
         <div className="h-auto w-full ">
-          <select className="w-2/3 p-2 rounded-xl text-sm" onChange={(e) => setUserData({ ...userData, role: e.target.value })}>
+          <select className="w-2/3 p-2 rounded-xl text-sm" 
+          required value={userData.role} 
+          onChange={(e) => setUserData({ ...userData, role: e.target.value })}>
+             <option value="" disabled>Select role</option>
             <option value="1">Admin</option>
             <option value="2">Viewer</option>
           </select>

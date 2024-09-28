@@ -14,12 +14,13 @@ export const useCreateAcc = () => {
         setError(null)
         try {
             const newUser = await createUserWithEmailAndPassword(auth, userData.email, userData.password)
+
             // const uid = newUser.user.uid
             const newUser_token = await newUser.user.getIdToken();
             const data = {
                 role: userData.role
             }
-            const res = await axios.post('http://localhost:4000/admin/create/', data, {
+            const res = await axios.post('http://localhost:4000/admin/create', data, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${newUser_token}` 

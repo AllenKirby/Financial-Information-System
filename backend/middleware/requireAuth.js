@@ -15,6 +15,7 @@ const requireAuth = async (req, res, next) => {
     try{
         const decodedToken = await admin.auth().verifyIdToken(token);
         req.user = {
+            name: decodedToken.displayName,
             uid: decodedToken.uid,
             email: decodedToken.email,
             role: decodedToken.role || 0,
