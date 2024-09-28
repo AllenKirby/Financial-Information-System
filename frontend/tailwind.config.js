@@ -16,6 +16,10 @@ export default {
       boxShadow: {
         'customShadowStyle': '2px 0 10px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.19)',
       },
+      spacing: {
+        'a4-width': '210mm',  // Custom A4 width
+        'a4-height': '296mm', // Custom A4 height
+      },
     },
   },
   plugins: [],

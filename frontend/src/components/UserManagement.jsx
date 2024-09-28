@@ -61,7 +61,7 @@ const UserManagement = () => {
           onChange={(e) => setUserData({ ...userData, role: e.target.value })}>
              <option value="" disabled>Select role</option>
             <option value="1">Admin</option>
-            <option value="2">Viewer</option>
+            <option value="4">Editor</option>
           </select>
         </div>
         <h1 className="py-3 font-semibold">Set up Your Account</h1>
