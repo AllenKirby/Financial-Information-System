@@ -1,10 +1,22 @@
 import { useLogout } from "../hooks/useLogout"
-
+import Swal from 'sweetalert2';
 const Header = () => {
   const {logout} = useLogout()
   
   const handleLogout = () => {
-    logout()
+    Swal.fire({
+      title: "Do you want to logout?",
+      showDenyButton: false,
+      showCancelButton: true,
+      confirmButtonText: "Logout",
+      confirmButtonColor: '#ab0310'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logout()
+      }
+    });
+
+    
   }
 
   return (

@@ -7,6 +7,7 @@ import axios from 'axios'
 export const useCreateAcc = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const [success, setSuccess] = useState(false)
     const { userData } = useAuthContext()
 
     const createAcc = async(userData) =>{   
@@ -31,6 +32,7 @@ export const useCreateAcc = () => {
             if(res.status === 200){
                 console.log(res.data)
                 setIsLoading(false)
+                setSuccess(true)
             }
             
         } catch (error) {
@@ -40,5 +42,5 @@ export const useCreateAcc = () => {
             console.log(error)
         }
     }
-    return{ createAcc, isLoading, error }
+    return{ createAcc, isLoading, error, success }
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react"
 import { useCreateAcc } from "../hooks/useCreateAcc"
 import DisbursementVoucher from "./DisbursementVoucher"
+import Swal from "sweetalert2"
 
 const UserManagement = () => {
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
-  const { createAcc, isLoading, error } = useCreateAcc()
+  const { createAcc, isLoading, error, success } = useCreateAcc()
   const [passwordError, setPasswordError] = useState('')
   const [documentFlag, setDocumentFlag] = useState(false)
 
@@ -18,6 +19,15 @@ const UserManagement = () => {
     setPasswordError("") 
 
     await createAcc(userData)
+    if(success){
+      console.log('usermanagement if')
+      Swal.fire({
+        title: "Saved",
+        text: "Account is successfully created!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+    }
   }
 
   useEffect(()=>{
