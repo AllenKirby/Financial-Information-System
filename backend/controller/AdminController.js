@@ -18,7 +18,7 @@ const createAccount = async (req, res) => {
   console.log('creating acc')
 
   try{
-     await admin.auth().setCustomUserClaims(uid, { role, displayName });
+     await admin.auth().setCustomUserClaims(uid, { role });
 
      return res.status(200).json({ 
       success: true, 
