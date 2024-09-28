@@ -2,7 +2,7 @@ import { useState } from "react"
 import axios from "axios"
 import { useAuthContext } from "./useAuthContext"
 import {auth} from '../config/firebase-config';
-import { signInWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import Cookies from 'universal-cookie';
 
 export const useLogin = () => {

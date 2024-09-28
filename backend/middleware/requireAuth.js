@@ -1,7 +1,6 @@
 const admin  = require('../firebase')
 
 const requireAuth = async (req, res, next) => {
-
     let token = req.cookies.token
     if(!token){
         const authHeader = req.headers.authorization;
@@ -11,9 +10,10 @@ const requireAuth = async (req, res, next) => {
         }
         token = authHeader.split(' ')[1];
     }
-
+    console.log('auth')
     try{
         const decodedToken = await admin.auth().verifyIdToken(token);
+        console.log(decodedToken)
         req.user = {
             name: decodedToken.displayName,
             uid: decodedToken.uid,
@@ -22,6 +22,7 @@ const requireAuth = async (req, res, next) => {
             token: token
           };
         console.log('authentication passed')
+        console.log(req.user.role)
         // const user = await admin.auth().getUser(req.user.uid)
         next()
     }catch(error){

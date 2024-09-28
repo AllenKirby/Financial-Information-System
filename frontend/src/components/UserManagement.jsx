@@ -5,7 +5,7 @@ import Swal from "sweetalert2"
 
 const UserManagement = () => {
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
-  const { createAcc, isLoading, error, success } = useCreateAcc()
+  const { createAcc, isLoading, error } = useCreateAcc()
   const [passwordError, setPasswordError] = useState('')
   const [documentFlag, setDocumentFlag] = useState(false)
 
@@ -18,8 +18,9 @@ const UserManagement = () => {
     }
     setPasswordError("") 
 
-    await createAcc(userData)
-    if(success){
+    const res_creatingAccount = await createAcc(userData)
+    console.log(res_creatingAccount)
+    if(res_creatingAccount){
       console.log('usermanagement if')
       Swal.fire({
         title: "Saved",

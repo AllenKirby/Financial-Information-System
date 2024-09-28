@@ -12,17 +12,18 @@ const createAccount = async (req, res) => {
   const token = authHeader.split(' ')[1];
 
   const decodedToken = await admin.auth().verifyIdToken(token);
-  const {role} = req.body
+  const role = req.body.role
   const uid = decodedToken.uid
   console.log(`role in createaccount ${role}`)
   console.log('creating acc')
 
   try{
      await admin.auth().setCustomUserClaims(uid, { role });
-
+      console.log(`account created with role ${role}`)
      return res.status(200).json({ 
       success: true, 
       message: `User created successfully with role ${role}` 
+      
     });
   }catch(error){
     console.error('Error creating new user:', error);

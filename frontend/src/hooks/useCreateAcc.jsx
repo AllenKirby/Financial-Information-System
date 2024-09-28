@@ -7,10 +7,10 @@ import axios from 'axios'
 export const useCreateAcc = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
-    const [success, setSuccess] = useState(false)
     const { userData } = useAuthContext()
 
     const createAcc = async(userData) =>{   
+        console.log('creating Account')
         setIsLoading(true)
         setError(null)
         try {
@@ -21,6 +21,7 @@ export const useCreateAcc = () => {
             const data = {
                 role: userData.role
             }
+            console.log(`userCreateAcc ${userData.role}`)
             const res = await axios.post('http://localhost:4000/admin/create', data, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,8 +33,9 @@ export const useCreateAcc = () => {
             if(res.status === 200){
                 console.log(res.data)
                 setIsLoading(false)
-                setSuccess(true)
+                return true;
             }
+            return false
             
         } catch (error) {
             setIsLoading(false)
@@ -42,5 +44,5 @@ export const useCreateAcc = () => {
             console.log(error)
         }
     }
-    return{ createAcc, isLoading, error, success }
+    return{ createAcc, isLoading, error }
 }

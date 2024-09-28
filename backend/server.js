@@ -21,7 +21,10 @@ app.use((req, res, next) => {
     console.log(req.path, req.method)
    next() 
 })
-
+app.post('/logout', (req, res) => {
+  res.clearCookie('token', { path: '/' });
+  res.status(200).json({message: "cleared"})
+})
 app.use('/user',UserRoutes)
 
 app.use(requireAuth)
