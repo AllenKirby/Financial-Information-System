@@ -1,7 +1,19 @@
+import html2pdf from 'html2pdf.js';
+import Document from "./Document";
+
 const DisbursementVoucher = () => {
+
+  const downloadPDF = () => {
+    const pdf = document.getElementById('pdf');
+    html2pdf(pdf);
+  }
+
   return (
-    <div className="fixed z-10 left-0 top-0 w-full h-full flex items-center justify-center bg-slate-200 opacity-50"></div>
+    <section className="w-full h-auto">
+      <button onClick={downloadPDF}>Download</button>
+      <Document/>
+    </section>
   )
 }
 
-export default DisbursementVoucher
+export default DisbursementVoucher;

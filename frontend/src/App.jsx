@@ -2,9 +2,9 @@ import Mainpage from "./pages/Mainpage"
 
 function App() {
   return (
-    <>
-      <Mainpage/>
-    </>
+    <div className="m-0 p-0 box-border">
+      <Mainpage />
+    </div>
   )
 }
 
