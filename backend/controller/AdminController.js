@@ -14,6 +14,7 @@ const createAccount = async (req, res) => {
   const {role} = req.body
   const uid = decodedToken.uid
   console.log(`role in createaccount ${role}`)
+  console.log('creating acc')
   try{
     
      await admin.auth().setCustomUserClaims(uid, { role });
