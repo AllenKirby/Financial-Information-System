@@ -17,15 +17,13 @@ export const useLogin = () => {
         try{
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
           const token = await userCredential.user.getIdToken();
-          const data = {
-            uid: userCredential.user.uid
-          }
-          const response = await axios.post('http://localhost:4000/user/login', data, {
+         
+          const response = await axios.post('http://localhost:4000/user/login', {}, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${token}` 
             },
-            
+            withCredentials: true,
           });
           
           console.log(response)
