@@ -1,7 +1,7 @@
 const login = (req, res) => {
 
     try{
-        console.log('hit login')
+        
         const role = req.user.role
         const token = req.user.token;
         res.cookie('token', token, {

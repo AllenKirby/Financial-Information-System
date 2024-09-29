@@ -7,8 +7,6 @@ export const useCreateAcc = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
 
-    const { user } = useAuthContext()
-
     const createAcc = async(userData) =>{   
         console.log('creating Account')
         setIsLoading(true)
