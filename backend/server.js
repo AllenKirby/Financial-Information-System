@@ -4,9 +4,10 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 
-const AdminRoutes = require('./routes/AdminRoutes');
 const requireAuth = require('./middleware/requireAuth');
+const AdminRoutes = require('./routes/AdminRoutes');
 const UserRoutes = require('./routes/UserRoutes')
+const EditorRoutes = require('./routes/EditorRoutes')
 
 const app = express()
 
@@ -30,6 +31,7 @@ app.use('/user',UserRoutes)
 app.use(requireAuth)
 
 app.use('/admin', AdminRoutes)
+app.use('/editor', EditorRoutes)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
