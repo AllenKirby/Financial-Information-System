@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react"
 import { useCreateAcc } from "../hooks/useCreateAcc"
-import DisbursementVoucher from "./DisbursementVoucher"
 import Swal from "sweetalert2"
 
 const UserManagement = () => {
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
   const { createAcc, isLoading, error } = useCreateAcc()
   const [passwordError, setPasswordError] = useState('')
-  const [documentFlag, setDocumentFlag] = useState(false)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -36,8 +34,8 @@ const UserManagement = () => {
   }, [userData.role])
 
   return (
-    <section className="h-full w-full flex">
-      <form onSubmit={handleSubmit} className="w-3/5 rounded-xl mr-3 p-7 shadow-slate-200 shadow-customShadowStyle">
+    <section className="h-full w-full flex ">
+      <form onSubmit={handleSubmit} className="bg-white w-3/5 rounded-xl mr-3 p-7 shadow-slate-200 shadow-customShadowStyle">
         <h1 className="mb-3 font-semibold">Personal Information</h1>
         <div className="h-auto w-full flex gap-3">
           <input
@@ -106,10 +104,9 @@ const UserManagement = () => {
           </div>
         )}
       </form>
-      <aside className="w-2/5 h-full rounded-xl ml-3 p-10 shadow-slate-200 shadow-customShadowStyle">
-        <button onClick={() => setDocumentFlag(true)}>View Document</button>
+      <aside className="w-2/5 h-full rounded-xl ml-3 p-10 shadow-slate-200 shadow-customShadowStyle bg-white">
+        <butto>View Document</butto>
       </aside>
-      {documentFlag && <DisbursementVoucher/>}
     </section>
   )
 }

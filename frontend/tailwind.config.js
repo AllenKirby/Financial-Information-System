@@ -11,7 +11,8 @@ export default {
       },
       colors: {
         customgreen: '#009933',
-        customFontColor: '#013237'
+        customFontColor: '#013237',
+        customBg: '#eaebeb'
       },
       boxShadow: {
         'customShadowStyle': '2px 0 10px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.19)',
