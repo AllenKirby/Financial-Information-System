@@ -1,12 +1,12 @@
 import {useState} from 'react'
 import {auth} from '../config/firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import {useAuthContext} from '../hooks/useAuthContext'
 import axios from 'axios'
 
 export const useCreateAcc = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+
     const { user } = useAuthContext()
 
     const createAcc = async(userData) =>{   
