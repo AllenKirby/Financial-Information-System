@@ -1,5 +1,5 @@
 
-const admin  = require('../firebase')
+const {admin, db}  = require('../firebase')
 
 const createAccount = async (req, res) => {
 
@@ -12,14 +12,24 @@ const createAccount = async (req, res) => {
   const token = authHeader.split(' ')[1];
 
   const decodedToken = await admin.auth().verifyIdToken(token);
-  const role = req.body.role
-  const uid = decodedToken.uid
-  console.log(`role in createaccount ${role}`)
+  const role = req.body.role;
+  const userData = {
+    email: decodedToken.email,
+    name: req.body.name,
+    uid: decodedToken.uid,
+    role : req.body.role,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  }
+
+  console.log(`role in createaccount ${userData.role}`)
   console.log('creating acc')
 
   try{
-     await admin.auth().setCustomUserClaims(uid, { role });
+     await admin.auth().setCustomUserClaims(userData.uid, { role });
       console.log(`account created with role ${role}`)
+
+     await db.collection('users').doc(userData.uid).set(userData); 
+
      return res.status(200).json({ 
       success: true, 
       message: `User created successfully with role ${role}` 

@@ -7,6 +7,8 @@ export const useCreateAcc = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
 
+    const { user } = useAuthContext()
+
     const createAcc = async(userData) =>{   
         console.log('creating Account')
         setIsLoading(true)
@@ -17,7 +19,8 @@ export const useCreateAcc = () => {
             // const uid = newUser.user.uid
             const newUser_token = await newUser.user.getIdToken();
             const data = {
-                role: userData.role
+                role: userData.role,
+                name: `${userData.firstname} ${userData.lastname}`
             }
             console.log(`userCreateAcc ${userData.role}`)
             const res = await axios.post('http://localhost:4000/admin/create', data, {
