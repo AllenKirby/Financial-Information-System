@@ -8,6 +8,7 @@ import Dashboard from "../components/Dashboard";
 import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
 import DisbursementVoucher from "../components/DisbursementVoucher";
+import DisbursementRecords from "../components/DisbursementRecords";
 
 const Mainpage = () => {
 
@@ -22,6 +23,7 @@ const Mainpage = () => {
         </Route>
         <Route path="/editor" element={<EditorPage/>}>
           <Route path="disbursementvoucher" element={<DisbursementVoucher/>}/>
+          <Route path="disbursementrecords" element={<DisbursementRecords/>}/>
         </Route>
 
         <Route path="*" element={<NotFound/>}/>

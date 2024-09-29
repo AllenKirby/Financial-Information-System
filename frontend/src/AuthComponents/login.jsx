@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import bgImage from '../assets/images/NIAimg.png';
+import Loader from "../components/Loader";
 
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
@@ -46,7 +47,7 @@ const Login = () => {
             type="submit" 
             disabled={isLoading} 
             className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
-            >Login</button>
+            >{isLoading ? <Loader/> : 'Login'}</button>
         </div>
         {error && (<div className="w-full text-center">
             <h4 className="text-sm text-red-600">{error}</h4>

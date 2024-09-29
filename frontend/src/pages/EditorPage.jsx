@@ -6,11 +6,13 @@ import Header from "../components/Header";
 
 //Icons
 import { IoDocumentOutline } from "react-icons/io5";
+import { CiViewList } from "react-icons/ci";
 
 const EditorPage = () => {
   
   const navItems = [
-    { label: 'Disbursement Voucher', path: '/editor/disbursementvoucher', icon: <IoDocumentOutline size={18} /> }
+    { label: 'Disbursement Voucher', path: '/editor/disbursementvoucher', icon: <IoDocumentOutline size={18} /> },
+    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> }
   ];
 
   return (
