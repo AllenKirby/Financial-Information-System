@@ -6,7 +6,7 @@ import bgImage from '../assets/images/NIAimg.png';
 
 const Navbar = ({ items }) => {
   return (
-    <nav className="h-full w-full rounded-xl shadow-slate-200 shadow-customShadowStyle">
+    <nav className="h-full w-full rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
       <div className='h-auto w-full p-5 flex items-center justify-center'>
         <img src={bgImage} alt="" className="w-12 mr-3" />
         <p className='text-xs font-semibold'>NATIONAL IRRIGATION ADMINISTRATION</p>

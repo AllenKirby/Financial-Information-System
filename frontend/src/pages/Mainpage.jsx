@@ -33,7 +33,7 @@ const Mainpage = () => {
   );
 
   return (
-    <main className="h-screen w-full flex items-center justify-center font-poppins text-customFontColor">
+    <main className="w-full h-svh flex items-center justify-center font-poppins text-customFontColor">
       <RouterProvider router={router} />
     </main>
   )
