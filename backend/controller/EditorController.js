@@ -3,7 +3,7 @@ const {admin, db}  = require('../firebase')
 const createDV = async (req, res) => {
     const {payee, TIN, date, DV, RC, accTitle, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
     const {birRC, birParticular, birSubAmount, birAmountDue} = req.body.bir_data
-
+    
     dvData = {
         //payee data
         payee: payee, 
@@ -27,16 +27,20 @@ const createDV = async (req, res) => {
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         status: 'ongoing',
         //open for necessary data needed
-
     }
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
 
     try{
-        await db.collection('records').doc(dvData.status).collection(dvData.date).doc(dvData.DV).set(dvData);
-        
+        await db.collection('records').doc(dvData.status).collection(dateCollection).doc(dvData.DV).set(dvData);
+       
         return res.status(200).json({ 
             success: true, 
             message: `The DV:${dvData.DV} is successfully created.` 
-            
           });
     }catch(error){
         console.log(`Error in saving data of payee and BIR: ${error}`)
