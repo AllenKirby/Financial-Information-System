@@ -1,4 +1,4 @@
-import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider, Navigate } from "react-router-dom";
 
 //Components and Pages
 import {AuthRole} from "../components/AuthRole";
@@ -9,6 +9,7 @@ import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
 import DisbursementVoucher from "../components/DisbursementVoucher";
 import DisbursementRecords from "../components/DisbursementRecords";
+import ViewDocument from "../components/ViewDocument";
 
 const Mainpage = () => {
 
@@ -17,13 +18,15 @@ const Mainpage = () => {
       <Route>
         <Route index element={<AuthRole/>} />
         <Route path="/admin" element={<AdminPage/>}>
-          <Route index element={<Dashboard/>} />
+        <Route index element={<Navigate to="/admin/dashboard" />} />
           <Route path="dashboard" element={<Dashboard />}/>
           <Route path="usermanagement" element={<UserManagement />}/>
         </Route>
         <Route path="/editor" element={<EditorPage/>}>
+          <Route index element={<Navigate to="/editor/disbursementvoucher"/>} />
           <Route path="disbursementvoucher" element={<DisbursementVoucher/>}/>
           <Route path="disbursementrecords" element={<DisbursementRecords/>}/>
+          <Route path=":id" element={<ViewDocument/>}/>
         </Route>
 
         <Route path="*" element={<NotFound/>}/>
