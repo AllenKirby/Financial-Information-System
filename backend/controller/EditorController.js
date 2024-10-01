@@ -2,8 +2,8 @@ const {admin, db}  = require('../firebase')
 
 
 const createDV = async (req, res) => {
-    const {payee, TIN, address, date, DV, RC, accTitle, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
-    const {birRC, birParticular, birSubAmount, birAmountDue} = req.body.bir_data
+    const {payee, TIN, address, fund, date, DV, RC, accTitle, accCode, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
+    const {birRC, birParticular, birSubAmount} = req.body.bir_data
     
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -18,10 +18,12 @@ const createDV = async (req, res) => {
         payee: payee, 
         TIN: TIN, 
         address: address,
+        fund: fund,
         date: date, 
         DV: DV, 
         RC: RC, 
-        accTitle: accTitle, 
+        accTitle: accTitle,
+        accCode: accCode, 
         amount: amount, 
         particular: particular,
         bir2percent: bir2percent, 
@@ -31,8 +33,7 @@ const createDV = async (req, res) => {
         //BIR data
         birRC: birRC, 
         birParticular: birParticular,
-        birSubAmount: birSubAmount, 
-        birAmountDue: birAmountDue,
+        birSubAmount: birSubAmount,
         //other data
         createdAt: dateCollection,
         status: 'ongoing',
