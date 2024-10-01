@@ -25,10 +25,12 @@ const Mainpage = () => {
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['1']}><Dashboard/></PrivateRoute>}/>
           <Route path="usermanagement" element={<PrivateRoute allowedRoles={['1']}><UserManagement /></PrivateRoute>}/>
         </Route>
-        <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>          
+        <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>    
+          <Route index element={<Navigate to="disbursementrecords"/>}/>      
           <Route path="disbursementvoucher" element={<PrivateRoute allowedRoles={['4']}><DisbursementVoucher/></PrivateRoute>}/>
-          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}/>
-          <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
+          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
+            <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
+          </Route>
 
         </Route>
         <Route path="/unauthorized" element={<NotFound/>}/>
