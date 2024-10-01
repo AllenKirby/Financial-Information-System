@@ -5,7 +5,10 @@ import Loader from './Loader'
 const DisbursementVoucher = () => {
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '', date: '', DV: '', RC: '', accTitle: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
   const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0, birAmountDue: 0})
+
+  const [accountOptions, setAccountOptions] = useState([]);
   const {createDisbursement, isLoading, error} = useCreateDisbursement()
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,6 +47,35 @@ const DisbursementVoucher = () => {
     setPayeeData({...payeeData, amount: parsedAmount, bir2percent: bir2percent, bir3percent: bir3percent, subAmount: subAmount, amountDue: amountDue});
     setBirData({...birData, birSubAmount: birSubAmount, birAmountDue: birAmountDue});
   }
+
+  useEffect(() => {
+    const fetchAccountCode = async () => {
+      const storedAccountOptions = localStorage.getItem('accountOptions');
+      if(storedAccountOptions){
+        console.log('hit')
+        setAccountOptions(JSON.parse(storedAccountOptions));
+      }else{
+        try{
+          const response = await axios.get('http://localhost:4000/editor/getAccountCode', {
+            withCredentials: true
+          })
+
+          if(response.status === 200){
+            const options = response.data;
+            localStorage.setItem('accountOptions', JSON.stringify(options));
+            setAccountOptions(options);
+            console.log('success fetching')
+          }else{
+            console.log('fail to fetch')
+          }
+
+        }catch(error){
+          console.error('Error fetching account titles:', error);
+        }
+      }
+    }
+    fetchAccountCode();
+  }, [])
 
   return (
     <section className="w-full h-full flex">
@@ -122,7 +154,7 @@ const DisbursementVoucher = () => {
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">Financial/Payment Details</h1>
         <div className="w-auto h-auto flex flex-col gap-3 p-3">
-          <label>Training Expenses</label>
+          <label>Account Title</label>
           <select  className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             onChange={(e) => {setPayeeData({...payeeData, accTitle: e.target.value})}}
             value={payeeData.accTitle}

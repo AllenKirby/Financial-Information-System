@@ -105,7 +105,7 @@ const UserManagement = () => {
         )}
       </form>
       <aside className="w-2/5 h-full rounded-xl ml-3 p-10 shadow-slate-200 shadow-customShadowStyle bg-white">
-        <butto>View Document</butto>
+        <button>View Document</button>
       </aside>
     </section>
   )

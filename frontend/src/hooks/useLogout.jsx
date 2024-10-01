@@ -21,7 +21,7 @@ export const useLogout = () => {
           dispatch({type: 'LOGOUT', payload: null})
           dispatchDocuments({type: 'SET_DOCUMENTS', payload: null})
           cookies.remove('user', { path: '/' });
-          navigate('/')
+          navigate('/', {replace: true})
         }
       }catch(error){
         console.log(`error logging out ${error}`)
