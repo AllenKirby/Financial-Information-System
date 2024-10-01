@@ -7,6 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
+        'times': ['"Times New Roman"', 'serif'],
         poppins: ['Poppins', 'sans-serif'], // Add Poppins to the font family list
       },
       colors: {

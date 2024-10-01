@@ -43,10 +43,7 @@ const createDV = async (req, res) => {
     try{
         await db.collection('records').doc(dvData.DV).set(dvData);
        
-        return res.status(200).json({ 
-            success: true, 
-            message: `The DV:${dvData.DV} is successfully created.` 
-          });
+        return res.status(200).json(dvData);
     }catch(error){
         console.log(`Error in saving data of payee and BIR: ${error}`)
         return res.status(500).json({ 
