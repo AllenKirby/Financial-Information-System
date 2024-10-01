@@ -1,10 +1,11 @@
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import  {useCreateDisbursement}  from '../hooks/useCreateDisbursement'
 import Loader from './Loader'
+import axios from 'axios'
 
 const DisbursementVoucher = () => {
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '', date: '', DV: '', RC: '', accTitle: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
-  const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0, birAmountDue: 0})
+  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', accTitle: '', accCode: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
+  const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
 
   const [accountOptions, setAccountOptions] = useState([]);
   const {createDisbursement, isLoading, error} = useCreateDisbursement()
@@ -49,10 +50,11 @@ const DisbursementVoucher = () => {
   }
 
   useEffect(() => {
+    
     const fetchAccountCode = async () => {
-      const storedAccountOptions = localStorage.getItem('accountOptions');
+      const storedAccountOptions = localStorage.getItem('accountOptions')
       if(storedAccountOptions){
-        console.log('hit')
+        console.log(JSON.parse(storedAccountOptions))
         setAccountOptions(JSON.parse(storedAccountOptions));
       }else{
         try{
@@ -156,14 +158,25 @@ const DisbursementVoucher = () => {
         <div className="w-auto h-auto flex flex-col gap-3 p-3">
           <label>Account Title</label>
           <select  className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-            onChange={(e) => {setPayeeData({...payeeData, accTitle: e.target.value})}}
+            onChange={(e) => {
+              const [title, code] = e.target.value.split(':');
+              setPayeeData({...payeeData, accTitle: title, accCode: code})
+            }}
             value={payeeData.accTitle}
             required
           >
             <option value="" disabled>Select Account Title</option>
-            <option value="Training Expenses:5-02-02-010">Training Expenses</option>
-            <option value="Representation Expenses:5-02-99-030">Representation Expenses</option>
-            <option value="Information and Communication Technology Equipment:1-06-05-030">Information and Communication Technology Equipment</option>
+            {
+              accountOptions.accountTitle && accountOptions.accountTitle.length > 0 ? (
+                accountOptions.accountTitle.map((option, index) => (
+                  <option key={index} value={`${option.id}:${option.account_title}`}>
+                    {option.account_title} 
+                  </option>
+                ))
+              ) : (
+                <option>Loading...</option>
+              )
+            }
           </select >
           <input 
             className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 

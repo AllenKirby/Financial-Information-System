@@ -8,9 +8,9 @@ import { DisbursementContextProvider } from './context/DisbursementContext.jsx'
 createRoot(document.getElementById('root')).render(
   <DisbursementContextProvider>
     <AuthContextProvider>
-      <StrictMode>
+      {/* <StrictMode> */}
         <App />
-      </StrictMode>,
+      {/* </StrictMode>, */}
     </AuthContextProvider>
   </DisbursementContextProvider>
 )
