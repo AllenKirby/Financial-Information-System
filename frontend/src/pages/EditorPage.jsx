@@ -16,11 +16,11 @@ const EditorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
   const { user } = useAuthContext()
-  const { dispatch } = useDisbursementContext()
+  const { dispatch, documents } = useDisbursementContext()
   
   const navItems = [
-    { label: 'Disbursement Voucher', path: '/editor/disbursementvoucher', icon: <IoDocumentOutline size={18} /> },
-    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> }
+    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> },
+    { label: 'Disbursement Voucher', path: '/editor/disbursementvoucher', icon: <IoDocumentOutline size={18} /> }
   ];
 
   useEffect(() => {
@@ -34,28 +34,32 @@ const EditorPage = () => {
 
   useEffect(() => {
     const retrieveDV = async() => {
-      try{
-        console.log('start')
-        const getDocu = await axios.get('http://localhost:4000/editor/getDV', {
-          withCredentials: true
-        })
-        
-        if(getDocu.status === 200){
-          const documents = getDocu.data
-          console.log('end')
-          console.log(documents)
-          dispatch({type: 'SET_DOCUMENTS', payload: documents})
+      if(documents){
+        console.log('Disbursement Records has been retrieved')
+      }else{
+        try{
+          console.log('start')
+          const getDocu = await axios.get('http://localhost:4000/editor/getDV', {
+            withCredentials: true
+          })
+          
+          if(getDocu.status === 200){
+            const documents = getDocu.data
+            console.log('end')
+            console.log(documents)
+            dispatch({type: 'SET_DOCUMENTS', payload: documents})
+          }
         }
-      }
-      catch(error){
-        console.log(error)
+        catch(error){
+          console.log(error)
+        }
       }
     }
 
     if(user){
       retrieveDV()
     }
-  }, [user, dispatch])
+  }, [user, dispatch, documents])
 
   return (
     <main className="h-screen w-full flex bg-gray-100 p-3">
