@@ -1,13 +1,23 @@
 const {admin, db}  = require('../firebase')
 
+
 const createDV = async (req, res) => {
-    const {payee, TIN, date, DV, RC, accTitle, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
+    const {payee, TIN, address, date, DV, RC, accTitle, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
     const {birRC, birParticular, birSubAmount, birAmountDue} = req.body.bir_data
     
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+
     dvData = {
         //payee data
         payee: payee, 
         TIN: TIN, 
+        address: address,
         date: date, 
         DV: DV, 
         RC: RC, 
@@ -24,19 +34,13 @@ const createDV = async (req, res) => {
         birSubAmount: birSubAmount, 
         birAmountDue: birAmountDue,
         //other data
-        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        createdAt: dateCollection,
         status: 'ongoing',
+
         //open for necessary data needed
     }
-    const today = new Date()
-    const dateCollection = today.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "2-digit"
-      });
-
     try{
-        await db.collection('records').doc(dvData.status).collection(dateCollection).doc(dvData.DV).set(dvData);
+        await db.collection('records').doc(dvData.DV).set(dvData);
        
         return res.status(200).json({ 
             success: true, 
@@ -48,9 +52,31 @@ const createDV = async (req, res) => {
             success: false, 
             message: 'Error in saving data of payee and BIR', 
             error: error.message 
-          });
+        });
     }
 
 }
 
-module.exports = createDV;
+const retrieveDV = async(req, res) => {
+    try{
+        const docRef = db.collection('records')
+        const dv = await docRef.get();
+    
+        const documents = []
+    
+        dv.forEach(doc => {
+            documents.push({ id: doc.id, data: doc.data() });
+          });
+        res.status(200).json({ success: true, documents });
+    }
+    catch(error){
+        console.error("Error retrieving documents: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+    
+}
+
+module.exports = {
+    createDV,
+    retrieveDV
+};

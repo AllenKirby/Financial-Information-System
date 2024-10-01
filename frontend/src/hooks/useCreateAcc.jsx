@@ -13,7 +13,7 @@ export const useCreateAcc = () => {
         setError(null)
         try {
             const newUser = await createUserWithEmailAndPassword(auth, userData.email, userData.password)
-
+            console.log(newUser)
             // const uid = newUser.user.uid
             const newUser_token = await newUser.user.getIdToken();
             const data = {
