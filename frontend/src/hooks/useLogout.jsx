@@ -18,7 +18,7 @@ export const useLogout = () => {
         if(response.status === 200){
           dispatch({type: 'LOGOUT', payload: null})
           cookies.remove('user', { path: '/' });
-          navigate('/')
+          navigate('/', {replace: true})
         }
       }catch(error){
         console.log(`error logging out ${error}`)

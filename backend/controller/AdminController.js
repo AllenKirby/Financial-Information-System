@@ -1,5 +1,6 @@
 
 const {admin, db}  = require('../firebase')
+const fs = require('fs');
 
 const createAccount = async (req, res) => {
 
@@ -45,7 +46,23 @@ const createAccount = async (req, res) => {
   }
 }
 
+// const uploadJSOn = async () => {
+//   try{
+//     const data = JSON.parse(fs.readFileSync('C:/Users/Administrator/Downloads/assets.json', 'utf8'));
+//     const batch = db.batch();
+
+//     Object.keys(data).forEach(key => {
+//       const docRef = db.collection('accountCode').doc(key);  // Document with key as ID
+//       batch.set(docRef, data[key]);  // Set the document with the object as value
+//     });
+//     await batch.commit();
+//     console.log('Batch write completed successfully.');
+//   }catch(error){
+//     console.log(`Batch write failed: ${error}`);
+//   }
+// }
+
 module.exports = {
 
-  createAccount
+  createAccount,
 };

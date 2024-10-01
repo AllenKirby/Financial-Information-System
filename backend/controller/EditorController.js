@@ -53,4 +53,24 @@ const createDV = async (req, res) => {
 
 }
 
-module.exports = createDV;
+const getAccountCodes = async (req, res) => {
+    try{
+        const collectionRef = db.collection('accountCode')
+        const snapshot = await collectionRef.get();
+        if (snapshot.empty) {
+            return res.status(200).json({accountTitle: []})
+        }
+
+        const documents = snapshot.docs.map(doc => ({
+            id: doc.id,     
+            ...doc.data()   
+        }));
+        console.log('success in fetching')
+        res.status(200).json({accountTitle: documents})
+    }catch(error){
+        console.log('fail to fetch')
+        res.status(500).json({ error: error.message });
+    }
+}
+
+module.exports = {createDV, getAccountCodes};
