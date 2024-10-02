@@ -47,22 +47,24 @@ const createAccount = async (req, res) => {
 }
 
 // const uploadJSOn = async () => {
-//   try{
-//     const data = JSON.parse(fs.readFileSync('C:/Users/Administrator/Downloads/assets.json', 'utf8'));
-//     const batch = db.batch();
-
+//   try {
+//     const data = JSON.parse(fs.readFileSync('C:/Users/Administrator/Downloads/assests1.json', 'utf8'));
+//     const docRef = db.collection('account_codes').doc('accountFields_1');
+//     const transformedData = {};
 //     Object.keys(data).forEach(key => {
-//       const docRef = db.collection('accountCode').doc(key);  // Document with key as ID
-//       batch.set(docRef, data[key]);  // Set the document with the object as value
+//         const concatenatedValue = `${data[key].col.join(':')}:${data[key].account_title}`;
+
+//         transformedData[key] = concatenatedValue;
 //     });
-//     await batch.commit();
-//     console.log('Batch write completed successfully.');
-//   }catch(error){
-//     console.log(`Batch write failed: ${error}`);
-//   }
+//     await docRef.set(transformedData);
+
+//     console.log('Data written successfully as a single document with multiple fields.');
+// } catch (error) {
+//     console.error(`Failed to write data: ${error}`);
+// }
 // }
 
 module.exports = {
 
-  createAccount,
+  createAccount
 };

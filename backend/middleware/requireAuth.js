@@ -10,7 +10,7 @@ const requireAuth = async (req, res, next) => {
         }
         token = authHeader.split(' ')[1];
     }
-    console.log('auth')
+    // console.log('auth')
     try{
         const decodedToken = await admin.auth().verifyIdToken(token);
         console.log(decodedToken)
@@ -22,7 +22,7 @@ const requireAuth = async (req, res, next) => {
             token: token
           };
         console.log('authentication passed')
-        console.log(req.user.role)
+        // console.log(req.user.role)
         // const user = await admin.auth().getUser(req.user.uid)
         next()
     }catch(error){

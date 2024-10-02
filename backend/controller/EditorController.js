@@ -56,28 +56,56 @@ const createDV = async (req, res) => {
 }
 
 
-const getAccountCodes = async (req, res) => {
-    try{
-        const collectionRef = db.collection('accountCode')
-        const snapshot = await collectionRef.get();
-        if (snapshot.empty) {
-            return res.status(200).json({accountTitle: []})
-        }
+// const getAccountCodes = async (req, res) => {
+//     try{
+//         console.log('getAccountCOdes hit')
+//         const collectionRef = db.collection('accountCode')
+//         const snapshot = await collectionRef.get();
+//         if (snapshot.empty) {
+//             return res.status(200).json({accountTitle: []})
+//         }
 
-        const documents = snapshot.docs.map(doc => ({
-            id: doc.id,     
-            ...doc.data()   
-        }));
-        console.log('success in fetching')
-        res.status(200).json({accountTitle: documents})
+//         const documents = snapshot.docs.map(doc => ({
+//             id: doc.id,     
+//             ...doc.data()   
+//         }));
+//         console.log('success in fetching')
+//         res.status(200).json({accountTitle: documents})
+//     }catch(error){
+//         console.log('fail to fetch')
+//         res.status(500).json({ error: error.message });
+//     }
+// }
+
+const getAccountCodes = async (req, res) => {
+    const documentIds = ['accountFields', 'accountFields_1', 'accountFields_2'];
+    const combinedData = {};
+    try{
+        const accountCodesSnapshot = await db.collection('account_codes').get();
+        for (const docId of documentIds){
+            const docRef = db.collection('account_codes').doc(docId);
+            const docSnapshot = await docRef.get();
+
+            if (docSnapshot.exists){
+                const docData = docSnapshot.data();
+                Object.keys(docData).forEach(fieldKey => {
+                    combinedData[fieldKey] = docData[fieldKey]
+                });
+            }else{
+                console.log(`Document ${docId} does not exist.`);
+            }
+        }
+        console.log('successfully retrieved');
+        res.status(200).json({account_codes: combinedData})
+        
     }catch(error){
-        console.log('fail to fetch')
-        res.status(500).json({ error: error.message });
+        console.log('Error retrieving account fields:', error)
     }
 }
 
 const retrieveDV = async(req, res) => {
     try{
+        console.log('retrieveDv hit')
         const docRef = db.collection('records')
         const dv = await docRef.get();
     
@@ -86,7 +114,7 @@ const retrieveDV = async(req, res) => {
         dv.forEach(doc => {
             documents.push({ id: doc.id, data: doc.data() });
           });
-        res.status(200).json({ success: true, documents });
+        res.status(200).json({ success: true, docu: documents });
     }
     catch(error){
         console.error("Error retrieving documents: ", error);
