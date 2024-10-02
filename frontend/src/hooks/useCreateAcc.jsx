@@ -32,7 +32,7 @@ export const useCreateAcc = () => {
             })
 
             if(res.status === 200){
-                console.log(res.data)
+                console.log('successfully created', res.data)
                 setIsLoading(false)
                 dispatch({type: 'CREATE_DOCUMENT', payload: res.data})
                 return true;

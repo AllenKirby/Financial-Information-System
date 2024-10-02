@@ -30,7 +30,7 @@ export const useLogin = () => {
           if (response.status === 200) {
             console.log("success")
             console.log(response.data)
-            cookies.set('user', JSON.stringify(response.data), { path: '/', maxAge: 86400, secure: true, sameSite: 'strict' });
+            cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
             dispatch({type: 'LOGIN', payload: response.data})
             setIsLoading(false)
           } 
