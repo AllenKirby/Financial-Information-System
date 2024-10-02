@@ -22,7 +22,7 @@ export const DisbursementReducer = (state, action) => {
         case 'DELETE_DOCUMENT':
             return {
                 ...state,
-                documents: state.documents.filter(d => d._id !== action.payload._id)
+                documents: state.documents.documents.filter(document => document.data.DV !== action.payload)
             };
         default:
             return state
