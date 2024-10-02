@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react'
 import  {useCreateDisbursement}  from '../hooks/useCreateDisbursement'
 import Loader from './Loader'
 import axios from 'axios'
+import Swal from "sweetalert2"
 
 const DisbursementVoucher = () => {
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', accTitle: '', accCode: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
@@ -22,7 +23,15 @@ const DisbursementVoucher = () => {
       bir_data: birData
     }
 
-    await createDisbursement(data)
+    const res = await createDisbursement(data)
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "Dibursement Voucher is successfully created!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+    }
 
   }
 

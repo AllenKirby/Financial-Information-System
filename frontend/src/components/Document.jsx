@@ -14,7 +14,7 @@ const Document = ({document}) => {
             <div className='w-full h-1/3 flex items-center font-bold px-2'>DV No. {document.id}</div>
           </div>
         </header>
-        <body>
+        <div>
           <div className='w-full h-9 flex border-2 border-black'>
             <div className='w-20 border-r-2 border-black flex items-center justify-center font-bold'>Mode of <br/> Payment</div>
             <div className='w-5/6 py-2 flex gap-3 px-7'>
@@ -154,7 +154,7 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div>
-                  <div className='flex justify-center items-center h-full'>{toWords(document.data.amountDue)}</div> 
+                  <div className='flex justify-center items-center h-full'>{`${toWords(document.data.amountDue)} pesos`}</div> 
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
@@ -247,7 +247,7 @@ const Document = ({document}) => {
               </div>
           </div>
           <div className="w-full p-1 border-l-2 border-r-2 border-b-2 border-black">Official Receipt No. & Date/Other Documents</div>
-        </body>
+        </div>
       </section>
       <section className='w-a4-width h-a4-height text-black text-xs mt-1'>
         <header className='w-full h-auto flex'>
@@ -259,7 +259,7 @@ const Document = ({document}) => {
             <div className='w-full h-1/3 flex items-center font-bold px-2'>DV No. 501-2024-09-507</div>
           </div>
         </header>
-        <body>
+        <div>
           <div className='w-full h-9 flex border-2 border-black'>
             <div className='w-20 border-r-2 border-black flex items-center justify-center font-bold'>Mode of <br/> Payment</div>
             <div className='w-5/6 py-2 flex gap-3 px-7'>
@@ -385,7 +385,7 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div> 
-                  <div className='flex justify-center items-center h-full'>{toWords(document.data.amount)}</div>
+                  <div className='flex justify-center items-center h-full'>{`${toWords(document.data.birSubAmount)} pesos`}</div>
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
@@ -478,7 +478,7 @@ const Document = ({document}) => {
               </div>
           </div>
           <div className="w-full p-1 border-l-2 border-r-2 border-b-2 border-black">Official Receipt No. & Date/Other Documents</div>
-        </body>
+        </div>
       </section>
     </main>
   )

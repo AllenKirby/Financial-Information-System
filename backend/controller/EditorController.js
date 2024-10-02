@@ -114,7 +114,7 @@ const retrieveDV = async(req, res) => {
         dv.forEach(doc => {
             documents.push({ id: doc.id, data: doc.data() });
           });
-        res.status(200).json({ success: true, docu: documents });
+        res.status(200).json({ success: true, documents });
     }
     catch(error){
         console.error("Error retrieving documents: ", error);

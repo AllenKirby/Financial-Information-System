@@ -10,8 +10,8 @@ const ViewDocument = () => {
   const [doc, setDoc] = useState(null);
 
   useEffect(() => {
-    if (documents && documents.documents) { 
-      const selectedDocument = documents.documents.find((document) => document.data.DV === id);
+    if (documents && documents) { 
+      const selectedDocument = documents.find((document) => document.data.DV === id);
       if (selectedDocument) {
         setDoc(selectedDocument);
       } else {
