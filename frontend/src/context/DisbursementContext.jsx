@@ -33,7 +33,7 @@ export const DisbursementContextProvider = ({children}) => {
         documents: null
     })
 
-    console.log('Disbursement Context', state)
+    console.log('Disbursement Context', state.documents)
 
     return(
         <DisbursementContext.Provider value={{...state, dispatch}}>

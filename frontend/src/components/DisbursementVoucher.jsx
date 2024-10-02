@@ -24,6 +24,7 @@ const DisbursementVoucher = () => {
     }
 
     const res = await createDisbursement(data)
+
     if(res){
       Swal.fire({
         title: "Saved",

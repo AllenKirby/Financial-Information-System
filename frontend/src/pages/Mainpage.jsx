@@ -9,9 +9,9 @@ import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
 import DisbursementVoucher from "../components/DisbursementVoucher";
 import DisbursementRecords from "../components/DisbursementRecords";
-
 import PrivateRoute from '../AuthComponents/PrivateRoute';
 import ViewDocument from "../components/ViewDocument";
+import OperatorPage from "./OperatorPage";
 
 
 const Mainpage = () => {
@@ -31,8 +31,11 @@ const Mainpage = () => {
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-
         </Route>
+        <Route path="/operatorpage" element={<OperatorPage/>}>
+        
+        </Route>
+
         <Route path="/unauthorized" element={<NotFound/>}/>
         <Route path="*" element={<NotFound/>}/>
       </Route>

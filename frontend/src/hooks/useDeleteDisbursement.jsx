@@ -17,6 +17,7 @@ export const useDeleteDisbursement = () => {
             if(res.status === 200){
                 console.log(res.data)
                 dispatch({type: 'DELETE_DOCUMENT', payload: id})
+                return true
             }
         } catch (error) {
             const errorMessage = error.response?.data?.message || error.message || "An error occurred";

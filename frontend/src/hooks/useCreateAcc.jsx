@@ -30,7 +30,7 @@ export const useCreateAcc = () => {
             })
 
             if(res.status === 200){
-                console.log(res.data)
+                console.log('successfully created', res.data)
                 setIsLoading(false)
                 return true;
             }
