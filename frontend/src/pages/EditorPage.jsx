@@ -47,7 +47,7 @@ const EditorPage = () => {
             const documents = getDocu.data
             console.log('end')
             console.log(documents)
-            dispatch({type: 'SET_DOCUMENTS', payload: documents})
+            dispatch({type: 'SET_DOCUMENTS', payload: documents.documents})
           }
         }
         catch(error){

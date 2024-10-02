@@ -22,7 +22,7 @@ export const DisbursementReducer = (state, action) => {
         case 'DELETE_DOCUMENT':
             return {
                 ...state,
-                documents: state.documents.documents.filter(document => document.data.DV !== action.payload)
+                documents: state.documents.filter(document => document.data.DV !== action.payload)
             };
         default:
             return state
@@ -33,7 +33,7 @@ export const DisbursementContextProvider = ({children}) => {
         documents: null
     })
 
-    console.log('Disbursement Context', state)
+    console.log('Disbursement Context', state.documents)
 
     return(
         <DisbursementContext.Provider value={{...state, dispatch}}>

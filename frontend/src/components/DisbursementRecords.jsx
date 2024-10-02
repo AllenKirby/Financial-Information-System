@@ -16,10 +16,10 @@ const DisbursementRecords = () => {
             className="text-sm w-64 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen"/>
             <button className="px-6 py-2 rounded-xl bg-customgreen text-white hover:scale-125 transition-all duration-100">Filter</button>
           </div>
-          {documents && documents.documents ? (
+          {documents ? (
             <div className="w-full max-h-fit overflow-auto py-3">
-              {documents.documents.map((document, index) => (
-                <DocumentDetails key={index} documents={document.data}/>
+              {documents.map((document, index) => (
+                <DocumentDetails key={index} documents={document}/>
               ))}
             </div>
           ) : (
