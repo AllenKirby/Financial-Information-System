@@ -95,8 +95,22 @@ const retrieveDV = async(req, res) => {
     
 }
 
+const deleteDV = async(req, res) => {
+    const { id } = req.params
+
+    try{
+        await db.collection('records').doc(id).delete();
+        res.status(200).json({ message: 'Document successfully deleted' })
+    }
+    catch(error){
+        console.error("Error deleting documents: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = {
     createDV,
     retrieveDV,
-    getAccountCodes
+    getAccountCodes,
+    deleteDV
 };
