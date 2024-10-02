@@ -169,7 +169,7 @@ const DisbursementVoucher = () => {
             {
               accountOptions.accountTitle && accountOptions.accountTitle.length > 0 ? (
                 accountOptions.accountTitle.map((option, index) => (
-                  <option key={index} value={`${option.id}:${option.account_title}`}>
+                  <option key={index} value={`${option.account_title}:${option.id}`}>
                     {option.account_title} 
                   </option>
                 ))

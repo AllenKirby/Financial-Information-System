@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import {toWords} from 'number-to-words'
 
 const Document = ({document}) => {
   return (
@@ -8,7 +9,7 @@ const Document = ({document}) => {
           <div className='w-1/4 h-28'></div>
           <div className='w-2/4 h-28'></div>
           <div className='w-1/4 border-t-2 border-r-2 border-l-2 border-black h-28 flex flex-col'>
-            <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: </div>
+            <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: {document.data.fund}</div>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Date: {document.data.date}</div>
             <div className='w-full h-1/3 flex items-center font-bold px-2'>DV No. {document.id}</div>
           </div>
@@ -58,16 +59,16 @@ const Document = ({document}) => {
                 <div className="w-full text-center border-b-2 border-black">Particulars</div>
                 <div className="w-full h-3/6 text-justify px-1 pb-2">{document.data.particular}</div>
                 <div className="flex gap-3 px-3 py-1">
-                  <div>{document.data.amount}</div>
+                  <div>{document.data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   <div>x 3%</div>
                   <div>=</div>
-                  <div>{document.data.bir3percent}</div>
+                  <div>{document.data.bir3percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
                 <div className="flex gap-3 px-3 py-1">
-                  <div>{document.data.amount}</div>
+                  <div>{document.data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   <div>x 2%</div>
                   <div>=</div>
-                  <div>{document.data.bir2percent}</div>
+                  <div>{document.data.bir2percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
                 <div className="px-2 py-1">ASA No.501-2024-296 Lopez SRIP</div>
                 <div className="w-full flex items-center justify-center font-bold py-1">Amount Due</div>
@@ -82,10 +83,10 @@ const Document = ({document}) => {
               </div>
               <div className='w-60'>
                 <div className="w-full text-center border-b-2 border-black">Amount</div>
-                <div className="w-full h-3/6 flex items-center justify-end p-1">{document.data.amount}</div>
+                <div className="w-full h-3/6 flex items-center justify-end p-1">{document.data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div className="w-full h-24 flex justify-between items-end font-bold">
                   <div>₱</div>
-                  <div>{document.data.amountDue}</div>
+                  <div>{document.data.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
               </div>
           </div>
@@ -111,21 +112,21 @@ const Document = ({document}) => {
                   </div>
                   <div className="w-1/5 h-[100px] border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">UACS Code</div>
-                      <div className="w-full pt-1 text-center">5-02-02-010</div>
+                      <div className="w-full pt-1 text-center">{document.data.accCode}</div>
                       <div className="w-full pt-1 text-center">2 02 01 010</div>
                       <div className="w-full pt-1 text-center">2 02 01 010</div>
                       <div className="w-full pt-1 text-center">1 01 02 020</div>
                   </div>
                   <div className="w-1/5 h-[100px] border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Debit</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.amount}</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
                   <div className="w-1/5 h-[100px] border-black">
                       <div className="w-full text-center border-b-2 border-black">Credit</div>
                       <div className="w-full pt-1 text-end px-2"><br/></div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.bir3percent}</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.bir2percent}</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.amountDue}</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.bir3percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.bir2percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
               </div>
           </div>
@@ -152,7 +153,8 @@ const Document = ({document}) => {
                   <div className="w-full flex border-b-2 border-black">
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
-                  </div> 
+                  </div>
+                  <div className='flex justify-center items-center h-full'>{toWords(document.data.amountDue)}</div> 
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
@@ -252,8 +254,8 @@ const Document = ({document}) => {
           <div className='w-1/4 h-28'></div>
           <div className='w-2/4 h-28'></div>
           <div className='w-1/4 border-t-2 border-r-2 border-l-2 border-black h-28 flex flex-col'>
-            <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: 501 LFP</div>
-            <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Date: {document.data.Date}</div>
+            <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: {document.data.fund}</div>
+            <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Date: {document.data.date}</div>
             <div className='w-full h-1/3 flex items-center font-bold px-2'>DV No. 501-2024-09-507</div>
           </div>
         </header>
@@ -313,10 +315,10 @@ const Document = ({document}) => {
               </div>
               <div className='w-60'>
                 <div className="w-full text-center border-b-2 border-black">Amount</div>
-                <div className="w-full h-3/6 flex items-center justify-end p-1">{document.data.birSubAmount}</div>
+                <div className="w-full h-3/6 flex items-center justify-end p-1">{document.data.birSubAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div className="w-full h-24 flex justify-between items-end font-bold">
                   <div>₱</div>
-                  <div>{document.data.birSubAmount}</div>
+                  <div>{document.data.birSubAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
               </div>
           </div>
@@ -347,15 +349,15 @@ const Document = ({document}) => {
                   </div>
                   <div className="w-1/5 h-[100px] border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Debit</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.bir3percent}</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.bir2percent}</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.bir3percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.bir2percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                       <div className="w-full pt-1 text-end px-2">-</div>
                   </div>
                   <div className="w-1/5 h-[100px] border-black">
                       <div className="w-full text-center border-b-2 border-black">Credit</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.bir3percent}</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.bir2percent}</div>
-                      <div className="w-full pt-1 text-end px-2">{document.data.birSubAmount}</div>
+                      <div className="w-full pt-1 text-end px-2">-</div>
+                      <div className="w-full pt-1 text-end px-2">-</div>
+                      <div className="w-full pt-1 text-end px-2">{document.data.birSubAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   </div>
               </div>
           </div>
@@ -383,6 +385,7 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div> 
+                  <div className='flex justify-center items-center h-full'>{toWords(document.data.amount)}</div>
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">

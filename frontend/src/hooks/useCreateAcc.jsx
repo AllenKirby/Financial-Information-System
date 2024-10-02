@@ -2,10 +2,12 @@ import {useState} from 'react'
 import {auth} from '../config/firebase-config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios'
+import { useDisbursementContext } from './useDisbursementContext';
 
 export const useCreateAcc = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const {dispatch} = useDisbursementContext()
 
     const createAcc = async(userData) =>{   
         console.log('creating Account')
@@ -32,6 +34,7 @@ export const useCreateAcc = () => {
             if(res.status === 200){
                 console.log(res.data)
                 setIsLoading(false)
+                dispatch({type: 'CREATE_DOCUMENT', payload: res.data})
                 return true;
             }
             return false
