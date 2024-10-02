@@ -3,7 +3,7 @@ const express = require('express');
 const adminRouter = express.Router()
 
 const setRole = require('../middleware/Role')
-const {createAccount, uploadJSOn} = require('../controller/AdminController');
+const {createAccount} = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
 

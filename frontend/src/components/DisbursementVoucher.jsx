@@ -52,8 +52,9 @@ const DisbursementVoucher = () => {
   useEffect(() => {
     
     const fetchAccountCode = async () => {
-      const storedAccountOptions = localStorage.getItem('accountOptions')
+      const storedAccountOptions = localStorage.getItem('account_fields')
       if(storedAccountOptions){
+        console.log(`from local storage`)
         console.log(JSON.parse(storedAccountOptions))
         setAccountOptions(JSON.parse(storedAccountOptions));
       }else{
@@ -64,7 +65,8 @@ const DisbursementVoucher = () => {
 
           if(response.status === 200){
             const options = response.data;
-            localStorage.setItem('accountOptions', JSON.stringify(options));
+            console.log(options)
+            localStorage.setItem('account_fields', JSON.stringify(options));
             setAccountOptions(options);
             console.log('success fetching')
           }else{
@@ -156,28 +158,35 @@ const DisbursementVoucher = () => {
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">Financial/Payment Details</h1>
         <div className="w-auto h-auto flex flex-col gap-3 p-3">
-          <label>Account Title</label>
-          <select  className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+        <label>Account Title</label>
+          <select  
+            className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             onChange={(e) => {
               const [title, code] = e.target.value.split(':');
-              setPayeeData({...payeeData, accTitle: title, accCode: code})
+              setPayeeData({...payeeData, accTitle: title, accCode: code});
             }}
-            value={payeeData.accTitle}
+            value={`${payeeData.accTitle}:${payeeData.accCode}`}
             required
           >
             <option value="" disabled>Select Account Title</option>
             {
-              accountOptions.accountTitle && accountOptions.accountTitle.length > 0 ? (
-                accountOptions.accountTitle.map((option, index) => (
-                  <option key={index} value={`${option.account_title}:${option.id}`}>
-                    {option.account_title} 
-                  </option>
-                ))
+              accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
+                Object.entries(accountOptions.account_codes).map(([key, value], index) => {
+                  // Split the field value by ':' and take the last part
+                  const parts = value.split(':');
+                  const lastPart = parts[parts.length - 1];
+                  
+                  return (
+                    <option key={index} value={`${lastPart}:${key}`}>
+                      {lastPart}
+                    </option>
+                  );
+                })
               ) : (
                 <option>Loading...</option>
               )
             }
-          </select >
+          </select>
           <input 
             className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             type="number" 
