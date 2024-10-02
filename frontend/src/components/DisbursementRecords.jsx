@@ -4,7 +4,7 @@ import DocumentDetails from './DocumentDetails'
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
   const { id } = useParams()
-
+  console.log("documents records: ", documents)
   return (
     <section className="w-4/5 p-3 h-[30rem] overflow-auto rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
       {!id ? ( 
