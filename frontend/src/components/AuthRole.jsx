@@ -10,7 +10,7 @@ export const AuthRole = () => {
     }else if(user.role === '1'){
         navigate('/admin/dashboard');
     }else if(user.role === '3') {
-        navigate('/operator');
+        navigate('/operator/disbursementrecords');
     }else if (user.role === '4'){
         navigate('/editor/disbursementrecords');
     }else{

@@ -9,7 +9,7 @@ const OperatorPage = () => {
   const [location, setLocation] = useState('')
 
   const navItems = [
-    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> },
+    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
   ]
 
   useEffect(() => {

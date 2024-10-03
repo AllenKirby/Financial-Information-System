@@ -14,14 +14,23 @@ const DocumentDetails = ({documents}) => {
     e.stopPropagation()
 
     Swal.fire({
-      title: "Are you sure you want to delete?",
-      showDenyButton: false,
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: "Delete",
-      confirmButtonColor: "#ab0310"
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
     }).then(async(result) => {
       if (result.isConfirmed) {
-        await deleteDV(DV)
+        const res = await deleteDV(DV)
+        if(res){
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your Documents has been deleted.",
+            icon: "success"
+          });
+        }
       }
     });
   }
