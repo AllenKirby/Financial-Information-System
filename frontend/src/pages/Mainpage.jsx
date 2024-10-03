@@ -3,15 +3,16 @@ import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } 
 //Components and Pages
 import {AuthRole} from "../components/AuthRole";
 import AdminPage from "./AdminPage";
-import UserManagement from "../components/UserManagement"
-import Dashboard from "../components/Dashboard";
+import UserManagement from "../components/AdminComponents/UserManagement"
+import Dashboard from "../components/AdminComponents/Dashboard";
 import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
-import DisbursementVoucher from "../components/DisbursementVoucher";
-import DisbursementRecords from "../components/DisbursementRecords";
+import DisbursementVoucher from "../components/EditorComponents/DisbursementVoucher";
+import DisbursementRecords from "../components/EditorComponents/DisbursementRecords";
 import PrivateRoute from '../AuthComponents/PrivateRoute';
 import ViewDocument from "../components/ViewDocument";
 import OperatorPage from "./OperatorPage";
+import Disbursementrecords from '../components/OperatorComponents/DisbursementRecords'
 
 
 const Mainpage = () => {
@@ -33,7 +34,7 @@ const Mainpage = () => {
           </Route>
         </Route>
         <Route path="/operator" element={<OperatorPage/>}>
-          
+          <Route path="disbursementrecords" element={<Disbursementrecords/>}/>
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>

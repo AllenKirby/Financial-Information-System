@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useCreateAcc } from "../hooks/useCreateAcc"
+import { useCreateAcc } from "../../hooks/useCreateAcc"
 import Swal from "sweetalert2"
 
 const UserManagement = () => {

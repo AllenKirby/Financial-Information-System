@@ -1,6 +1,6 @@
 import { Outlet, useParams } from 'react-router-dom'
-import { useDisbursementContext } from '../hooks/useDisbursementContext'
-import DocumentDetails from './DocumentDetails'
+import { useDisbursementContext } from '../../hooks/useDisbursementContext'
+import DocumentDetails from '../DocumentDetails'
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
   const { id } = useParams()

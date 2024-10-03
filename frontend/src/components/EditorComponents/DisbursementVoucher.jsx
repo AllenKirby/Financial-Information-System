@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
-import  {useCreateDisbursement}  from '../hooks/useCreateDisbursement'
-import Loader from './Loader'
+import  {useCreateDisbursement}  from '../../hooks/useCreateDisbursement'
+import Loader from '../Loader'
 import axios from 'axios'
 import Swal from "sweetalert2"
 
