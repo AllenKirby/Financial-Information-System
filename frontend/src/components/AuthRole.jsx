@@ -1,20 +1,19 @@
 import { useAuthContext } from "../hooks/useAuthContext";
-import Login from "../AuthComponents/login";
-import AdminPage from "../pages/AdminPage";
-import EditorPage from "../pages/EditorPage";
-import OperatorPage from "../pages/OperatorPage";
+import Login from "../AuthComponents/login";  
+import { useNavigate } from "react-router-dom";
 
 export const AuthRole = () => {
+    const navigate = useNavigate()
     const {user} = useAuthContext();
     if(!user){
         return <Login/>
     }else if(user.role === '1'){
-        return <AdminPage/>
+        navigate('/admin/dashboard');
     }else if(user.role === '3') {
-        return <OperatorPage/>
+        navigate('/operator');
     }else if (user.role === '4'){
-        return <EditorPage/>
+        navigate('/editor/disbursementrecords');
     }else{
-        return <div>snaiksankd</div>
+        return <div>Oopss</div>
     }
 }

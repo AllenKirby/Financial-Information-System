@@ -1,9 +1,9 @@
 const login = (req, res) => {
-
     try{
         
         const role = req.user.role
         const token = req.user.token;
+        const name = req.user.name
         res.cookie('token', token, {
             httpOnly: true,  
             secure: true,  

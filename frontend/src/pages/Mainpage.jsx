@@ -32,8 +32,8 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>
         </Route>
-        <Route path="/operatorpage" element={<OperatorPage/>}>
-        
+        <Route path="/operator" element={<OperatorPage/>}>
+          
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>
