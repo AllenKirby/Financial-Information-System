@@ -1,13 +1,24 @@
 import PropTypes from 'prop-types'
 import {toWords} from 'number-to-words'
+import TopDesign from '../assets/images/top.png'
+import Logo1 from '../assets/images/Picture1.png'
+import Logo2 from '../assets/images/DOA.png'
+import Text1 from '../assets/images/text.png'
+import BottomDesign from '../assets/images/bottom.png'
+import Text2 from '../assets/images/dasda.png'
 
 const Document = ({document}) => {
   return (
     <main id="pdf" className="w-auto h-auto flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-a4-height text-black text-xs'>
         <header className='w-full h-auto flex'>
-          <div className='w-1/4 h-28'></div>
-          <div className='w-2/4 h-28'></div>
+          <div className='w-3/4 h-28 relative'>
+            <img src={TopDesign} alt="Top" className='h-[118px] w-96' />
+            <img src={Logo1} alt="Logo1" className='h-20 w-20 absolute top-8 left-[73px]'/>
+            <img src={Logo2} alt="Logo2" className='h-[70px] w-26 absolute top-10 left-36'/>
+            <img src={Text1} alt="text" className='absolute top-5 left-[253px] w-72 h-[75px]' />
+            <h1 className='text-2xl font-bold absolute -bottom-1 left-[260px]'>Disbursement Voucher</h1>
+          </div>
           <div className='w-1/4 border-t-2 border-r-2 border-l-2 border-black h-28 flex flex-col'>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: {document.data.fund}</div>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Date: {document.data.date}</div>
@@ -17,7 +28,7 @@ const Document = ({document}) => {
         <div>
           <div className='w-full h-9 flex border-2 border-black'>
             <div className='w-20 border-r-2 border-black flex items-center justify-center font-bold'>Mode of <br/> Payment</div>
-            <div className='w-5/6 py-2 flex gap-3 px-7'>
+            <div className='w-5/6 py-2 flex gap-10 px-7'>
               <div className='flex items-center justify-center'>
                 <input type="checkbox" className='w-5 h-5'/>
                 <label>MDS Check</label>
@@ -248,11 +259,30 @@ const Document = ({document}) => {
           </div>
           <div className="w-full p-1 border-l-2 border-r-2 border-b-2 border-black">Official Receipt No. & Date/Other Documents</div>
         </div>
+        <footer className='h-28 w-full relative'>
+          <div className="h-full w-[510px] text-[8px] font-bold flex items-center pt-3 pl-3">
+            <div>
+              <p>National Hi-way, Rizal ST., Brgy. Sta Clara Sur Pila, Laguna, Philippines</p>
+              <p>Tel. Nos.:(049) 559 0722 (Administrative) • 559 0723 (Engineering) • 559 0724 (COA) • 559 0727 (Regional Manager)</p>
+              <p className='ml-6'>• 576 5543 (Equipment) • 523 3668 (Finance) Telefax No.: (049) 559 0726</p>
+              <p>Website: region4A.nia.gov.ph • Facebook: www.facebook.com/region4A.nia.gov.ph</p>
+              <p>TIN: 000916415043</p>
+              <p className='mt-2'>NIA-RO-AFD-FIN-INT-Form-209-Rev00</p>
+            </div>
+          </div>
+          <img src={BottomDesign} alt="bottom" className ="absolute bottom right-0 bottom-0 h-28 w-[320px]" />
+          <img src={Text2} alt="text" className ="absolute bottom right-16 bottom-6 h-12 w-28" />
+        </footer>
       </section>
       <section className='w-a4-width h-a4-height text-black text-xs mt-1'>
         <header className='w-full h-auto flex'>
-          <div className='w-1/4 h-28'></div>
-          <div className='w-2/4 h-28'></div>
+        <div className='w-3/4 h-28 relative'>
+            <img src={TopDesign} alt="Top" className='h-[118px] w-96' />
+            <img src={Logo1} alt="Logo1" className='h-20 w-20 absolute top-8 left-[73px]'/>
+            <img src={Logo2} alt="Logo2" className='h-[70px] w-26 absolute top-10 left-36'/>
+            <img src={Text1} alt="text" className='absolute top-5 left-[253px] w-72 h-[75px]' />
+            <h1 className='text-2xl font-bold absolute -bottom-1 left-[260px]'>Disbursement Voucher</h1>
+          </div>
           <div className='w-1/4 border-t-2 border-r-2 border-l-2 border-black h-28 flex flex-col'>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: {document.data.fund}</div>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Date: {document.data.date}</div>
@@ -479,6 +509,20 @@ const Document = ({document}) => {
           </div>
           <div className="w-full p-1 border-l-2 border-r-2 border-b-2 border-black">Official Receipt No. & Date/Other Documents</div>
         </div>
+        <footer className='h-28 w-full relative'>
+          <div className="h-full w-[510px] text-[8px] font-bold flex items-center pt-3 pl-3">
+            <div>
+              <p>National Hi-way, Rizal ST., Brgy. Sta Clara Sur Pila, Laguna, Philippines</p>
+              <p>Tel. Nos.:(049) 559 0722 (Administrative) • 559 0723 (Engineering) • 559 0724 (COA) • 559 0727 (Regional Manager)</p>
+              <p className='ml-6'>• 576 5543 (Equipment) • 523 3668 (Finance) Telefax No.: (049) 559 0726</p>
+              <p>Website: region4A.nia.gov.ph • Facebook: www.facebook.com/region4A.nia.gov.ph</p>
+              <p>TIN: 000916415043</p>
+              <p className='mt-2'>NIA-RO-AFD-FIN-INT-Form-209-Rev00</p>
+            </div>
+          </div>
+          <img src={BottomDesign} alt="bottom" className ="absolute bottom right-0 bottom-0 h-28 w-[320px]" />
+          <img src={Text2} alt="text" className ="absolute bottom right-16 bottom-6 h-12 w-28" />
+        </footer>
       </section>
     </main>
   )
