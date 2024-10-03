@@ -8,6 +8,7 @@ const requireAuth = require('./middleware/requireAuth');
 const AdminRoutes = require('./routes/AdminRoutes');
 const UserRoutes = require('./routes/UserRoutes')
 const EditorRoutes = require('./routes/EditorRoutes')
+const OperatorRoutes = require('./routes/OperatorRoutes')
 
 const app = express()
 
@@ -32,6 +33,7 @@ app.use(requireAuth)
 
 app.use('/admin', AdminRoutes)
 app.use('/editor', EditorRoutes)
+app.use('/operator', OperatorRoutes)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
