@@ -12,6 +12,14 @@ const createDV = async (req, res) => {
         day: "2-digit"
       });
 
+    const timeCollection = today.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
 
     dvData = {
         //payee data
@@ -35,9 +43,8 @@ const createDV = async (req, res) => {
         birParticular: birParticular,
         birSubAmount: birSubAmount,
         //other data
-        createdAt: dateCollection,
-        status: 'ongoing',
-
+        createdAt: dateTimeCollection,
+        status: 'editing',
         //open for necessary data needed
     }
     try{
@@ -53,6 +60,37 @@ const createDV = async (req, res) => {
         });
     }
 
+}
+
+const passDocument = async (req, res) => {
+    const {DV, payee} = req.body;
+    console.log('passing docu', DV)
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection}|${timeCollection}|${payee}`;
+
+    const data = {
+         [DV] : dateTimeCollection,
+    }
+    try {
+        await db.collection('passed_records').doc('editor').set(data)
+        res.status(200).json({success: true, record: data});
+    }catch(error){
+        console.log('error creating passed records: ', error)
+        res.status(500).json({success: false, message: `error creating passed records: ${error}`});
+    }
 }
 
 
@@ -140,5 +178,6 @@ module.exports = {
     createDV,
     retrieveDV,
     getAccountCodes,
-    deleteDV
+    deleteDV, 
+    passDocument,
 };

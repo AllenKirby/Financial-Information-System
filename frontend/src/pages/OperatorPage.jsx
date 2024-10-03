@@ -3,6 +3,7 @@ import Header from "../components/Header"
 import { Outlet, useLocation } from "react-router-dom"
 import { CiViewList } from "react-icons/ci"
 import { useState, useEffect } from "react"
+import axios from "axios"
 
 const OperatorPage = () => {
   const page = useLocation()
@@ -17,6 +18,23 @@ const OperatorPage = () => {
       setLocation('Disbursement Records')
     }
   }, [page.pathname])
+
+  useEffect(() => {
+    const retriveData = async() => {
+      try{
+        const getDocu = await axios.get('http://localhost:4000/operator/read_records', {
+          withCredentials: true
+        });
+        if(getDocu.status === 200){
+          const documents = getDocu.data
+          console.log(documents)
+        }
+      }catch(error){
+        console.log(error)
+      }
+    };
+    retriveData();
+  }, [])
 
   return (
     <main className="w-full h-screen flex p-3 bg-gray-100">
