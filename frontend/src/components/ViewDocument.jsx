@@ -9,7 +9,6 @@ const ViewDocument = () => {
   const { id } = useParams();
   const { documents } = useDisbursementContext();
   const [doc, setDoc] = useState(null);
-  console.log(`hit viewdOCU ID: ${id}`)
   useEffect(() => {
     if (documents && documents) { 
       const selectedDocument = documents.find((document) => document.data.DV === id);
@@ -38,9 +37,9 @@ const ViewDocument = () => {
 
   const handleSubmit = async() => {
     try{
-      console.log('submitting records', id)
       const data = {
         DV: id,
+        payee: doc.data.payee
       }
       const res = await axios.post('http://localhost:4000/editor/passRecord', data, {
         withCredentials: true

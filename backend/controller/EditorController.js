@@ -79,13 +79,19 @@ const passDocument = async (req, res) => {
     hour12: true
     });
 
-    const dateTimeCollection = `${dateCollection}|${timeCollection}|${payee}`;
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`;
 
     const data = {
-         [DV] : dateTimeCollection,
+         [DV] : dataCollection,
     }
     try {
-        await db.collection('passed_records').doc('editor').set(data)
+        const docRef = db.collection('passed_records').doc('editor');
+        const doc = await docRef.get();
+        if(doc.exists){
+            await docRef.update(data);
+        }else{
+            await docRef.set(data);
+        }
         res.status(200).json({success: true, record: data});
     }catch(error){
         console.log('error creating passed records: ', error)
