@@ -34,7 +34,9 @@ const Mainpage = () => {
           </Route>
         </Route>
         <Route path="/operator" element={<OperatorPage/>}>
-          <Route path="disbursementrecords" element={<Disbursementrecords/>}/>
+          <Route path="disbursementrecords" element={<Disbursementrecords/>}>
+            <Route path=":id" element={<ViewDocument/>}/>
+          </Route>
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>

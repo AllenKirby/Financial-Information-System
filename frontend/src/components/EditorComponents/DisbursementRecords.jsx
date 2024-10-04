@@ -18,8 +18,8 @@ const DisbursementRecords = () => {
           </div>
           {documents ? (
             <div className="w-full max-h-fit overflow-auto py-3">
-              {documents.map((document, index) => (
-                <DocumentDetails key={index} documents={document}/>
+              {Object.entries(documents).map(([key, document]) => (
+                <DocumentDetails key={key} documents={document}/>
               ))}
             </div>
           ) : (

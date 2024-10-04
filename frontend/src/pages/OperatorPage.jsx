@@ -4,10 +4,12 @@ import { Outlet, useLocation } from "react-router-dom"
 import { CiViewList } from "react-icons/ci"
 import { useState, useEffect } from "react"
 import axios from "axios"
+import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 
 const OperatorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
+  const { dispatch } = useOpDisbursementContext()
 
   const navItems = [
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
@@ -28,13 +30,14 @@ const OperatorPage = () => {
         if(getDocu.status === 200){
           const documents = getDocu.data
           console.log(documents)
+          dispatch({type: 'SET_OPDOCUMENTS', payload: documents})
         }
       }catch(error){
         console.log(error)
       }
     };
     retriveData();
-  }, [])
+  }, [dispatch])
 
   return (
     <main className="w-full h-screen flex p-3 bg-gray-100">

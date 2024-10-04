@@ -44,13 +44,15 @@ const createDV = async (req, res) => {
         birSubAmount: birSubAmount,
         //other data
         createdAt: dateTimeCollection,
-        status: 'editing',
+        status: 'drafting',
         //open for necessary data needed
     }
     try{
         await db.collection('records').doc(dvData.DV).set(dvData);
-       
-        return res.status(200).json(dvData);
+        document = {
+            [DV]: dvData
+        }
+        return res.status(200).json(document);
     }catch(error){
         console.log(`Error in saving data of payee and BIR: ${error}`)
         return res.status(500).json({ 
@@ -59,7 +61,6 @@ const createDV = async (req, res) => {
             error: error.message 
         });
     }
-
 }
 
 const passDocument = async (req, res) => {
@@ -85,6 +86,13 @@ const passDocument = async (req, res) => {
          [DV] : dateTimeCollection,
     }
     try {
+        const docref = db.collection('records').doc(DV)
+        await docref.update({
+            status: 'In Review'
+        })
+        const updatedDoc = docref.get()
+        console.log('updated field: ', updatedDoc)
+
         await db.collection('passed_records').doc('editor').set(data)
         res.status(200).json({success: true, record: data});
     }catch(error){
@@ -141,25 +149,26 @@ const getAccountCodes = async (req, res) => {
     }
 }
 
-const retrieveDV = async(req, res) => {
-    try{
-        console.log('retrieveDv hit')
-        const docRef = db.collection('records')
+const retrieveDV = async (req, res) => {
+    try {
+        console.log('retrieveDv hit');
+        const docRef = db.collection('records');
         const dv = await docRef.get();
-    
-        const documents = []
-    
+
+        const docu= {};
+
         dv.forEach(doc => {
-            documents.push({ id: doc.id, data: doc.data() });
-          });
-        res.status(200).json({ success: true, documents });
-    }
-    catch(error){
+            const data = doc.data();
+            docu[data.DV] = data; 
+        });
+
+        res.status(200).json(docu);
+    } catch (error) {
         console.error("Error retrieving documents: ", error);
         res.status(500).json({ success: false, error: error.message });
     }
-    
 }
+
 
 const deleteDV = async(req, res) => {
     const { id } = req.params

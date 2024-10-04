@@ -200,9 +200,8 @@ const DisbursementVoucher = () => {
           <input 
             className="w-80 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             type="number" 
-            placeholder="Amount"
+            placeholder="0"
             onChange={(e) => computeAmount(e.target.value)}
-            value={payeeData.amount}
             required  />
           <textarea className="w-[30rem] h-52 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" placeholder="Particulars"
             onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}

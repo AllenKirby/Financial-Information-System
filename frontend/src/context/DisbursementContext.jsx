@@ -10,13 +10,13 @@ export const DisbursementReducer = (state, action) => {
             }
         case 'CREATE_DOCUMENT':
             return {
-                documents: [action.payload, ...state.documents]
+                documents: [action.payload, []]
             }
         case 'UPDATE_DOCUMENT':
             return {
                 ...state,
                 documents: state.documents.map(document => 
-                    document._id === action.payload._id ? action.payload :document
+                    document._id=== action.payload._id ? action.payload :document
                 )
             }
         case 'DELETE_DOCUMENT':

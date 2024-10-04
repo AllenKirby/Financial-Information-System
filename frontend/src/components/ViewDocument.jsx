@@ -2,24 +2,38 @@ import { useParams } from "react-router-dom";
 import { useDisbursementContext } from "../hooks/useDisbursementContext";
 import { useEffect, useState } from "react";
 import Document from "./Document";
-import axios from "axios";
+import Swal from "sweetalert2";
+import { useToOperator } from "../hooks/useToOperator";
+import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 //import html2pdf from 'html2pdf.js'
 
 const ViewDocument = () => {
   const { id } = useParams();
   const { documents } = useDisbursementContext();
+  const { OpDocuments } = useOpDisbursementContext()
   const [doc, setDoc] = useState(null);
+  const {toOperator, isLoading, error} = useToOperator()
+
+  console.log('records',documents)
 
   useEffect(() => {
-    if (documents && documents) { 
-      const selectedDocument = documents.find((document) => document.data.DV === id);
+    if (documents) { 
+      const selectedDocument = Object.entries(documents).find(([, document]) => document.DV === id);
       if (selectedDocument) {
         setDoc(selectedDocument);
       } else {
-        console.log("Error finding the document");
+        console.log("Error finding the editor document");
       }
     }
-  }, [documents, id]); 
+    else if (OpDocuments){
+      const selectedDocument = Object.entries(OpDocuments).find((document) => document.DV === id);
+      if (selectedDocument) {
+        setDoc(selectedDocument);
+      } else {
+        console.log("Error finding the operator document");
+      }
+    }
+  }, [documents, OpDocuments,id]); 
   if (!doc) {
     return <div>Loading or no document found...</div>;
   }
@@ -37,27 +51,35 @@ const ViewDocument = () => {
   }*/
 
   const handleSubmit = async() => {
-    try{
-      console.log('submitting records', id)
-      const data = {
-        DV: id,
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Submit"
+    }).then(async(result) => {
+      if (result.isConfirmed) {
+        const res = await toOperator(id)
+        if(res){
+          Swal.fire({
+            title: "Submitted",
+            text: "Your document has been submitted.",
+            icon: "success"
+          });
+        }
       }
-      const res = await axios.post('http://localhost:4000/editor/passRecord', data, {
-        withCredentials: true
-      });
-      if(res.status === 200){
-        console.log(`passed record: ${res.data}`)
-      }
-    }catch(error){
-      console.log('Error in passing records', error)
-    }
+    });
   }
+
+  console.log(error)
 
   return (
     <section className="w-full h-auto">
       <div className="px-5 py-4 flex items-center justify-between"> 
         <button onClick={() => window.history.back()} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Back</button>
-        <button onClick={handleSubmit} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Submit</button>
+        <button disabled={isLoading} onClick={handleSubmit} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Submit</button>
       </div>
       <Document document={doc}/>
     </section>
