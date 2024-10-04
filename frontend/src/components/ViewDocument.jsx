@@ -9,7 +9,7 @@ const ViewDocument = () => {
   const { id } = useParams();
   const { documents } = useDisbursementContext();
   const [doc, setDoc] = useState(null);
-
+  console.log(`hit viewdOCU ID: ${id}`)
   useEffect(() => {
     if (documents && documents) { 
       const selectedDocument = documents.find((document) => document.data.DV === id);

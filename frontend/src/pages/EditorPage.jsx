@@ -46,7 +46,7 @@ const EditorPage = () => {
           if(getDocu.status === 200){
             const documents = getDocu.data
             console.log('end')
-            console.log(documents)
+            console.log(documents.documents)
             dispatch({type: 'SET_DOCUMENTS', payload: documents.documents})
           }
         }

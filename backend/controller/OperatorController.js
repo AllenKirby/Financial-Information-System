@@ -5,7 +5,7 @@ const readPassed_records = async (req, res) => {
         const docRef = db.collection('passed_records').doc('editor');
         const dvRecords = await docRef.get();
     
-        const result = {};
+        const documents = [];
     
         if (dvRecords.exists) {
             const data = dvRecords.data();
@@ -19,10 +19,11 @@ const readPassed_records = async (req, res) => {
     
                 if (recordsDoc.exists) {
                     const recordData = recordsDoc.data();
-                    result[key] = {
+                    documents.push({
+                        key: key,
                         timePassed: value,
                         data: recordData
-                    };
+                    })
     
                     console.log(`Successfully retrieved data from document ${key}:`);
                 } else {
@@ -30,7 +31,7 @@ const readPassed_records = async (req, res) => {
                 }
             }
     
-            return res.status(200).json(result);
+            return res.status(200).json({success: true, documents});
     
         } else {
             console.log('No such document!');
