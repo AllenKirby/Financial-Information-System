@@ -44,13 +44,16 @@ const createDV = async (req, res) => {
         birSubAmount: birSubAmount,
         //other data
         createdAt: dateTimeCollection,
-        status: 'editing',
+        status: 'drafting',
         //open for necessary data needed
     }
     try{
         await db.collection('records').doc(dvData.DV).set(dvData);
-       
-        return res.status(200).json(dvData);
+        document = {
+            [DV]: dvData
+        }
+        return res.status(200).json(document);
+
     }catch(error){
         console.log(`Error in saving data of payee and BIR: ${error}`)
         return res.status(500).json({ 
@@ -60,6 +63,15 @@ const createDV = async (req, res) => {
         });
     }
 
+}
+
+const updateStatus = async (DV) => {
+    const docref = db.collection('records').doc(DV)
+    await docref.update({
+        status: 'In Review'
+    })
+    const updatedDoc = docref.get()
+    return updatedDoc;
 }
 
 const passDocument = async (req, res) => {
@@ -92,7 +104,11 @@ const passDocument = async (req, res) => {
         }else{
             await docRef.set(data);
         }
-        res.status(200).json({success: true, record: data});
+
+        const updatedDocu = updateStatus(DV)
+        console.log(`updated docu: ${updatedDocu}`)
+
+        res.status(200).json({success: true, record: data, update: updatedDocu});
     }catch(error){
         console.log('error creating passed records: ', error)
         res.status(500).json({success: false, message: `error creating passed records: ${error}`});
@@ -153,12 +169,13 @@ const retrieveDV = async(req, res) => {
         const docRef = db.collection('records')
         const dv = await docRef.get();
     
-        const documents = []
+        const documents = {}
     
         dv.forEach(doc => {
-            documents.push({ id: doc.id, data: doc.data() });
+            const data = doc.data();
+            documents[data.DV] = data;
           });
-        res.status(200).json({ success: true, documents });
+        res.status(200).json(documents);
     }
     catch(error){
         console.error("Error retrieving documents: ", error);

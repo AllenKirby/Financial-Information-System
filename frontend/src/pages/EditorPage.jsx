@@ -36,6 +36,7 @@ const EditorPage = () => {
     const retrieveDV = async() => {
       if(documents){
         console.log('Disbursement Records has been retrieved')
+        
       }else{
         try{
           console.log('start')
@@ -46,8 +47,8 @@ const EditorPage = () => {
           if(getDocu.status === 200){
             const documents = getDocu.data
             console.log('end')
-            console.log(documents.documents)
-            dispatch({type: 'SET_DOCUMENTS', payload: documents.documents})
+            console.log(documents)
+            dispatch({type: 'SET_DOCUMENTS', payload: documents})
           }
         }
         catch(error){

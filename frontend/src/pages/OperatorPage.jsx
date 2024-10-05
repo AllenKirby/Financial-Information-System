@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom"
-import { useDisbursementContext } from '../hooks/useDisbursementContext'
+import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
@@ -13,7 +13,7 @@ const OperatorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
   const { user } = useAuthContext()
-  const { dispatch, documents } = useDisbursementContext()
+  const { dispatch, documents } = useOpDisbursementContext()
 
   const navItems = [
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
@@ -39,11 +39,11 @@ const OperatorPage = () => {
           });
           if(getDocu.status === 200){
             const documents = getDocu.data
-            console.log(documents.documents)
-            dispatch({type: 'SET_DOCUMENTS', payload: documents.documents})
+            console.log(`from set op docu ${documents}`)
+            dispatch({type: 'SET_OPDOCUMENTS', payload: documents})
           }
         }catch(error){
-          console.log(error)
+          console.log(`fetching docu in op: ${error}`)
         }
       }
     };

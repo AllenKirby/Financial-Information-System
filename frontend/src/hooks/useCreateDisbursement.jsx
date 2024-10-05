@@ -19,7 +19,7 @@ export const useCreateDisbursement = () => {
               setIsLoading(false)
               const docu = res.data
               dispatch({type: 'CREATE_DOCUMENT', payload: docu})
-              console.log('success',res.data)
+              console.log('success', docu)
               return true
             }
           }
