@@ -12,7 +12,7 @@ import DisbursementRecords from "../components/EditorComponents/DisbursementReco
 import PrivateRoute from '../AuthComponents/PrivateRoute';
 import ViewDocument from "../components/ViewDocument";
 import OperatorPage from "./OperatorPage";
-//import Disbursementrecords from '../components/OperatorComponents/DisbursementRecords'
+import Disbursementrecords from '../components/OperatorComponents/DisbursementRecords'
 
 
 const Mainpage = () => {
@@ -34,7 +34,7 @@ const Mainpage = () => {
           </Route>
         </Route>
         <Route path="/operator" element={<OperatorPage/>}>
-          <Route path="disbursementrecords" element={<DisbursementRecords/>}>
+          <Route path="disbursementrecords" element={<Disbursementrecords/>}>
             <Route path=":id" element={<ViewDocument/>}/>
           </Route>
         </Route>

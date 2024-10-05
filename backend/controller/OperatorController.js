@@ -5,7 +5,7 @@ const readPassed_records = async (req, res) => {
         const docRef = db.collection('passed_records').doc('editor');
         const dvRecords = await docRef.get();
     
-        const documents = [];
+        const documents = {};
     
         if (dvRecords.exists) {
             const data = dvRecords.data();
@@ -19,11 +19,11 @@ const readPassed_records = async (req, res) => {
     
                 if (recordsDoc.exists) {
                     const recordData = recordsDoc.data();
-                    documents.push({
+                    documents[key] = {
                         key: key,
                         timePassed: value,
                         data: recordData
-                    })
+                    }
     
                     console.log(`Successfully retrieved data from document ${key}:`);
                 } else {
