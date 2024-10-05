@@ -14,6 +14,7 @@ const ViewDocument = () => {
 
   useEffect(() => {
     if (documents) { 
+      console.log(documents)
       const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === id);
       if (selectedDocument) {
         setDoc(selectedDocument);
@@ -21,7 +22,7 @@ const ViewDocument = () => {
         console.log("Error finding the document");
       }
     }else if (OpDocuments){
-      const selectedDocument = Object.entries(OpDocuments).find((document) => document.DV === id);
+      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.key === id);
       if (selectedDocument) {
         setDoc(selectedDocument);
       } else {
@@ -55,7 +56,7 @@ const ViewDocument = () => {
         withCredentials: true
       });
       if(res.status === 200){
-        console.log(`passed record: ${res.data}`)
+        console.log(`passed record: ${JSON.stringify(res.data, null, 2)}`)
       }
     }catch(error){
       console.log('Error in passing records', error)

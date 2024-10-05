@@ -70,8 +70,8 @@ const updateStatus = async (DV) => {
     await docref.update({
         status: 'In Review'
     })
-    const updatedDoc = docref.get()
-    return updatedDoc;
+    const updatedDoc = await docref.get()
+    return updatedDoc.data();
 }
 
 const passDocument = async (req, res) => {
@@ -105,7 +105,7 @@ const passDocument = async (req, res) => {
             await docRef.set(data);
         }
 
-        const updatedDocu = updateStatus(DV)
+        const updatedDocu = await updateStatus(DV)
         console.log(`updated docu: ${updatedDocu}`)
 
         res.status(200).json({success: true, record: data, update: updatedDocu});

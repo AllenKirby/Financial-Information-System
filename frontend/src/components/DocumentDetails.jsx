@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 const DocumentDetails = ({documents}) => {
   const navigate = useNavigate()
   const { deleteDV } =  useDeleteDisbursement()
-  const DV = documents?.DV
+  const DV = documents?.DV ? documents?.DV : documents?.key
 
 
   const delDV = async(e) => {
@@ -37,9 +37,10 @@ const DocumentDetails = ({documents}) => {
 
   
   console.log(documents)
+  console.log(DV)
     
   return (
-    <div onClick={() => navigate(`${documents.DV}`)} className="w-full h-24 rounded-xl bg-customgreen p-3 text-white my-3 cursor-pointer">
+    <div onClick={() => navigate(`${DV}`)} className="w-full h-24 rounded-xl bg-customgreen p-3 text-white my-3 cursor-pointer">
         <div className='flex items-center justify-between'>
           <h1 className='font-semibold text-2xl'>{documents?.payee ? documents?.payee : documents?.timePassed.split('|').slice(-1)[0]}</h1>
           <MdDelete size={20} onClick={(e) => delDV(e)} className='cursor-pointer' />
