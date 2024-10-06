@@ -1,32 +1,55 @@
 import { Outlet, useParams } from 'react-router-dom'
 import { useDisbursementContext } from '../../hooks/useDisbursementContext'
 import DocumentDetails from '../DocumentDetails'
+import { IoAdd } from "react-icons/io5";
+import { useState } from 'react';
+import DisbursementVoucher from './DisbursementVoucher';
+
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
   const { id } = useParams()
-  console.log("documents records: ", documents)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const modal = () => setIsModalOpen(!isModalOpen)
+
   return (
-    <section className="w-4/5 p-3 h-[30rem] overflow-auto rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
+    <section className="w-4/5 p-3 h-[30rem] rounded-xl overflow-auto shadow-slate-200 shadow-customShadowStyle bg-white">
       {!id ? ( 
         <>
           <div className="w-full py-3 px-6 flex items-center justify-between">
-            <input 
-            type="text" 
-            placeholder="Search"
-            className="text-sm w-64 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen"/>
-            <button className="px-6 py-2 rounded-xl bg-customgreen text-white hover:scale-125 transition-all duration-100">Filter</button>
+            <button onClick={modal} className="flex pl-3 pr-5 py-1 rounded-lg bg-customgreen text-white hover:scale-125 transition-all duration-100">
+              <div className='w-auto h-auto flex gap-2 items-center justify-center'>
+                <IoAdd size={20}/> <p>Add DV</p>
+              </div>
+            </button>
           </div>
-          {documents ? (
-            <div className="w-full max-h-fit overflow-auto py-3">
-              {Object.entries(documents).map(([key, document]) => (
-                <DocumentDetails key={key} documents={document}/>
-              ))}
-            </div>
-          ) : (
-            <div>Loading...</div>
-          )}
+          <div className='w-full h-auto p-2'>
+            <section className='w-full h-auto flex pl-3 pr-6 py-2'>
+              <h1 className='w-3/6 text-left font-bold'>Payee</h1>
+              <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
+              <h1 className='w-1/6 text-center font-bold'>Status</h1>
+              <h1 className='w-1/6 text-center font-bold'>Options</h1>
+            </section>
+            {documents ? (
+              <section className="w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1">
+                {Object.entries(documents).map(([key, document]) => (
+                    <DocumentDetails key={key} documents={document} type='Editor'/>
+                ))}
+              </section>
+            ) : (
+              <div>Loading...</div>
+            )}
+          </div>
         </>
     ) : <Outlet/>}
+    {isModalOpen && (
+       <>
+       <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+       <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+         <DisbursementVoucher modal={modal} flag={false}/>
+       </section>
+     </>
+    )}
     </section>
   )
 }

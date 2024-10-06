@@ -7,7 +7,6 @@ import UserManagement from "../components/AdminComponents/UserManagement"
 import Dashboard from "../components/AdminComponents/Dashboard";
 import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
-import DisbursementVoucher from "../components/EditorComponents/DisbursementVoucher";
 import DisbursementRecords from "../components/EditorComponents/DisbursementRecords";
 import PrivateRoute from '../AuthComponents/PrivateRoute';
 import ViewDocument from "../components/ViewDocument";
@@ -28,7 +27,6 @@ const Mainpage = () => {
         </Route>
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>       
           <Route index element={<PrivateRoute allowedRoles={['1']}><DisbursementRecords/></PrivateRoute>} />
-          <Route path="disbursementvoucher" element={<PrivateRoute allowedRoles={['4']}><DisbursementVoucher/></PrivateRoute>}/>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>

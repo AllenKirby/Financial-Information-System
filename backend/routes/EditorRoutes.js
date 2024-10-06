@@ -4,7 +4,14 @@ const editorRouter = express.Router();
 
 const setRole = require('../middleware/Role');
 
-const {createDV, retrieveDV ,getAccountCodes, deleteDV, passDocument } = require('../controller/EditorController');
+const {
+    createDV, 
+    retrieveDV ,
+    getAccountCodes, 
+    deleteDV, 
+    passDocument,
+    updateDV
+} = require('../controller/EditorController');
 
 
 editorRouter.use(setRole([4]))
@@ -14,6 +21,7 @@ editorRouter.post('/passRecord', passDocument)
 editorRouter.get('/getAccountCode', getAccountCodes)
 editorRouter.get('/getDV', retrieveDV)
 editorRouter.delete('/deleteDV/:id', deleteDV)
+editorRouter.patch('/updateDV/:id', updateDV)
 // editorRouter.post('/next', )
 
 

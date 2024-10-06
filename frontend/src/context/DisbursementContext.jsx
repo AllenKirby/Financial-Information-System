@@ -6,10 +6,10 @@ export const DisbursementReducer = (state, action) => {
     switch (action.type) {  
         case 'SET_DOCUMENTS':
             return {
-                documents: action.payload
+                ...state, documents: action.payload
             }
         case 'CREATE_DOCUMENT':
-            const new_key = Object.keys(action.payload)[0]
+            {const new_key = Object.keys(action.payload)[0]
             const new_value = Object.values(action.payload)[0]
             return {
                 ...state, 
@@ -17,19 +17,25 @@ export const DisbursementReducer = (state, action) => {
                     ...state.documents,
                     [new_key]: new_value
                 }
-            }
+            }}
         case 'UPDATE_DOCUMENT':
+            {const updatedKey = Object.keys(action.payload)[0]
             return {
                 ...state,
-                documents: state.documents.map(document => 
-                    document._id === action.payload._id ? action.payload :document
-                )
-            }
+                documents: {
+                    ...state.documents,
+                    [updatedKey]: {
+                        ...state.documents[updatedKey],
+                        ...action.payload
+                    }
+                }
+            }}
         case 'DELETE_DOCUMENT':
+            {const { [action.payload]: deletedDocument, ...remainingDocuments } = state.documents;
             return {
                 ...state,
-                documents: state.documents.filter(document => document.data.DV !== action.payload)
-            };
+                documents: remainingDocuments, 
+            }}
         default:
             return state
     }

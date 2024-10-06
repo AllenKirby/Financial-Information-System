@@ -19,7 +19,7 @@ export const useLogout = () => {
         });
         if(response.status === 200){
           dispatch({type: 'LOGOUT', payload: null})
-          dispatchDocuments({type: 'SET_DOCUMENTS', payload: null})
+          dispatchDocuments({type: 'SET_DOCUMENTS', payload: null })
           cookies.remove('user', { path: '/' });
           navigate('/', {replace: true})
         }

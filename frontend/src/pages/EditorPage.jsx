@@ -1,16 +1,16 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
+import { useEffect, useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
+import axios from "axios";
 
 //Components
 import Navbar from "../components/Navbar"
 import Header from "../components/Header";
 
 //Icons
-import { IoDocumentOutline } from "react-icons/io5";
 import { CiViewList } from "react-icons/ci";
-import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
-import axios from "axios";
+
 
 const EditorPage = () => {
   const page = useLocation()
@@ -19,8 +19,7 @@ const EditorPage = () => {
   const { dispatch, documents } = useDisbursementContext()
   
   const navItems = [
-    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> },
-    { label: 'Disbursement Voucher', path: '/editor/disbursementvoucher', icon: <IoDocumentOutline size={18} /> }
+    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> } 
   ];
 
   useEffect(() => {

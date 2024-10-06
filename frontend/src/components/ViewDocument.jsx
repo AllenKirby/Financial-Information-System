@@ -11,25 +11,32 @@ const ViewDocument = () => {
   const { documents } = useDisbursementContext();
   const [doc, setDoc] = useState(null);
   const {OpDocuments} = useOpDisbursementContext();
+  const [idStatus, setIdStatus] = useState({id: '', status: ''})
+
+  useEffect(() => {
+    if(id){
+      const decoded = decodeURIComponent(id)
+      setIdStatus({id: decoded.split('|').slice()[0], status: decoded.split('|').slice()[1]})
+    }
+  }, [id])
 
   useEffect(() => {
     if (documents) { 
-      console.log(documents)
-      const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === id);
+      const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
       if (selectedDocument) {
         setDoc(selectedDocument);
       } else {
         console.log("Error finding the document");
       }
     }else if (OpDocuments){
-      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.key === id);
+      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.key === idStatus);
       if (selectedDocument) {
         setDoc(selectedDocument);
       } else {
         console.log("Error finding the operator document");
       }
     }
-  }, [OpDocuments, documents, id]); 
+  }, [OpDocuments, documents, idStatus]); 
   if (!doc) {
     return <div>Loading or no document found...</div>;
   }
@@ -62,12 +69,12 @@ const ViewDocument = () => {
       console.log('Error in passing records', error)
     }
   }
-
+  const isDisabled = idStatus.status === 'In Review';
   return (
     <section className="w-full h-auto">
       <div className="px-5 py-4 flex items-center justify-between"> 
         <button onClick={() => window.history.back()} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Back</button>
-        <button onClick={handleSubmit} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Submit</button>
+        <button disabled={isDisabled} onClick={handleSubmit} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Submit</button>
       </div>
       <Document document={doc}/>
     </section>

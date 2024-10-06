@@ -9,22 +9,24 @@ const DisbursementRecords = () => {
     <section className="w-4/5 p-3 h-[30rem] overflow-auto rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
       {!id ? ( 
         <>
-          <div className="w-full py-3 px-6 flex items-center justify-between">
-            <input 
-            type="text" 
-            placeholder="Search"
-            className="text-sm w-64 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen"/>
-            <button className="px-6 py-2 rounded-xl bg-customgreen text-white hover:scale-125 transition-all duration-100">Filter</button>
-          </div>
+          <div className='w-full h-auto p-2'>
+            <section className='w-full h-auto flex pl-3 pr-6 py-2'>
+              <h1 className='w-3/6 flex items-center justify-start font-bold'>Payee</h1>
+              <h1 className='w-1/6 flex items-center justify-center font-bold'>DV No.</h1>
+              <h1 className='w-1/6 flex items-center justify-center font-bold'>Status</h1>
+              <h1 className='w-1/6 flex items-center justify-center font-bold text-sm'>Time Transferred</h1>
+              <h1 className='w-1/6 flex items-center justify-center font-bold'>Options</h1>
+            </section>
           {OpDocuments ? (
-            <div className="w-full max-h-fit overflow-auto py-3">
+            <div className="w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1">
               {Object.entries(OpDocuments.documents).map(([key, document]) => (
-                <DocumentDetails key={key} documents={document}/>
+                <DocumentDetails key={key} documents={document} type='Operator' />
               ))}
             </div>
           ) : (
             <div>Loading...</div>
           )}
+          </div>
         </>
     ) : <Outlet/>}
     </section>
