@@ -12,8 +12,6 @@ const DisbursementRecords = () => {
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
-  console.log("documents records: ", documents)
-
   return (
     <section className="w-4/5 p-3 h-[30rem] rounded-xl overflow-auto shadow-slate-200 shadow-customShadowStyle bg-white">
       {!id ? ( 
@@ -35,7 +33,7 @@ const DisbursementRecords = () => {
             {documents ? (
               <section className="w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1">
                 {Object.entries(documents).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} />
+                    <DocumentDetails key={key} documents={document} type='Editor'/>
                 ))}
               </section>
             ) : (
@@ -45,9 +43,12 @@ const DisbursementRecords = () => {
         </>
     ) : <Outlet/>}
     {isModalOpen && (
-      <section className="fixed z-10 left-0 top-0 w-full h-full flex items-center justify-center">
-        <DisbursementVoucher modal={modal}/>
-      </section>
+       <>
+       <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+       <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+         <DisbursementVoucher modal={modal} flag={false}/>
+       </section>
+     </>
     )}
     </section>
   )

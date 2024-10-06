@@ -1,6 +1,20 @@
 const {admin, db}  = require('../firebase')
 
+const formatDate = (rawDate) => {
+    const dateObject = new Date(rawDate);
+    
+    if (isNaN(dateObject.getTime())) {
+      return "Invalid date";
+    }
 
+    const formattedDate = dateObject.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "2-digit",
+    });
+
+    return formattedDate;
+  };
 const createDV = async (req, res) => {
     const {payee, TIN, address, fund, date, DV, RC, accTitle, accCode, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
     const {birRC, birParticular, birSubAmount} = req.body.bir_data
@@ -27,7 +41,7 @@ const createDV = async (req, res) => {
         TIN: TIN, 
         address: address,
         fund: fund,
-        date: date, 
+        date: formatDate(date), 
         DV: DV, 
         RC: RC, 
         accTitle: accTitle,
@@ -197,10 +211,74 @@ const deleteDV = async(req, res) => {
     }
 }
 
+const updateDV = async(req, res) => {
+    const { id } = req.params
+    const {payee, TIN, address, fund, date, DV, RC, accTitle, accCode, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
+    const {birRC, birParticular, birSubAmount} = req.body.bir_data
+
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+
+    dvData = {
+        //payee data
+        payee: payee, 
+        TIN: TIN, 
+        address: address,
+        fund: fund,
+        date: formatDate(date), 
+        DV: DV, 
+        RC: RC, 
+        accTitle: accTitle,
+        accCode: accCode, 
+        amount: amount, 
+        particular: particular,
+        bir2percent: bir2percent, 
+        bir3percent: bir3percent, 
+        subAmount: subAmount,
+        amountDue: amountDue,
+        //BIR data
+        birRC: birRC, 
+        birParticular: birParticular,
+        birSubAmount: birSubAmount,
+        //other data
+        updatedAt: dateTimeCollection
+    }
+    try {
+        const docref = db.collection('records').doc(id)
+        await docref.update(dvData)
+        const updatedDoc = await docref.get()
+        if(updatedDoc.exists){
+            const doc = updatedDoc.data()
+            document = {
+                [doc.DV] : doc
+            }
+        }
+
+        res.status(200).json(document)
+    } catch (error) {
+        console.error("Error updating document: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = {
     createDV,
     retrieveDV,
     getAccountCodes,
     deleteDV, 
     passDocument,
+    updateDV
 };

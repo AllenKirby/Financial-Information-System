@@ -1,16 +1,62 @@
 import {useState, useEffect} from 'react'
 import  {useCreateDisbursement}  from '../../hooks/useCreateDisbursement'
+import {useUpdateDisbursement} from '../../hooks/useUpdateDisbursement'
 import Loader from '../Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
 
-const DisbursementVoucher = ({modal}) => {
+const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', accTitle: '', accCode: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
   const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
 
   const [accountOptions, setAccountOptions] = useState([]);
   const {createDisbursement, isLoading, error} = useCreateDisbursement()
+  const {updateDV, isLoadingForUpdate, errorForUpdate} = useUpdateDisbursement()
+
+  console.log('update', document)
+
+  useEffect(() => {
+    if (flag && document) {
+      setPayeeData({
+        payee: document.payee || '',
+        TIN: document.TIN || '',
+        address: document.address || '',
+        fund: document.fund || '',
+        date: formatDateforUpdate(document.date) || '',
+        DV: document.DV || '',
+        RC: document.RC || '',
+        accTitle: document.accTitle || '',
+        accCode: document.accCode || '',
+        amount: document.amount || 0,
+        particular: document.particular || '',
+        bir2percent: document.bir2percent || 0,
+        bir3percent: document.bir3percent || 0,
+        subAmount: document.subAmount || 0,
+        amountDue: document.amountDue || 0,
+      });
+      setBirData({
+        birRC: document.birRC || '',
+        birParticular: document.birParticular || '',
+        birSubAmount: document.birSubAmount || 0,
+      });
+    }
+  }, [document, flag]);
+
+  const formatDateforUpdate = (rawDate) => {
+    if (typeof rawDate === 'string') {
+      // Parse the date string into a Date object
+      const date = new Date(rawDate);
+  
+      // Check if the date is valid
+      if (!isNaN(date)) {
+        // Convert to 'yyyy-MM-dd' format
+        const formattedDate = date.toISOString().split('T')[0];
+        return formattedDate;
+      }
+    }
+    return 
+  };
 
 
   const handleSubmit = async (e) => {
@@ -35,16 +81,6 @@ const DisbursementVoucher = ({modal}) => {
       });
     }
     modal()
-
-  }
-
-  const formatDate = (rawDate) => {
-    const formattedDate = rawDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "2-digit"
-    });
-    return formattedDate
   }
 
   const computeAmount = (amount) => {
@@ -93,10 +129,30 @@ const DisbursementVoucher = ({modal}) => {
     fetchAccountCode();
   }, [])
 
+  const handleUpdate = async(e) => {
+    e.preventDefault()
+
+    const data = {
+      payee_data: payeeData,
+      bir_data: birData
+    }
+
+    const res = await updateDV(data, document.DV)
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "Dibursement Voucher is successfully updated!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+      modal()
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} action="" className="bg-white w-2/5 h-5/6 p-7 rounded-xl shadow-gray-300 shadow-md">
+    <form onSubmit={flag ? handleUpdate : handleSubmit} action="" className="bg-white w-2/5 h-5/6 p-7 rounded-xl">
       <div className='w-full h-auto py-2 text-center'>
-        <h1 className='text-xl font-bold'>Create Disbursement Voucher</h1>
+        <h1 className='text-xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
       </div>
       <div className='w-full h-4/5 rounded-xl bg-gray-100 p-3 overflow-y-auto'>
         <h1 className="font-semibold text-lg mb-2">Personal/Payee Information</h1>
@@ -147,8 +203,9 @@ const DisbursementVoucher = ({modal}) => {
             <input 
               className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
               type="date" 
+              value={payeeData.date}
               placeholder="Date"
-              onChange={(e) => setPayeeData({...payeeData, date: formatDate(new Date(e.target.value))})}
+              onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
               required  />
           </div>
           <input 
@@ -211,6 +268,7 @@ const DisbursementVoucher = ({modal}) => {
             required  />
           <textarea className="w-full h-52 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" placeholder="Particulars"
             onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
+            value={payeeData.particular}
             required
           />
         </div>
@@ -236,7 +294,7 @@ const DisbursementVoucher = ({modal}) => {
       <div className="w-full flex items-center justify-center py-3 gap-4">
         <button 
           type="submit" 
-          disabled={isLoading}
+          disabled={flag ? isLoadingForUpdate : isLoading}
           className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
           >{isLoading ? <Loader/> : 'Save'}</button>
         <button 
@@ -244,14 +302,18 @@ const DisbursementVoucher = ({modal}) => {
           className="py-2 px-10 rounded-md bg-gray-300 text-customFontColor hover:scale-125 transition-all duration-100"
           >Back</button>
       </div>
-      {error && (<div className="w-full text-center">
-          <h4 className="text-sm text-red-600">{error}</h4>
-      </div>)}
+      {(error || errorForUpdate) && (
+        <div className="w-full text-center">
+          <h4 className="text-sm text-red-500">{error ? error : errorForUpdate}</h4>
+        </div>
+      )}
     </form>
   )
 }
 DisbursementVoucher.propTypes = {
-  modal: PropTypes.func.isRequired
+  modal: PropTypes.func.isRequired,
+  flag: PropTypes.bool.isRequired,
+  document: PropTypes.object
 }
 
 export default DisbursementVoucher;

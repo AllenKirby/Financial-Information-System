@@ -20,7 +20,7 @@ const DisbursementRecords = () => {
           {OpDocuments ? (
             <div className="w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1">
               {Object.entries(OpDocuments.documents).map(([key, document]) => (
-                <DocumentDetails key={key} documents={document}/>
+                <DocumentDetails key={key} documents={document} type='Operator' />
               ))}
             </div>
           ) : (
