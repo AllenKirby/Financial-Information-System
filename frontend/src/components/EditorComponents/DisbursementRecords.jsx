@@ -16,11 +16,13 @@ const DisbursementRecords = () => {
     <section className="w-4/5 p-3 h-[30rem] rounded-xl overflow-auto shadow-slate-200 shadow-customShadowStyle bg-white">
       {!id ? ( 
         <>
-          <div className="w-full py-3 px-6 flex items-center justify-between">
-            <button onClick={modal} className="flex pl-3 pr-5 py-1 rounded-lg bg-customgreen text-white hover:scale-125 transition-all duration-100">
-              <div className='w-auto h-auto flex gap-2 items-center justify-center'>
-                <IoAdd size={20}/> <p>Add DV</p>
+          <div className="w-full py-1 px-6 flex items-center justify-between">
+            
+            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-lg bg-white text-customgreen font-semibold border-2 border-customgreen hover:scale-125 hover:bg-customgreen hover:text-white transition-all duration-100">
+              <div className='w-auto h-auto flex items-center justify-center'>
+                <IoAdd size={20}/>
               </div>
+              <p className='text-sm'>Add DV</p>
             </button>
           </div>
           <div className='w-full h-auto p-2'>

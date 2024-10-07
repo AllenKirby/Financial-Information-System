@@ -24,19 +24,22 @@ const ViewDocument = () => {
     if (documents) { 
       const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
       if (selectedDocument) {
+        console.log('Editor',selectedDocument)
         setDoc(selectedDocument);
       } else {
         console.log("Error finding the document");
       }
     }else if (OpDocuments){
-      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.key === idStatus);
+      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.key === idStatus.id);
       if (selectedDocument) {
+        console.log('Operator',selectedDocument)
         setDoc(selectedDocument);
       } else {
         console.log("Error finding the operator document");
       }
     }
   }, [OpDocuments, documents, idStatus]); 
+
   if (!doc) {
     return <div>Loading or no document found...</div>;
   }
@@ -74,7 +77,7 @@ const ViewDocument = () => {
     <section className="w-full h-auto">
       <div className="px-5 py-4 flex items-center justify-between"> 
         <button onClick={() => window.history.back()} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Back</button>
-        <button disabled={isDisabled} onClick={handleSubmit} className="px-7 py-2 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-150">Submit</button>
+        <button disabled={isDisabled} onClick={handleSubmit} className={`px-7 py-2 rounded-xl ${ isDisabled ? `bg-gray-200 text-customFontColor` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>
       </div>
       <Document document={doc}/>
     </section>

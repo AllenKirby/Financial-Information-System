@@ -14,7 +14,7 @@ const DisbursementRecords = () => {
               <h1 className='w-3/6 flex items-center justify-start font-bold'>Payee</h1>
               <h1 className='w-1/6 flex items-center justify-center font-bold'>DV No.</h1>
               <h1 className='w-1/6 flex items-center justify-center font-bold'>Status</h1>
-              <h1 className='w-1/6 flex items-center justify-center font-bold text-sm'>Time Transferred</h1>
+              <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
               <h1 className='w-1/6 flex items-center justify-center font-bold'>Options</h1>
             </section>
           {OpDocuments ? (

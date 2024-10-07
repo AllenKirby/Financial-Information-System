@@ -70,6 +70,10 @@ const DocumentDetails = ({ documents, type }) => {
     });
   };
 
+  const returnDV = async() => {
+
+  }
+
   return (
     <div onClick={() => navigate(`${docu.DV}|${docu.status}`)} className="w-full h-12 rounded-md my-1 bg-white text-customFontGreen cursor-pointer flex items-center justify-center">
       {/* Payee column */}
@@ -97,7 +101,7 @@ const DocumentDetails = ({ documents, type }) => {
             <div className="bg-gray-200 absolute top-6 right-[8px] w-7 h-7 rounded-md rotate-45"></div>
             <div className="absolute top-7 z-50 right-0 bg-gray-200 rounded-xl p-1 border-2 border-gray-200 flex flex-col gap-1">
               {type === 'Editor' && <button onClick={(e)=> {e.stopPropagation();modal()}} className="bg-white w-20 rounded-md text-xs text-customFontGreen py-1 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">Update</button>}
-              <button onClick={delDV} className="bg-white w-20 rounded-md text-xs text-red-500 py-1 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">Delete</button>
+              <button onClick={type === 'Editor' ? delDV : returnDV} className="bg-white w-20 rounded-md text-xs text-red-500 py-1 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">{type === 'Editor' ? 'Delete' : 'Return'}</button>
             </div>
           </>}
       </div>
