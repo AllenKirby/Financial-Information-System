@@ -1,5 +1,6 @@
 import { Outlet,  useLocation  } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
@@ -10,6 +11,7 @@ import { RxDashboard } from "react-icons/rx";
 const AdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
+    const { user } = useAuthContext()
 
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },

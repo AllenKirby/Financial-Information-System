@@ -1,9 +1,11 @@
-import { initializeApp } from "firebase/app";
+import {initializeApp } from "firebase/app";
 import {getAuth} from 'firebase/auth'
+import { Database, getDatabase } from 'firebase/database';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBIzbZigyXE9ky5J2dTRsurw5AqBvKsE_Q",
   authDomain: "financial-information-system.firebaseapp.com",
+  databaseURL: "https://financial-information-system-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "financial-information-system",
   storageBucket: "financial-information-system.appspot.com",
   messagingSenderId: "308788090578",
@@ -12,4 +14,5 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+export const RtDatabase = getDatabase(app);
 export const auth = getAuth(app)
