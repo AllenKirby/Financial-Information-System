@@ -39,7 +39,7 @@ const OperatorPage = () => {
           });
           if(getDocu.status === 200){
             const documents = getDocu.data
-            console.log(`from set op docu ${documents}`)
+            console.log(`from set op docu ${JSON.stringify(documents, null, 2)}`)
             dispatch({type: 'SET_OPDOCUMENTS', payload: documents})
           }
         }catch(error){

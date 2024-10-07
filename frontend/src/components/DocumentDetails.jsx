@@ -18,6 +18,7 @@ const DocumentDetails = ({ documents, type }) => {
     else if(documents && type === 'Operator'){
       setDateTime({ date: documents?.timePassed.split('|').slice()[0], time: documents?.timePassed.split('|').slice()[1]})
       setDocu(documents.data)
+      console.log('sadsadas', documents.data)
     }
   },[documents, type]) //[documents, type, dateTime]
 
