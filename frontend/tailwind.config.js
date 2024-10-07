@@ -22,6 +22,15 @@ export default {
         'a4-width': '210mm',  // Custom A4 width
         'a4-height': '296mm', // Custom A4 height
       },
+      animation: {
+        blink: 'blink 2s ease-in-out infinite',
+      },
+      keyframes: {
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+      },
     },
   },
   plugins: [],

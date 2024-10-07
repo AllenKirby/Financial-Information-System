@@ -9,7 +9,7 @@ export const OpDisbursementReducer = (state, action) => {
                 OpDocuments: action.payload
             }
         case 'CREATE_OPDOCUMENT':
-            const new_key = Object.keys(action.payload)[0]
+            {const new_key = Object.keys(action.payload)[0]
             const new_value = Object.values(action.payload)[0]
 
             return {
@@ -18,19 +18,28 @@ export const OpDisbursementReducer = (state, action) => {
                     ...state.OpDocuments,
                     [new_key]: new_value
                 }
-            }
-        case 'UPDATE_OPDOCUMENT':
+            }}
+        case 'UPDATE_OPDOCUMENT': {
+            const updatedKey = Object.keys(action.payload)[0];
+            const updatedValue = Object.values(action.payload)[0];
+            
             return {
                 ...state,
-                OpDocuments: state.OpDocuments.map(document => 
-                    document._id === action.payload._id ? action.payload :document
-                )
-            }
-        case 'DELETE_OPDOCUMENT':
-            return {
-                ...state,
-                OpDocuments: state.OpDocuments.filter(document => document.DV !== action.payload)
+                documents: {
+                    ...state.documents,
+                    [updatedKey]: {
+                        ...state.documents[updatedKey], 
+                        ...updatedValue
+                    }
+                }
             };
+        }
+        case 'DELETE_OPDOCUMENT':
+            {const { [action.payload]: deletedDocument, ...remainingDocuments } = state.documents;
+            return {
+                ...state,
+                documents: remainingDocuments, 
+            }}
         default:
             return state
     }

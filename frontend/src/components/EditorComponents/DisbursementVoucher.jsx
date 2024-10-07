@@ -14,8 +14,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const {createDisbursement, isLoading, error} = useCreateDisbursement()
   const {updateDV, isLoadingForUpdate, errorForUpdate} = useUpdateDisbursement()
 
-  console.log('update', document)
-
   useEffect(() => {
     if (flag && document) {
       setPayeeData({

@@ -13,6 +13,9 @@ const Header = ({ currentPage}) => {
   const [dropDown, setDropDown] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false); // For showing notification dropdown
   const { user } = useAuthContext();
+  const [unreadNotifs, setUnreadNotifs] = useState(0)
+
+  const notifs = (n) => setUnreadNotifs(n)
 
   const handleLogout = () => {
     Swal.fire({
@@ -27,31 +30,39 @@ const Header = ({ currentPage}) => {
       }
     });
   };
+  console.log('sadhdghasgdja', unreadNotifs)
 
   return (
     <header className="w-full h-auto flex gap-2">
       <div className="w-4/6 p-5 bg-white flex items-center rounded-xl shadow-slate-200 shadow-customShadowStyle">
         <h1 className="text-xl font-semibold">{currentPage}</h1>
       </div>
-      <div className="h-14 w-2/6 px-4 bg-white flex items-center justify-between rounded-xl shadow-slate-200 shadow-customShadowStyle">
+      <div className="h-14 w-2/6 px-4 relative z-20 bg-white flex items-center justify-between rounded-xl shadow-slate-200 shadow-customShadowStyle">
         {/* Notification Icon */}
-        <div className="relative">
-          <IoMdNotificationsOutline 
-            size={35} 
-            className="p-2 rounded-xl bg-slate-100 cursor-pointer hover:scale-125 duration-100 transition-all"
-            onClick={() => setShowNotifications(!showNotifications)} // Toggle notifications dropdown
-          />
-          
+        <div>
+          <div className="relative">
+            <IoMdNotificationsOutline 
+              size={35} 
+              className="p-2 rounded-xl bg-slate-100 cursor-pointer hover:scale-125 duration-100 transition-all"
+              onClick={() => setShowNotifications(!showNotifications)} // Toggle notifications dropdown
+            />
+            <div className={`absolute -top-3 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
+              <p className="text-xs font-semibold">{unreadNotifs}</p>
+            </div>
+          </div>
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute top-12 right-0 bg-white p-4 shadow-lg rounded-lg w-80">
-              <Notification userId={user.uid} /> {/* Pass the user ID to Notification component */}
-            </div>
+            <>
+            <div className="absolute w-10 h-10 top-14 left-[14px] rounded-md bg-white rotate-45"></div>
+              <div className="absolute top-16 z-0 right-0 w-full bg-white p-4 shadow-lg rounded-lg">
+                <Notification userId={user.uid} notifs={notifs} /> {/* Pass the user ID to Notification component */}
+              </div>
+            </>
           )}
         </div>
 
         <div className="w-auto flex py-2 pr-3 pl-4 gap-1 rounded-full bg-slate-100 relative">
-          <p>{user?.name}</p>
+          <p>{user?.name.split(',').slice()[0]}</p>
           <button onClick={() => setDropDown(!dropDown)} className="hover:bg-white rounded-lg px-1 py-1">
             {!dropDown ? <FaAngleDown /> : <FaAngleUp />}
           </button>

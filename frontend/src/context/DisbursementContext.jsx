@@ -18,18 +18,21 @@ export const DisbursementReducer = (state, action) => {
                     [new_key]: new_value
                 }
             }}
-        case 'UPDATE_DOCUMENT':
-            {const updatedKey = Object.keys(action.payload)[0]
+        case 'UPDATE_DOCUMENT': {
+            const updatedKey = Object.keys(action.payload)[0];
+            const updatedValue = Object.values(action.payload)[0];
+            
             return {
                 ...state,
                 documents: {
                     ...state.documents,
                     [updatedKey]: {
-                        ...state.documents[updatedKey],
-                        ...action.payload
+                        ...state.documents[updatedKey], 
+                        ...updatedValue
                     }
                 }
-            }}
+            };
+        }
         case 'DELETE_DOCUMENT':
             {const { [action.payload]: deletedDocument, ...remainingDocuments } = state.documents;
             return {
