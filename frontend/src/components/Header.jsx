@@ -5,10 +5,14 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
 import { useState } from "react";
+import { useAuthContext } from "../hooks/useAuthContext";
+import Notification from './Notification'; // Import the Notification component
 
-const Header = ({ currentPage }) => {
+const Header = ({ currentPage}) => {
   const { logout } = useLogout();
   const [dropDown, setDropDown] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false); // For showing notification dropdown
+  const { user } = useAuthContext();
 
   const handleLogout = () => {
     Swal.fire({
@@ -30,16 +34,39 @@ const Header = ({ currentPage }) => {
         <h1 className="text-xl font-semibold">{currentPage}</h1>
       </div>
       <div className="h-14 w-2/6 px-4 bg-white flex items-center justify-between rounded-xl shadow-slate-200 shadow-customShadowStyle">
-        <IoMdNotificationsOutline size={35} className="p-2 rounded-xl bg-slate-100 cursor-pointer hover:scale-125 duration-100 transition-all"/>
+        {/* Notification Icon */}
+        <div className="relative">
+          <IoMdNotificationsOutline 
+            size={35} 
+            className="p-2 rounded-xl bg-slate-100 cursor-pointer hover:scale-125 duration-100 transition-all"
+            onClick={() => setShowNotifications(!showNotifications)} // Toggle notifications dropdown
+          />
+          
+          {/* Notifications Dropdown */}
+          {showNotifications && (
+            <div className="absolute top-12 right-0 bg-white p-4 shadow-lg rounded-lg w-80">
+              <Notification userId={user.uid} /> {/* Pass the user ID to Notification component */}
+            </div>
+          )}
+        </div>
+
         <div className="w-auto flex py-2 pr-3 pl-4 gap-1 rounded-full bg-slate-100 relative">
-          <p>Allen Kirby</p>
-          <button onClick={() => setDropDown(!dropDown)} className="hover:bg-white rounded-lg px-1 py-1">{!dropDown ? <FaAngleDown /> : <FaAngleUp />}</button>
-          {dropDown && <>
+          <p>{user?.name}</p>
+          <button onClick={() => setDropDown(!dropDown)} className="hover:bg-white rounded-lg px-1 py-1">
+            {!dropDown ? <FaAngleDown /> : <FaAngleUp />}
+          </button>
+          {dropDown && (
+            <>
               <div className="bg-white absolute top-8 right-[10px] w-7 h-7 rounded-md rotate-45"></div>
               <div className="absolute top-9 right-0 bg-white rounded-xl py-1 px-2">
-                <button onClick={handleLogout} className="rounded-lg px-7 py-1 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">Logout</button>
+                <button 
+                  onClick={handleLogout} 
+                  className="rounded-lg px-7 py-1 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">
+                  Logout
+                </button>
               </div>
-            </>}
+            </>
+          )}
         </div>
       </div>
     </header>

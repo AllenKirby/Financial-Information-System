@@ -15,7 +15,7 @@ const DocumentDetails = ({ documents, type }) => {
   const [docu, setDocu] = useState(null)
   const [dateTime, setDateTime] = useState({date: '', time: ''})
 
-  console.log("documents records: ", documents)
+  // console.log("documents records: ", documents)
 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
@@ -26,11 +26,11 @@ const DocumentDetails = ({ documents, type }) => {
       setDocu(documents)
     }
     else if(documents && type === 'Operator'){
-      setDateTime({...dateTime, date: documents?.timePassed.split('|').slice()[0]})
-      setDateTime({...dateTime, time: documents?.timePassed.split('|').slice()[1]})
+      setDateTime({ date: documents?.timePassed.split('|').slice()[0]})
+      setDateTime({ time: documents?.timePassed.split('|').slice()[1]})
       setDocu(documents.data)
     }
-  },[documents, type, dateTime])
+  },[documents, type]) //[documents, type, dateTime]
 
 
   useEffect(() => {

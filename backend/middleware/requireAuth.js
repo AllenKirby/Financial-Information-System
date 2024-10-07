@@ -15,13 +15,14 @@ const requireAuth = async (req, res, next) => {
         const decodedToken = await admin.auth().verifyIdToken(token);
         console.log(decodedToken)
         req.user = {
-            name: decodedToken.displayName,
+            name: decodedToken.dispName,
             uid: decodedToken.uid,
             email: decodedToken.email,
             role: decodedToken.role || 0,
             token: token
           };
         console.log('authentication passed')
+        console.log(req.user.name)
         // console.log(req.user.role)
         // const user = await admin.auth().getUser(req.user.uid)
         next()

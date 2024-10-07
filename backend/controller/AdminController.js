@@ -14,22 +14,30 @@ const createAccount = async (req, res) => {
 
   const decodedToken = await admin.auth().verifyIdToken(token);
   const role = req.body.role;
+  const dispName = req.body.name
+  
+  const email = decodedToken.email
+  const uid = decodedToken.uid
+
+
   const userData = {
-    email: decodedToken.email,
-    name: req.body.name,
-    uid: decodedToken.uid,
-    role : req.body.role,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    [uid] : `${email}|${dispName}`
   }
 
-  console.log(`role in createaccount ${userData.role}`)
+  console.log(`role in createaccount ${role}`)
   console.log('creating acc')
 
   try{
-     await admin.auth().setCustomUserClaims(userData.uid, { role });
+     await admin.auth().setCustomUserClaims(uid, { role, dispName });
       console.log(`account created with role ${role}`)
 
-     await db.collection('users').doc(userData.uid).set(userData); 
+     const docRef = db.collection('listOfUsers').doc(role);
+     const doc = await docRef.get();
+     if(doc.exists){
+      await docRef.update(userData);
+     }else{
+      await docRef.set(userData);
+     }
 
      return res.status(200).json({ 
       success: true, 

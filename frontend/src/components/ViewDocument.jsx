@@ -8,7 +8,7 @@ import { useOpDisbursementContext } from "../hooks/useOpDisbursementContext";
 
 const ViewDocument = () => {
   const { id } = useParams();
-  const { documents } = useDisbursementContext();
+  const { documents, dispatch } = useDisbursementContext();
   const [doc, setDoc] = useState(null);
   const {OpDocuments} = useOpDisbursementContext();
   const [idStatus, setIdStatus] = useState({id: '', status: ''})
@@ -59,7 +59,7 @@ const ViewDocument = () => {
   const handleSubmit = async() => {
     try{
       const data = {
-        DV: id,
+        DV: idStatus.id,
         payee: doc[1].payee
       }
       const res = await axios.post('http://localhost:4000/editor/passRecord', data, {
@@ -67,6 +67,9 @@ const ViewDocument = () => {
       });
       if(res.status === 200){
         console.log(`passed record: ${JSON.stringify(res.data, null, 2)}`)
+        console.log(res.data.update)
+        dispatch({type: 'UPDATE_DOCUMENT', payload: res.data.update})
+
       }
     }catch(error){
       console.log('Error in passing records', error)

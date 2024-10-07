@@ -1,4 +1,4 @@
-const {admin, db}  = require('../firebase')
+const {admin, db, rtdb}  = require('../firebase')
 
 const formatDate = (rawDate) => {
     const dateObject = new Date(rawDate);
@@ -91,20 +91,20 @@ const updateStatus = async (DV) => {
 const passDocument = async (req, res) => {
     const {DV, payee} = req.body;
     console.log('passing docu', DV)
+    const dispName = req.user.name;
+    const uid = req.user.uid;
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
         year: "numeric",
         month: "long",
         day: "2-digit"
       });
-
     const timeCollection = today.toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
     hour12: true
     });
-
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`;
 
     const data = {
@@ -120,36 +120,54 @@ const passDocument = async (req, res) => {
         }
 
         const updatedDocu = await updateStatus(DV)
-        console.log(`updated docu: ${updatedDocu}`)
+        const returnData = {
+            [DV] : updatedDocu
+        }
+        console.log(`updated docu: ${returnData}`)
+        const listOfOpAcc = await getListOfOperatorAccounts();
+        await setNotification(listOfOpAcc, dataCollection, dispName)
 
-        res.status(200).json({success: true, record: data, update: updatedDocu});
+        res.status(200).json({success: true, record: data, update: returnData});
     }catch(error){
         console.log('error creating passed records: ', error)
         res.status(500).json({success: false, message: `error creating passed records: ${error}`});
     }
 }
 
+const setNotification = async (destination_uids, dataCollection, dispName) => {
+    
+   try{
+    for (const destination_uid of destination_uids){
+        const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
+        await notificationRef.push({
+            input: `${dataCollection}|${dispName}`,
+            read: false,
+        });
+    }
 
-// const getAccountCodes = async (req, res) => {
-//     try{
-//         console.log('getAccountCOdes hit')
-//         const collectionRef = db.collection('accountCode')
-//         const snapshot = await collectionRef.get();
-//         if (snapshot.empty) {
-//             return res.status(200).json({accountTitle: []})
-//         }
+    console.log('notif sent succesfully')
+   }catch(error){
+    console.log('error in setNotif:', error)
+   }
 
-//         const documents = snapshot.docs.map(doc => ({
-//             id: doc.id,     
-//             ...doc.data()   
-//         }));
-//         console.log('success in fetching')
-//         res.status(200).json({accountTitle: documents})
-//     }catch(error){
-//         console.log('fail to fetch')
-//         res.status(500).json({ error: error.message });
-//     }
-// }
+}
+
+const getListOfOperatorAccounts = async () => {
+    try{
+        const doc = await db.collection('listOfUsers').doc('3').get();
+        if(doc.exists){
+            const data = doc.data();
+            const keys = Object.keys(data)
+            console.log('successfully getting the list of op')
+            return keys
+        }else{
+            console.log("No such document for op!");
+        }
+    }catch(error){
+        console.log(`Error in getting list of op : ${error}`)
+    }
+    return [];
+}
 
 const getAccountCodes = async (req, res) => {
     const documentIds = ['accountFields', 'accountFields_1', 'accountFields_2'];
