@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
-import  {useCreateDisbursement}  from '../../hooks/useCreateDisbursement'
-import {useUpdateDisbursement} from '../../hooks/useUpdateDisbursement'
-import Loader from '../Loader'
+import  {useCreateDisbursement}  from '../hooks/useCreateDisbursement'
+import {useUpdateDisbursement} from '../hooks/useUpdateDisbursement'
+import Loader from './Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"

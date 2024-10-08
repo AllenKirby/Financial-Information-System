@@ -3,7 +3,7 @@ import { useDisbursementContext } from '../../hooks/useDisbursementContext'
 import DocumentDetails from '../DocumentDetails'
 import { IoAdd } from "react-icons/io5";
 import { useState } from 'react';
-import DisbursementVoucher from './DisbursementVoucher';
+import DisbursementVoucher from '../DisbursementVoucher';
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 const DisbursementRecords = () => {

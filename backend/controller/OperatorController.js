@@ -3,7 +3,7 @@ const {admin, db}  = require('../firebase')
 const readPassed_records = async (req, res) => {
     try {
         const documents = {};
-        
+       
         const recordsSnapshot = await db.collection('records')
             .where('status', '==', 'In Review')
             .get();
