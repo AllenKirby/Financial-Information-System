@@ -6,7 +6,8 @@ export const OpDisbursementReducer = (state, action) => {
     switch (action.type) {  
         case 'SET_OPDOCUMENTS':
             return {
-                OpDocuments: action.payload
+                ...state,
+                OpDocuments: action.payload ? action.payload : { documents: {} }
             }
         case 'CREATE_OPDOCUMENT':
             {const new_key = Object.keys(action.payload)[0]
@@ -46,7 +47,7 @@ export const OpDisbursementReducer = (state, action) => {
 }
 export const OpDisbursementContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(OpDisbursementReducer, {
-        OpDocuments: null
+        OpDocuments: { documents: {} } 
     })
 
     console.log('op-Disbursement Context', state.OpDocuments)

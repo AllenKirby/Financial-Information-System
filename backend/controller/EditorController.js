@@ -79,9 +79,10 @@ const createDV = async (req, res) => {
 
 }
 
-const updateStatus = async (DV) => {
+const updateStatus = async (DV, dTPassed) => {
     const docref = db.collection('records').doc(DV)
     await docref.update({
+        dateTimePassed: dTPassed,
         status: 'In Review'
     })
     const updatedDoc = await docref.get()
@@ -105,42 +106,42 @@ const passDocument = async (req, res) => {
     second: "2-digit",
     hour12: true
     });
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`;
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
+    const dateTimePassed = `${dateCollection}|${timeCollection}`;
 
-    const data = {
-         [DV] : dataCollection,
-    }
     try {
-        const docRef = db.collection('passed_records').doc('editor');
-        const doc = await docRef.get();
-        if(doc.exists){
-            await docRef.update(data);
-        }else{
-            await docRef.set(data);
-        }
+        // const docRef = db.collection('passed_records').doc('editor');
+        // const doc = await docRef.get();
+        // if(doc.exists){
+        //     await docRef.update(data);
+        // }else{
+        //     await docRef.set(data);
+        // }
 
-        const updatedDocu = await updateStatus(DV)
+        const updatedDocu = await updateStatus(DV, dateTimePassed)
         const returnData = {
             [DV] : updatedDocu
         }
-        console.log(`updated docu: ${returnData}`)
+        console.log(`updated docu: ${JSON.stringify(returnData, null, 2)}`)
+        // console.log(`record: ${JSON.stringify(data, null, 2)}`)
         const listOfOpAcc = await getListOfOperatorAccounts();
-        await setNotification(listOfOpAcc, dataCollection, dispName)
+        await setNotification(listOfOpAcc, dataCollection, dispName, DV)
 
-        res.status(200).json({success: true, record: data, update: returnData});
+        //res.status(200).json({success: true, record: data, update: returnData});
+        res.status(200).json({success: true, update: returnData});
     }catch(error){
         console.log('error creating passed records: ', error)
         res.status(500).json({success: false, message: `error creating passed records: ${error}`});
     }
 }
 
-const setNotification = async (destination_uids, dataCollection, dispName) => {
+const setNotification = async (destination_uids, dataCollection, dispName, DV) => {
     
    try{
     for (const destination_uid of destination_uids){
         const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
         await notificationRef.push({
-            input: `${dataCollection}|${dispName}`,
+            input: `${dataCollection}|${dispName}|${DV}`,
             read: false,
         });
     }
