@@ -5,7 +5,7 @@ import Document from "./Document";
 import html2pdf from 'html2pdf.js'
 import { useOpDisbursementContext } from "../hooks/useOpDisbursementContext";
 import { FaAngleDown, FaAngleUp, FaAngleLeft } from "react-icons/fa";
-import DisbursementVoucher from './EditorComponents/DisbursementVoucher';
+import DisbursementVoucher from './DisbursementVoucher';
 import Swal from 'sweetalert2';
 import { useDeleteDisbursement } from "../hooks/useDeleteDisbursement";
 import { useToOperator } from "../hooks/useToOperator";
@@ -129,7 +129,7 @@ const ViewDocument = () => {
       }
     });
   }
-  const isDisabled = idStatus.status === 'In Review';
+  const isDisabled = idStatus.status === 'In Review' && idStatus.type === '4';
 
   const returnDV = async() => {
 

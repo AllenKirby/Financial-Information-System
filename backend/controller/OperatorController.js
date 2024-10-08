@@ -16,7 +16,6 @@ const readPassed_records = async (req, res) => {
                 const value = data[key];
                 const recordDocRef = db.collection('records').doc(key);
                 const recordsDoc = await recordDocRef.get();
-    
                 if (recordsDoc.exists) {
                     const recordData = recordsDoc.data();
                     documents[key] = {

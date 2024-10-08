@@ -26,7 +26,7 @@ const Notification = ({ userId, notifs }) => {
         });
 
         setNotifications(sortedNotifications);
-        notifs(unreadNotifs())
+        
       } else {
         setNotifications([]);  // No notifications found
       }
@@ -51,6 +51,7 @@ const Notification = ({ userId, notifs }) => {
     const unreads = notifications.filter(notification => !notification.read).length
     return unreads
   }
+  notifs(unreadNotifs())
   return (
     <div>
       <h3 className='font-semibold text-xl my-2'>Notifications</h3>
