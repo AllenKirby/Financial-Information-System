@@ -51,7 +51,7 @@ const ViewDocument = () => {
       }
     });
   };
-
+  
   useEffect(() => {
     if(id){
       const decoded = decodeURIComponent(id)
@@ -69,7 +69,7 @@ const ViewDocument = () => {
         console.log("Error finding the document");
       }
     }else if (OpDocuments){
-      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.key === idStatus.id);
+      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
         console.log('Operator',selectedDocument)
         setDoc(selectedDocument);

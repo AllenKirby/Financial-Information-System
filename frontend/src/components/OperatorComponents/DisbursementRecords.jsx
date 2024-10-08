@@ -1,9 +1,12 @@
 import { Outlet, useParams } from 'react-router-dom'
 import { useOpDisbursementContext } from '../../hooks/useOpDisbursementContext'
 import DocumentDetails from '../DocumentDetails'
+import { useAuthContext } from "../../hooks/useAuthContext";
+
 const DisbursementRecords = () => {
   const { OpDocuments } = useOpDisbursementContext()
   const { id } = useParams()
+  const {user} = useAuthContext();
   console.log("documents records: ", OpDocuments)
   return (
     <section className="w-4/5 p-3 h-[30rem] rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
@@ -19,7 +22,7 @@ const DisbursementRecords = () => {
           {OpDocuments ? (
             <div className="w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1">
               {Object.entries(OpDocuments.documents).map(([key, document]) => (
-                <DocumentDetails key={key} documents={document} type='Operator' />
+                <DocumentDetails key={key} documents={document} type={user.role} />
               ))}
             </div>
           ) : (
