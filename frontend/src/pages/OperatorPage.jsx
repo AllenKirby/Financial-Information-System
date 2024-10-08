@@ -1,5 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom"
 import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
+import { firestore } from "../config/firebase-config"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
 
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
@@ -48,6 +50,19 @@ const OperatorPage = () => {
       }
     };
     retriveData();
+
+    const q = query(collection(firestore, 'records'), where('status', '==', 'In Review'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
+        acc[doc.id] = {data: {...doc.data()}};
+        return acc;
+      }, {})};
+      
+      console.log(newDocuments)
+      dispatch({type: 'SET_OPDOCUMENTS', payload: newDocuments})
+    })
+
+    return () => unsubscribe()
   }, [user, dispatch, documents])
 
   return (

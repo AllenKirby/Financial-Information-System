@@ -9,6 +9,7 @@ import Text2 from '../assets/images/dasda.png'
 
 const Document = ({document}) => {
   const doc = document[1]?.data ? document[1]?.data : document[1]
+  console.log('document', doc)
   return (
     <main id="pdf" className="w-auto h-auto flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-a4-height text-black text-xs'>

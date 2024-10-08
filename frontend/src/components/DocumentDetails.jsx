@@ -8,19 +8,25 @@ const DocumentDetails = ({ documents, type }) => {
   const [docu, setDocu] = useState(null)
   const [dateTime, setDateTime] = useState({date: '', time: ''})
 
-  // console.log("documents records: ", documents)
+  console.log("documents details: ", documents)
 
 
   useEffect(()=>{
-    if(documents && type === 'Editor'){
+    if(documents && type === '4'){
       setDocu(documents)
     }
-    else if(documents && type === 'Operator'){
-      setDateTime({ date: documents?.timePassed.split('|').slice()[0], time: documents?.timePassed.split('|').slice()[1]})
+    else if(documents && type === '3'){
       setDocu(documents.data)
-      console.log('sadsadas', documents.data)
+      setDateTime({date: documents.data.dateTimePassed.split('|').slice()[0], time: documents.data.dateTimePassed.split('|').slice()[1]})
+      console.log(`datetime: ${JSON.stringify(docu, null, 2)}`)
     }
   },[documents, type]) //[documents, type, dateTime]
+
+  // useEffect(() => {
+  //   if (docu) {
+  //     console.log(`Updated docu: ${docu}`); // Now logs updated state
+  //   }
+  // }, [docu]);
 
 
   useEffect(() => {
@@ -34,6 +40,7 @@ const DocumentDetails = ({ documents, type }) => {
       setStatusColor('bg-green-500 text-white')
     }
   }, [docu])
+
 
   return (
     <div onClick={() => navigate(`${docu.DV}|${docu.status}|${type}`)} className="w-full h-12 rounded-md my-1 bg-white text-customFontGreen cursor-pointer flex items-center justify-center">
@@ -51,7 +58,7 @@ const DocumentDetails = ({ documents, type }) => {
           { docu?.status }
         </div>
       </h2>
-      {documents.timePassed && 
+      {(documents?.data ? documents.data.dateTimePassed : documents.date) && 
       (<h2 className="text-xs font-light text-center w-1/6">
         {dateTime ? `${dateTime.date} ${dateTime.time}` : ''}
       </h2>)}

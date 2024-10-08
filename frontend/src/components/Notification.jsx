@@ -2,9 +2,16 @@ import { useEffect, useState } from 'react';
 import { ref, onValue, update } from 'firebase/database';
 import { RtDatabase } from '../config/firebase-config';
 import PropTypes from 'prop-types'
+import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext';
+import { useNavigate } from 'react-router-dom';
+import { useAuthContext } from '../hooks/useAuthContext';
+
 
 const Notification = ({ userId, notifs }) => {
+  const {OpDocuments} = useOpDisbursementContext();
   const [notifications, setNotifications] = useState([]);
+  const navigate = useNavigate();
+  const {user} = useAuthContext();
 
   useEffect(() => {
     if (!userId) return;
@@ -51,14 +58,28 @@ const Notification = ({ userId, notifs }) => {
     const unreads = notifications.filter(notification => !notification.read).length
     return unreads
   }
+  
   notifs(unreadNotifs())
+  
+  const openNotif = (DV) =>{
+    const document = OpDocuments.documents[DV].data
+    navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+  }
+  
   return (
     <div>
       <h3 className='font-semibold text-xl my-2'>Notifications</h3>
       <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
         {notifications.length > 0 ? (
           notifications.map((notification) => (
-            <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-gray-200 ' key={notification.key} onClick={() => markAsRead(notification.key)}>
+            <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-gray-200' 
+            key={notification.key} 
+            onClick={() => {
+              markAsRead(notification.key)
+              console.log('hit notif', notification.input)
+              const dvNo = notification.input.split('|').slice(-1)[0]
+              openNotif(dvNo)
+              }}>
               <p ><strong>{notification.input.split('|').slice()[3].replace(',', ' ')}</strong> has successfully transferred the document: <strong>{notification.input.split('|').slice()[2]}</strong></p>
               {!notification.read && <strong className='flex items-end justify-end'> Unread</strong>}
             </li>

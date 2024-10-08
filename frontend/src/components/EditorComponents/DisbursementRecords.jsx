@@ -4,11 +4,13 @@ import DocumentDetails from '../DocumentDetails'
 import { IoAdd } from "react-icons/io5";
 import { useState } from 'react';
 import DisbursementVoucher from '../DisbursementVoucher';
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
   const { id } = useParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const {user} = useAuthContext();
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -34,7 +36,7 @@ const DisbursementRecords = () => {
             {documents ? (
               <section className="w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1">
                 {Object.entries(documents).map(([key, document]) => (
-                  <DocumentDetails key={key} documents={document} type='Editor'/>
+                  <DocumentDetails key={key} documents={document} type={user.role}/>
                 ))}
               </section>
             ) : (
