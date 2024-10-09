@@ -4,7 +4,9 @@ import PropTypes from 'prop-types'
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
-import { useEffect, useState } from "react";
+
+import { useState, useEffect } from "react";
+
 import { useAuthContext } from "../hooks/useAuthContext";
 import Notification from './Notification'; // Import the Notification component
 import { ref, onValue, update } from 'firebase/database';
@@ -42,7 +44,7 @@ const Header = ({ currentPage}) => {
     const formattedDate = `${datePart} ${timePart}`; // Combine date and time
     return new Date(formattedDate); // Create Date object
   };
- 
+
   useEffect(() => {
     if (!userId) return;
     console.log('hit notif op, ', userId)
@@ -63,21 +65,24 @@ const Header = ({ currentPage}) => {
         });
 
         setNotifications(sortedNotifications);
-        
+
       } else {
         setNotifications([]);  // No notifications found
       }
     });
+
 
     // Cleanup listener on component unmount
     return () => unsubscribe();
   }, [userId]);
 
     // Function to mark notifications as read
+
   const markAsRead = (notificationKey) => {
     const notificationRef = ref(RtDatabase, `users/${userId}/notifications/${notificationKey}`);
     update(notificationRef, { read: true }); // Update the 'read' status
   };
+
   
   useEffect(() => {
     const unreadnotifs = () => {
@@ -85,6 +90,7 @@ const Header = ({ currentPage}) => {
     }
     notifs(unreadnotifs())
   }, [notifications])
+
 
 
 
@@ -110,9 +116,11 @@ const Header = ({ currentPage}) => {
           {showNotifications && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
-              <div className="absolute w-10 h-10 z-40 top-14 left-[14px] rounded-md bg-white rotate-45"></div>
-              <div className="absolute shadow-black top-16 z-50 right-0 w-full bg-white p-4 shadow-sm rounded-lg">
-              <h3 className='font-semibold text-xl my-2'>Notifications</h3>
+
+              <div className="absolute w-10 h-10 z-40 top-14 left-[14px] rounded-md bg-white rotate-45 "></div>
+              <div className="absolute top-16 z-50 right-0 w-full bg-white p-4 rounded-lg">
+                <h3 className='font-semibold text-xl my-2'>Notifications</h3>
+
                   <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
                     {notifications.length > 0 ? (
                       notifications.map((notification)=> (
