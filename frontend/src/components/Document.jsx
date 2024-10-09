@@ -8,7 +8,7 @@ import BottomDesign from '../assets/images/bottom.png'
 import Text2 from '../assets/images/dasda.png'
 
 const Document = ({document}) => {
-  const doc = document[1]?.data ? document[1]?.data : document[1]
+  const doc = document
   console.log('document', doc)
   return (
     <main id="pdf" className="w-auto h-auto flex flex-col items-center justify-center font-times">
@@ -24,7 +24,7 @@ const Document = ({document}) => {
           <div className='w-1/4 border-t-2 border-r-2 border-l-2 border-black h-28 flex flex-col'>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Fund Cluster: {doc.fund}</div>
             <div className='w-full h-1/3 border-b-2 border-black flex items-center font-bold px-2'>Date: {doc.date}</div>
-            <div className='w-full h-1/3 flex items-center font-bold px-2'>DV No. {doc.id}</div>
+            <div className='w-full h-1/3 flex items-center font-bold px-2'>DV No. {doc.DV}</div>
           </div>
         </header>
         <div>
@@ -59,7 +59,7 @@ const Document = ({document}) => {
               </div>
               <div className="w-1/2 px-2 py-1">
                 <div>ORS/BURS No.:  </div>
-                <div className='text-center font-bold'>501-2024-09-408</div>
+                <div className='text-center font-bold'>{doc.ORSBURS}</div>
               </div>
             </div>
           </div>
@@ -83,7 +83,7 @@ const Document = ({document}) => {
                   <div>=</div>
                   <div>{doc.bir2percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
-                <div className="px-2 py-1">ASA No.501-2024-296 Lopez SRIP</div>
+                <div className="px-2 py-1">ASA No.{doc.ASA}</div>
                 <div className="w-full flex items-center justify-center font-bold py-1">Amount Due</div>
               </div>
               <div className='w-36 border-r-2 border-black flex-col'>
@@ -323,7 +323,7 @@ const Document = ({document}) => {
               </div>
               <div className="w-1/2 px-2 py-1">
                 <div>ORS/BURS No.:  </div>
-                <div className='text-center font-bold'>501-2024-09-408</div>
+                <div className='text-center font-bold'>{doc.ORSBURS}</div>
               </div>
             </div>
           </div>

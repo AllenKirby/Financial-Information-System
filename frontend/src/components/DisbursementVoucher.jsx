@@ -5,14 +5,19 @@ import Loader from './Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
+import { useAuthContext } from '../hooks/useAuthContext'
+import { useInputOperator } from '../hooks/useInputOperator'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', accTitle: '', accCode: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
   const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
+  const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
 
   const [accountOptions, setAccountOptions] = useState([]);
   const {createDisbursement, isLoading, error} = useCreateDisbursement()
   const {updateDV, isLoadingForUpdate, errorForUpdate} = useUpdateDisbursement()
+  const {inputOperator, isLoadingForOp, errorForOp} = useInputOperator()
+  const { user } = useAuthContext()
 
   useEffect(() => {
     if (flag && document) {
@@ -38,6 +43,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         birParticular: document.birParticular || '',
         birSubAmount: document.birSubAmount || 0,
       });
+      setOperatorInput({
+        ors: document.ORSBURS || '',
+        asa: document.ASA || ''
+      })
     }
   }, [document, flag]);
 
@@ -139,7 +148,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     if(res){
       Swal.fire({
         title: "Saved",
-        text: "Dibursement Voucher is successfully updated!",
+        text: "Disbursement Voucher is successfully updated!",
         icon: "success",
         confirmButtonColor: "#009933"
       });
@@ -147,8 +156,31 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }
 
+  const handleOpInput = async(e) => {
+    e.preventDefault()
+
+    const res = await inputOperator(operatorInput, payeeData.DV)
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "Disbursement Voucher is successfully save!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+      modal()
+    }
+  }
+
+  const isDisabled = user.role === '3'
+
   return (
-    <form onSubmit={flag ? handleUpdate : handleSubmit} action="" className="bg-white w-2/5 h-5/6 p-7 rounded-xl">
+    <form onSubmit={(e) => {
+        if(user.role === '3'){
+          handleOpInput(e)
+        }else{
+          flag && !user.role === '3' ? handleUpdate(e) : handleSubmit(e)
+        }
+      }} action="" className="bg-white w-2/5 h-5/6 p-7 rounded-xl">
       <div className='w-full h-auto py-2 text-center'>
         <h1 className='text-xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
       </div>
@@ -158,6 +190,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className='w-full h-auto flex gap-2 pb-3'>
             <input
               className="w-1/2 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+              disabled={isDisabled}
               type="text" 
               placeholder="Payee"
               value={payeeData.payee}
@@ -165,6 +198,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               required  />
             <input 
               className="w-1/2 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+              disabled={isDisabled}
               type="text" 
               placeholder="TIN/Employee No." 
               value={payeeData.TIN}
@@ -173,6 +207,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           </div>
           <input 
             className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+            disabled={isDisabled}
             type="text" 
             placeholder="Address" 
             value={payeeData.address}
@@ -186,6 +221,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <select className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
               onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
               value={payeeData.fund}
+              disabled={isDisabled}
               required
               //value
             >
@@ -201,6 +237,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <input 
               className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
               type="date" 
+              disabled={isDisabled}
               value={payeeData.date}
               placeholder="Date"
               onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
@@ -209,15 +246,24 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <input 
             className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             type="text" 
+            disabled={isDisabled}
             placeholder="Disbursement Voucher No." 
             value={payeeData.DV}
             onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
             required  />
+           {user.role === '3' && <input 
+              className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+              type="text" 
+              placeholder="ORS/BURS No." 
+              value={operatorInput.ors}
+              onChange={(e) => setOperatorInput({...operatorInput, ors: e.target.value})}
+              required  />}
           <div className="flex flex-col">
             <label>Responsibility Center</label>
             <select  className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
               onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
               value={payeeData.RC}
+              disabled={isDisabled}
               required
             >
               <option value="" disabled>Select Responsibilty Center</option>
@@ -236,6 +282,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               setPayeeData({...payeeData, accTitle: title, accCode: code});
             }}
             value={`${payeeData.accTitle}:${payeeData.accCode}`}
+            disabled={isDisabled}
             required
           >
             <option value="" disabled>Select Account Title</option>
@@ -261,12 +308,21 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             type="number" 
             placeholder="Amount"
+            disabled={isDisabled}
             onChange={(e) => computeAmount(e.target.value)}
             value={payeeData.amount}
             required  />
+          {user.role === '3' && <input 
+            className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+            type="text" 
+            placeholder="ASA No." 
+            value={operatorInput.asa}
+            onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
+            required  />}
           <textarea className="w-full h-52 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" placeholder="Particulars"
             onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
             value={payeeData.particular}
+            disabled={isDisabled}
             required
           />
         </div>
@@ -276,6 +332,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <select  className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
             onChange={(e) => {setBirData({...birData, birRC: e.target.value})}}
             value={birData.birRC}
+            disabled={isDisabled}
             required
           >
             <option value="" disabled>Select Responsibilty Center</option>
@@ -286,13 +343,19 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         <textarea className="w-full h-52 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" placeholder="Particulars"
           onChange={(e) => {setBirData({...birData, birParticular: e.target.value})}}
           value={birData.birParticular}
+          disabled={isDisabled}
           required
         />
       </div>
       <div className="w-full flex items-center justify-center py-3 gap-4">
         <button 
           type="submit" 
-          disabled={flag ? isLoadingForUpdate : isLoading}
+          disabled={()=> {
+            if(user.role === '3'){
+              return isLoadingForOp
+            }
+            flag ? isLoadingForUpdate : isLoading
+          }}
           className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
           >{isLoading ? <Loader/> : 'Save'}</button>
         <button 
@@ -300,7 +363,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           className="py-2 px-10 rounded-md bg-gray-300 text-customFontColor hover:scale-125 transition-all duration-100"
           >Back</button>
       </div>
-      {(error || errorForUpdate) && (
+      {(error || errorForUpdate || errorForOp) && (
         <div className="w-full text-center">
           <h4 className="text-sm text-red-500">{error ? error : errorForUpdate}</h4>
         </div>

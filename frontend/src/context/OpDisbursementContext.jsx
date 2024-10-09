@@ -23,13 +23,11 @@ export const OpDisbursementReducer = (state, action) => {
         case 'UPDATE_OPDOCUMENT': {
             const updatedKey = Object.keys(action.payload)[0];
             const updatedValue = Object.values(action.payload)[0];
-            
             return {
                 ...state,
                 documents: {
                     ...state.documents,
                     [updatedKey]: {
-                        ...state.documents[updatedKey], 
                         ...updatedValue
                     }
                 }
