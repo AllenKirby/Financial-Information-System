@@ -63,16 +63,16 @@ const ViewDocument = () => {
     if (documents) { 
       const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
       if (selectedDocument) {
-        console.log('Editor',selectedDocument)
-        setDoc(selectedDocument);
+        console.log('Editor',selectedDocument[1])
+        setDoc(selectedDocument[1]);
       } else {
         console.log("Error finding the document");
       }
     }else if (OpDocuments){
       const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
-        console.log('Operator',selectedDocument)
-        setDoc(selectedDocument);
+        console.log('Operator',selectedDocument[1].data)
+        setDoc(selectedDocument[1].data);
       } else {
         console.log("Error finding the operator document");
       }
@@ -98,7 +98,7 @@ const ViewDocument = () => {
   const handleSubmit = async() => {
     const data = {
       DV: idStatus.id,
-      payee: doc[1].payee
+      payee: doc.payee
     }
 
     Swal.fire({
@@ -143,14 +143,15 @@ const ViewDocument = () => {
           <button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>
           {/* Options column */}
           <div className=" flex items-center justify-end w-1/6 relative">
-            <button onClick={() => setDropDown(!dropDown)} className="flex z-20 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white">
+            <button onClick={() => setDropDown(!dropDown)} className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white">
               {dropDown ? <FaAngleDown size={20}/> : <FaAngleUp size={20}/>} More
             </button>
             {dropDown && <>
+                <div className="fixed inset-0 z-20" onClick={() => setDropDown(!dropDown)}></div>
                 <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
                   <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>
                   <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
-                  <button disabled={isDisabled} onClick={idStatus.type === 'Editor' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === 'Editor' ? 'Delete' : 'Return'}</button>
+                  <button disabled={isDisabled} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>
                 </div>
               </>}
           </div>
@@ -158,7 +159,7 @@ const ViewDocument = () => {
             <>
               <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
               <section onClick={(e) => e.stopPropagation()} className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <DisbursementVoucher modal={modal} document={doc[1]} flag={true}/>
+                  <DisbursementVoucher modal={modal} document={doc} flag={true}/>
               </section>
             </>
           )}

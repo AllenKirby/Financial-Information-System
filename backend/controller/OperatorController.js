@@ -59,4 +59,33 @@ const readPassed_records = async (req, res) => {
     
 }
 
-module.exports = {readPassed_records}
+const operatorInput = async(req, res) => {
+    const { ors, asa } = req.body
+    const { id } = req.params
+
+    dvData = {
+        ORSBURS: ors,
+        ASA: asa
+    }
+    document = {} 
+
+    try {
+        console.log('ors', ors)
+        const docref = db.collection('records').doc(id)
+        await docref.update(dvData)
+        const updatedDoc = await docref.get()
+        if(updatedDoc.exists){
+            const doc = updatedDoc.data()
+            document[doc.DV] = {
+                data : doc
+            }
+        }
+
+        res.status(200).json(document)
+    } catch (error) {
+        console.error("Error updating document: operator: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+} 
+
+module.exports = {readPassed_records, operatorInput}
