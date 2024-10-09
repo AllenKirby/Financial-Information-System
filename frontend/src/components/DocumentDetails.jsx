@@ -1,15 +1,12 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { parse, formatDistanceToNow } from 'date-fns';
 
 const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
   const [statusColor, setStatusColor] = useState('')
   const [docu, setDocu] = useState(null)
-  const [dateTime, setDateTime] = useState({date: '', time: ''})
-
-  console.log("documents details: ", documents)
-
 
   useEffect(()=>{
     if(documents && type === '4'){
@@ -17,17 +14,16 @@ const DocumentDetails = ({ documents, type }) => {
     }
     else if(documents && type === '3'){
       setDocu(documents.data)
-      setDateTime({date: documents.data.dateTimePassed.split('|').slice()[0], time: documents.data.dateTimePassed.split('|').slice()[1]})
-      console.log(`datetime: ${JSON.stringify(docu, null, 2)}`)
     }
-  },[documents, type]) //[documents, type, dateTime]
+  },[documents, type, docu])
+  
 
-  // useEffect(() => {
-  //   if (docu) {
-  //     console.log(`Updated docu: ${docu}`); // Now logs updated state
-  //   }
-  // }, [docu]);
+  const formateDateTime = (datetime) => {
+    if (!datetime) return null;
+    const formattedDateString = datetime.replace('|', ' ');
 
+    return parse(formattedDateString, 'MMMM dd, yyyy hh:mm:ss a', new Date());
+  }
 
   useEffect(() => {
     if(docu?.status === 'Drafting'){
@@ -57,11 +53,9 @@ const DocumentDetails = ({ documents, type }) => {
         <div className={`${statusColor} w-20 h-auto rounded-md text-center px-2 py-1`}>
           { docu?.status }
         </div>
+      </h2><h2 className="text-xs font-light text-center w-1/6">
+        {formatDistanceToNow(formateDateTime(docu?.dateTimePassed), { addSuffix: true })}
       </h2>
-      {(documents?.data ? documents.data.dateTimePassed : documents.date) && 
-      (<h2 className="text-xs font-light text-center w-1/6">
-        {dateTime ? `${dateTime.date} ${dateTime.time}` : ''}
-      </h2>)}
       
     </div>
   );
