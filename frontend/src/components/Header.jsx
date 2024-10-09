@@ -4,11 +4,14 @@ import PropTypes from 'prop-types'
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { FaAngleDown } from "react-icons/fa";
 import { FaAngleUp } from "react-icons/fa";
+
 import { useState, useEffect } from "react";
+
 import { useAuthContext } from "../hooks/useAuthContext";
 import Notification from './Notification'; // Import the Notification component
 import { ref, onValue, update } from 'firebase/database';
 import { RtDatabase } from '../config/firebase-config';
+
 
 const Header = ({ currentPage}) => {
   const { logout } = useLogout();
@@ -19,6 +22,8 @@ const Header = ({ currentPage}) => {
   const [notifications, setNotifications] = useState([]);
   const userId = user?.uid
   const notifs = (n) => setUnreadNotifs(n)
+
+
 
   const handleLogout = () => {
     Swal.fire({
@@ -60,27 +65,34 @@ const Header = ({ currentPage}) => {
         });
 
         setNotifications(sortedNotifications);
+
       } else {
         setNotifications([]);  // No notifications found
       }
     });
+
+
     // Cleanup listener on component unmount
-    return () => {
-      console.log('Clean up')
-      unsubscribe()}
+    return () => unsubscribe();
   }, [userId]);
+
+    // Function to mark notifications as read
 
   const markAsRead = (notificationKey) => {
     const notificationRef = ref(RtDatabase, `users/${userId}/notifications/${notificationKey}`);
     update(notificationRef, { read: true }); // Update the 'read' status
   };
 
+  
   useEffect(() => {
     const unreadnotifs = () => {
-      return  notifications.filter(notification => !notification.read).length
+      return notifications.filter(notification => !notification.read).length
     }
     notifs(unreadnotifs())
   }, [notifications])
+
+
+
 
   return (
     <header className="w-full h-auto flex gap-2">
@@ -104,9 +116,11 @@ const Header = ({ currentPage}) => {
           {showNotifications && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
+
               <div className="absolute w-10 h-10 z-40 top-14 left-[14px] rounded-md bg-white rotate-45 "></div>
               <div className="absolute top-16 z-50 right-0 w-full bg-white p-4 rounded-lg">
                 <h3 className='font-semibold text-xl my-2'>Notifications</h3>
+
                   <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
                     {notifications.length > 0 ? (
                       notifications.map((notification)=> (

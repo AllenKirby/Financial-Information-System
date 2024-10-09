@@ -1,12 +1,17 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useDisbursementContext } from '../hooks/useDisbursementContext';
 import { parse, formatDistanceToNow } from 'date-fns';
+
 
 const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
   const [statusColor, setStatusColor] = useState('')
   const [docu, setDocu] = useState(null)
+  const [dateTime, setDateTime] = useState({date: '', time: ''})
+  // console.log("documents details: ", documents)
+
 
   useEffect(()=>{
     if(documents && type === '4'){
@@ -14,9 +19,10 @@ const DocumentDetails = ({ documents, type }) => {
     }
     else if(documents && type === '3'){
       setDocu(documents.data)
+
     }
-  },[documents, type, docu])
-  
+  },[documents, type]) //[documents, type, docu], [documents], [] 
+
 
   const formateDateTime = (datetime) => {
     if (!datetime) return null;

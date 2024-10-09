@@ -178,7 +178,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         if(user.role === '3'){
           handleOpInput(e)
         }else{
-          flag && !user.role === '3' ? handleUpdate(e) : handleSubmit(e)
+          flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
         }
       }} action="" className="bg-white w-2/5 h-5/6 p-7 rounded-xl">
       <div className='w-full h-auto py-2 text-center'>

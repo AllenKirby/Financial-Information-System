@@ -3,6 +3,7 @@ import Cookies from 'universal-cookie';
 import {useNavigate} from 'react-router-dom';
 import axios from "axios"
 import { useDisbursementContext } from './useDisbursementContext.jsx';
+import { getAuth, signOut } from "firebase/auth"; 
 
 
 export const useLogout = () => {
@@ -12,8 +13,9 @@ export const useLogout = () => {
     const navigate = useNavigate()
 
     const logout = async () => {
-        
+      const auth = getAuth();  
       try{
+        await signOut(auth);
         const response = await axios.post('http://localhost:4000/logout', {}, {
           withCredentials: true
         });
