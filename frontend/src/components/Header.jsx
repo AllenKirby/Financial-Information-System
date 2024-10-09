@@ -53,9 +53,9 @@ const Header = ({ currentPage}) => {
           {/* Notifications Dropdown */}
           {showNotifications && (
             <>
-              <div className="fixed inset-0 z-20" onClick={() => setShowNotifications(!showNotifications)}></div>
+              <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
               <div className="absolute w-10 h-10 z-40 top-14 left-[14px] rounded-md bg-white rotate-45"></div>
-              <div className="absolute top-16 z-50 right-0 w-full bg-white p-4 shadow-lg rounded-lg">
+              <div className="absolute shadow-black top-16 z-50 right-0 w-full bg-white p-4 shadow-sm rounded-lg">
                 <Notification userId={user.uid} notifs={notifs} /> {/* Pass the user ID to Notification component */}
               </div>
             </>
@@ -69,12 +69,12 @@ const Header = ({ currentPage}) => {
           </button>
           {dropDown && (
             <>
-              <div className="fixed inset-0 z-20" onClick={() => setDropDown(!dropDown)}></div>
+              <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)}></div>
               <div className="bg-white absolute top-8 right-[10px] w-7 h-7 rounded-md rotate-45"></div>
               <div className="absolute top-9 right-0 bg-white rounded-xl py-1 px-2">
                 <button 
                   onClick={handleLogout} 
-                  className="rounded-lg px-7 py-1 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">
+                  className="rounded-lg px-7 py-1 z-20 font-semibold hover:bg-slate-100 hover:scale-105 transition-all duration-100">
                   Logout
                 </button>
               </div>

@@ -147,7 +147,7 @@ const ViewDocument = () => {
               {dropDown ? <FaAngleDown size={20}/> : <FaAngleUp size={20}/>} More
             </button>
             {dropDown && <>
-                <div className="fixed inset-0 z-20" onClick={() => setDropDown(!dropDown)}></div>
+                <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)}></div>
                 <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
                   <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>
                   <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
