@@ -1,15 +1,16 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { useDisbursementContext } from '../hooks/useDisbursementContext';
 
 const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
   const [statusColor, setStatusColor] = useState('')
   const [docu, setDocu] = useState(null)
   const [dateTime, setDateTime] = useState({date: '', time: ''})
+  // console.log("documents details: ", documents)
 
-  console.log("documents details: ", documents)
-
+  
 
   useEffect(()=>{
     if(documents && type === '4'){
@@ -18,9 +19,8 @@ const DocumentDetails = ({ documents, type }) => {
     else if(documents && type === '3'){
       setDocu(documents.data)
       setDateTime({date: documents.data.dateTimePassed.split('|').slice()[0], time: documents.data.dateTimePassed.split('|').slice()[1]})
-      console.log(`datetime: ${JSON.stringify(docu, null, 2)}`)
     }
-  },[documents, type]) //[documents, type, dateTime]
+  },[documents]) //[]
 
   // useEffect(() => {
   //   if (docu) {

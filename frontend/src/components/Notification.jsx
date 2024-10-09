@@ -1,100 +1,53 @@
-import { useEffect, useState } from 'react';
-import { ref, onValue, update } from 'firebase/database';
-import { RtDatabase } from '../config/firebase-config';
+import { parse, formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types'
 import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
+import { useEffect, useState } from 'react';
 
 
-const Notification = ({ userId, notifs }) => {
+const Notification = ({ notification, markAsRead }) => {
   const {OpDocuments} = useOpDisbursementContext();
-  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
-  const {user} = useAuthContext();
+  const { user } = useAuthContext()
+  const [notifData, setNotifData] = useState({date: '', time: '', docName: '', name: '', DV: ''})
 
+  
   useEffect(() => {
-    if (!userId) return;
-    console.log('hit notif op, ', userId)
-    const notificationsRef = ref(RtDatabase, `users/${userId}/notifications`);
+    const [date, time, docName, name, DV] = notification.input.split('|');
+    setNotifData({ date, time, docName, name, DV });
+  }, [notification.input]);
 
-    // Listen for changes to the notifications node
-    const unsubscribe = onValue(notificationsRef, (snapshot) => {
-      const data = snapshot.val();
-
-      if (data) {
-        const parsedNotifications = Object.keys(data).map((key) => ({
-          key,
-          ...data[key]
-        }));
-
-        const sortedNotifications = parsedNotifications.sort((a, b) => {
-          return parseInputDate(b.input) - parseInputDate(a.input);
-        });
-
-        setNotifications(sortedNotifications);
-        
-      } else {
-        setNotifications([]);  // No notifications found
-      }
-    });
-
-    // Cleanup listener on component unmount
-    return () => unsubscribe();
-  }, [userId]);
-
-  const parseInputDate = (input) => {
-    const [datePart, timePart] = input.split('|'); // Split into date and time parts
-    const formattedDate = `${datePart} ${timePart}`; // Combine date and time
-    return new Date(formattedDate); // Create Date object
-  };
-
-  // Function to mark notifications as read
-  const markAsRead = (notificationKey) => {
-    const notificationRef = ref(RtDatabase, `users/${userId}/notifications/${notificationKey}`);
-    update(notificationRef, { read: true }); // Update the 'read' status
-  };
-  const unreadNotifs = () => {
-    const unreads = notifications.filter(notification => !notification.read).length
-    return unreads
-  }
-  
-  notifs(unreadNotifs())
-  
   const openNotif = (DV) =>{
     const document = OpDocuments.documents[DV].data
     navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
   }
+
+  const formateDateTime = (date, time) => {
+    if (!date && !time) return null;
+    const formattedDateString = `${date} ${time}`;
+
+    return parse(formattedDateString, 'MMMM dd, yyyy hh:mm:ss a', new Date());
+  }
   
   return (
-    <div>
-      <h3 className='font-semibold text-xl my-2'>Notifications</h3>
-      <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
-        {notifications.length > 0 ? (
-          notifications.map((notification) => (
-            <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-gray-200' 
-            key={notification.key} 
-            onClick={() => {
-              markAsRead(notification.key)
-              console.log('hit notif', notification.input)
-              const dvNo = notification.input.split('|').slice(-1)[0]
-              openNotif(dvNo)
-              }}>
-              <p ><strong>{notification.input.split('|').slice()[3].replace(',', ' ')}</strong> has successfully transferred the document: <strong>{notification.input.split('|').slice()[2]}</strong></p>
-              {!notification.read && <strong className='flex items-end justify-end'> Unread</strong>}
-            </li>
-          ))
-        ) : (
-          <li className='text-center'>No notifications found</li>
-        )}
-      </ul>
-    </div>
+    <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-gray-200' 
+      onClick={() => {
+      markAsRead(notification.key)
+      console.log('hit notif', notification.input)
+      const dvNo = notifData.DV
+      openNotif(dvNo)
+    }}>
+      <p ><strong>{notifData.name.replace(',', ' ')}</strong> has successfully transferred the document: <strong>{notifData.docName}</strong></p>
+      <p className='text-xs mt-2'>{formatDistanceToNow(formateDateTime(notifData.date, notifData.time), { addSuffix: true })}</p>
+      {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}
+    </li>
   );
 };
 
 Notification.propTypes = {
-  userId: PropTypes.string.isRequired,
-  notifs: PropTypes.func.isRequired
+  notification: PropTypes.object.isRequired,
+  markAsRead: PropTypes.func.isRequired
 }
 
 export default Notification;

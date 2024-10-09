@@ -9,6 +9,7 @@ import DisbursementVoucher from './DisbursementVoucher';
 import Swal from 'sweetalert2';
 import { useDeleteDisbursement } from "../hooks/useDeleteDisbursement";
 import { useToOperator } from "../hooks/useToOperator";
+import { useBackToEditor } from "../hooks/useBackToEditor";
 
 
 const ViewDocument = () => {
@@ -21,6 +22,7 @@ const ViewDocument = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { deleteDV } = useDeleteDisbursement();
   const { submitDoc, isLoading, error } = useToOperator()
+  const {returnDoc, isLoadingReturn_OpToEditor, errorReturn_OpToEditor} = useBackToEditor();
 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
@@ -60,7 +62,7 @@ const ViewDocument = () => {
   }, [id])
 
   useEffect(() => {
-    if (documents) { 
+    if (documents) {
       const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
       if (selectedDocument) {
         console.log('Editor',selectedDocument[1])
@@ -132,7 +134,37 @@ const ViewDocument = () => {
   const isDisabled = idStatus.status === 'In Review' && idStatus.type === '4';
 
   const returnDV = async() => {
-
+    const data = {
+      DV: idStatus.id,
+      payee: doc.payee
+    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Return it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await returnDoc(data)
+        if (res) {
+          Swal.fire({
+            title: "Submitted!",
+            text: "Your document has been returned.",
+            icon: "success",
+          });
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {error},
+            icon: "error",
+          });
+        }
+      }
+    });
   }
 
   return (
@@ -151,7 +183,7 @@ const ViewDocument = () => {
                 <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
                   <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>
                   <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
-                  <button disabled={isDisabled} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>
+                  <button disabled={isDisabled || isLoadingReturn_OpToEditor} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>
                 </div>
               </>}
           </div>
