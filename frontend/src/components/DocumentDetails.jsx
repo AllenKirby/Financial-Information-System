@@ -15,7 +15,7 @@ const DocumentDetails = ({ documents, type }) => {
     else if(documents && type === '3'){
       setDocu(documents.data)
     }
-  },[documents, type, docu])
+  },[documents, type])
   
 
   const formateDateTime = (datetime) => {

@@ -22,7 +22,6 @@ editorRouter.get('/getAccountCode', getAccountCodes)
 editorRouter.get('/getDV', retrieveDV)
 editorRouter.delete('/deleteDV/:id', deleteDV)
 editorRouter.patch('/updateDV/:id', updateDV)
-// editorRouter.post('/next', )
 
 
 module.exports = editorRouter;
