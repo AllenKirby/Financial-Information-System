@@ -3,6 +3,8 @@ import { useDisbursementContext } from '../hooks/useDisbursementContext'
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
+import { firestore } from "../config/firebase-config"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
 
 //Components
 import Navbar from "../components/Navbar"
@@ -59,7 +61,26 @@ const EditorPage = () => {
     if(user){
       retrieveDV()
     }
-  }, [user, dispatch, documents])
+
+    const q = query(collection(firestore, 'records'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+
+      const updatedDocuments = snapshot.docChanges().reduce((acc, change) => {
+        if(change.type === 'modified' && !change.doc.metadata.hasPendingWrites){
+          const docId = change.doc.id;
+          acc[docId] = { ...change.doc.data() };
+        }
+        return acc;
+      }, {});
+
+      if (Object.keys(updatedDocuments).length > 0) {  // Only dispatch if there are updated documents
+        console.log(updatedDocuments);
+        dispatch({ type: 'UPDATE_DOCUMENT', payload: updatedDocuments });
+      }
+    })
+
+    return () => unsubscribe()
+  }, [user, dispatch])
 
   return (
     <main className="h-screen w-full flex bg-gray-100 p-3">

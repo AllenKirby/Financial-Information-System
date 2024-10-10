@@ -8,6 +8,7 @@ export const useUpdateDisbursement = () => {
     const { dispatch } = useDisbursementContext()
 
     const updateDV = async(data, id) => {
+        console.log('updating')
         seterrorForUpdate(null)
         setisLoadingForUpdate(true)
         try {
