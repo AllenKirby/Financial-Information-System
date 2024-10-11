@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { useDisbursementContext } from '../hooks/useDisbursementContext';
 import { parse, formatDistanceToNow } from 'date-fns';
 
 
@@ -9,8 +8,9 @@ const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
   const [statusColor, setStatusColor] = useState('')
   const [docu, setDocu] = useState(null)
-  const [dateTime, setDateTime] = useState({date: '', time: ''})
   // console.log("documents details: ", documents)
+
+  console.log('documents: ', documents)
 
 
   useEffect(()=>{
@@ -19,7 +19,9 @@ const DocumentDetails = ({ documents, type }) => {
     }
     else if(documents && type === '3'){
       setDocu(documents.data)
-
+    }
+    else if(documents && type === '2'){
+      setDocu(documents.data)
     }
   },[documents, type]) //[documents, type, docu], [documents], [] 
 
@@ -56,7 +58,7 @@ const DocumentDetails = ({ documents, type }) => {
       </h2>
       {/* Status column */}
       <h2 className="text-xs font-light flex items-center justify-center w-1/6">
-        <div className={`${statusColor} w-20 h-auto rounded-md text-center px-2 py-1`}>
+        <div className={`${statusColor} w-auto h-auto rounded-md text-center px-2 py-1`}>
           { docu?.status }
         </div>
       </h2><h2 className="text-xs font-light text-center w-1/6">

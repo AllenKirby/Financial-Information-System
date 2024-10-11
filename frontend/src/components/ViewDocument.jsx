@@ -10,6 +10,8 @@ import Swal from 'sweetalert2';
 import { useDeleteDisbursement } from "../hooks/useDeleteDisbursement";
 import { useToOperator } from "../hooks/useToOperator";
 import { useBackToEditor } from "../hooks/useBackToEditor";
+import { useToHead } from "../hooks/useToHead";
+import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
 
 
 const ViewDocument = () => {
@@ -23,11 +25,13 @@ const ViewDocument = () => {
   const { deleteDV } = useDeleteDisbursement();
   const { submitDoc, isLoading, error } = useToOperator()
   const {returnDoc, isLoadingReturn_OpToEditor, errorReturn_OpToEditor} = useBackToEditor();
+  const { transferToHead, isLoadingToHead, errorToHead } = useToHead()
+  const { HeadDocuments} = useHeadDisbursementContext()
 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
   } 
-
+  
   const delDV = async (e) => {
     e.stopPropagation();
 
@@ -53,7 +57,6 @@ const ViewDocument = () => {
       }
     });
   };
-  
   useEffect(() => {
     if(id){
       const decoded = decodeURIComponent(id)
@@ -61,8 +64,11 @@ const ViewDocument = () => {
     }
   }, [id])
 
+  console.log(HeadDocuments)
+
   useEffect(() => {
-    if (documents) {
+
+    if (idStatus.type === '4') {
       const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
       if (selectedDocument) {
         console.log('Editor',selectedDocument[1])
@@ -70,7 +76,7 @@ const ViewDocument = () => {
       } else {
         console.log("Error finding the document");
       }
-    }else if (OpDocuments){
+    }else if (idStatus.type === '3'){
       const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
         console.log('Operator',selectedDocument[1].data)
@@ -78,8 +84,19 @@ const ViewDocument = () => {
       } else {
         console.log("Error finding the operator document");
       }
+    }else if (idStatus.type === '2'){
+      console.log('hit')
+      console.log(HeadDocuments)
+      const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
+      console.log(selectedDocument)
+      if (selectedDocument) {
+        console.log('Head',selectedDocument[1].data)
+        setDoc(selectedDocument[1].data);
+      } else {
+        console.log("Error finding the Head document");
+      }
     }
-  }, [OpDocuments, documents, idStatus]); 
+  }, [OpDocuments, HeadDocuments, documents, idStatus]); 
 
   if (!doc) {
     return <div className="w-a4-width bg-gray-200 h-full animate-blink rounded-md"></div>;
@@ -132,6 +149,7 @@ const ViewDocument = () => {
     });
   }
   const isDisabled = idStatus.status === 'In Review' && idStatus.type === '4';
+  const isDisabledForOp = idStatus.status === 'Under Review' && idStatus.type === '3';
 
   const returnDV = async() => {
     const data = {
@@ -151,7 +169,7 @@ const ViewDocument = () => {
         const res = await returnDoc(data)
         if (res) {
           Swal.fire({
-            title: "Submitted!",
+            title: "Returned",
             text: "Your document has been returned.",
             icon: "success",
           });
@@ -159,7 +177,42 @@ const ViewDocument = () => {
         else{
           Swal.fire({
             title: "Error!",
-            text: {error},
+            text: {errorReturn_OpToEditor},
+            icon: "error",
+          });
+        }
+      }
+    });
+  }
+
+  const handleSubmitForOp = async() => {
+    const data = {
+      DV: idStatus.id,
+      payee: doc.payee
+    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Submit it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await transferToHead(data)
+        if (res) {
+          Swal.fire({
+            title: "Submitted!",
+            text: "Your document has been submitted.",
+            icon: "success",
+          });
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {errorToHead},
             icon: "error",
           });
         }
@@ -172,7 +225,8 @@ const ViewDocument = () => {
       <div className="px-5 py-4 flex items-center justify-between"> 
         <button onClick={() => window.history.back()} className="px-5 py-2 bg-customgreen rounded-lg text-white hover:scale-125 transition-all duration-150"><FaAngleLeft size={20}/></button>
         <div className="flex items-center justify-center gap-16">
-          <button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>
+          {idStatus.type === '4' && (<button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
+          {idStatus.type === '3' && (<button disabled={isDisabledForOp || isLoadingToHead} onClick={handleSubmitForOp} className={`px-5 py-2 rounded-lg ${ isDisabled ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
           {/* Options column */}
           <div className=" flex items-center justify-end w-1/6 relative">
             <button onClick={() => setDropDown(!dropDown)} className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white">
@@ -181,7 +235,7 @@ const ViewDocument = () => {
             {dropDown && <>
                 <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)}></div>
                 <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
-                  <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>
+                  {idStatus.type !== '2' && <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>}
                   <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
                   <button disabled={isDisabled || isLoadingReturn_OpToEditor} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>
                 </div>
