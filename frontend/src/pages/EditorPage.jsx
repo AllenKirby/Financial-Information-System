@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
-import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { collection, query, onSnapshot } from "firebase/firestore"
 
 //Components
 import Navbar from "../components/Navbar"
@@ -25,9 +25,7 @@ const EditorPage = () => {
   ];
 
   useEffect(() => {
-    if(page.pathname === "/editor/disbursementvoucher"){
-      setLocation('Disbursement Voucher')
-    }else if(page.pathname === "/editor/disbursementrecords"){
+    if(page.pathname === "/editor/disbursementrecords"){
       setLocation('Disbursement Records')
     }
   }, [page.pathname])
@@ -80,7 +78,7 @@ const EditorPage = () => {
     })
 
     return () => unsubscribe()
-  }, [user, dispatch])
+  }, [user, documents,  dispatch])
 
   return (
     <main className="h-screen w-full flex bg-gray-100 p-3">

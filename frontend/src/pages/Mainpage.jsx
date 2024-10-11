@@ -12,6 +12,8 @@ import PrivateRoute from '../AuthComponents/PrivateRoute';
 import ViewDocument from "../components/ViewDocument";
 import OperatorPage from "./OperatorPage";
 import Disbursementrecords from '../components/OperatorComponents/DisbursementRecords'
+import HeadPage from "./HeadPage";
+import DisbursementRecordsHead from "../components/HeadComponents/DisbursementRecordsHead";
 
 
 const Mainpage = () => {
@@ -33,6 +35,11 @@ const Mainpage = () => {
         </Route>
         <Route path="/operator" element={<OperatorPage/>}>
           <Route path="disbursementrecords" element={<Disbursementrecords/>}>
+            <Route path=":id" element={<ViewDocument/>}/>
+          </Route>
+        </Route>
+        <Route path="/head" element={<HeadPage/>}>
+          <Route path="disbursementrecords" element={<DisbursementRecordsHead/>}>
             <Route path=":id" element={<ViewDocument/>}/>
           </Route>
         </Route>

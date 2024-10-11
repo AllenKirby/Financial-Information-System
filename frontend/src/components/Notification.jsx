@@ -4,6 +4,8 @@ import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
 import { useEffect, useState } from 'react';
+import { useDisbursementContext } from '../hooks/useDisbursementContext';
+import { useHeadDisbursementContext } from '../hooks/useHeadDisbursementContext';
 
 
 const Notification = ({ notification, markAsRead }) => {
@@ -11,6 +13,8 @@ const Notification = ({ notification, markAsRead }) => {
   const navigate = useNavigate();
   const { user } = useAuthContext()
   const [notifData, setNotifData] = useState({date: '', time: '', docName: '', name: '', DV: ''})
+  const { documents } = useDisbursementContext()
+  const { HeadDocuments } = useHeadDisbursementContext()
 
   
   useEffect(() => {
@@ -19,8 +23,19 @@ const Notification = ({ notification, markAsRead }) => {
   }, [notification.input]);
 
   const openNotif = (DV) =>{
-    const document = OpDocuments.documents[DV].data
-    navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+    console.log(user.role)
+    if(user.role === '3'){
+      const document = OpDocuments.documents[DV].data
+      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+    }else if(user.role === '4'){
+      // console.log(documents[DV])
+      const document = documents[DV]
+      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+    }else if(user.role === '2'){
+      console.log('sbashdhas', HeadDocuments)
+      const document = HeadDocuments[DV].data
+      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+    }
   }
 
   const formateDateTime = (date, time) => {

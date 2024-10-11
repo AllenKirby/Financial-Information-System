@@ -60,6 +60,7 @@ const UserManagement = () => {
           onChange={(e) => setUserData({ ...userData, role: e.target.value })}>
              <option value="" disabled>Select role</option>
             <option value="1">Admin</option>
+            <option value="2">Head</option>
             <option value="3">Operator</option>
             <option value="4">Editor</option>
           </select>
