@@ -28,6 +28,9 @@ const ViewDocument = () => {
   const { transferToHead, isLoadingToHead, errorToHead } = useToHead()
   const { HeadDocuments} = useHeadDisbursementContext()
 
+  let isDisabled = (idStatus.status !== 'Drafting' && idStatus.status !== 'Returned') && idStatus.type === '4';
+  const isDisabledForOp = idStatus.status !== 'In Review';
+
   const modal = () => {
     setIsModalOpen(!isModalOpen)
   } 
@@ -148,8 +151,6 @@ const ViewDocument = () => {
       }
     });
   }
-  const isDisabled = idStatus.status === 'In Review' && idStatus.type === '4';
-  const isDisabledForOp = idStatus.status === 'Under Review' && idStatus.type === '3';
 
   const returnDV = async() => {
     const data = {
@@ -173,6 +174,7 @@ const ViewDocument = () => {
             text: "Your document has been returned.",
             icon: "success",
           });
+          window.history.back()
         }
         else{
           Swal.fire({
@@ -208,6 +210,7 @@ const ViewDocument = () => {
             text: "Your document has been submitted.",
             icon: "success",
           });
+          window.history.back()
         }
         else{
           Swal.fire({
@@ -225,8 +228,8 @@ const ViewDocument = () => {
       <div className="px-5 py-4 flex items-center justify-between"> 
         <button onClick={() => window.history.back()} className="px-5 py-2 bg-customgreen rounded-lg text-white hover:scale-125 transition-all duration-150"><FaAngleLeft size={20}/></button>
         <div className="flex items-center justify-center gap-16">
-          {idStatus.type === '4' && (<button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
-          {idStatus.type === '3' && (<button disabled={isDisabledForOp || isLoadingToHead} onClick={handleSubmitForOp} className={`px-5 py-2 rounded-lg ${ isDisabled ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
+          {idStatus.type === '4' && (<button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoading ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
+          {idStatus.type === '3' && (<button disabled={isDisabledForOp || isLoadingToHead} onClick={handleSubmitForOp} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoadingToHead ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
           {/* Options column */}
           <div className=" flex items-center justify-end w-1/6 relative">
             <button onClick={() => setDropDown(!dropDown)} className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white">
@@ -236,8 +239,10 @@ const ViewDocument = () => {
                 <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)}></div>
                 <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
                   {idStatus.type !== '2' && <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>}
+                  {idStatus.type !== '2' && <button disabled={isDisabled || isLoadingReturn_OpToEditor} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>}
                   <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
-                  <button disabled={isDisabled || isLoadingReturn_OpToEditor} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>
+                  {idStatus.type === '2' && <button className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Operator</button>}
+                  {idStatus.type === '2' && <button className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Editor</button>}
                 </div>
               </>}
           </div>

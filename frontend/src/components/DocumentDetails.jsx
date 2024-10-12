@@ -38,6 +38,8 @@ const DocumentDetails = ({ documents, type }) => {
       setStatusColor('bg-gray-200 text-customFontColor')
     }else if (docu?.status === 'In Review'){
       setStatusColor('bg-blue-500 text-white')
+    }else if (docu?.status === 'Returned'){
+      setStatusColor('bg-red-500 text-white')
     }else if(docu?.status === 'Under Review'){
       setStatusColor('bg-orange-500 text-white')
     }else if(docu?.status === 'Approved'){
