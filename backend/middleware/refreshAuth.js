@@ -1,16 +1,12 @@
 const {admin, db}  = require('../firebase')
 
-const requireAuth = async (req, res, next) => {
-    let token = req.cookies.token
-    if(!token){
-        const authHeader = req.headers.authorization;
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            
-            return res.status(401).json({ success: false, message: 'Unauthorized: no token provided' });
-        }
-        token = authHeader.split(' ')[1];
+const refreshAuth = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        
+        return res.status(401).json({ success: false, message: 'Unauthorized: no token provided' });
     }
-    // console.log('auth')
+    token = authHeader.split(' ')[1];
     try{
         const decodedToken = await admin.auth().verifyIdToken(token);
         console.log(decodedToken)
@@ -26,10 +22,11 @@ const requireAuth = async (req, res, next) => {
         
         next()
     }catch(error){
+        console.log("EXPIRED TOKEN, CAN'T VERIFY!!!!!")
         return res.status(401).json({ success: false, message: 'Unauthorized: Invalid Token' });
     }
 
 
 }
 
-module.exports = requireAuth;
+module.exports = refreshAuth;
