@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useCreateAcc } from "../../hooks/useCreateAcc"
 import Swal from "sweetalert2"
+import Loader from "../Loader"
 
 const UserManagement = () => {
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
@@ -98,7 +99,7 @@ const UserManagement = () => {
           )}
         </div>
         <div className="w-full h-auto py-2 flex items-center justify-center">
-          <button disabled={isLoading} type="submit" className="px-14 py-3 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-100">Save</button>
+          <button disabled={isLoading} type="submit" className="px-14 py-3 bg-customgreen rounded-xl text-white hover:scale-125 transition-all duration-100">{isLoading ? <Loader /> : 'Save'}</button>
         </div>
         {error && (
           <div className="h-auto w-full py-3 text-center">

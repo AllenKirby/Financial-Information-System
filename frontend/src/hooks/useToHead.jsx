@@ -1,9 +1,11 @@
 import axios from "axios"
 import { useState } from "react"
+import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 
 export const useToHead = () => {
     const [isLoadingToHead, setIsLoadingToHead] = useState(false)
     const [errorToHead, setErrorToHead] = useState(null)
+    const { dispatch } = useOpDisbursementContext()
 
     const transferToHead = async(data) => {
         setErrorToHead(null)
@@ -16,6 +18,7 @@ export const useToHead = () => {
             if(res.status === 200){
                 const docu = res.data
                 console.log('document transferred to head', docu)
+                dispatch({type: 'UPDATE_OPDOCUMENT', payload: docu.update})
                 return true
             }
             

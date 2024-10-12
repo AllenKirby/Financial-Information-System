@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 
 import { FaRegUser } from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
+import { CiViewList } from "react-icons/ci";
 
 const AdminPage = () => {
     const page = useLocation()
@@ -13,6 +14,7 @@ const AdminPage = () => {
 
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
+        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
         { label: 'User Management', path: '/admin/usermanagement', icon: <FaRegUser size={15}/> },
     ];
 

@@ -71,7 +71,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
     console.log(payeeData);
     console.log(birData);
-
     const data = {
       payee_data: payeeData,
       bir_data: birData
@@ -357,7 +356,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             flag ? isLoadingForUpdate : isLoading
           }}
           className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
-          >{isLoading ? <Loader/> : 'Save'}</button>
+          >{isLoading ? <Loader /> : 'Save'}</button>
         <button 
           onClick={modal}
           className="py-2 px-10 rounded-md bg-gray-300 text-customFontColor hover:scale-125 transition-all duration-100"

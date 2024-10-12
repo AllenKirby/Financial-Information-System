@@ -128,7 +128,7 @@ const updateStatus = async (DV, dTPassed, flag) => {
     const docref = db.collection('records').doc(DV)
     await docref.update({
         dateTimePassed: dTPassed,
-        status: flag ? 'Drafting' : 'Under Review'
+        status: flag ? 'Returned' : 'Under Review'
     })
     const updatedDoc = await docref.get()
     return updatedDoc.data();

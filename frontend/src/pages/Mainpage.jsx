@@ -14,6 +14,7 @@ import OperatorPage from "./OperatorPage";
 import Disbursementrecords from '../components/OperatorComponents/DisbursementRecords'
 import HeadPage from "./HeadPage";
 import DisbursementRecordsHead from "../components/HeadComponents/DisbursementRecordsHead";
+import DisbursementRecordsAdmin from "../components/AdminComponents/DisbursementRecords"
 
 
 const Mainpage = () => {
@@ -25,6 +26,7 @@ const Mainpage = () => {
         <Route path="/admin" element={<PrivateRoute allowedRoles={['1']}><AdminPage/></PrivateRoute>}>
           <Route index element={<PrivateRoute allowedRoles={['1']}><Dashboard/></PrivateRoute>} />
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['1']}><Dashboard/></PrivateRoute>}/>
+          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}/>
           <Route path="usermanagement" element={<PrivateRoute allowedRoles={['1']}><UserManagement /></PrivateRoute>}/>
         </Route>
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>       
