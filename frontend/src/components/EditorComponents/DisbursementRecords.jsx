@@ -15,7 +15,7 @@ const DisbursementRecords = () => {
   const modal = () => setIsModalOpen(!isModalOpen)
 
   return (
-    <section className="w-4/5 p-3 h-[30rem] rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
+    <section className="w-4/5 p-3 h-full rounded-xl shadow-slate-200 shadow-customShadowStyle bg-white">
       {!id ? ( 
         <>
           <div className="w-full py-1 px-6 flex items-center justify-between">
