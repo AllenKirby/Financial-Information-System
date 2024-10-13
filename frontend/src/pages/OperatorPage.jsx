@@ -51,7 +51,7 @@ const OperatorPage = () => {
     };
     retriveData();
 
-    const q = query(collection(firestore, 'records'), where('status', '==', 'In Review'));
+    const q = query(collection(firestore, 'records'), where('status', 'in', ['In Review', 'Returned|3']));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = {data: {...doc.data()}};

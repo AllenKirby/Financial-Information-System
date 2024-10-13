@@ -6,12 +6,14 @@ import { useEffect, useState } from "react"
 import { useAuthContext } from "../hooks/useAuthContext"
 import axios from "axios"
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext"
+import { firestore } from "../config/firebase-config"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
 
 const HeadPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
     const { user } = useAuthContext() 
-    const { dispatch, HeadDocuments } = useHeadDisbursementContext()
+    const { dispatch, documents } = useHeadDisbursementContext()
 
 
     const navItems = [
@@ -24,9 +26,9 @@ const HeadPage = () => {
         }
       }, [page.pathname])
 
-    useEffect(() => {
+      useEffect(() => {
         const retrieveDV = async() => {
-            try {
+            if(!documents){ try {
                 const res = await axios.get('http://localhost:4000/head/read_records', {
                     withCredentials: true
                 })
@@ -37,17 +39,24 @@ const HeadPage = () => {
                 }
             } catch (error) {
                 console.log(error)
-            }
+            }}
         }
         if(user){
-            if(!HeadDocuments){
-                retrieveDV()
-            }
-            else {
-                console.log('Head Documents has been retrieved')
-            }
+            retrieveDV()
         }
-    }, [user, dispatch, HeadDocuments])
+
+        const q = query(collection(firestore, 'records'), where('status', '==', 'Under Review'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const newDocuments = snapshot.docs.reduce((acc, doc) => {
+            acc[doc.id] = {data: {...doc.data()}};
+            return acc;
+        }, {});
+        console.log(newDocuments)
+        dispatch({ type: 'SET_HEADDOCUMENTS', payload: newDocuments });
+        })
+
+        return () => unsubscribe()
+    }, [user, dispatch, documents])
 
   return (
     <main className="h-screen w-full flex bg-gray-100 p-3">

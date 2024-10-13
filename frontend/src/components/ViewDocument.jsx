@@ -12,6 +12,8 @@ import { useToOperator } from "../hooks/useToOperator";
 import { useBackToEditor } from "../hooks/useBackToEditor";
 import { useToHead } from "../hooks/useToHead";
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
+import { useReturnFromHead } from '../hooks/useReturnFromHead'
+import { useToAdmin } from "../hooks/useToAdmin";
 
 
 const ViewDocument = () => {
@@ -27,6 +29,8 @@ const ViewDocument = () => {
   const {returnDoc, isLoadingReturn_OpToEditor, errorReturn_OpToEditor} = useBackToEditor();
   const { transferToHead, isLoadingToHead, errorToHead } = useToHead()
   const { HeadDocuments} = useHeadDisbursementContext()
+  const {returnDocFromHeader, isLoadingReturn_fromHeader, errorReturn_fromHeader} = useReturnFromHead()
+  const {submitToAdmin, isLoadingToAdmin, errorToAdmin} = useToAdmin()
 
   let isDisabled = (idStatus.status !== 'Drafting' && idStatus.status !== 'Returned') && idStatus.type === '4';
   const isDisabledForOp = idStatus.status !== 'In Review';
@@ -66,8 +70,6 @@ const ViewDocument = () => {
       setIdStatus({id: decoded.split('|').slice()[0], status: decoded.split('|').slice()[1], type: decoded.split('|').slice()[2]})
     }
   }, [id])
-
-  console.log(HeadDocuments)
 
   useEffect(() => {
 
@@ -140,6 +142,7 @@ const ViewDocument = () => {
             text: "Your document has been submit.",
             icon: "success",
           });
+          window.history.back()
         }
         else{
           Swal.fire({
@@ -223,6 +226,83 @@ const ViewDocument = () => {
     });
   }
 
+  const handleReturn = (backToRole) => {
+    const data = {
+      DV: idStatus.id,
+      payee: doc.payee,
+      returnTo: backToRole
+    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Return it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        let res;
+        if(backToRole === '3'){
+          res = returnDocFromHeader(data)
+        }else if(backToRole === '4'){
+          res = returnDocFromHeader(data)
+        }
+        if (res) {
+          Swal.fire({
+            title: "Returned!",
+            text: "Your document has been returned.",
+            icon: "success",
+          });
+          window.history.back()
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {errorReturn_fromHeader},
+            icon: "error",
+          });
+        }
+      }
+    });
+  }
+
+  const handleSubmitForHead = async() => {
+    const data = {
+      DV: idStatus.id,
+      payee: doc.payee
+    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Submit it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await submitToAdmin(data)
+        if (res) {
+          Swal.fire({
+            title: "Submitted!",
+            text: "Your document has been submit.",
+            icon: "success",
+          });
+          window.history.back()
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {errorToAdmin},
+            icon: "error",
+          });
+        }
+      }
+    });
+  }
+
   return (
     <section className="w-full h-auto">
       <div className="px-5 py-4 flex items-center justify-between"> 
@@ -230,6 +310,7 @@ const ViewDocument = () => {
         <div className="flex items-center justify-center gap-16">
           {idStatus.type === '4' && (<button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoading ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
           {idStatus.type === '3' && (<button disabled={isDisabledForOp || isLoadingToHead} onClick={handleSubmitForOp} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoadingToHead ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
+          {idStatus.type === '2' && (<button disabled={isLoadingToAdmin} onClick={handleSubmitForHead} className={`px-5 py-2 rounded-lg ${isLoadingToAdmin ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
           {/* Options column */}
           <div className=" flex items-center justify-end w-1/6 relative">
             <button onClick={() => setDropDown(!dropDown)} className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white">
@@ -241,8 +322,8 @@ const ViewDocument = () => {
                   {idStatus.type !== '2' && <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>}
                   {idStatus.type !== '2' && <button disabled={isDisabled || isLoadingReturn_OpToEditor} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>}
                   <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
-                  {idStatus.type === '2' && <button className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Operator</button>}
-                  {idStatus.type === '2' && <button className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Editor</button>}
+                  {idStatus.type === '2' && <button onClick={() => handleReturn('3')} disabled={isLoadingReturn_fromHeader || isDisabled} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_fromHeader ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Operator</button>}
+                  {idStatus.type === '2' && <button onClick={() => handleReturn('4')} disabled={isLoadingReturn_fromHeader || isDisabled} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_fromHeader ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Editor</button>}
                 </div>
               </>}
           </div>
