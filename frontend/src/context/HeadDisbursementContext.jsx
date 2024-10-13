@@ -22,7 +22,7 @@ export const HeadDisbursementContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(HeadDisbursementReducer, {
         HeadDocuments: null
     })
-    console.log('Head Disbursement Context', state.HeadDocuments)
+    // console.log('Head Disbursement Context', state.HeadDocuments)
 
     return(
         <HeadDisbursementContext.Provider value={{...state, dispatch}}>

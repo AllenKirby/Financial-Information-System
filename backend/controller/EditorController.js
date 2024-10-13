@@ -196,18 +196,46 @@ const getAccountCodes = async (req, res) => {
     }
 }
 
+// const retrieveDV = async(req, res) => {
+//     try{
+//         console.log('retrieveDv hit')
+//         const docRef = db.collection('records')
+//         const dv = await docRef.get();
+    
+//         const documents = {}
+    
+//         dv.forEach(doc => {
+//             const data = doc.data();
+//             documents[data.DV] = data;
+//           });
+//         res.status(200).json(documents);
+//     }
+//     catch(error){
+//         console.error("Error retrieving documents: ", error);
+//         res.status(500).json({ success: false, error: error.message });
+//     } 
+// }
+
 const retrieveDV = async(req, res) => {
     try{
-        console.log('retrieveDv hit')
-        const docRef = db.collection('records')
-        const dv = await docRef.get();
-    
         const documents = {}
-    
-        dv.forEach(doc => {
-            const data = doc.data();
-            documents[data.DV] = data;
-          });
+        console.log('retrieveDv hit')
+
+        const recordsSnapshot = await db.collection('records')
+        .where('status', 'in', ['Drafting', 'Returned|4'])
+        .get()
+        recordsSnapshot.forEach((recordDoc) => {
+            if(recordDoc.exists){
+                const recordData = recordDoc.data();
+                documents[recordDoc.id] = recordData
+                
+                console.log(recordData)
+            }else{
+                console.log('No such document for keys');
+            }
+        })
+        console.log('after retrieveDv hit')
+        console.log(documents)
         res.status(200).json(documents);
     }
     catch(error){

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
-import { collection, query, onSnapshot } from "firebase/firestore"
+import { collection, query, onSnapshot, where } from "firebase/firestore"
 
 //Components
 import Navbar from "../components/Navbar"
@@ -33,24 +33,20 @@ const EditorPage = () => {
 
   useEffect(() => {
     const retrieveDV = async() => {
-      if(documents){
-        console.log('Disbursement Records has been retrieved')
-        
-      }else{
-        try{
-          console.log('start')
-          const getDocu = await axios.get('http://localhost:4000/editor/getDV', {
-            withCredentials: true
-          })
-          
-          if(getDocu.status === 200){
-            const documents = getDocu.data
-            console.log('end')
-            console.log(documents)
-            dispatch({type: 'SET_DOCUMENTS', payload: documents})
-          }
-        }
-        catch(error){
+        if(!documents){
+          try{
+            console.log('start')
+            const getDocu = await axios.get('http://localhost:4000/editor/getDV', {
+              withCredentials: true
+            })
+            
+            if(getDocu.status === 200){
+              const documents = getDocu.data
+              console.log('end')
+              console.log(documents)
+              dispatch({type: 'SET_DOCUMENTS', payload: documents})
+            }
+          }catch(error){
           console.log(error)
         }
       }
@@ -60,24 +56,18 @@ const EditorPage = () => {
       retrieveDV()
     }
 
-    const q = query(collection(firestore, 'records'));
+    const q = query(collection(firestore, 'records'), where('status', 'in', ['Drafting', 'Returned|4']));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-
-      const updatedDocuments = snapshot.docChanges().reduce((acc, change) => {
-        if(change.type === 'modified' && !change.doc.metadata.hasPendingWrites){
-          const docId = change.doc.id;
-          acc[docId] = { ...change.doc.data() };
-        }
+      const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
+        acc[doc.id] = {...doc.data()}
         return acc;
       }, {});
 
-      if (Object.keys(updatedDocuments).length > 0) {  // Only dispatch if there are updated documents
-        console.log(updatedDocuments);
-        dispatch({ type: 'UPDATE_DOCUMENT', payload: updatedDocuments });
-      }
+      // console.log(updatedDocuments);
+      dispatch({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
     })
 
-    return () => unsubscribe()
+    return () => unsubscribe()   
   }, [user, documents,  dispatch])
 
   return (

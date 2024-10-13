@@ -54,6 +54,25 @@ const createAccount = async (req, res) => {
   }
 }
 
+const retrieveAllDV = async(req, res) => {
+  try{
+    const docRef = db.collection('records')
+    const dv = await docRef.get();
+
+    const documents = {}
+
+    dv.forEach(doc => {
+        const data = doc.data();
+        documents[data.DV] = data;
+      });
+    res.status(200).json(documents);
+}
+catch(error){
+    console.error("Error retrieving documents: ", error);
+    res.status(500).json({ success: false, error: error.message });
+} 
+}
+
 // const uploadJSOn = async () => {
 //   try {
 //     const data = JSON.parse(fs.readFileSync('C:/Users/Administrator/Downloads/assests1.json', 'utf8'));
@@ -73,6 +92,6 @@ const createAccount = async (req, res) => {
 // }
 
 module.exports = {
-
+  retrieveAllDV,
   createAccount
 };

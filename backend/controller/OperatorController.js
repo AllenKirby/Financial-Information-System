@@ -5,7 +5,7 @@ const readPassed_records = async (req, res) => {
         const documents = {};
        
         const recordsSnapshot = await db.collection('records')
-            .where('status', '==', 'In Review')
+            .where('status', 'in', ['In Review', 'Returned|3'])
             .get();
         
         recordsSnapshot.forEach((recordDoc) => {
@@ -124,11 +124,21 @@ const opReturnDocu = async (req, res) => {
     }
 }
 
+// const updateStatus = async (DV, dTPassed, flag) => {
+//     const docref = db.collection('records').doc(DV)
+//     await docref.update({
+//         dateTimePassed: dTPassed,
+//         status: flag ? 'Returned' : 'Under Review'
+//     })
+//     const updatedDoc = await docref.get()
+//     return updatedDoc.data();
+// }
+
 const updateStatus = async (DV, dTPassed, flag) => {
     const docref = db.collection('records').doc(DV)
     await docref.update({
         dateTimePassed: dTPassed,
-        status: flag ? 'Returned' : 'Under Review'
+        status: flag ? 'Returned|4' : 'Under Review'
     })
     const updatedDoc = await docref.get()
     return updatedDoc.data();
