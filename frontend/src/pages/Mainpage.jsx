@@ -27,12 +27,14 @@ const Mainpage = () => {
         <Route path="/admin" element={<PrivateRoute allowedRoles={['1']}><AdminPage/></PrivateRoute>}>
           <Route index element={<PrivateRoute allowedRoles={['1']}><Dashboard/></PrivateRoute>} />
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['1']}><Dashboard/></PrivateRoute>}/>
-          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}/>
+          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}>
+            <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
+          </Route>
           <Route path="usermanagement" element={<PrivateRoute allowedRoles={['1']}><UserManagement /></PrivateRoute>}/>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
         </Route>
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>       
-          <Route index element={<PrivateRoute allowedRoles={['1']}><DisbursementRecords/></PrivateRoute>} />
+          <Route index element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>} />
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>

@@ -14,21 +14,27 @@ import { useToHead } from "../hooks/useToHead";
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
 import { useReturnFromHead } from '../hooks/useReturnFromHead'
 import { useToAdmin } from "../hooks/useToAdmin";
+import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 
 
 const ViewDocument = () => {
   const { id } = useParams();
-  const { documents } = useDisbursementContext();
   const [doc, setDoc] = useState(null);
-  const {OpDocuments} = useOpDisbursementContext();
   const [idStatus, setIdStatus] = useState({id: '', status: '', type: ''})
   const [dropDown, setDropDown] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  
+  //contexts
+  const { documents } = useDisbursementContext();
+  const {OpDocuments} = useOpDisbursementContext();
+  const { HeadDocuments} = useHeadDisbursementContext()
+  const { AdminDocuments } = useAdminDisbursementContext()
+
+  //hooks
   const { deleteDV } = useDeleteDisbursement();
   const { submitDoc, isLoading, error } = useToOperator()
   const {returnDoc, isLoadingReturn_OpToEditor, errorReturn_OpToEditor} = useBackToEditor();
   const { transferToHead, isLoadingToHead, errorToHead } = useToHead()
-  const { HeadDocuments} = useHeadDisbursementContext()
   const {returnDocFromHeader, isLoadingReturn_fromHeader, errorReturn_fromHeader} = useReturnFromHead()
   const {submitToAdmin, isLoadingToAdmin, errorToAdmin} = useToAdmin()
 
@@ -90,10 +96,15 @@ const ViewDocument = () => {
         console.log("Error finding the operator document");
       }
     }else if (idStatus.type === '2'){
-      console.log('hit')
-      console.log(HeadDocuments)
       const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
-      console.log(selectedDocument)
+      if (selectedDocument) {
+        console.log('Head',selectedDocument[1].data)
+        setDoc(selectedDocument[1].data);
+      } else {
+        console.log("Error finding the Head document");
+      }
+    }else if(idStatus.type === '1'){
+      const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
         console.log('Head',selectedDocument[1].data)
         setDoc(selectedDocument[1].data);
@@ -101,7 +112,7 @@ const ViewDocument = () => {
         console.log("Error finding the Head document");
       }
     }
-  }, [OpDocuments, HeadDocuments, documents, idStatus]); 
+  }, [OpDocuments, HeadDocuments, documents, idStatus, AdminDocuments]); 
 
   if (!doc) {
     return <div className="w-a4-width bg-gray-200 h-full animate-blink rounded-md"></div>;
