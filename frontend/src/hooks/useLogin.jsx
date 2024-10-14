@@ -16,24 +16,32 @@ export const useLogin = () => {
         setError(null)
         try{
           const userCredential = await signInWithEmailAndPassword(auth, email, password);
+          const user = userCredential.user;
           const token = await userCredential.user.getIdToken();
-         
-          const response = await axios.post('http://localhost:4000/user/login', {}, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}` 
-            },
-            withCredentials: true,
-          });
+
+          //remove !
+          if (!user.emailVerified) {
+            console.log('hit')
+            const response = await axios.post('http://localhost:4000/user/login', {}, {
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}` 
+              },
+              withCredentials: true,
+            });
           
-          console.log(response)
-          if (response.status === 200) {
-            console.log("success")
-            console.log(response.data)
-            cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
-            dispatch({type: 'LOGIN', payload: response.data})
+            console.log(response)
+            if (response.status === 200) {
+              console.log("success")
+              console.log(response.data)
+              cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
+              dispatch({type: 'LOGIN', payload: response.data})
+              setIsLoading(false)
+            }
+          }else{
             setIsLoading(false)
-          } 
+            setError('Please verify your email.')
+          }
         }
         catch(error){
           setIsLoading(false)

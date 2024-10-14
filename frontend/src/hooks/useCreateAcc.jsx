@@ -1,6 +1,6 @@
 import {useState} from 'react'
 import {auth} from '../config/firebase-config';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import axios from 'axios'
 
 export const useCreateAcc = () => {
@@ -14,7 +14,7 @@ export const useCreateAcc = () => {
         try {
             const newUser = await createUserWithEmailAndPassword(auth, userData.email, userData.password)
             console.log(newUser)
-            // const uid = newUser.user.uid
+            sendEmailVerification(newUser.user);
             const newUser_token = await newUser.user.getIdToken();
             const data = {
                 role: userData.role,
