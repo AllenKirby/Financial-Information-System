@@ -54,23 +54,30 @@ const createAccount = async (req, res) => {
   }
 }
 
-const retrieveAllDV = async(req, res) => {
+const getAllLogs = async(req, res) => {
   try{
-    const docRef = db.collection('records')
-    const dv = await docRef.get();
+    const docRef = db.collection('passed_records').doc('History_Logs')
+    const data = await docRef.get();
 
-    const documents = {}
+    const arrLogs = []
 
-    dv.forEach(doc => {
-        const data = doc.data();
-        documents[data.DV] = data;
-      });
-    res.status(200).json(documents);
-}
-catch(error){
+    if(data.exists){
+      const logs = data.data()
+
+      for(const key in logs){
+        arrLogs.push(logs[key])
+      } 
+      console.log(arrLogs)
+      res.status(200).json(arrLogs);
+    }
+    else{
+      console.log('No History Logs Founds')
+    }  
+  }
+  catch(error){
     console.error("Error retrieving documents: ", error);
     res.status(500).json({ success: false, error: error.message });
-} 
+  } 
 }
 
 // const uploadJSOn = async () => {
@@ -119,7 +126,7 @@ const readAdmin_records = async(req, res) => {
 }
 
 module.exports = {
-  retrieveAllDV,
+  getAllLogs,
   createAccount,
   readAdmin_records
 };
