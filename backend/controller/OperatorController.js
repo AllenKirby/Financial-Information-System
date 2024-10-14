@@ -107,15 +107,18 @@ const opReturnDocu = async (req, res) => {
     });
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
+    const returnedBy = `${dispName}|${dateTimePassed}`
+    const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
 
     try{
-        const updatedDocu = await updateStatus(DV, dateTimePassed, true)
+        const updatedDocu = await updateStatus(DV, returnedBy, true)
         const returnData = {
             [DV] : updatedDocu
         }
         console.log(`updated docu: ${JSON.stringify(returnData, null, 2)}`)
         const listOfEditorAcc = await getListOfEditorAccounts();
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
+        await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
     }catch(error){
@@ -135,14 +138,18 @@ const opReturnDocu = async (req, res) => {
 // }
 
 const updateStatus = async (DV, dTPassed, flag) => {
-    const docref = db.collection('records').doc(DV)
-    await docref.update({
-        dateTimePassed: dTPassed,
-        status: flag ? 'Returned|4' : 'Under Review'
-    })
-    const updatedDoc = await docref.get()
+    const docref = db.collection('records').doc(DV);
+
+    const updateData = flag ? 
+        { returnedBy: dTPassed, status: 'Returned|4' } : 
+        { updatedBy: dTPassed, status: 'Under Review' };
+
+    await docref.update(updateData);
+
+    const updatedDoc = await docref.get();
     return updatedDoc.data();
-}
+};
+
 
 const getListOfEditorAccounts = async () => {
     try{
@@ -196,14 +203,17 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
     });
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
+    const updatedBy = `${dispName}|${dateTimePassed}`
+    const logs = `${payee}|${DV}|Updated By ${dispName}|${dateTimePassed}`
 
     try {
-        const updatedDocu = await updateStatus(DV, dateTimePassed, false)
+        const updatedDocu = await updateStatus(DV, updatedBy, false)
         const returnData = {
             [DV] : updatedDocu
         }
         const listOfOpAcc = await getListOfHeadAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});
@@ -230,6 +240,20 @@ const getListOfHeadAccounts = async () => {
     return [];
 }
 
+const setHistoryLogs = async(DT, logs) => {
+    try {
+        const docref = db.collection('passed_records').doc('History_Logs')
+        docref.set({
+            [DT]: logs
+        }, {merge: true})
 
+        const historyLogs = await docref.get()
+        return historyLogs.data();
+
+    }catch(error){
+        console.error("Error History Logs: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
 
 module.exports = {readPassed_records, operatorInput, opReturnDocu, transferDocument}

@@ -45,15 +45,18 @@ const returnRecordTo = async(req, res) => {
     });
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
+    const returnedBy = `${dispName}|${dateTimePassed}`
+    const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
     
     try{
-        const updatedDocu = await updateStatus(DV, dateTimePassed, returnTo)
+        const updatedDocu = await updateStatus(DV, returnedBy, returnTo)
         const returnData = {
             [DV] : updatedDocu
         }
         console.log(`updated docu: ${JSON.stringify(returnData, null, 2)}`)
         const listOfEditorAcc = await getListOfAccount(returnTo);
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
+        await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
 
@@ -69,7 +72,7 @@ const updateStatus = async (DV, dTPassed, returnToRole) => {
         const returnType = `Returned|${returnToRole}`
         const docref = db.collection('records').doc(DV)
         await docref.update({
-            dateTimePassed: dTPassed,
+            returnedBy: dTPassed,
             status: returnType
         })
         const updatedDoc = await docref.get()
@@ -83,7 +86,7 @@ const updateStatusToApproved = async(DV, DTpass) => {
     try {
         const docref = db.collection('records').doc(DV)
         await docref.update({
-            dateTimePassed: DTpass,
+            reviewedBy: DTpass,
             status: 'Approved'
         })
         const updatedDoc = await docref.get()
@@ -144,20 +147,39 @@ const transferDocument = async (req, res) => {
     });
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
+    const reviewedBy = `${dispName}|${dateTimePassed}`
+    const logs = `${payee}|${DV}|Reviewed By ${dispName}|${dateTimePassed}`
 
     try {
-        const updatedDocu = await updateStatusToApproved(DV, dateTimePassed)
+        const updatedDocu = await updateStatusToApproved(DV, reviewedBy)
         const returnData = {
             [DV] : updatedDocu
         }
         const listOfOpAcc = await getListOfAccount('1');
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});
     }catch(error){
         console.log('error creating passed records: ', error)
         res.status(500).json({success: false, message: `error creating passed records: ${error}`});
+    }
+}
+
+const setHistoryLogs = async(DT, logs) => {
+    try {
+        const docref = db.collection('passed_records').doc('History_Logs')
+        docref.set({
+            [DT]: logs
+        }, {merge: true})
+
+        const historyLogs = await docref.get()
+        return historyLogs.data();
+
+    }catch(error){
+        console.error("Error History Logs: ", error);
+        res.status(500).json({ success: false, error: error.message });
     }
 }
 

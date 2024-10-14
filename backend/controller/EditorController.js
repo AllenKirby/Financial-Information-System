@@ -82,7 +82,7 @@ const createDV = async (req, res) => {
 const updateStatus = async (DV, dTPassed) => {
     const docref = db.collection('records').doc(DV)
     await docref.update({
-        dateTimePassed: dTPassed,
+        submittedBy: dTPassed,
         status: 'In Review'
     })
     const updatedDoc = await docref.get()
@@ -108,6 +108,8 @@ const passDocument = async (req, res) => {
     });
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
+    const submittedBy = `${dispName}|${dateTimePassed }`
+    const logs = `${payee}|${DV}|Submitted By ${dispName}|${dateTimePassed}`
 
     try {
         // const docRef = db.collection('passed_records').doc('editor');
@@ -118,7 +120,7 @@ const passDocument = async (req, res) => {
         //     await docRef.set(data);
         // }
 
-        const updatedDocu = await updateStatus(DV, dateTimePassed)
+        const updatedDocu = await updateStatus(DV, submittedBy)
         const returnData = {
             [DV] : updatedDocu
         }
@@ -126,6 +128,7 @@ const passDocument = async (req, res) => {
         // console.log(`record: ${JSON.stringify(data, null, 2)}`)
         const listOfOpAcc = await getListOfOperatorAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});
@@ -317,6 +320,22 @@ const updateDV = async(req, res) => {
         res.status(200).json(document)
     } catch (error) {
         console.error("Error updating document: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const setHistoryLogs = async(DT, logs) => {
+    try {
+        const docref = db.collection('passed_records').doc('History_Logs')
+        docref.set({
+            [DT]: logs
+        }, {merge: true})
+
+        const historyLogs = await docref.get()
+        return historyLogs.data();
+
+    }catch(error){
+        console.error("Error History Logs: ", error);
         res.status(500).json({ success: false, error: error.message });
     }
 }
