@@ -137,7 +137,7 @@ const Header = ({ currentPage}) => {
         </div>
 
         <div className="w-auto flex py-2 pr-3 pl-4 gap-1 rounded-full bg-slate-100 relative">
-          <p>{user?.name.split(',').slice()[0]}</p>
+          <p>{user?.name}</p>
           <button onClick={() => setDropDown(!dropDown)} className="hover:bg-white rounded-lg px-1 py-1">
             {!dropDown ? <FaAngleDown /> : <FaAngleUp />}
           </button>

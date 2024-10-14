@@ -64,13 +64,12 @@ const EditorPage = () => {
         return acc;
       }, {});
 
-      // console.log(updatedDocuments);
-      dispatch({ type: 'UPDATE_DOCUMENTS', payload: updatedDocuments });
-      prevDocumentsRef.current = updatedDocuments;
+      console.log(updatedDocuments);
+      dispatch({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
     })
 
     return () => unsubscribe()   
-  }, [dispatch, documents, user])
+  }, [dispatch])
 
   return (
     <main className="h-screen w-full flex bg-gray-100 p-3">

@@ -25,5 +25,5 @@ export const AuthRole = () => {
     return <Login />;
   }
 
-  return <div>Oopss</div>;
+  return <Login />;
 };

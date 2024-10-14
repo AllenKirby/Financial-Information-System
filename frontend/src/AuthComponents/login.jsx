@@ -3,6 +3,7 @@ import { useLogin } from "../hooks/useLogin";
 import bgImage from '../assets/images/NIAimg.png';
 import Loader from "../components/Loader";
 
+
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
     const [email, setEmail] = useState('')
