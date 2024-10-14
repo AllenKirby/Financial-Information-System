@@ -7,13 +7,16 @@ const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
   const [docu, setDocu] = useState(null);
   const [Status, setStatus] = useState('');
-
+  console.log(documents)
   useEffect(() => {
     if (documents && type === '4') {
       setDocu(documents);
     } else if (documents && type === '3') {
       setDocu(documents.data);
     } else if (documents && type === '2') {
+      setDocu(documents.data);
+    }
+    else if (documents && type === '1') {
       setDocu(documents.data);
     }
   }, [documents, type]);

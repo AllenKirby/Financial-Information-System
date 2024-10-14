@@ -8,10 +8,17 @@ import { FaRegUser } from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
 import { CiViewList } from "react-icons/ci";
 import { TbLogs } from "react-icons/tb";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
+import axios from "axios";
+import { firestore } from "../config/firebase-config"
+import { collection, query, where, onSnapshot } from "firebase/firestore"
 
 const AdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
+    const { user } = useAuthContext()
+    const {documents, dispatch } = useAdminDisbursementContext()
 
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
@@ -32,6 +39,39 @@ const AdminPage = () => {
         }
         
       }, [page.pathname])
+
+      useEffect(() => {
+        const retrieveDV = async () => {
+            if(!documents){
+                try {
+                    const res = await axios.get('http://localhost:4000/admin/approvedDV', {
+                        withCredentials: true
+                    })  
+                    if(res.status === 200){
+                        const docu = res.data
+                        console.log(docu)
+                        dispatch({ type: 'SET_ADMINDOCUMENTS', payload: docu });
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
+            }
+        }
+        if(user){
+            retrieveDV()
+        }
+        const q = query(collection(firestore, 'records'), where('status', '==', 'Approved'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const newDocuments = snapshot.docs.reduce((acc, doc) => {
+            acc[doc.id] = {data: {...doc.data()}};
+            return acc;
+        }, {});
+        console.log(newDocuments)
+        dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
+        })
+
+        return () => unsubscribe()
+      }, [documents, user, dispatch])
 
     return(
         <main className="h-screen w-full flex p-3 bg-gray-100">

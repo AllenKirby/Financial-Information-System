@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
@@ -19,6 +19,7 @@ const EditorPage = () => {
   const [location, setLocation] = useState('')
   const { user } = useAuthContext()
   const { dispatch, documents } = useDisbursementContext()
+  const prevDocumentsRef = useRef();
   
   const navItems = [
     { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> } 
@@ -64,11 +65,12 @@ const EditorPage = () => {
       }, {});
 
       // console.log(updatedDocuments);
-      dispatch({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
+      dispatch({ type: 'UPDATE_DOCUMENTS', payload: updatedDocuments });
+      prevDocumentsRef.current = updatedDocuments;
     })
 
     return () => unsubscribe()   
-  }, [user, documents,  dispatch])
+  }, [dispatch, documents, user])
 
   return (
     <main className="h-screen w-full flex bg-gray-100 p-3">
