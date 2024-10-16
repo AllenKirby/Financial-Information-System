@@ -17,6 +17,8 @@ export const AuthRole = () => {
         navigate('/operator/disbursementrecords');
       } else if (user.role === '4') {
         navigate('/editor/disbursementrecords');
+      }else{
+        navigate('/unauthorizedEmail')
       }
     }
   }, [user, navigate]);
