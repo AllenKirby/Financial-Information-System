@@ -72,15 +72,15 @@ const EditorPage = () => {
   }, [dispatch])
 
   return (
-    <main className="h-screen w-full flex bg-gray-100 p-3">
-      <aside className="h-full w-1/6 mr-3">
+    <main className="h-screen w-full flex bg-slate-100">
+      <aside className="h-full w-1/6">
           <Navbar items={navItems}/>
       </aside>
       <section className="h-full w-5/6 ml-3">
           <section className="h-1/6 w-full">
               <Header currentPage={location}/>
           </section>
-          <section className="h-5/6 w-full flex">
+          <section className="h-5/6 w-full flex pr-3">
               <Outlet/>
           </section>
       </section>
