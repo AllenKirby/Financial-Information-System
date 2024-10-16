@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
+import { useGoogleLogin } from "../hooks/useGoogleLogin";
 import Loader from "../components/Loader";
 import { FcGoogle } from "react-icons/fc";
 
@@ -8,10 +9,16 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const {login, isLoading, error} = useLogin()
+    const {googleLogin, isLoadingGoogle, errorGoogle} = useGoogleLogin()
 
     const handleLogin = async(e) => {
         e.preventDefault()
         await login(email, password)
+    }
+
+    const handleGoogleLogin = async(e) => {
+        e.preventDefault()
+        await googleLogin()
     }
 
   return (
@@ -56,9 +63,10 @@ const Login = () => {
             <div className="w-full h-auto px-2 pt-2">
                 <div className="w-full h-auto px-2 pt-2 border-t-2 relative">
                     <p className="text-center bg-white rounded-lg px-3 absolute -top-3 left-[100px]">Or</p>
-                    <button className="w-full my-3 flex items-center justify-center py-2 rounded-lg border-2"><FcGoogle size={20} className="mx-2" />Login with Google</button>
+                    <button 
+                      onClick={handleGoogleLogin}
+                      className="w-full my-3 flex items-center justify-center py-2 rounded-lg border-2"><FcGoogle size={20} className="mx-2" />Login with Google</button>
                 </div>
-            </div>
         </form>
     </div>
   )

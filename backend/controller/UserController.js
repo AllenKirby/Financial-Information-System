@@ -1,3 +1,4 @@
+const {admin}  = require('../firebase')
 const login = (req, res) => {
     try{
         
@@ -5,6 +6,17 @@ const login = (req, res) => {
         const token = req.user.token;
         const name = req.user.name;
         const uid = req.user.uid;
+        if(!role){
+            admin.auth().deleteUser(uid)
+            .then(() => {
+                console.log(`Deleting user with UID: ${uid}. reason: no role`);
+                return
+            })
+            .catch((error) => {
+                console.error(`Error deleting user: ${error}`);
+            });
+        }
+
         res.cookie('token', token, {
             httpOnly: true,  
             secure: true,  

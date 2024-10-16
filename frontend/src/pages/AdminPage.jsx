@@ -25,6 +25,7 @@ const AdminPage = () => {
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
         { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
         { label: 'User Management', path: '/admin/usermanagement', icon: <FaRegUser size={15}/> },
+        { label: 'List of Accounts', path: '/admin/accountsmanagement'}
     ];
 
     useEffect(() => {
@@ -36,6 +37,8 @@ const AdminPage = () => {
             setLocation('Disbursement Records')
         }else if(page.pathname === "/admin/historylogs"){
             setLocation('History Logs')
+        }else if(page.pathname === "/admin/accountsmanagement"){
+            setLocation('Accounts Management')
         }
         
       }, [page.pathname])
