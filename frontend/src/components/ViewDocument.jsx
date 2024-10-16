@@ -39,7 +39,7 @@ const ViewDocument = () => {
   const {submitToAdmin, isLoadingToAdmin, errorToAdmin} = useToAdmin()
 
   let isDisabled = (idStatus.status !== 'Drafting' && idStatus.status !== 'Returned') && idStatus.type === '4';
-  const isDisabledForOp = idStatus.status !== 'In Review';
+  const isDisabledForOp = (idStatus.status !== 'In Review' && idStatus.status !== 'Returned') && idStatus === '3';
 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
@@ -317,7 +317,7 @@ const ViewDocument = () => {
   return (
     <section className="w-full h-auto">
       <div className="px-5 py-4 flex items-center justify-between"> 
-        <button onClick={() => window.history.back()} className="px-5 py-2 bg-customgreen rounded-lg text-white hover:scale-125 transition-all duration-150"><FaAngleLeft size={20}/></button>
+        <button onClick={() => window.history.back()} className="px-5 py-2 border-2  rounded-lg text-customgreen hover:scale-125 transition-all duration-150"><FaAngleLeft size={20}/></button>
         <div className="flex items-center justify-center gap-16">
           {idStatus.type === '4' && (<button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoading ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
           {idStatus.type === '3' && (<button disabled={isDisabledForOp || isLoadingToHead} onClick={handleSubmitForOp} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoadingToHead ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}

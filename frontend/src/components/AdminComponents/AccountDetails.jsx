@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const AccountDetails = ({ email, name, roleString }) => {
     const [role, setRole] = useState('');
@@ -45,13 +46,13 @@ const AccountDetails = ({ email, name, roleString }) => {
             <h2 className="text-xs font-light flex items-center justify-center w-1/6">{role}</h2>
 
             {/* Button column */}
-            <div className="relative w-1/12 flex justify-end pr-2">
+            <div className="relative w-auto flex justify-end pr-2">
                 {isHovered && (
                     <button
-                        className="bg-blue-500 text-white rounded-full w-10 h-10 flex items-center justify-center"
+                        className="text-customFontColor rounded-full w-auto px-1 h-10 flex items-center justify-center"
                         onClick={handleButtonClick}
                     >
-                        :
+                        <BsThreeDotsVertical />
                     </button>
                 )}
 

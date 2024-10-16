@@ -183,168 +183,200 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       <div className='w-full h-auto py-2 text-center'>
         <h1 className='text-xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
       </div>
-      <div className='w-full h-4/5 rounded-xl bg-gray-100 p-3 overflow-y-auto'>
+      <div className='w-full h-4/5 p-3 overflow-y-auto'>
         <h1 className="font-semibold text-lg mb-2">Personal/Payee Information</h1>
-        <div className="w-full h-auto py-2">
-          <div className='w-full h-auto flex gap-2 pb-3'>
+        <div className="w-full h-auto">
+          <div className='w-full py-2'>
+            <label>Payee</label>
             <input
-              className="w-1/2 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+              className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
               disabled={isDisabled}
               type="text" 
-              placeholder="Payee"
               value={payeeData.payee}
               onChange={(e) => setPayeeData({...payeeData, payee: e.target.value})} 
               required  />
-            <input 
-              className="w-1/2 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-              disabled={isDisabled}
-              type="text" 
-              placeholder="TIN/Employee No." 
-              value={payeeData.TIN}
-              onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
-              required  />
           </div>
-          <input 
-            className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-            disabled={isDisabled}
-            type="text" 
-            placeholder="Address" 
-            value={payeeData.address}
-            onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
-            required  />
+          <div className='w-full flex gap-2'>
+            <div className='w-1/2'>
+              <label>Address</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                disabled={isDisabled}
+                type="text" 
+                value={payeeData.address}
+                onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
+                required  />
+            </div>
+            <div className='w-1/2'>
+              <label>TIN/Employee No.</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                disabled={isDisabled}
+                type="text" 
+                value={payeeData.TIN}
+                onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                required  />
+            </div>
+          </div>
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">Document/Transaction Information</h1>
         <div className="w-full h-auto flex flex-col gap-3 py-2">
-          <div className="flex flex-col">
-            <label className='py-1'>Fund Cluster</label>
-            <select className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-              onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
-              value={payeeData.fund}
-              disabled={isDisabled}
-              required
-              //value
-            >
-              <option value="" disabled>Select Fund Cluster</option>
-              <option value="501 LFP">501 LFP</option>
-              <option value="COV">COV</option>
-              <option value="501 CARP">501 CARP</option>
-              <option value="501 LFP-contract farming">501 LFP-contract farming</option>
-            </select>
+          <div className='w-full flex gap-2'>
+            <div className="flex flex-col w-4/6">
+              <label>Fund Cluster</label>
+              <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
+                value={payeeData.fund}
+                disabled={isDisabled}
+                required
+                //value
+              >
+                <option value="" disabled>Select</option>
+                <option value="501 LFP">501 LFP</option>
+                <option value="COV">501 COB</option>
+                <option value="501 CARP">501 CARP</option>
+                <option value="501 LFP-contract farming">Contract farming</option>
+              </select>
+            </div>
+            <div className="flex flex-col w-2/6">
+              <label>Date</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                type="date" 
+                disabled={isDisabled}
+                value={payeeData.date}
+                placeholder="Date"
+                onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
+                required  />
+            </div>
           </div>
-          <div className="flex flex-col">
-            <label>Date</label>
-            <input 
-              className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-              type="date" 
-              disabled={isDisabled}
-              value={payeeData.date}
-              placeholder="Date"
-              onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
-              required  />
+          <div className='w-full flex gap-2'>
+            <div className='w-1/2'>
+              <label>DV No.</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                type="text" 
+                disabled={isDisabled} 
+                value={payeeData.DV}
+                onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
+                required  />
+            </div>
+            <div className="flex flex-col w-1/2">
+              <label>Responsibility Center</label>
+              <select  className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
+                value={payeeData.RC}
+                disabled={isDisabled}
+                required
+              >
+                <option value="" disabled>Select </option>
+                <option value="EOD">EOD</option>
+                <option value="AFD">AFD</option>
+              </select>
+            </div>
           </div>
-          <input 
-            className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-            type="text" 
-            disabled={isDisabled}
-            placeholder="Disbursement Voucher No." 
-            value={payeeData.DV}
-            onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
-            required  />
-           {user.role === '3' && <input 
-              className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-              type="text" 
-              placeholder="ORS/BURS No." 
-              value={operatorInput.ors}
-              onChange={(e) => setOperatorInput({...operatorInput, ors: e.target.value})}
-              required  />}
-          <div className="flex flex-col">
-            <label>Responsibility Center</label>
-            <select  className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-              onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
-              value={payeeData.RC}
-              disabled={isDisabled}
-              required
-            >
-              <option value="" disabled>Select Responsibilty Center</option>
-              <option value="EOD">EOD</option>
-              <option value="AFD">AFD</option>
-            </select>
-          </div>
+           {user.role === '3' && 
+            <div className='w-full'>
+              <label>ORS/BURS no.</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                type="text" 
+                value={operatorInput.ors}
+                onChange={(e) => setOperatorInput({...operatorInput, ors: e.target.value})}
+                required  />
+            </div>
+           }
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">Financial/Payment Details</h1>
-        <div className="w-auto h-auto flex flex-col gap-3 py-2">
-        <label>Account Title</label>
-          <select  
-            className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-            onChange={(e) => {
-              const [title, code] = e.target.value.split(':');
-              setPayeeData({...payeeData, accTitle: title, accCode: code});
-            }}
-            value={`${payeeData.accTitle}:${payeeData.accCode}`}
-            disabled={isDisabled}
-            required
-          >
-            <option value="" disabled>Select Account Title</option>
-            {
-              accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
-                Object.entries(accountOptions.account_codes).map(([key, value], index) => {
-                  // Split the field value by ':' and take the last part
-                  const parts = value.split(':');
-                  const lastPart = parts[parts.length - 1];
-                  
-                  return (
-                    <option key={index} value={`${lastPart}:${key}`}>
-                      {lastPart}
-                    </option>
-                  );
-                })
-              ) : (
-                <option>Loading...</option>
-              )
-            }
-          </select>
-          <input 
-            className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-            type="number" 
-            placeholder="Amount"
-            disabled={isDisabled}
-            onChange={(e) => computeAmount(e.target.value)}
-            value={payeeData.amount}
-            required  />
-          {user.role === '3' && <input 
-            className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-            type="text" 
-            placeholder="ASA No." 
-            value={operatorInput.asa}
-            onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
-            required  />}
-          <textarea className="w-full h-52 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" placeholder="Particulars"
-            onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
-            value={payeeData.particular}
-            disabled={isDisabled}
-            required
-          />
+        <div className="w-auto h-auto flex flex-col py-2">
+          <div className='w-full mb-2'>
+            <label>Account Title</label>
+            <select  
+              className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+              onChange={(e) => {
+                const [title, code] = e.target.value.split(':');
+                setPayeeData({...payeeData, accTitle: title, accCode: code});
+              }}
+              value={`${payeeData.accTitle}:${payeeData.accCode}`}
+              disabled={isDisabled}
+              required
+            >
+              <option value="" disabled>Select Account Title</option>
+              {
+                accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
+                  Object.entries(accountOptions.account_codes).map(([key, value], index) => {
+                    // Split the field value by ':' and take the last part
+                    const parts = value.split(':');
+                    const lastPart = parts[parts.length - 1];
+                    
+                    return (
+                      <option key={index} value={`${lastPart}:${key}`}>
+                        {lastPart}
+                      </option>
+                    );
+                  })
+                ) : (
+                  <option>Loading...</option>
+                )
+              }
+            </select>
+          </div>
+          <div className='w-full mb-2'>
+            <label>Amount</label>
+            <input 
+              className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+              type="number" 
+              disabled={isDisabled}
+              onChange={(e) => computeAmount(e.target.value)}
+              value={payeeData.amount}
+              required  />
+          </div>
+          {user.role === '3' && 
+            <div className='w-full'>
+              <label>ASA No.</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                type="text" 
+                value={operatorInput.asa}
+                onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
+                required/>
+            </div>
+          }
+          <div className='w-full'>
+            <label>Particulars</label>
+            <textarea className="w-full h-52 peer px-4 py-2 rounded-md border-2 focus:outline-none"
+              onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
+              value={payeeData.particular}
+              disabled={isDisabled}
+              placeholder='Write details here...'
+              required
+            />
+          </div>
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">BIR Information</h1>
-        <div className="flex flex-col gap-3 py-3">
+        <div className="flex flex-col py-3">
           <label>Responsibility Center</label>
-          <select  className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
+          <select  className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
             onChange={(e) => {setBirData({...birData, birRC: e.target.value})}}
             value={birData.birRC}
             disabled={isDisabled}
             required
           >
-            <option value="" disabled>Select Responsibilty Center</option>
+            <option value="" disabled>Select</option>
             <option value="RO">RO</option>
             <option value="ROO">ROO</option>
           </select>
         </div>
-        <textarea className="w-full h-52 peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" placeholder="Particulars"
-          onChange={(e) => {setBirData({...birData, birParticular: e.target.value})}}
-          value={birData.birParticular}
-          disabled={isDisabled}
-          required
-        />
+        <div className='w-full'>
+          <label>Particulars</label>
+          <textarea className="w-full h-52 px-4 py-2 rounded-md border-2 focus:outline-none"
+            onChange={(e) => {setBirData({...birData, birParticular: e.target.value})}}
+            value={birData.birParticular}
+            disabled={isDisabled}
+            placeholder='Write details here...'
+            required
+          />
+        </div>
       </div>
       <div className="w-full flex items-center justify-center py-3 gap-4">
         <button 
@@ -359,7 +391,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           >{isLoading ? <Loader /> : 'Save'}</button>
         <button 
           onClick={modal}
-          className="py-2 px-10 rounded-md bg-gray-300 text-customFontColor hover:scale-125 transition-all duration-100"
+          className="py-2 px-10 rounded-md border-2 border-customFontColor text-customFontColor hover:scale-125 transition-all duration-100"
           >Back</button>
       </div>
       {(error || errorForUpdate || errorForOp) && (

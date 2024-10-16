@@ -46,7 +46,7 @@ const Notification = ({ notification, markAsRead }) => {
   }
   
   return (
-    <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-gray-200' 
+    <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-slate-100' 
       onClick={() => {
       markAsRead(notification.key)
       console.log('hit notif', notification.input)

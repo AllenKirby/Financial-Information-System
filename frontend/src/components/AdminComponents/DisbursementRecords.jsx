@@ -2,14 +2,12 @@ import {useParams, Outlet} from 'react-router-dom'
 
 import DocumentDetails from '../DocumentDetails'
 
-import { useAuthContext } from '../../hooks/useAuthContext' 
 import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
 
 import { IoSearchSharp } from "react-icons/io5";
 
 const DisbursementRecords = () => {
   const { id } = useParams()
-  const { user } = useAuthContext()
   const { AdminDocuments } = useAdminDisbursementContext()
   return (
     <section className='w-full h-full'>
@@ -35,7 +33,7 @@ const DisbursementRecords = () => {
               {AdminDocuments ? (
                 <div className="w-full h-[340px] overflow-auto">
                   {Object.entries(AdminDocuments).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={user.role}/>
+                    <DocumentDetails key={key} documents={document} type={'1'}/>
                   ))}
                 </div>
               ) : (

@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
-import { FaRegUser } from "react-icons/fa";
 import { RxDashboard } from "react-icons/rx";
 import { CiViewList } from "react-icons/ci";
-import { TbLogs } from "react-icons/tb";
+//import { TbLogs } from "react-icons/tb";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { PiUsersThree } from "react-icons/pi";
 
 const AdminPage = () => {
     const page = useLocation()
@@ -23,16 +23,13 @@ const AdminPage = () => {
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
-        { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
-        { label: 'User Management', path: '/admin/usermanagement', icon: <FaRegUser size={15}/> },
-        { label: 'List of Accounts', path: '/admin/accountsmanagement'}
+        // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
+        { label: 'List of Accounts', path: '/admin/accountsmanagement', icon: <PiUsersThree size={20}/>}
     ];
 
     useEffect(() => {
         if(page.pathname === "/admin/dashboard"){
             setLocation('Dashboard')
-        }else if(page.pathname === "/admin/usermanagement"){
-            setLocation('User Management')
         }else if(page.pathname === "/admin/disbursementrecords"){
             setLocation('Disbursement Records')
         }else if(page.pathname === "/admin/historylogs"){
@@ -82,10 +79,10 @@ const AdminPage = () => {
                 <Navbar items={navItems}/>
             </aside>
             <section className="h-full w-5/6 ml-3">
-                <section className="h-1/6 w-full">
+                <section className="h-[13%] w-full">
                     <Header currentPage={location}/>
                 </section>
-                <section className="h-5/6 w-full pr-3">
+                <section className="h-[87%] w-full pr-3">
                     <Outlet/>
                 </section>
             </section>
