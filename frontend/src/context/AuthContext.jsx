@@ -1,4 +1,4 @@
-import { createContext, useReducer, useEffect, useState } from 'react';
+import { createContext, useReducer, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
 import { onIdTokenChanged } from 'firebase/auth';
@@ -29,9 +29,8 @@ export const AuthContextProvider = ({ children }) => {
         }
 
         const unsubscribe = onIdTokenChanged(auth, async (user) => {
-            //remove !
-            if(!user.emailVerified){
-
+            //user.emailVerified
+            if(true){
                 cookies.remove('user', { path: '/' }); 
                 try{
                     const token = await user.getIdToken();

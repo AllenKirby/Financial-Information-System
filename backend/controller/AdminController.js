@@ -125,8 +125,41 @@ const readAdmin_records = async(req, res) => {
   
 }
 
+const getAllAccounts = async (req, res) => {
+  try{
+    const users = await listAllUsers(); // Call the function to get users
+    res.status(200).json(users);
+  }catch(error){
+    res.status(500).json({ error: 'Failed to list users' });
+  }
+}
+
+const listAllUsers = async(nextPageToken) => {
+  let allUsers = []; 
+
+  const fetchUsers = async (nextPageToken) => {
+    try {
+      const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
+
+      allUsers = allUsers.concat(listUsersResult.users.map(userRecord => userRecord.toJSON()));
+
+      if (listUsersResult.pageToken) {
+        return fetchUsers(listUsersResult.pageToken); 
+      } else {
+        return allUsers; 
+      }
+    } catch (error) {
+      console.error('Error listing users:', error);
+      throw error; 
+    }
+  };
+
+  return await fetchUsers(nextPageToken);
+}
+
 module.exports = {
   getAllLogs,
   createAccount,
-  readAdmin_records
+  readAdmin_records,
+  getAllAccounts
 };
