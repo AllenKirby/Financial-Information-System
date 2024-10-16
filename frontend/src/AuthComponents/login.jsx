@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLogin } from "../hooks/useLogin";
 import { useGoogleLogin } from "../hooks/useGoogleLogin";
-import bgImage from '../assets/images/NIAimg.png';
 import Loader from "../components/Loader";
 import { FcGoogle } from "react-icons/fc";
 
@@ -23,29 +22,29 @@ const Login = () => {
     }
 
   return (
-    <div className="flex flex-col">
-        <form action="#" onSubmit={handleLogin} className="w-80 p-7 h-auto rounded-md shadow-md shadow-black bg-white">
-            <div className="w-full flex items-center justify-center py-3">
-                <img src={bgImage} alt="" className="w-20" />
+    <div className="w-full h-screen flex items-center justify-center p-20">
+        <form action="#" onSubmit={handleLogin} className="w-80 p-5 h-auto rounded-md bg-white shadow-md shadow-black">
+            <div className="text-center mb-3">
+                <h1 className="text-2xl font-medium">Welcome!</h1>
+                <h2 className="text-sm my-2">Please login your details to continue</h2>
             </div>
-            <div className="text-center mb-2">
-                <h1 className="text-2xl font-medium">Login</h1>
-            </div>
-            <div className="w-full flex items-center py-2 px-2 gap-2">
+            <div className="w-full py-2 px-2 gap-2">
+                <label className="font-semibold ">Email</label>
                 <input 
-                className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-                type="text" 
-                placeholder="Username" 
-                required 
-                onChange={(e) => setEmail(e.target.value)}/>
+                    className="w-full px-4 py-2 rounded-md ring-customgreen border-2 border-customgreen focus:outline-none" 
+                    type="text" 
+                    placeholder="email@gmail.com" 
+                    required 
+                    onChange={(e) => setEmail(e.target.value)}/>
             </div>
-            <div className="w-full flex items-center py-2 px-2 gap-2">
+            <div className="w-full py-2 px-2 gap-2">
+                <label className="font-semibold ">Password</label> 
                 <input 
-                className="w-full peer z-[21] px-4 py-2 rounded-md outline-none duration-200 ring-2 ring-[transparent] focus:ring-customgreen" 
-                type={!isChecked ? 'password' : 'text'} 
-                placeholder="Password" 
-                required 
-                onChange={(e) => setPassword(e.target.value)}/>
+                    className="w-full px-4 py-2 rounded-md ring-customgreen border-2 border-customgreen focus:outline-none" 
+                    type={!isChecked ? 'password' : 'text'} 
+                    placeholder="••••••••" 
+                    required 
+                    onChange={(e) => setPassword(e.target.value)}/>
             </div>
             <div className="w-full flex gap-1 my-1 px-1"> 
                 <input type="checkbox" onClick={() => setIsChecked(!isChecked)}/>
@@ -61,16 +60,14 @@ const Login = () => {
             {error && (<div className="w-full text-center">
                 <h4 className="text-sm text-red-600">{error}</h4>
             </div>)}
-            <div className="w-full h-auto px-2 pt-2 mt-5">
-            <div className="w-full h-auto px-2 pt-2 border-t-2 relative">
-                <p className="text-center bg-white rounded-lg px-3 absolute -top-3 left-[60px]">Or Login With</p>
-                <button 
-                onClick={handleGoogleLogin}
-                className="w-full my-3 flex items-center justify-center py-2 rounded-lg border-2"><FcGoogle size={20} className="mx-2" />Google</button>
-            </div>
-        </div>
+            <div className="w-full h-auto px-2 pt-2">
+                <div className="w-full h-auto px-2 pt-2 border-t-2 relative">
+                    <p className="text-center bg-white rounded-lg px-3 absolute -top-3 left-[100px]">Or</p>
+                    <button 
+                      onClick={handleGoogleLogin}
+                      className="w-full my-3 flex items-center justify-center py-2 rounded-lg border-2"><FcGoogle size={20} className="mx-2" />Login with Google</button>
+                </div>
         </form>
-        
     </div>
   )
 }

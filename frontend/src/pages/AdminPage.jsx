@@ -77,7 +77,7 @@ const AdminPage = () => {
       }, [documents, user, dispatch])
 
     return(
-        <main className="h-screen w-full flex p-3 bg-gray-100">
+        <main className="h-screen w-full flex bg-slate-100">
             <aside className="h-full w-1/6">
                 <Navbar items={navItems}/>
             </aside>
@@ -85,7 +85,7 @@ const AdminPage = () => {
                 <section className="h-1/6 w-full">
                     <Header currentPage={location}/>
                 </section>
-                <section className="h-5/6 w-full">
+                <section className="h-5/6 w-full pr-3">
                     <Outlet/>
                 </section>
             </section>

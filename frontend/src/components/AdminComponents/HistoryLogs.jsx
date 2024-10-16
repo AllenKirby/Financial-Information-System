@@ -30,24 +30,24 @@ const HistoryLogs = () => {
     }, [user, historyLogs])
 
   return (
-    <section className="w-full h-full flex flex-col bg-white rounded-xl p-5">
+    <section className="w-full h-full flex flex-col bg-white rounded-t-lg border-[1px] p-5">
         <table className="w-full h-full">
-            <thead className="w-full">
-                <tr className="w-full py-1 text-lg">
-                    <th>Payee</th>
-                    <th>DV No.</th>
-                    <th>Last Action By Name</th>
-                    <th>Action Time and Date</th>
+            <thead className="w-full text-white rounded-t-lg">
+                <tr className="w-full text-lg bg-customgreen">
+                    <th className="w-1/4 py-2 border-r-2 border-white text-left px-2">Payee</th>
+                    <th className="w-1/4 py-2 border-r-2 border-white">DV No.</th>
+                    <th className="w-1/4 py-2 border-r-2 border-white">Last Action By Name</th>
+                    <th className="w-1/4 py-w-1/4 2">Action Time and Date</th>
                 </tr>
             </thead>
-            <tbody className="w-full">
+            <tbody className="w-full h-72 overflow-y-auto">
                 {historyLogs ? (
                     historyLogs.map((log, index) => (
-                        <tr key={index} className="w-full">
-                            <td className="text-center">{log.split('|').slice()[0]}</td>
-                            <td className="text-center">{log.split('|').slice()[1]}</td>
-                            <td className="text-center">{log.split('|').slice()[2]}</td>
-                            <td className="text-center">{`${log.split('|').slice()[3]} ${log.split('|').slice()[4]}`}</td>
+                        <tr key={index} className="w-full border-2">
+                            <td className="text-left px-2 border-r-2">{log.split('|').slice()[0]}</td>
+                            <td className="text-center px-2 border-r-2">{log.split('|').slice()[1]}</td>
+                            <td className="text-center px-2 border-r-2">{log.split('|').slice()[2]}</td>
+                            <td className="text-center px-2">{`${log.split('|').slice()[3]} ${log.split('|').slice()[4]}`}</td>
                         </tr>
                     ) )
                 ) : (
