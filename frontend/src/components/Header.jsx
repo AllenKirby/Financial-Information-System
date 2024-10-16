@@ -99,14 +99,13 @@ const Header = ({ currentPage}) => {
             <div className={`absolute -top-3 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
               <p className="text-xs font-semibold">{unreadNotifs}</p>
             </div>
-          </div>
-          {/* Notifications Dropdown */}
+            {/* Notifications Dropdown */}
           {showNotifications && (
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
 
-              <div className="absolute w-5 h-5 z-50 top-[39px] left-[187px] rounded-tl-lg border-l-[1px] border-t-[1px] bg-white rotate-45 "></div>
-              <div className="absolute top-12 z-40 right-7 w-11/12 bg-white border-[1px] p-4 rounded-lg">
+              <div className="absolute w-5 h-5 z-50 top-[39px] right-2 rounded-tl-lg border-l-[1px] border-t-[1px] bg-white rotate-45 "></div>
+              <div className="absolute top-12 z-40 -right-28 w-96 bg-white border-[1px] p-4 rounded-lg">
                 <h3 className='font-semibold text-xl my-2'>Notifications</h3>
 
                   <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
@@ -122,10 +121,11 @@ const Header = ({ currentPage}) => {
               </div>
             </>
           )}
+          </div>
         </div>
 
         <div className="w-auto flex py-1 px-5 px gap-1 rounded-full border-[1px] border-customFontColor font-medium relative">
-          <p className='flex items-center justify-center text-lg gap-2'><FaUserCircle size={20} />{user?.name.split(',').slice()[0]}</p>
+          <p className='flex items-center justify-center text-lg gap-2'><FaUserCircle size={20} />{user?.name ? user.name.split(',')[0] : 'User'}</p>
         </div>
       </div>
     </header>

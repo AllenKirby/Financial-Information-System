@@ -29,33 +29,35 @@ export const AuthContextProvider = ({ children }) => {
         }
 
         const unsubscribe = onIdTokenChanged(auth, async (user) => {
-            //user.emailVerified
-            if(true){
-                cookies.remove('user', { path: '/' }); 
-                try{
-                    const token = await user.getIdToken();
-                    console.log('REFRESHED')
-                    const response = await axios.post('http://localhost:4000/user/refreshToken', {}, {
-                        headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` 
-                        },
-                        withCredentials: true,
-                    });
-
-                    if (response.status === 200) {
-                        console.log("success")
-                        console.log(response.data)
-                        cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
-                        dispatch({type: 'LOGIN', payload: response.data})
-                    } 
-                }catch(error){
-                    console.error('Token verification failed:', error);
-                    dispatch({ type: 'LOGOUT' }); 
-                    cookies.remove('user', { path: '/' }); 
+            
+            if(user){
+                if(user.emailVerified){
+                    try{
+                        const token = await user.getIdToken();
+                        console.log('REFRESHED')
+                        const response = await axios.post('http://localhost:4000/user/refreshToken', {}, {
+                            headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization':` Bearer ${token} `
+                            },
+                            withCredentials: true,
+                        });
+    
+                        if (response.status === 200) {
+                            console.log("success")
+                            console.log(response.data)
+                            cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
+                            dispatch({type: 'LOGIN', payload: response.data})
+                        } 
+                    }catch(error){
+                        console.log("Error at authcontext: ", error)
+                        console.error('Token verification failed:', error);
+                        dispatch({ type: 'LOGOUT' }); 
+                        cookies.remove('user', { path: '/' });
+                    }
                 }
             }else {
-                
+                console.log('else authcontetx')
                 dispatch({ type: 'LOGOUT' }); 
                 cookies.remove('user', { path: '/' }); 
             }

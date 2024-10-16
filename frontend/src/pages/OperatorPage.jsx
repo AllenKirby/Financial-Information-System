@@ -66,15 +66,15 @@ const OperatorPage = () => {
   }, [user, dispatch, documents])
 
   return (
-    <main className="w-full h-screen flex p-3 bg-gray-100">
+    <main className="w-full h-screen flex bg-slate-100">
       <aside className="h-full w-1/6">
         <Navbar items={navItems}/>
       </aside>
       <section className="h-full w-5/6 ml-3">
-          <section className="h-1/6 w-full">
+          <section className="h-[13%] w-full">
               <Header currentPage={location}/>
           </section>
-          <section className="h-5/6 w-full">
+          <section className="h-[87%] w-full pr-3">
               <Outlet/>
           </section>
       </section>

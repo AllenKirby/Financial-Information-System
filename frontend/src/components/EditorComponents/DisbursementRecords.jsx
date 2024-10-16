@@ -4,14 +4,12 @@ import DocumentDetails from '../DocumentDetails'
 import { IoAdd } from "react-icons/io5";
 import { useState } from 'react';
 import DisbursementVoucher from '../DisbursementVoucher';
-import { useAuthContext } from "../../hooks/useAuthContext";
 import { IoSearchSharp } from "react-icons/io5";
 
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
   const { id } = useParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const {user} = useAuthContext();
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -19,8 +17,8 @@ const DisbursementRecords = () => {
     <section className='w-full h-full'>
       <div className='w-full p-1 flex items-center justify-between'>
         <div className="w-full py-1 flex items-center justify-between">
-          <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-lg bg-customgreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
-              <IoAdd size={20}/>Add DV
+          <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-customgreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
+              <IoAdd size={20} className='font-bold'/>Add DV
           </button>
         </div>
         <div className='relative'>
@@ -44,7 +42,7 @@ const DisbursementRecords = () => {
               {documents ? (
                 <section className="w-full h-[340px] overflow-auto">
                   {Object.entries(documents).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={user.role}/>
+                    <DocumentDetails key={key} documents={document} type={'4'}/>
                   ))}
                 </section>
               ) : (

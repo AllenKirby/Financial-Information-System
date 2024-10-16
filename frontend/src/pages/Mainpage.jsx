@@ -3,7 +3,7 @@ import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } 
 //Components and Pages
 import {AuthRole} from "../components/AuthRole";
 import AdminPage from "./AdminPage";
-import UserManagement from "../components/AdminComponents/UserManagement"
+import UserManagement from "../components/SuperAdminComponents/UserManagement"
 import Dashboard from "../components/AdminComponents/Dashboard";
 import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
@@ -18,6 +18,7 @@ import DisbursementRecordsAdmin from "../components/AdminComponents/Disbursement
 import HistoryLogs from "../components/AdminComponents/HistoryLogs";
 import ForbiddenPage from "./ForbiddenPage";
 import AccountsManagement from "../components/AdminComponents/AccountsManagement";
+import SuperAdminPage from "./SuperAdminPage";
 
 
 const Mainpage = () => {
@@ -32,7 +33,6 @@ const Mainpage = () => {
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-          <Route path="usermanagement" element={<PrivateRoute allowedRoles={['1']}><UserManagement /></PrivateRoute>}/>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="accountsmanagement" element={<PrivateRoute allowedRoles={['1']}><AccountsManagement/></PrivateRoute>} />
         </Route>
@@ -52,11 +52,13 @@ const Mainpage = () => {
             <Route path=":id" element={<ViewDocument/>}/>
           </Route>
         </Route>
+        <Route path="/superadmin" element={<SuperAdminPage/>}>
+          <Route path="usermanagement" element={<UserManagement />}/>
+        </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>
         <Route path="*" element={<NotFound/>}/>
         <Route path="/unauthorizedEmail" element={<ForbiddenPage/>}/>
-        
       </Route>
     )
     

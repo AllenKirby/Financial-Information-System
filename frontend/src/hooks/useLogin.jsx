@@ -20,7 +20,7 @@ export const useLogin = () => {
           const token = await userCredential.user.getIdToken();
 
           //remove !
-          if (!user.emailVerified) {
+          if (user.emailVerified) {
             console.log('hit')
             const response = await axios.post('http://localhost:4000/user/login', {}, {
               headers: {
