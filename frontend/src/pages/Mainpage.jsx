@@ -17,7 +17,6 @@ import DisbursementRecordsHead from "../components/HeadComponents/DisbursementRe
 import DisbursementRecordsAdmin from "../components/AdminComponents/DisbursementRecords"
 import HistoryLogs from "../components/AdminComponents/HistoryLogs";
 import ForbiddenPage from "./ForbiddenPage";
-import AccountsManagement from "../components/AdminComponents/AccountsManagement";
 import SuperAdminPage from "./SuperAdminPage";
 
 
@@ -34,7 +33,6 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
           </Route>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
-          <Route path="accountsmanagement" element={<PrivateRoute allowedRoles={['1']}><AccountsManagement/></PrivateRoute>} />
         </Route>
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>       
           <Route index element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>} />

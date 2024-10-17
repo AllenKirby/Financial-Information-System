@@ -12,7 +12,6 @@ import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContex
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, where, onSnapshot } from "firebase/firestore"
-import { PiUsersThree } from "react-icons/pi";
 
 const AdminPage = () => {
     const page = useLocation()
@@ -24,7 +23,6 @@ const AdminPage = () => {
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
         // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
-        { label: 'List of Accounts', path: '/admin/accountsmanagement', icon: <PiUsersThree size={20}/>}
     ];
 
     useEffect(() => {
@@ -34,8 +32,6 @@ const AdminPage = () => {
             setLocation('Disbursement Records')
         }else if(page.pathname === "/admin/historylogs"){
             setLocation('History Logs')
-        }else if(page.pathname === "/admin/accountsmanagement"){
-            setLocation('Accounts Management')
         }
         
       }, [page.pathname])

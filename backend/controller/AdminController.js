@@ -2,58 +2,6 @@
 const {admin, db}  = require('../firebase')
 const fs = require('fs');
 
-const createAccount = async (req, res) => {
-
-
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      
-      return res.status(406).json({ success: false, message: 'Unauthorized: no token provided' });
-  }
-  const token = authHeader.split(' ')[1];
-
-  const decodedToken = await admin.auth().verifyIdToken(token);
-  const role = req.body.role;
-  const dispName = req.body.name
-  
-  const email = decodedToken.email
-  const uid = decodedToken.uid
-
-
-  const userData = {
-    [uid] : `${email}|${dispName}`
-  }
-
-  console.log(`role in createaccount ${role}`)
-  console.log('creating acc')
-
-  try{
-     await admin.auth().setCustomUserClaims(uid, { role, dispName });
-      console.log(`account created with role ${role}`)
-
-     const docRef = db.collection('listOfUsers').doc(role);
-     const doc = await docRef.get();
-     if(doc.exists){
-      await docRef.update(userData);
-     }else{
-      await docRef.set(userData);
-     }
-
-     return res.status(200).json({ 
-      success: true, 
-      message: `User created successfully with role ${role}` 
-      
-    });
-  }catch(error){
-    console.error('Error creating new user:', error);
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error creating user', 
-      error: error.message 
-    });
-  }
-}
-
 const getAllLogs = async(req, res) => {
   try{
     const docRef = db.collection('passed_records').doc('History_Logs')
@@ -125,41 +73,7 @@ const readAdmin_records = async(req, res) => {
   
 }
 
-const getAllAccounts = async (req, res) => {
-  try{
-    const users = await listAllUsers(); // Call the function to get users
-    res.status(200).json(users);
-  }catch(error){
-    res.status(500).json({ error: 'Failed to list users' });
-  }
-}
-
-const listAllUsers = async(nextPageToken) => {
-  let allUsers = []; 
-
-  const fetchUsers = async (nextPageToken) => {
-    try {
-      const listUsersResult = await admin.auth().listUsers(1000, nextPageToken);
-
-      allUsers = allUsers.concat(listUsersResult.users.map(userRecord => userRecord.toJSON()));
-
-      if (listUsersResult.pageToken) {
-        return fetchUsers(listUsersResult.pageToken); 
-      } else {
-        return allUsers; 
-      }
-    } catch (error) {
-      console.error('Error listing users:', error);
-      throw error; 
-    }
-  };
-
-  return await fetchUsers(nextPageToken);
-}
-
 module.exports = {
   getAllLogs,
-  createAccount,
-  readAdmin_records,
-  getAllAccounts
+  readAdmin_records
 };

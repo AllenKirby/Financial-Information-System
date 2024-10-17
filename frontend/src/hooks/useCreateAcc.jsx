@@ -21,7 +21,7 @@ export const useCreateAcc = () => {
                 name: `${userData.firstname},${userData.lastname}`
             }
             console.log(`userCreateAcc ${userData.role}`)
-            const res = await axios.post('http://localhost:4000/admin/create', data, {
+            const res = await axios.post('http://localhost:4000/superadmin/create', data, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${newUser_token}` 
