@@ -5,10 +5,23 @@ import Loader from "../Loader"
 
 import PropTypes from 'prop-types'
 
-const UserManagement = ({modal}) => {
+const UserManagement = ({modal, account = {}, flag}) => {
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
   const { createAcc, isLoading, error } = useCreateAcc()
   const [passwordError, setPasswordError] = useState('')
+
+  console.log(account)
+
+  useEffect(() => {
+    if(flag && account){
+      setUserData({
+        firstname: account.customClaims.dispName.split(',').slice()[0] || '',
+        lastname: account.customClaims.dispName.split(',').slice()[1] || '',
+        role: account.customClaims.role || '',
+        email: account.email || ''
+      })
+    }
+  }, [account, flag])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -31,11 +44,6 @@ const UserManagement = ({modal}) => {
       });
     }
   }
-
-  useEffect(()=>{
-    console.log(userData.role)
-  }, [userData.role])
-
   return (
     <form onSubmit={handleSubmit} className="bg-white w-2/5 rounded-lg border-[1px] mr-3 p-5">
       <h1 className="text-center text-2xl font-bold">Create User</h1>
@@ -47,6 +55,7 @@ const UserManagement = ({modal}) => {
             className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
             type="text"
             placeholder="e.g., John"
+            value={userData.firstname}
             pattern="[A-Za-z-_]+" title="Numbers and Special Characters are not allowed"
             onChange={(e) => setUserData({ ...userData, firstname: e.target.value })}
             required />
@@ -57,6 +66,7 @@ const UserManagement = ({modal}) => {
             className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
             type="text"
             placeholder="e.g., Dela Cruz"
+            value={userData.lastname}
             pattern="[A-Za-z]+" title="Numbers and Special Characters are not allowed"
             onChange={(e) => setUserData({ ...userData, lastname: e.target.value })}
             required />
@@ -72,6 +82,7 @@ const UserManagement = ({modal}) => {
                 className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
                 type="email"
                 placeholder="email@gmail.com"
+                value={userData.email}
                 onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                 required />
             </div>
@@ -90,7 +101,7 @@ const UserManagement = ({modal}) => {
               </select>
             </div>
           </div>
-          <div className="flex gap-3 mt-3">
+          {!flag && (<div className="flex gap-3 mt-3">
             <div className="flex flex-col w-1/2">
               <label className="text-base">Password</label>
               <input
@@ -112,6 +123,7 @@ const UserManagement = ({modal}) => {
                 required />
             </div>
           </div>
+        )}
         </div>
         {passwordError && (
           <div className="text-red-600 font-semibold">
@@ -119,7 +131,7 @@ const UserManagement = ({modal}) => {
           </div>
         )}
       </div>
-      <div className="w-full h-auto py-4 flex items-center justify-center gap-3">
+      <div className="w-full h-auto py-4 flex items-center justify-end gap-3">
         <button disabled={isLoading} type="submit" className="px-10 py-2 bg-customgreen rounded-lg text-white hover:scale-125 transition-all duration-100">{isLoading ? <Loader /> : 'Save'}</button>
         <button onClick={modal} className="px-10 py-2 border-2 rounded-lg text-customFontColor bg-white hover:scale-125 transition-all duration-100">Back</button>
       </div>
@@ -133,7 +145,9 @@ const UserManagement = ({modal}) => {
 }
 
 UserManagement.propTypes = {
-  modal: PropTypes.func.isRequired
+  modal: PropTypes.func.isRequired,
+  account: PropTypes.object,
+  flag: PropTypes.bool.isRequired
 }
 
 export default UserManagement

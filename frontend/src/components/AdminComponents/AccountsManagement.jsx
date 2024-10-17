@@ -1,7 +1,6 @@
 import { useAuthContext } from '../../hooks/useAuthContext' 
 import axios from "axios"
 import { useEffect, useState } from "react"
-import AccountDetails from './AccountDetails'
 
 const AccountsManagement = () => {
     const [acc, setAcc] = useState([])
@@ -26,7 +25,7 @@ const AccountsManagement = () => {
         }
         
         getAllAccount()
-    }, [user])
+    }, [])
 
     return (
         <section className="w-full p-3 h-[30rem] rounded-t-lg border-[1px] bg-white">
