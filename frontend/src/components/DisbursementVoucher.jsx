@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useInputOperator } from '../hooks/useInputOperator'
+import { IoAdd } from "react-icons/io5";
+import { MdRemove } from "react-icons/md";
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', accTitle: '', accCode: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
@@ -170,6 +172,31 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }
 
+  const [formFields, setFormFields] = useState([{ accTitle: '', accCode: '', amount: '' }]);
+
+  const addNewField = () => {
+    setFormFields([...formFields, { accTitle: '', accCode: '', amount: '' }]);
+  };
+
+  const removeField = (index) => {
+    const updatedFields = formFields.filter((_, i) => i !== index);
+    setFormFields(updatedFields);
+  };
+
+  const handleFieldChange = (index, field, value) => {
+    const updatedFields = [...formFields];
+    updatedFields[index][field] = value;
+    setFormFields(updatedFields);
+  };
+
+  const handleButtonClick = (index) => {
+    if (index === formFields.length - 1) {
+      addNewField();
+    } else {
+      removeField(index);
+    }
+  };
+
   const isDisabled = user.role === '3'
 
   return (
@@ -179,7 +206,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         }else{
           flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
         }
-      }} action="" className="bg-white w-2/5 h-5/6 p-7 rounded-xl">
+      }} action="" className="bg-white w-3/5 h-5/6 p-7 rounded-xl">
       <div className='w-full h-auto py-2 text-center'>
         <h1 className='text-xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
       </div>
@@ -196,8 +223,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               onChange={(e) => setPayeeData({...payeeData, payee: e.target.value})} 
               required  />
           </div>
+
+          {/* ADDRESS */}
           <div className='w-full flex gap-2'>
-            <div className='w-1/2'>
+            <div className='w-full'>
               <label>Address</label>
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
@@ -207,17 +236,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
                 required  />
             </div>
-            <div className='w-1/2'>
-              <label>TIN/Employee No.</label>
-              <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                disabled={isDisabled}
-                type="text" 
-                value={payeeData.TIN}
-                onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
-                required  />
-            </div>
           </div>
+
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">Document/Transaction Information</h1>
         <div className="w-full h-auto flex flex-col gap-3 py-2">
@@ -233,9 +253,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               >
                 <option value="" disabled>Select</option>
                 <option value="501 LFP">501 LFP</option>
-                <option value="COV">501 COB</option>
+                <option value="501 COB">501 COB</option>
                 <option value="501 CARP">501 CARP</option>
-                <option value="501 LFP-contract farming">Contract farming</option>
+                <option value="Contract Farming">Contract farming</option>
               </select>
             </div>
             <div className="flex flex-col w-2/6">
@@ -289,48 +309,120 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">Financial/Payment Details</h1>
         <div className="w-auto h-auto flex flex-col py-2">
-          <div className='w-full mb-2'>
-            <label>Account Title</label>
-            <select  
-              className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-              onChange={(e) => {
-                const [title, code] = e.target.value.split(':');
-                setPayeeData({...payeeData, accTitle: title, accCode: code});
-              }}
-              value={`${payeeData.accTitle}:${payeeData.accCode}`}
-              disabled={isDisabled}
-              required
-            >
-              <option value="" disabled>Select Account Title</option>
-              {
-                accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
-                  Object.entries(accountOptions.account_codes).map(([key, value], index) => {
-                    // Split the field value by ':' and take the last part
-                    const parts = value.split(':');
-                    const lastPart = parts[parts.length - 1];
-                    
-                    return (
-                      <option key={index} value={`${lastPart}:${key}`}>
-                        {lastPart}
-                      </option>
-                    );
-                  })
-                ) : (
-                  <option>Loading...</option>
-                )
-              }
-            </select>
-          </div>
+           {/* TIN AND VAT */}
+           <div className='w-full flex gap-2'>
+                <div className='w-1/4'>
+                  <label>Tax Types</label>
+                  <select 
+                    className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                    disabled={isDisabled}
+                    // onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                    required  >
+                      <option value="" disabled>Select Tax Type</option>
+                      <option value="VAT">VAT</option>
+                      <option value="NONVAT">NONVAT</option>
+                  </select>  
+                </div>
+                <div className='w-1/4'>
+                  <label>Cost Categories</label>
+                  <select 
+                    className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                    disabled={isDisabled}
+                    // onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                    required  >
+                      <option value="" disabled>Select Cost Category</option>
+                      <option value="Goods">Goods</option>
+                      <option value="Services">Services</option>
+                  </select>
+                </div>
+                <div className='w-1/2'>
+                  <label>TIN/Employee No.</label>
+                  <input 
+                    className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                    disabled={isDisabled}
+                    type="text" 
+                    value={payeeData.TIN}
+                    onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                    required  />
+                </div>
+            </div>
+
           <div className='w-full mb-2'>
             <label>Amount</label>
             <input 
-              className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+              className="w-1/2 flex px-4 py-2 rounded-md border-2 focus:outline-none" 
               type="number" 
               disabled={isDisabled}
               onChange={(e) => computeAmount(e.target.value)}
-              value={payeeData.amount}
+              placeholder='0'
+              value={payeeData.amount === 0 ? '' : payeeData.amount}
               required  />
           </div>
+          {/* ACCOUNT TITLE */}
+          <div className='w-auto h-auto flex flex-col py-2'>
+              {
+                formFields.map((field, index) => (
+                  <div key={index} className='w-full flex gap-2 mb-4'>
+                    <div className='w-3/5 mb-2'>
+                      <label>Account Title</label>
+                      <select
+                        className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+                        onChange={(e) => {
+                          const [title, code] = e.target.value.split(':');
+                          handleFieldChange(index, 'accTitle', title);
+                          handleFieldChange(index, 'accCode', code);
+                        }}
+                        value={`${field.accTitle}:${field.accCode}`}
+                        disabled={isDisabled}
+                        required
+                      >
+                        <option value="" disabled>Select Account Title</option>
+                        {
+                          accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
+                            Object.entries(accountOptions.account_codes).map(([key, value], idx) => {
+                              const parts = value.split(':');
+                              const lastPart = parts[parts.length - 1];
+                              return (
+                                <option key={idx} value={`${lastPart}:${key}`}>
+                                  {lastPart}
+                                </option>
+                              );
+                            })
+                          ) : (
+                            <option>Loading...</option>
+                          )
+                        }
+                      </select>
+                    </div>
+                    <div className='w-2/5 flex gap-2'>
+                      <div className='w-4/5 mb-2'>
+                        <label>Amount (Optional)</label>
+                        <input
+                          className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+                          type="number"
+                          disabled={isDisabled}
+                          onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
+                          value={field.amount === 0 ? '' : field.amount}
+                          placeholder="0"
+                        />
+                      </div>
+                      <div className='flex justify-center items-center gap-2'>
+                        <div className='pt-4'>
+                        <button
+                          className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'} hover:text-white`}
+                          onClick={() => handleButtonClick(index)}>
+                          {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
+                        </button>
+                        </div>
+                        
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+          
+          
           {user.role === '3' && 
             <div className='w-full'>
               <label>ASA No.</label>
