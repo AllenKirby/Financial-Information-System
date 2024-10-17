@@ -73,7 +73,39 @@ const readAdmin_records = async(req, res) => {
   
 }
 
+const addFundCluster = async (req, res) => {
+  const newFundCluster = req.body.cluster
+  console.log('hit add fund')
+  const randomKey = Math.random().toString(36).substring(2, 15);
+
+  const clusterData = {
+    [randomKey] : newFundCluster
+  }
+
+  try{
+    console.log('hit try')
+    const docRef = db.collection('formData').doc('fundCluster');
+    const doc = await docRef.get()
+    if(doc.exists){
+      await docRef.update(clusterData)
+    }else{
+      await docRef.set(clusterData)
+    }
+    console.log('successfully adding new fundcluster')
+    return res.status(200).json({success: true, message: `Successfully added ${newFundCluster}`});
+
+  }catch(error){
+    console.log('error adding new fundcluster')
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error creating user', 
+      error: error.message 
+    });
+  }
+}
+
 module.exports = {
   getAllLogs,
-  readAdmin_records
+  readAdmin_records,
+  addFundCluster
 };

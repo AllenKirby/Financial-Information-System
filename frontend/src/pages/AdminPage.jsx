@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 
 import { RxDashboard } from "react-icons/rx";
 import { CiViewList } from "react-icons/ci";
+import { FaRegEdit } from "react-icons/fa";
 //import { TbLogs } from "react-icons/tb";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
@@ -23,6 +24,7 @@ const AdminPage = () => {
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
         // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
+        { label: 'Edit Form', path: '/admin/editform', icon: <FaRegEdit size={18}/>}
     ];
 
     useEffect(() => {
@@ -32,6 +34,8 @@ const AdminPage = () => {
             setLocation('Disbursement Records')
         }else if(page.pathname === "/admin/historylogs"){
             setLocation('History Logs')
+        }else if(page.pathname === "/admin/editform"){
+            setLocation('Edit Form')
         }
         
       }, [page.pathname])

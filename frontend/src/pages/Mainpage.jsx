@@ -18,6 +18,7 @@ import DisbursementRecordsAdmin from "../components/AdminComponents/Disbursement
 import HistoryLogs from "../components/AdminComponents/HistoryLogs";
 import ForbiddenPage from "./ForbiddenPage";
 import SuperAdminPage from "./SuperAdminPage";
+import Editform from "../components/AdminComponents/EditForm";
 
 
 const Mainpage = () => {
@@ -33,6 +34,7 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
           </Route>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
+          <Route path="editform" element={<PrivateRoute allowedRoles={['1']}><Editform/></PrivateRoute>}/>
         </Route>
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>       
           <Route index element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>} />
