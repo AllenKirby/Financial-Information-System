@@ -19,6 +19,7 @@ import HistoryLogs from "../components/AdminComponents/HistoryLogs";
 import ForbiddenPage from "./ForbiddenPage";
 import SuperAdminPage from "./SuperAdminPage";
 import Editform from "../components/AdminComponents/EditForm";
+import AccessControl from "../components/SuperAdminComponents/AccessControl";
 
 
 const Mainpage = () => {
@@ -54,6 +55,7 @@ const Mainpage = () => {
         </Route>
         <Route path="/superadmin" element={<SuperAdminPage/>}>
           <Route path="usermanagement" element={<UserManagement />}/>
+          <Route path="accesscontrol" element={<AccessControl />}/>
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>

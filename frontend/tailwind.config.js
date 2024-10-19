@@ -21,6 +21,8 @@ export default {
       spacing: {
         'a4-width': '210mm',  // Custom A4 width
         'a4-height': '296mm', // Custom A4 height
+        'long-width': '215.9mm',
+        'long-height': '330.2mm'
       },
       animation: {
         blink: 'blink 2s ease-in-out infinite',

@@ -5,13 +5,15 @@ import { Outlet, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react";
 
 import { PiUsersThree } from "react-icons/pi";
+import { TbUserShield } from "react-icons/tb";
 
 const SuperAdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
 
     const navItems = [
-        {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThree size={18} />}
+      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThree size={18} />},
+      {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={18} />}
     ]
 
     useEffect(() => {

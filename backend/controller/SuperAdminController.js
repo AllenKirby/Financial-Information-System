@@ -67,9 +67,12 @@ const getAllAccounts = async (req, res) => {
     const email = decodedToken.email
     const uid = decodedToken.uid
   
-  
+
     const userData = {
-      [uid] : `${email}|${dispName}`
+      uid : uid,
+      name : dispName,
+      email: email,
+      role : role
     }
   
     console.log(`role in createaccount ${role}`)
@@ -79,14 +82,9 @@ const getAllAccounts = async (req, res) => {
        await admin.auth().setCustomUserClaims(uid, { role, dispName });
         console.log(`account created with role ${role}`)
   
-       const docRef = db.collection('listOfUsers').doc(role);
-       const doc = await docRef.get();
-       if(doc.exists){
-        await docRef.update(userData);
-       }else{
-        await docRef.set(userData);
-       }
-  
+       await db.collection('listOfUsers').doc(uid).set(userData);
+       
+      
        return res.status(200).json({ 
         success: true, 
         message: `User created successfully with role ${role}` 
@@ -103,14 +101,11 @@ const getAllAccounts = async (req, res) => {
   }
 
   const deleteAcc = async(req, res) => {
-    const uidRole = req.params.id
-    const uid = uidRole.split('|').slice()[0]
-    const role = uidRole.split('|').slice()[1]
+    const uid = req.params.id
+    
     try {
       await admin.auth().deleteUser(uid)
-      await db.collection('listOfUsers').doc(role).update({
-        [uid]: admin.firestore.FieldValue.delete()
-      })
+      await db.collection('listOfUsers').doc(uid).delete()
       res.status(200).json({message: 'Account Successfully Deleted'})
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -122,9 +117,48 @@ const getAllAccounts = async (req, res) => {
     }
   }
 
+  const retrieveRoles = async(req, res) => {
+    try{
+      const docref = await db.collection('Roles').get()
+
+      const roles = docref.docs.map(doc => ({
+        ...doc.data()
+      }));
+
+      res.status(200).json(roles)
+    }catch(error){
+      console.error('Error retrieving roles:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error retrieving roles', 
+        error: error.message 
+      });
+    }
+  }
+
+  const changeAccess = async(req, res) => {
+    const roleName = req.params.id
+    const {newPermission} = req.body
+    try {
+      await db.collection('Roles').doc(roleName).update({
+        permission: newPermission
+      })
+      res.status(200).json({message: 'Permission Change'})
+    }catch(error){
+      console.error('Error changing permission:', error);
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error changing permission', 
+        error: error.message 
+      });
+    }
+  }
+
   module.exports = {
     getAllAccounts,
     disableAccount,
     createAccount,
-    deleteAcc
+    deleteAcc,
+    retrieveRoles,
+    changeAccess
   };

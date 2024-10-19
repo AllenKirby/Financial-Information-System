@@ -76,7 +76,7 @@ const AccountDetails = ({account}) => {
             confirmButtonText: "Yes, Delete it!",
             }).then(async (result) => {
                 if (result.isConfirmed) {
-                    const res = await deleteUser(account.customClaims.role, account.uid)
+                    const res = await deleteUser(account.uid)
                     if (res) {
                         Swal.fire({
                             title: "Deleted!",
@@ -100,7 +100,7 @@ const AccountDetails = ({account}) => {
                 <p className="w-1/5 px-2 truncate font-semibold">{account.customClaims.dispName.replace(',', ' ')}</p>
                 <p className="w-1/5 px-2">{role}</p>
                 <p className="w-1/5 px-2 truncate text-blue-500 underline">{account.email}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.disabled ? 'text-red-500' : 'text-green-500'}`}>{account.disabled ? 'Disabled' : 'Active'}</p>
+                <p className={`w-1/5 px-2 text-center font-medium ${account.disabled ? 'text-red-500' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</p>
                 <p className={`w-1/5 px-2 text-center font-medium ${account.emailVerified ? 'text-green-500' : 'text-red-500'}`}>{account.emailVerified ? 'True' : 'False'}</p>
             </div>
             <div className='w-[10%] h-auto flex items-center justify-end px-2 gap-2'>
