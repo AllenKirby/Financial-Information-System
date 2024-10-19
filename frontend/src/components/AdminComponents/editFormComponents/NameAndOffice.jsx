@@ -27,7 +27,8 @@ export const NameAndOffice = () => {
     const handleSubmit = () => {
         
         if (name && office) {
-            const randomKey = Math.random().toString(36).substring(2, 15);
+            const input = name+office
+            const randomKey = input.replace(/[^a-zA-Z0-9]/g, "");
             setEntries((prev) => {
                 const newObj = {...prev}
                 newObj[randomKey] = {name, office}
@@ -91,7 +92,7 @@ export const NameAndOffice = () => {
         <div className="w-4/5 h-72">
             <div className="w-full h-full rounded-lg bg-white border-[1px]">
                 <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
-                    <h1 className='w-2/5 text-left font-bold px-2'>Name</h1>
+                    <h1 className='w-2/5 text-center font-bold px-2'>Name</h1>
                     <h1 className='w-2/5 text-center font-bold'>Office</h1>
                     <div className="w-1/5 flex justify-center items-center">
                         <button 

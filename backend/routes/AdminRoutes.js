@@ -4,7 +4,21 @@ const adminRouter = express.Router()
 
 const setRole = require('../middleware/Role')
 
-const {getAllLogs, readAdmin_records, addFundCluster, getFundCluster, deleteFundCluster, addRC, getRC, deleteRC, addNameAndOffice, getNameAndOffice, deleteNameAndOffice} = require('../controller/AdminController');
+const {getAllLogs, 
+       readAdmin_records, 
+       addFundCluster, 
+       getFundCluster, 
+       deleteFundCluster, 
+       addRC, 
+       getRC, 
+       deleteRC, 
+       addNameAndOffice, 
+       getNameAndOffice, 
+       deleteNameAndOffice,
+       addTaxType,
+       getTaxType,
+       deleteTax
+        } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
 
@@ -22,6 +36,10 @@ adminRouter.delete('/deleteRC/:field_key', deleteRC)
 adminRouter.post('/addNameAndOffice', addNameAndOffice)
 adminRouter.get('/getNameAndOffice', getNameAndOffice)
 adminRouter.delete('/deleteNameAndOffice/:field_key', deleteNameAndOffice)
+//TAX TYPE
+adminRouter.post('/addTaxType', addTaxType)
+adminRouter.get('/getTaxType', getTaxType)
+adminRouter.delete('/deleteTax/:field_key', deleteTax)
 
 
 module.exports = adminRouter;

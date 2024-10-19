@@ -27,6 +27,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const [fundCluster, setFundCluster] = useState([])
   const [rc, setRc] = useState([])
+  const [taxType, setTaxType] = useState([])
+  const [cost, setCost] = useState([])
+  const [taxData, setTaxData] = useState({})
+  const [selectedCost, setSelectedCost] = useState("")
+  const [gross, setGross] = useState({})
+  const [nameOffice, setNameOffice] = useState({})
+  const [selectedNameOffice, setSelectedNameOffice] = useState("")
 
   useEffect(() => {
     if (flag && document) {
@@ -118,6 +125,14 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       const form = await getFormData()
       setFundCluster(Object.values(form.fundCluster))
       setRc(Object.values(form.ResponsibilityCenter))
+
+      const costOnly = Object.values(form.TaxType).map(arr => arr[1]);
+      const uniqueCost = [...new Set(costOnly)]
+      setCost(uniqueCost)
+
+      setTaxData(form.TaxType)
+
+      setNameOffice(form.NameOffice)
       
       const storedAccountOptions = localStorage.getItem('account_fields')
       if(storedAccountOptions){
@@ -212,6 +227,24 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   };
 
+
+  useEffect(() => {
+    if (taxType && selectedCost){
+      const key = taxType + selectedCost
+      if (taxData[key] && taxData[key].length >= 3) {
+        setGross({
+          value2: taxData[key][2],
+          value3: taxData[key][3]
+        });
+      } else {
+        setGross({ value2: '', value3: '' });
+      }
+    }else{
+      setGross({ value2: '', value3: '' });
+    }
+
+  }, [selectedCost, taxType])
+
   const isDisabled = user.role === '3'
 
   return (
@@ -241,7 +274,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
           {/* ADDRESS */}
           <div className='w-full flex gap-2'>
-            <div className='w-full'>
+            <div className='w-1/2'>
               <label>Address</label>
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
@@ -249,6 +282,16 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 type="text" 
                 value={payeeData.address}
                 onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
+                required  />
+            </div>
+            <div className='w-1/2'>
+              <label>TIN/Employee No.</label>
+              <input 
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                disabled={isDisabled}
+                type="text" 
+                value={payeeData.TIN}
+                onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
                 required  />
             </div>
           </div>
@@ -326,6 +369,37 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               </select>
             </div>
           </div>
+          <div className='w-full'>
+            <div className='w-full flex gap-2'>
+              <div className="flex flex-col w-3/5">
+                <label>Name and office</label>
+                <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                  // onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
+                  onChange={(e) => setSelectedNameOffice(e.target.value)}
+                  value={selectedNameOffice}
+                  disabled={isDisabled}
+                  required
+                  //value
+                >
+                  <option value="" disabled>Select</option>
+                  {Object.entries(nameOffice).length > 0 ? (
+                      Object.entries(nameOffice).map(([key, value]) => (
+                          <option key={key} value={value[1]}>
+                              {value[0]}
+                          </option>
+                      ))
+                  ) : (
+                      <option value="" disabled>
+                          No options available
+                      </option>
+                  )}
+                </select>
+              </div>
+              <div className='w-2/5 flex items-end justify-center'>
+                <label>{selectedNameOffice}</label>
+              </div>
+            </div>
+          </div>
            {user.role === '3' && 
             <div className='w-full'>
               <label>ORS/BURS no.</label>
@@ -342,52 +416,66 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         <div className="w-auto h-auto flex flex-col py-2">
            {/* TIN AND VAT */}
            <div className='w-full flex gap-2'>
-                <div className='w-1/4'>
+                <div className='w-1/3'>
                   <label>Tax Types</label>
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                     disabled={isDisabled}
-                    // onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                    value={taxType}
+                    onChange={(e) => setTaxType(e.target.value)} 
                     required  >
                       <option value="" disabled>Select Tax Type</option>
                       <option value="VAT">VAT</option>
-                      <option value="NONVAT">NONVAT</option>
+                      <option value="NON-VAT">NONVAT</option>
                   </select>  
                 </div>
-                <div className='w-1/4'>
+                <div className='w-1/3'>
                   <label>Cost Categories</label>
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                     disabled={isDisabled}
-                    // onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                    value={selectedCost}
+                    onChange={(e) => setSelectedCost(e.target.value)} 
                     required  >
                       <option value="" disabled>Select Cost Category</option>
-                      <option value="Goods">Goods</option>
-                      <option value="Services">Services</option>
+                      {
+                        cost.length > 0 ? (
+                          cost.map((uniquecost, index) => (
+                            <option key={index} value={uniquecost}>
+                              {uniquecost}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>No options available</option>
+                        )
+                      }
                   </select>
                 </div>
-                <div className='w-1/2'>
-                  <label>TIN/Employee No.</label>
+                <div className='w-1/3'>
+                  <label>Amount</label>
                   <input 
-                    className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
+                    className="w-full flex px-4 py-2 rounded-md border-2 focus:outline-none" 
+                    type="number" 
                     disabled={isDisabled}
-                    type="text" 
-                    value={payeeData.TIN}
-                    onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                    onChange={(e) => computeAmount(e.target.value)}
+                    placeholder='0'
+                    value={payeeData.amount === 0 ? '' : payeeData.amount}
                     required  />
                 </div>
             </div>
+          
+          <div className='w-full mb-2 flex'>
+            
 
-          <div className='w-full mb-2'>
-            <label>Amount</label>
-            <input 
-              className="w-1/2 flex px-4 py-2 rounded-md border-2 focus:outline-none" 
-              type="number" 
-              disabled={isDisabled}
-              onChange={(e) => computeAmount(e.target.value)}
-              placeholder='0'
-              value={payeeData.amount === 0 ? '' : payeeData.amount}
-              required  />
+              <div className='w-2/3 flex justify-center items-center'>
+                <div className='w-1/2 flex justify-center'>
+                  <label>gross{gross.value2}</label>
+                </div>
+                <div className='w-1/2 flex justify-center'>
+                  <label>gross{gross.value3}</label>
+                </div>
+              </div>
+
           </div>
           {/* ACCOUNT TITLE */}
           <div className='w-auto h-auto flex flex-col py-2'>
@@ -441,7 +529,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <div className='pt-4'>
                         <button
                           className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'} hover:text-white`}
-                          onClick={() => handleButtonClick(index)}>
+                          onClick={() => handleButtonClick(index)}
+                          type = "button">
+                          
                           {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
                         </button>
                         </div>
