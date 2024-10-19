@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react'
 import  {useCreateDisbursement}  from '../hooks/useCreateDisbursement'
 import {useUpdateDisbursement} from '../hooks/useUpdateDisbursement'
+import { useDV } from '../hooks/useDV'
 import Loader from './Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
@@ -15,11 +16,17 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
 
+  const [optionalAmount, setOptionalAmount] = useState(true)
+
   const [accountOptions, setAccountOptions] = useState([]);
   const {createDisbursement, isLoading, error} = useCreateDisbursement()
   const {updateDV, isLoadingForUpdate, errorForUpdate} = useUpdateDisbursement()
   const {inputOperator, isLoadingForOp, errorForOp} = useInputOperator()
+  const{getFormData} = useDV()
   const { user } = useAuthContext()
+
+  const [fundCluster, setFundCluster] = useState([])
+  const [rc, setRc] = useState([])
 
   useEffect(() => {
     if (flag && document) {
@@ -108,6 +115,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   useEffect(() => {
     
     const fetchAccountCode = async () => {
+      const form = await getFormData()
+      setFundCluster(Object.values(form.fundCluster))
+      setRc(Object.values(form.ResponsibilityCenter))
+      
       const storedAccountOptions = localStorage.getItem('account_fields')
       if(storedAccountOptions){
         console.log(`from local storage`)
@@ -133,6 +144,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           console.error('Error fetching account titles:', error);
         }
       }
+      
     }
     fetchAccountCode();
   }, [])
@@ -192,8 +204,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleButtonClick = (index) => {
     if (index === formFields.length - 1) {
       addNewField();
+      setOptionalAmount(formFields.length +1 === 1)
     } else {
+      setOptionalAmount(formFields.length -1 === 1)
       removeField(index);
+      
     }
   };
 
@@ -252,10 +267,17 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 //value
               >
                 <option value="" disabled>Select</option>
-                <option value="501 LFP">501 LFP</option>
-                <option value="501 COB">501 COB</option>
-                <option value="501 CARP">501 CARP</option>
-                <option value="Contract Farming">Contract farming</option>
+                {fundCluster.length > 0 ? (
+                    fundCluster.map((fund, index) => (
+                        <option key={index} value={fund}>
+                            {fund}
+                        </option>
+                    ))
+                ) : (
+                    <option value="" disabled>
+                        No options available
+                    </option>
+                )}
               </select>
             </div>
             <div className="flex flex-col w-2/6">
@@ -290,8 +312,17 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 required
               >
                 <option value="" disabled>Select </option>
-                <option value="EOD">EOD</option>
-                <option value="AFD">AFD</option>
+                {
+                  rc.length > 0 ? (
+                    rc.map((res_center, index) => (
+                      <option key={index} value={res_center}>
+                        {res_center}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="" disabled>No options available</option>
+                  )
+                }
               </select>
             </div>
           </div>
@@ -400,7 +431,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <input
                           className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
                           type="number"
-                          disabled={isDisabled}
+                          disabled={isDisabled || optionalAmount}
                           onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
                           value={field.amount === 0 ? '' : field.amount}
                           placeholder="0"

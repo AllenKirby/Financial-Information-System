@@ -4,12 +4,24 @@ const adminRouter = express.Router()
 
 const setRole = require('../middleware/Role')
 
-const {getAllLogs, readAdmin_records, addFundCluster} = require('../controller/AdminController');
+const {getAllLogs, readAdmin_records, addFundCluster, getFundCluster, deleteFundCluster, addRC, getRC, deleteRC, addNameAndOffice, getNameAndOffice, deleteNameAndOffice} = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
 
 adminRouter.get('/getAllDV', getAllLogs)
 adminRouter.get('/approvedDV', readAdmin_records)
+//FUND CLUSTER
 adminRouter.post('/addNewFundCluster', addFundCluster)
+adminRouter.get('/getFundCluster', getFundCluster)
+adminRouter.delete('/deleteFundCluster/:field_key', deleteFundCluster)
+//RESPONSIBILITY CENTER
+adminRouter.post('/addRC', addRC)
+adminRouter.get('/getRC', getRC)
+adminRouter.delete('/deleteRC/:field_key', deleteRC)
+//NAME AND OFFICE
+adminRouter.post('/addNameAndOffice', addNameAndOffice)
+adminRouter.get('/getNameAndOffice', getNameAndOffice)
+adminRouter.delete('/deleteNameAndOffice/:field_key', deleteNameAndOffice)
+
 
 module.exports = adminRouter;
