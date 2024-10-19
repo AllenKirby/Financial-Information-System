@@ -340,11 +340,35 @@ const setHistoryLogs = async(DT, logs) => {
     }
 }
 
+const getFormData = async (req, res) => {
+    try{
+        const docRef = db.collection('formData')
+        const snapshot = await docRef.get()
+
+        if (snapshot.empty) {
+            console.log('No matching documents.');
+            res.status(404).json({ success: false, message: 'No form data found.' });
+            return;
+        }
+
+        const formData = {};
+            snapshot.forEach(doc => {
+            formData[doc.id] = doc.data();
+        });
+
+        res.status(200).json({ success: true, form: formData });
+    }catch(error){
+        console.log(`Error fetching form data ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = {
     createDV,
     retrieveDV,
     getAccountCodes,
     deleteDV, 
     passDocument,
-    updateDV
+    updateDV,
+    getFormData
 };

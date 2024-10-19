@@ -10,7 +10,8 @@ const {
     getAccountCodes, 
     deleteDV, 
     passDocument,
-    updateDV
+    updateDV,
+    getFormData
 } = require('../controller/EditorController');
 
 
@@ -22,6 +23,7 @@ editorRouter.get('/getAccountCode', getAccountCodes)
 editorRouter.get('/getDV', retrieveDV)
 editorRouter.delete('/deleteDV/:id', deleteDV)
 editorRouter.patch('/updateDV/:id', updateDV)
+editorRouter.get('/getFormData', getFormData)
 
 
 module.exports = editorRouter;

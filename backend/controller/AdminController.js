@@ -1,6 +1,7 @@
 
 const {admin, db}  = require('../firebase')
 const fs = require('fs');
+const FieldValue = admin.firestore.FieldValue;
 
 const getAllLogs = async(req, res) => {
   try{
@@ -73,17 +74,17 @@ const readAdmin_records = async(req, res) => {
   
 }
 
+
+// FUND CLUSTER
 const addFundCluster = async (req, res) => {
   const newFundCluster = req.body.cluster
-  console.log('hit add fund')
-  const randomKey = Math.random().toString(36).substring(2, 15);
+  const randomKey = req.body.key
 
   const clusterData = {
     [randomKey] : newFundCluster
   }
 
   try{
-    console.log('hit try')
     const docRef = db.collection('formData').doc('fundCluster');
     const doc = await docRef.get()
     if(doc.exists){
@@ -98,14 +99,185 @@ const addFundCluster = async (req, res) => {
     console.log('error adding new fundcluster')
     return res.status(500).json({ 
       success: false, 
-      message: 'Error creating user', 
+      message: 'Error adding cluster', 
       error: error.message 
     });
   }
 }
 
+const getFundCluster = async (req, res) => {
+  try{
+    const docRef = db.collection('formData').doc('fundCluster');
+    const data = await docRef.get();
+
+    if(data.exists){
+      const cluster = data.data()
+
+      res.status(200).json({formData: cluster});
+    }
+    else{
+      console.log('No Fund cluster found')
+    } 
+
+  }catch(error){
+    console.error("Error retrieving fund cluster: ", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const deleteFundCluster = async (req, res) => {
+  try{
+    const field_key = req.params.field_key;
+
+    const docRef = db.collection('formData').doc('fundCluster');
+
+    await docRef.update({
+      [field_key]: FieldValue.delete()
+    });
+
+    res.status(200).json({ success: true, message: `Deleted key: ${field_key}` });
+
+  }catch(error){
+    console.log(`Error in deleting fund ${error}`)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+// RESPONSIBILITY CENTER
+const addRC = async (req, res) => {
+  const newRC = req.body.RC
+  const randomKey = req.body.key
+
+  const rcData = {
+    [randomKey] : newRC
+  }
+
+  try{
+    const docRef = db.collection('formData').doc('ResponsibilityCenter');
+    const doc = await docRef.get()
+    if(doc.exists){
+      await docRef.update(rcData)
+    }else{
+      await docRef.set(rcData)
+    }
+    return res.status(200).json({success: true, message: `Successfully added ${newRC}`});
+
+  }catch(error){
+    console.log('error adding new RC')
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error creating RC', 
+      error: error.message 
+    });
+  }
+}
+
+const getRC = async (req, res) => {
+  try{
+    const docRef = db.collection('formData').doc('ResponsibilityCenter');
+    const data = await docRef.get();
+
+    if(data.exists){
+      const RC = data.data()
+
+      res.status(200).json({formData: RC});
+    }
+    else{
+      console.log('No RC found')
+    } 
+
+  }catch(error){
+    console.error("Error retrieving RC ", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const deleteRC = async (req, res) => {
+  try{
+    const field_key = req.params.field_key;
+
+    const docRef = db.collection('formData').doc('ResponsibilityCenter');
+
+    await docRef.update({
+      [field_key]: FieldValue.delete()
+    });
+
+    res.status(200).json({ success: true, message: `Deleted key: ${field_key}` });
+
+  }catch(error){
+    console.log(`Error in deleting fund ${error}`)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+//NAME AND OFFICE
+const addNameAndOffice = async (req, res) => {
+  try{
+    const {name, office, key} = req.body
+    const data = {
+      [key] : [name, office]
+    }
+    const docRef = db.collection('formData').doc('NameOffice');
+    const doc = await docRef.get()
+    if(doc.exists){
+      await docRef.update(data)
+    }else{
+      await docRef.set(data)
+    }
+    return res.status(200).json({success: true, message: `Successfully added ${data}`});
+    
+  }catch(error){
+    console.log(`Error in adding new name and office ${error}`)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const getNameAndOffice = async (req, res) => {
+  try{
+    const docRef = db.collection('formData').doc('NameOffice');
+    const data = await docRef.get();
+
+    if(data.exists){
+      const RC = data.data()
+
+      res.status(200).json({formData: RC});
+    }
+    else{
+      console.log('No name and office found')
+    } 
+  }catch(error){
+    console.error("Error retrieving name and office ", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const deleteNameAndOffice = async (req, res) => {
+  try{
+    const field_key = req.params.field_key;
+
+    const docRef = db.collection('formData').doc('NameOffice');
+
+    await docRef.update({
+      [field_key]: FieldValue.delete()
+    });
+
+    res.status(200).json({ success: true, message: `Deleted key: ${field_key}` });
+
+  }catch(error){
+    console.log(`Error in deleting fund ${error}`)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
 module.exports = {
   getAllLogs,
   readAdmin_records,
-  addFundCluster
+  addFundCluster,
+  getFundCluster,
+  deleteFundCluster,
+  addRC,
+  getRC,
+  deleteRC,
+  addNameAndOffice,
+  getNameAndOffice,
+  deleteNameAndOffice
 };
