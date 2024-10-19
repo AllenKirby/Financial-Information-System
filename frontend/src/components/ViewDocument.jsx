@@ -121,13 +121,13 @@ const ViewDocument = () => {
   const handleDownload = () => {
     const pdf = document.getElementById('pdf')
     html2pdf(pdf)
-        .from(pdf)
-        .set({
-          image: { type: 'jpeg', quality: 0.98 },  // Adjust image quality
-          pagebreak: { mode: 'avoid-all' },        // Avoid breaking elements
-          jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait', precision: 16 } // precision for higher quality
-        })
-        .save();
+      .from(pdf)
+      .set({
+        image: { type: 'jpeg', quality: 0.98 },  // Adjust image quality
+        pagebreak: { mode: 'avoid-all' },        // Avoid breaking elements
+        jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait', precision: 16 } // precision for higher quality
+      }
+    ).save();
   }
 
   const handleSubmit = async() => {

@@ -158,15 +158,31 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
 
 const getListOfOperatorAccounts = async () => {
     try{
-        const doc = await db.collection('listOfUsers').doc('3').get();
-        if(doc.exists){
-            const data = doc.data();
-            const keys = Object.keys(data)
-            console.log('successfully getting the list of op')
-            return keys
-        }else{
-            console.log("No such document for op!");
-        }
+
+        const docref = await db.collection('listOfUsers').get()
+
+        const uids = []
+
+        docref.forEach(doc => {
+            const data = doc.data()
+
+            if(data.role === '3' && data.uid){
+                uids.push(data.uid)
+            }
+        })
+
+        console.log('Successfully retrieved uids:', uids);
+        return uids;
+
+        // const doc = await db.collection('listOfUsers').doc('3').get();
+        // if(doc.exists){
+        //     const data = doc.data();
+        //     const keys = Object.keys(data)
+        //     console.log('successfully getting the list of op')
+        //     return keys
+        // }else{
+        //     console.log("No such document for op!");
+        // }
     }catch(error){
         console.log(`Error in getting list of op : ${error}`)
     }

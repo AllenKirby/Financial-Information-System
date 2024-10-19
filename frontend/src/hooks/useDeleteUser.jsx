@@ -4,10 +4,10 @@ import { useState } from "react"
 export const useDeleteUser = () => {
     const [isLoadingDelete, setIsLoadingDelete] = useState(false)
 
-    const deleteUser = async(role, uid) => {
+    const deleteUser = async(uid) => {
         setIsLoadingDelete(true)
         try {
-            const res = await axios.delete(`http://localhost:4000/superadmin/deleteAcc/${uid}|${role}` ,{
+            const res = await axios.delete(`http://localhost:4000/superadmin/deleteAcc/${uid}` ,{
                 withCredentials: true
             })
             if(res.status === 200){
