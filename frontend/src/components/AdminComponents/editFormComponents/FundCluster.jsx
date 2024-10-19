@@ -75,24 +75,7 @@ import { MdRemove } from "react-icons/md";
                         onClick={handleAddString}><IoAdd/></button>
                 </div>
             </div>
-            
-            <div className="h-80 overflow-y-auto">
-                {Object.keys(arrFund).length > 0 ? (
-                    Object.entries(arrFund).map(([key, value], index) => (
-                        <div key={index} className="w-full h-12 rounded-md my-1 px-2 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
-                            <span className="flex-1 text-left">{value}</span> {/* Display only the value */}
-                            <button 
-                                onClick={() => handleDeleteFund(key)} // Pass the key to delete
-                                className="text-red-500 px-1 py-1 rounded-full hover:bg-red-500 hover:text-white"
-                            >
-                                <MdRemove />
-                            </button>
-                        </div>
-                    ))
-                ) : (
-                    <div>No fund clusters available</div>
-                )}
-                {showInput && (
+            {showInput && (
                     <div className="px-2 py-2 bg-gray-200 flex gap-1">
                         <input
                             type="text"
@@ -109,6 +92,23 @@ import { MdRemove } from "react-icons/md";
                         </button>
                     </div>
                 )}
+            <div className="h-80 overflow-y-auto">
+                {Object.keys(arrFund).length > 0 ? (
+                    Object.entries(arrFund).map(([key, value], index) => (
+                        <div key={index} className="w-full h-12 rounded-md my-1 px-2 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
+                            <span className="flex-1 text-left">{value}</span> {/* Display only the value */}
+                            <button 
+                                onClick={() => handleDeleteFund(key)} // Pass the key to delete
+                                className="text-red-500 px-1 py-1 rounded-full hover:bg-red-500 hover:text-white"
+                            >
+                                <MdRemove />
+                            </button>
+                        </div>
+                    ))
+                ) : (
+                    <div>No fund clusters available</div>
+                )}
+                
             </div>
         </div>
     )

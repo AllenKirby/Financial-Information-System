@@ -268,6 +268,66 @@ const deleteNameAndOffice = async (req, res) => {
     res.status(500).json({ success: false, error: error.message });
   }
 }
+
+//TAX TYPE
+const addTaxType = async(req, res) => {
+  try{
+    const {tax, title, formula1, formula2, key} = req.body
+    const data = {
+      [key] : [tax, title, formula1, formula2]
+    }
+    const docRef = db.collection('formData').doc('TaxType');
+    const doc = await docRef.get()
+    if(doc.exists){
+      await docRef.update(data)
+    }else{
+      await docRef.set(data)
+    }
+    return res.status(200).json({success: true, message: `Successfully added tax ${data}`});
+    
+  }catch(error){
+    console.log(`Error in adding new tax ${error}`)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const getTaxType = async (req, res) => {
+  try{
+    const docRef = db.collection('formData').doc('TaxType');
+    const data = await docRef.get();
+
+    if(data.exists){
+      const tax = data.data()
+
+      res.status(200).json({formData: tax});
+    }
+    else{
+      console.log('No tax type found')
+    } 
+  }catch(error){
+    console.error("Error retrieving name and office ", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const deleteTax = async (req, res) => {
+  try{
+    const field_key = req.params.field_key;
+
+    const docRef = db.collection('formData').doc('TaxType');
+
+    await docRef.update({
+      [field_key]: FieldValue.delete()
+    });
+
+    res.status(200).json({ success: true, message: `Deleted key: ${field_key}` });
+
+  }catch(error){
+    console.log(`Error in deleting fund ${error}`)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
 module.exports = {
   getAllLogs,
   readAdmin_records,
@@ -279,5 +339,8 @@ module.exports = {
   deleteRC,
   addNameAndOffice,
   getNameAndOffice,
-  deleteNameAndOffice
+  deleteNameAndOffice,
+  addTaxType,
+  getTaxType,
+  deleteTax
 };

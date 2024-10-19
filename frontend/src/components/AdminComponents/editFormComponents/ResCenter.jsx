@@ -78,7 +78,23 @@ export const ResCenter = () => {
                             onClick={handleAddString_RC}><IoAdd/></button>
                     </div>
                 </div>
-                
+                {showInput_RC && (
+                    <div className="px-2 py-2 bg-gray-200 flex gap-1">
+                        <input
+                            type="text"
+                            value={inputValue_RC}
+                            onChange={handleInputChange_RC}
+                            placeholder="Enter a new fund cluster"
+                            className="border border-gray-300 p-2 rounded w-4/5"
+                        />
+                        <button
+                            onClick={handleSubmitRC}
+                            className="w-1/5 bg-blue-500 text-white rounded"
+                        >
+                            Submit
+                        </button>
+                    </div>
+                )}
                 <div className="h-50 overflow-y-auto">
                     {Object.keys(arrRC).length > 0 ? (
                         Object.entries(arrRC).map(([key, value], index) => (
@@ -95,23 +111,7 @@ export const ResCenter = () => {
                     ) : (
                         <div>No fund clusters available</div>
                     )}
-                    {showInput_RC && (
-                        <div className="px-2 py-2 bg-gray-200 flex gap-1">
-                            <input
-                                type="text"
-                                value={inputValue_RC}
-                                onChange={handleInputChange_RC}
-                                placeholder="Enter a new fund cluster"
-                                className="border border-gray-300 p-2 rounded w-4/5"
-                            />
-                            <button
-                                onClick={handleSubmitRC}
-                                className="w-1/5 bg-blue-500 text-white rounded"
-                            >
-                                Submit
-                            </button>
-                        </div>
-                    )}
+                    
                 </div>
             </div>
         </div>
