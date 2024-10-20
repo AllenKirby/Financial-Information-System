@@ -1,23 +1,26 @@
 import { useParams } from "react-router-dom";
-import { useDisbursementContext } from "../hooks/useDisbursementContext";
 import { useEffect, useState } from "react";
-import Document from "./Document";
 import html2pdf from 'html2pdf.js'
-import { useOpDisbursementContext } from "../hooks/useOpDisbursementContext";
-import { FaAngleDown, FaAngleUp, FaAngleLeft } from "react-icons/fa";
-import DisbursementVoucher from './DisbursementVoucher';
 import Swal from 'sweetalert2';
-import { useDeleteDisbursement } from "../hooks/useDeleteDisbursement";
-import { useToOperator } from "../hooks/useToOperator";
-import { useBackToEditor } from "../hooks/useBackToEditor";
-import { useToHead } from "../hooks/useToHead";
+//icons
+import { FaAngleDown, FaAngleUp, FaAngleLeft } from "react-icons/fa";
+//components
+import DisbursementVoucher from './DisbursementVoucher';
+import Document from "./Document";
+//contexts
+import { useDisbursementContext } from "../hooks/useDisbursementContext";
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
-import { useReturnFromHead } from '../hooks/useReturnFromHead'
-import { useToAdmin } from "../hooks/useToAdmin";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
+import { useOpDisbursementContext } from "../hooks/useOpDisbursementContext";
+//hooks
+import { usePreparerHook } from "../hooks/usePreparerHook";
+import { useFundingHook } from "../hooks/useFundingHook";
+import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
+import { useApproverHook } from "../hooks/useApproverHook";
 
 
 const ViewDocument = () => {
+  //states
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
   const [idStatus, setIdStatus] = useState({id: '', status: '', type: ''})
@@ -31,15 +34,10 @@ const ViewDocument = () => {
   const { AdminDocuments } = useAdminDisbursementContext()
 
   //hooks
-  const { deleteDV } = useDeleteDisbursement();
-  const { submitDoc, isLoading, error } = useToOperator()
-  const {returnDoc, isLoadingReturn_OpToEditor, errorReturn_OpToEditor} = useBackToEditor();
-  const { transferToHead, isLoadingToHead, errorToHead } = useToHead()
-  const {returnDocFromHeader, isLoadingReturn_fromHeader, errorReturn_fromHeader} = useReturnFromHead()
-  const {submitToAdmin, isLoadingToAdmin, errorToAdmin} = useToAdmin()
-
-  let isDisabled = (idStatus.status !== 'Drafting' && idStatus.status !== 'Returned') && idStatus.type === '4';
-  const isDisabledForOp = (idStatus.status !== 'In Review' && idStatus.status !== 'Returned') && idStatus === '3';
+  const {deleteDV, submitDoc, isLoading, error} = usePreparerHook()
+  const {returnDoc, transferToHead, isLoading: isLoadingForFunding, error: errorForFunding} = useFundingHook()
+  const {submitToAdmin, returnDocFromHeader, isLoading: isLoadingForBO, errorForBO} = useBudgetOfficerHook()
+  const {approveDV, isLoading: isLoadingForApprover, error: errorForApprover} = useApproverHook()
 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
@@ -82,7 +80,6 @@ const ViewDocument = () => {
     if (idStatus.type === '4') {
       const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
       if (selectedDocument) {
-        console.log('Editor',selectedDocument[1])
         setDoc(selectedDocument[1]);
       } else {
         console.log("Error finding the document");
@@ -90,7 +87,6 @@ const ViewDocument = () => {
     }else if (idStatus.type === '3'){
       const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
-        console.log('Operator',selectedDocument[1].data)
         setDoc(selectedDocument[1].data);
       } else {
         console.log("Error finding the operator document");
@@ -98,7 +94,6 @@ const ViewDocument = () => {
     }else if (idStatus.type === '2'){
       const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
-        console.log('Head',selectedDocument[1].data)
         setDoc(selectedDocument[1].data);
       } else {
         console.log("Error finding the Head document");
@@ -106,7 +101,6 @@ const ViewDocument = () => {
     }else if(idStatus.type === '1'){
       const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DV === idStatus.id);
       if (selectedDocument) {
-        console.log('Head',selectedDocument[1].data)
         setDoc(selectedDocument[1].data);
       } else {
         console.log("Error finding the Head document");
@@ -193,7 +187,7 @@ const ViewDocument = () => {
         else{
           Swal.fire({
             title: "Error!",
-            text: {errorReturn_OpToEditor},
+            text: {errorForFunding},
             icon: "error",
           });
         }
@@ -229,7 +223,7 @@ const ViewDocument = () => {
         else{
           Swal.fire({
             title: "Error!",
-            text: {errorToHead},
+            text: {errorForFunding},
             icon: "error",
           });
         }
@@ -270,7 +264,7 @@ const ViewDocument = () => {
         else{
           Swal.fire({
             title: "Error!",
-            text: {errorReturn_fromHeader},
+            text: {errorForBO},
             icon: "error",
           });
         }
@@ -306,7 +300,39 @@ const ViewDocument = () => {
         else{
           Swal.fire({
             title: "Error!",
-            text: {errorToAdmin},
+            text: {errorForBO},
+            icon: "error",
+          });
+        }
+      }
+    });
+  }
+
+  const approve = async() => {
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Approve it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await approveDV(idStatus.id)
+        if (res) {
+          Swal.fire({
+            title: "Approved!",
+            text: "Your document has been Approved.",
+            icon: "success",
+          });
+          window.history.back()
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {errorForApprover},
             icon: "error",
           });
         }
@@ -316,43 +342,150 @@ const ViewDocument = () => {
 
   return (
     <section className="w-full h-auto">
-      <div className="px-5 py-4 flex items-center justify-between"> 
-        <button onClick={() => window.history.back()} className="px-5 py-2 border-2  rounded-lg text-customgreen hover:scale-125 transition-all duration-150"><FaAngleLeft size={20}/></button>
+      <div className="px-5 py-4 flex items-center justify-between">
+        <button
+          onClick={() => window.history.back()}
+          className="px-5 py-2 border-2 rounded-lg text-customgreen hover:scale-125 transition-all duration-150"
+        >
+          <FaAngleLeft size={20} />
+        </button>
+        {/*Submit Buttons*/}
         <div className="flex items-center justify-center gap-16">
-          {idStatus.type === '4' && (<button disabled={isDisabled || isLoading} onClick={handleSubmit} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoading ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
-          {idStatus.type === '3' && (<button disabled={isDisabledForOp || isLoadingToHead} onClick={handleSubmitForOp} className={`px-5 py-2 rounded-lg ${ isDisabled || isLoadingToHead ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
-          {idStatus.type === '2' && (<button disabled={isLoadingToAdmin} onClick={handleSubmitForHead} className={`px-5 py-2 rounded-lg ${isLoadingToAdmin ? `bg-gray-200 text-gray-500` : `bg-customgreen text-white hover:scale-125`} transition-all duration-150`}>Submit</button>)}
-          {/* Options column */}
-          <div className=" flex items-center justify-end w-1/6 relative">
-            <button onClick={() => setDropDown(!dropDown)} className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white">
-              {dropDown ? <FaAngleDown size={20}/> : <FaAngleUp size={20}/>} More
+          {idStatus.type === '4' && (
+            <button
+              disabled={isLoading}
+              onClick={handleSubmit}
+              className={`px-5 py-2 rounded-lg ${
+                isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+              } transition-all duration-150`}
+            >
+              Submit
             </button>
-            {dropDown && <>
-                <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)}></div>
+          )}
+  
+          {idStatus.type === '3' && (
+            <button
+              disabled={isLoadingForFunding}
+              onClick={handleSubmitForOp}
+              className={`px-5 py-2 rounded-lg ${
+                isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+              } transition-all duration-150`}
+            >
+              Submit
+            </button>
+          )}
+  
+          {idStatus.type === '2' && (
+            <button
+              disabled={isLoadingForBO}
+              onClick={handleSubmitForHead}
+              className={`px-5 py-2 rounded-lg ${
+                isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+              } transition-all duration-150`}
+            >
+              Submit
+            </button>
+          )}
+  
+          {idStatus.type === '1' && (
+            <button
+              disabled={isLoadingForApprover}
+              onClick={approve}
+              className={`px-5 py-2 rounded-lg ${
+                isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+              } transition-all duration-150`}
+            >
+              Approve
+            </button>
+          )}
+  
+          {/* Options column */}
+          <div className="flex items-center justify-end w-1/6 relative">
+            <button
+              onClick={() => setDropDown(!dropDown)}
+              className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white"
+            >
+              {dropDown ? <FaAngleDown size={20} /> : <FaAngleUp size={20} />} More
+            </button>
+  
+            {dropDown && (
+              <>
+                <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)} />
                 <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
-                  {idStatus.type !== '2' && <button disabled={isDisabled} onClick={modal} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled ? 'bg-gray-200 text-gray-500' : 'text-customFontGreen hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Update</button>}
-                  {idStatus.type !== '2' && <button disabled={isDisabled || isLoadingReturn_OpToEditor} onClick={idStatus.type === '4' ? delDV : returnDV} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_OpToEditor ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>{idStatus.type === '4' ? 'Delete' : 'Return'}</button>}
-                  <button onClick={handleDownload} className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100">Download</button>
-                  {idStatus.type === '2' && <button onClick={() => handleReturn('3')} disabled={isLoadingReturn_fromHeader || isDisabled} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_fromHeader ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Operator</button>}
-                  {idStatus.type === '2' && <button onClick={() => handleReturn('4')} disabled={isLoadingReturn_fromHeader || isDisabled} className={`w-20 rounded-md text-xs py-1 font-semibold ${isDisabled || isLoadingReturn_fromHeader ? 'bg-gray-200 text-gray-500' : 'text-red-500  hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}>Return to Editor</button>}
+                  {idStatus.type !== '2' && idStatus.type !== '1' && (
+                    <button
+                      onClick={modal}
+                      className="w-20 rounded-md text-xs py-1 font-semibold 'text-customFontGreen hover:bg-gray-200 hover:scale-105' transition-all duration-100"
+                    >
+                      Update
+                    </button>
+                  )}
+                  {idStatus.type !== '2' && idStatus.type !== '1' && (
+                    <button
+                      disabled={isLoadingForFunding || isLoading}
+                      onClick={idStatus.type === '4' ? delDV : returnDV}
+                      className={`w-20 rounded-md text-xs py-1 font-semibold ${
+                        isLoadingForFunding
+                          ? 'bg-gray-200 text-gray-500'
+                          : 'text-red-500 hover:bg-gray-200 hover:scale-105'
+                      } transition-all duration-100`}
+                    >
+                      {idStatus.type === '4' ? 'Delete' : 'Return'}
+                    </button>
+                  )}
+                  <button
+                    onClick={handleDownload}
+                    className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100"
+                  >
+                    Download
+                  </button>
+                  {idStatus.type === '2' && (
+                    <button
+                      onClick={() => handleReturn('3')}
+                      disabled={isLoadingForBO}
+                      className={`w-20 rounded-md text-xs py-1 font-semibold ${
+                        isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
+                      } transition-all duration-100`}
+                    >
+                      Return to Funding
+                    </button>
+                  )}
+                  {idStatus.type === '2' && (
+                    <button
+                      onClick={() => handleReturn('4')}
+                      disabled={isLoadingForBO}
+                      className={`w-20 rounded-md text-xs py-1 font-semibold ${
+                        isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
+                      } transition-all duration-100`}
+                    >
+                      Return to Preparer
+                    </button>
+                  )}
                 </div>
-              </>}
+              </>
+            )}
           </div>
+  
           {isModalOpen && (
             <>
               <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-              <section onClick={(e) => e.stopPropagation()} className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <DisbursementVoucher modal={modal} document={doc} flag={true}/>
+              <section
+                onClick={(e) => e.stopPropagation()}
+                className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+              >
+                <DisbursementVoucher modal={modal} document={doc} flag={true} />
               </section>
             </>
           )}
         </div>
       </div>
+  
       <section className="w-full h-96 overflow-y-auto">
-        <Document document={doc}/>
+        <Document document={doc} />
       </section>
     </section>
   );
+  
 };
 
 export default ViewDocument;

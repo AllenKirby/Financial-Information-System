@@ -1,16 +1,16 @@
 import { useEffect, useState } from "react"
-import { useCreateAcc } from "../../hooks/useCreateAcc"
 import Swal from "sweetalert2"
 import Loader from "../Loader"
 
 import PropTypes from 'prop-types'
+import { useSuperAdminHook } from "../../hooks/useSuperAdminHook"
 
 const UserManagement = ({modal, account = {}, flag}) => {
+  //state
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
-  const { createAcc, isLoading, error } = useCreateAcc()
   const [passwordError, setPasswordError] = useState('')
-
-  console.log(account)
+  //hooks
+  const {createAcc, isLoading, error} = useSuperAdminHook()
 
   useEffect(() => {
     if(flag && account){
@@ -35,13 +35,13 @@ const UserManagement = ({modal, account = {}, flag}) => {
     const res_creatingAccount = await createAcc(userData)
     console.log(res_creatingAccount)
     if(res_creatingAccount){
-      console.log('usermanagement if')
       Swal.fire({
         title: "Saved",
         text: "Account is successfully created!",
         icon: "success",
         confirmButtonColor: "#009933"
       });
+      modal()
     }
   }
   return (

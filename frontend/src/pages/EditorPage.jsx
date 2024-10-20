@@ -43,8 +43,6 @@ const EditorPage = () => {
             
             if(getDocu.status === 200){
               const documents = getDocu.data
-              console.log('end')
-              console.log(documents)
               dispatch({type: 'SET_DOCUMENTS', payload: documents})
             }
           }catch(error){
@@ -64,7 +62,6 @@ const EditorPage = () => {
         return acc;
       }, {});
 
-      console.log(updatedDocuments);
       dispatch({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
     })
 

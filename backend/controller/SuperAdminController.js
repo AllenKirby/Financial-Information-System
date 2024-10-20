@@ -37,12 +37,9 @@ const getAllAccounts = async (req, res) => {
     const {flag} = req.body
 
     try {
-      console.log(uid, flag)
-      console.log("hit disable account1")
       const user = await admin.auth().updateUser(uid, {
         disabled: flag
       })
-      console.log("hit disable account2")
       res.status(200).json({message: flag ? "User successfully disabled" : "User succesfully enabled", user: user.toJSON()})
       
     } catch (error) {
@@ -75,12 +72,8 @@ const getAllAccounts = async (req, res) => {
       role : role
     }
   
-    console.log(`role in createaccount ${role}`)
-    console.log('creating acc')
-  
     try{
        await admin.auth().setCustomUserClaims(uid, { role, dispName });
-        console.log(`account created with role ${role}`)
   
        await db.collection('listOfUsers').doc(uid).set(userData);
        

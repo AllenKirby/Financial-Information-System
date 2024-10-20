@@ -34,7 +34,6 @@ const HeadPage = () => {
                 })
                 if(res.status === 200){
                     const docu = res.data
-                    console.log(docu)
                     dispatch({type: 'SET_HEADDOCUMENTS', payload: docu})
                 }
             } catch (error) {
@@ -51,7 +50,6 @@ const HeadPage = () => {
             acc[doc.id] = {data: {...doc.data()}};
             return acc;
         }, {});
-        console.log(newDocuments)
         dispatch({ type: 'SET_HEADDOCUMENTS', payload: newDocuments });
         })
 

@@ -1,15 +1,15 @@
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 
-import { useLogout } from "../hooks/useLogout";
 
 import bgImage from '../assets/images/NIAimg.png';
 import { MdLogout } from "react-icons/md";
 import Swal from "sweetalert2";
 
+import { useAuthHook } from '../hooks/useAuthHook';
 
 const Navbar = ({ items }) => {
-  const { logout } = useLogout();
+  const {logout} = useAuthHook()
 
   const handleLogout = () => {
     Swal.fire({

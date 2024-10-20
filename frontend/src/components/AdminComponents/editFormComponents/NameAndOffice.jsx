@@ -1,8 +1,8 @@
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
 
-import { useNameAndOffice } from "../../../hooks/useNameAndOffice";
 import { useEffect, useState } from "react";
+import { useApproverHook } from "../../../hooks/useApproverHook";
 
 export const NameAndOffice = () => {
 
@@ -10,7 +10,7 @@ export const NameAndOffice = () => {
     const [name, setName] = useState('');
     const [office, setOffice] = useState('');
     const [entries, setEntries] = useState({});
-    const {addNewNameAndOffice, getNameAndOffice, deleteNameAndOffice} = useNameAndOffice();
+    const {addNewNameAndOffice, getNameAndOffice, deleteNameAndOffice} = useApproverHook
 
     const handleAddNameOffice = () => {
         setShowInputBoxA(!showInpuTBoxA);
@@ -74,7 +74,7 @@ export const NameAndOffice = () => {
             
         }
         gettingData()
-    }, [])
+    }, [getNameAndOffice])
 
     const addObjectToEntries = (dataObject) => {
         const updatedEntries = Object.entries(dataObject).reduce((acc, [key, value]) => {
