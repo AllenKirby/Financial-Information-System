@@ -6,14 +6,14 @@ import { MdDelete } from "react-icons/md";
 import { FaUserAltSlash } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 
-import { useDisableUser } from '../../hooks/useDisableUser';
-import { useDeleteUser } from '../../hooks/useDeleteUser';
+import { useSuperAdminHook } from '../../hooks/useSuperAdminHook';
 
 const AccountDetails = ({account}) => {
+    //state
     const [role, setRole] = useState('');
-    const {deleteUser, isLoadingDelete} = useDeleteUser()
 
-    const {disableAcc, isLoading} = useDisableUser()
+    //hooks
+    const {deleteUser, disableAcc, isLoading, error} = useSuperAdminHook()
 
     const getAccCode = (roleCode) => {
         switch (roleCode) {
@@ -57,7 +57,7 @@ const AccountDetails = ({account}) => {
                     }else{
                     Swal.fire({
                         title: "Error!",
-                        text: "Error Disabling the Account",
+                        text: {error},
                         icon: "error",
                     });
                 }
@@ -86,7 +86,7 @@ const AccountDetails = ({account}) => {
                     }else{
                     Swal.fire({
                         title: "Error!",
-                        text: "Error Deleting the Account",
+                        text: {error},
                         icon: "error",
                     });
                 }
@@ -120,7 +120,7 @@ const AccountDetails = ({account}) => {
                     onClick={deleteAcc} 
                     size={20} 
                     color='red'
-                    className={`${isLoadingDelete ? 'text-slate-100' : 'text-red-500'}`}
+                    className={`${isLoading ? 'text-slate-100' : 'text-red-500'}`}
                     />
             </div>
         </div>

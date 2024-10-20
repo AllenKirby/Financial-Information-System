@@ -531,7 +531,7 @@ const Document = ({document}) => {
 }
 
 Document.propTypes = {
-  document: PropTypes.array.isRequired
+  document: PropTypes.object.isRequired
 };
 
 export default Document

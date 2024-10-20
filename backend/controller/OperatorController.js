@@ -70,7 +70,6 @@ const operatorInput = async(req, res) => {
     document = {} 
 
     try {
-        console.log('ors', ors)
         const docref = db.collection('records').doc(id)
         await docref.update(dvData)
         const updatedDoc = await docref.get()
@@ -90,7 +89,6 @@ const operatorInput = async(req, res) => {
 
 const opReturnDocu = async (req, res) => {
     const {DV, payee} = req.body;
-    console.log('returning docu', DV)
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -115,7 +113,6 @@ const opReturnDocu = async (req, res) => {
         const returnData = {
             [DV] : updatedDocu
         }
-        console.log(`updated docu: ${JSON.stringify(returnData, null, 2)}`)
         const listOfEditorAcc = await getListOfEditorAccounts();
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
         await setHistoryLogs(dateTimePassed, logs)
@@ -165,8 +162,6 @@ const getListOfEditorAccounts = async () => {
                 uids.push(data.uid)
             }
         })
-
-        console.log('Successfully retrieved uids:', uids);
         return uids;
 
         // const doc = await db.collection('listOfUsers').doc('4').get();
@@ -194,7 +189,6 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
              read: false,
          });
      }
-     console.log('notif sent succesfully')
     }catch(error){
      console.log('error in setNotif:', error)
     }
@@ -253,8 +247,6 @@ const getListOfHeadAccounts = async () => {
                 uids.push(data.uid)
             }
         })
-
-        console.log('Successfully retrieved uids:', uids);
         return uids;
 
         // const doc = await db.collection('listOfUsers').doc('2').get();
@@ -288,4 +280,9 @@ const setHistoryLogs = async(DT, logs) => {
     }
 }
 
-module.exports = {readPassed_records, operatorInput, opReturnDocu, transferDocument}
+module.exports = {
+    readPassed_records, 
+    operatorInput, 
+    opReturnDocu, 
+    transferDocument
+}

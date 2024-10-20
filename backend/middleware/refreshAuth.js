@@ -9,7 +9,6 @@ const refreshAuth = async (req, res, next) => {
     token = authHeader.split(' ')[1];
     try{
         const decodedToken = await admin.auth().verifyIdToken(token);
-        console.log(decodedToken)
         req.user = {
             name: decodedToken.dispName,
             uid: decodedToken.uid,
@@ -17,8 +16,6 @@ const refreshAuth = async (req, res, next) => {
             role: decodedToken.role || 0,
             token: token
           };
-        console.log('authentication passed')
-        console.log(req.user.name)
         
         next()
     }catch(error){

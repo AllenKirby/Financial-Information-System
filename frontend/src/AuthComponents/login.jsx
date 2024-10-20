@@ -1,14 +1,17 @@
 import { useState } from "react";
-import { useLogin } from "../hooks/useLogin";
 //import { useGoogleLogin } from "../hooks/useGoogleLogin";
+
 import Loader from "../components/Loader";
+import { useAuthHook } from "../hooks/useAuthHook";
+
 //import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const {login, isLoading, error} = useLogin()
+    //hooks
+    const {login, isLoading, error} = useAuthHook()
     //const {googleLogin, isLoadingGoogle, errorGoogle} = useGoogleLogin()
 
     const handleLogin = async(e) => {

@@ -2,12 +2,12 @@ import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
 import { useEffect, useState } from "react";
 
-import { useTaxType } from "../../../hooks/useTaxType";
+import { useApproverHook } from "../../../hooks/useApproverHook";
 
  export const TaxType = () => {
     
     const [showInput, setShowInput] = useState(false)
-    const {addTax, getTaxType, deleteTax} = useTaxType()
+    const {addTax, getTaxType, deleteTax} = useApproverHook()
 
     const [tax, setTax] = useState('')
     const [cost, setCost] = useState('')
@@ -73,7 +73,7 @@ import { useTaxType } from "../../../hooks/useTaxType";
             }
         }
         gettingData()
-    }, [])
+    }, [getTaxType])
 
     const addObjectToEntries = (dataObject) => {
         const updatedEntries = Object.entries(dataObject).reduce((acc, [key, value]) => {

@@ -91,7 +91,6 @@ const updateStatus = async (DV, dTPassed) => {
 
 const passDocument = async (req, res) => {
     const {DV, payee} = req.body;
-    console.log('passing docu', DV)
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -124,8 +123,6 @@ const passDocument = async (req, res) => {
         const returnData = {
             [DV] : updatedDocu
         }
-        console.log(`updated docu: ${JSON.stringify(returnData, null, 2)}`)
-        // console.log(`record: ${JSON.stringify(data, null, 2)}`)
         const listOfOpAcc = await getListOfOperatorAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
         await setHistoryLogs(dateTimePassed, logs)
@@ -148,8 +145,6 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
             read: false,
         });
     }
-
-    console.log('notif sent succesfully')
    }catch(error){
     console.log('error in setNotif:', error)
    }
@@ -170,8 +165,6 @@ const getListOfOperatorAccounts = async () => {
                 uids.push(data.uid)
             }
         })
-
-        console.log('Successfully retrieved uids:', uids);
         return uids;
 
         // const doc = await db.collection('listOfUsers').doc('3').get();
@@ -238,7 +231,6 @@ const getAccountCodes = async (req, res) => {
 const retrieveDV = async(req, res) => {
     try{
         const documents = {}
-        console.log('retrieveDv hit')
 
         const recordsSnapshot = await db.collection('records')
         .where('status', 'in', ['Drafting', 'Returned|4'])
@@ -248,13 +240,10 @@ const retrieveDV = async(req, res) => {
                 const recordData = recordDoc.data();
                 documents[recordDoc.id] = recordData
                 
-                console.log(recordData)
             }else{
                 console.log('No such document for keys');
             }
         })
-        console.log('after retrieveDv hit')
-        console.log(documents)
         res.status(200).json(documents);
     }
     catch(error){
@@ -362,7 +351,6 @@ const getFormData = async (req, res) => {
         const snapshot = await docRef.get()
 
         if (snapshot.empty) {
-            console.log('No matching documents.');
             res.status(404).json({ success: false, message: 'No form data found.' });
             return;
         }

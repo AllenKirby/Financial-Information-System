@@ -7,7 +7,7 @@ const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
   const [docu, setDocu] = useState(null);
   const [Status, setStatus] = useState('');
-  console.log(documents)
+
   useEffect(() => {
     if (documents && type === '4') {
       setDocu(documents);
@@ -37,6 +37,8 @@ const DocumentDetails = ({ documents, type }) => {
     switch (status) {
       case 'Approved':
         return 'Approved';
+      case 'For Approval':
+        return 'For Approval';
       case 'Under Review':
         return 'Under Review';
       case 'In Review':
@@ -56,6 +58,8 @@ const DocumentDetails = ({ documents, type }) => {
     switch (status) {
       case 'Approved':
         return 'bg-green-500 text-white';
+      case 'For Approval':
+        return 'bg-yellow-500 text-white';
       case 'Under Review':
         return 'bg-orange-500 text-white';
       case 'In Review':
@@ -69,6 +73,33 @@ const DocumentDetails = ({ documents, type }) => {
         return 'bg-red-500 text-white';
     }
   };
+
+  const getDateTime = () => {
+    switch(type){
+      case '4':
+        return docu?.createdAt
+      case '3':
+        if (docu?.submittedBy) {
+          const [, date, time] = docu.submittedBy.split('|'); 
+          return `${date} ${time}`;
+        }
+        return;
+      case '2':
+        if (docu?.updatedBy) {
+          const [, date, time] = docu.updatedBy.split('|'); 
+          return `${date} ${time}`;
+        }
+        return;
+      case '1':
+        if (docu?.reviewedBy) {
+          const [, date, time] = docu.reviewedBy.split('|'); 
+          return `${date} ${time}`;
+        }
+        return;
+      default:
+        return;
+    }
+  }
 
   return (
     <div
@@ -88,7 +119,7 @@ const DocumentDetails = ({ documents, type }) => {
         </div>
       </h2>
       <h2 className="text-xs font-light text-center w-1/6">
-        {formatDistanceToNow(formatDateTime(docu?.dateTimePassed), { addSuffix: true })}
+        {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}
       </h2>
     </div>
   );
