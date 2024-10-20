@@ -12,7 +12,7 @@ import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', accTitle: '', accCode: '', amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
+  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'', accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
   const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
 
@@ -27,13 +27,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const [fundCluster, setFundCluster] = useState([])
   const [rc, setRc] = useState([])
-  const [taxType, setTaxType] = useState([])
   const [cost, setCost] = useState([])
   const [taxData, setTaxData] = useState({})
-  const [selectedCost, setSelectedCost] = useState("")
   const [gross, setGross] = useState({})
   const [nameOffice, setNameOffice] = useState({})
-  const [selectedNameOffice, setSelectedNameOffice] = useState("")
 
   useEffect(() => {
     if (flag && document) {
@@ -84,11 +81,17 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const updatedPayeeData = {
+      ...payeeData,
+      TT_formula1: gross.value2,
+      TT_formula2: gross.value3,
+      accTitle: formFields.map(arr => Object.values(arr)[0]),
+      accCode: formFields.map(arr => Object.values(arr)[1]),
+      optionalAmount: formFields.map(arr => Object.values(arr)[2])
 
-    console.log(payeeData);
-    console.log(birData);
+    };
     const data = {
-      payee_data: payeeData,
+      payee_data: updatedPayeeData,
       bir_data: birData
     }
 
@@ -133,6 +136,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       setTaxData(form.TaxType)
 
       setNameOffice(form.NameOffice)
+
+
       
       const storedAccountOptions = localStorage.getItem('account_fields')
       if(storedAccountOptions){
@@ -229,8 +234,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
 
   useEffect(() => {
-    if (taxType && selectedCost){
-      const key = taxType + selectedCost
+    if (payeeData.TT_tax && payeeData.TT_cost){
+      const key = payeeData.TT_tax + payeeData.TT_cost
       if (taxData[key] && taxData[key].length >= 3) {
         setGross({
           value2: taxData[key][2],
@@ -243,7 +248,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       setGross({ value2: '', value3: '' });
     }
 
-  }, [selectedCost, taxType])
+  }, [payeeData.TT_tax, payeeData.TT_cost])
 
   const isDisabled = user.role === '3'
 
@@ -373,18 +378,19 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <div className='w-full flex gap-2'>
               <div className="flex flex-col w-3/5">
                 <label>Name and office</label>
-                <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                  // onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
-                  onChange={(e) => setSelectedNameOffice(e.target.value)}
-                  value={selectedNameOffice}
+                <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+                  onChange={(e) => {
+                    const selectedOption = e.target.options[e.target.selectedIndex];
+                    setPayeeData({...payeeData, NF_name: e.target.value, NF_office: selectedOption.getAttribute('office')})
+                  }}
+                  value={payeeData.NF_name}
                   disabled={isDisabled}
                   required
-                  //value
                 >
                   <option value="" disabled>Select</option>
                   {Object.entries(nameOffice).length > 0 ? (
                       Object.entries(nameOffice).map(([key, value]) => (
-                          <option key={key} value={value[1]}>
+                          <option key={key} value={value[0]} office={value[1]}>
                               {value[0]}
                           </option>
                       ))
@@ -396,7 +402,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 </select>
               </div>
               <div className='w-2/5 flex items-end justify-center'>
-                <label>{selectedNameOffice}</label>
+                <label>{payeeData.NF_office}</label>
               </div>
             </div>
           </div>
@@ -421,8 +427,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                     disabled={isDisabled}
-                    value={taxType}
-                    onChange={(e) => setTaxType(e.target.value)} 
+                    value={payeeData.TT_tax}
+                    onChange={(e) => setPayeeData({...payeeData, TT_tax: e.target.value})} 
                     required  >
                       <option value="" disabled>Select Tax Type</option>
                       <option value="VAT">VAT</option>
@@ -434,8 +440,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                     disabled={isDisabled}
-                    value={selectedCost}
-                    onChange={(e) => setSelectedCost(e.target.value)} 
+                    value={payeeData.TT_cost}
+                    onChange={(e) => setPayeeData({...payeeData, TT_cost: e.target.value})} 
                     required  >
                       <option value="" disabled>Select Cost Category</option>
                       {
@@ -465,8 +471,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             </div>
           
           <div className='w-full mb-2 flex'>
-            
-
               <div className='w-2/3 flex justify-center items-center'>
                 <div className='w-1/2 flex justify-center'>
                   <label>gross{gross.value2}</label>
@@ -487,10 +491,20 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       <select
                         className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
                         onChange={(e) => {
+                          // const selectedOption = e.target.options[e.target.selectedIndex];
+                          // const newTitle = e.target.value;
+                          // const newCode = selectedOption.getAttribute('accCode');
+                          // setPayeeData(prevData => ({
+                          //   ...prevData,
+                          //   accTitle: [...prevData.accTitle, newTitle],
+                          //   accCode: [...prevData.accCode, newCode]
+                          // }))
+
                           const [title, code] = e.target.value.split(':');
                           handleFieldChange(index, 'accTitle', title);
                           handleFieldChange(index, 'accCode', code);
                         }}
+                        // value={payeeData.accTitle[payeeData.accTitle.length-1]}
                         value={`${field.accTitle}:${field.accCode}`}
                         disabled={isDisabled}
                         required
@@ -498,11 +512,14 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <option value="" disabled>Select Account Title</option>
                         {
                           accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
-                            Object.entries(accountOptions.account_codes).map(([key, value], idx) => {
+                            Object.entries(accountOptions.account_codes).map(([key, value]) => {
                               const parts = value.split(':');
                               const lastPart = parts[parts.length - 1];
                               return (
-                                <option key={idx} value={`${lastPart}:${key}`}>
+                                // <option key={key} value={lastPart} accCode={key}>
+                                //   {lastPart}
+                                // </option>
+                                <option key={key} value={`${lastPart}:${key}`}>
                                   {lastPart}
                                 </option>
                               );
