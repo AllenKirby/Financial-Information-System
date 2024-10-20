@@ -41,7 +41,6 @@ const OperatorPage = () => {
           });
           if(getDocu.status === 200){
             const documents = getDocu.data
-            console.log(`from set op docu ${JSON.stringify(documents, null, 2)}`)
             dispatch({type: 'SET_OPDOCUMENTS', payload: documents})
           }
         }catch(error){
@@ -58,7 +57,6 @@ const OperatorPage = () => {
         return acc;
       }, {})};
       
-      console.log(newDocuments)
       dispatch({type: 'SET_OPDOCUMENTS', payload: newDocuments})
     })
 

@@ -1,10 +1,14 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
-import { useChangeAccess } from "../../hooks/useChangeAccess";
+import Swal from 'sweetalert2'
+
+import { useSuperAdminHook } from "../../hooks/useSuperAdminHook";
 
 const AccessControl = () => {
+  //state
   const [roles, setRoles] = useState([]);
-  const {changeAccess, isLoading} = useChangeAccess()
+  //hooks
+  const {changeAccess, isLoading, error} = useSuperAdminHook()
 
   useEffect(() => {
     const retrieveRoles = async () => {
@@ -32,7 +36,32 @@ const AccessControl = () => {
     updatedRoles[index].permission = !updatedRoles[index].permission;
     setRoles(updatedRoles);
 
-    await changeAccess(roleName, newPermissionValue)
+    Swal.fire({
+      title: "Do you really want to grant access",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Grant it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            const res = await changeAccess(roleName, newPermissionValue)
+            if (res) {
+                Swal.fire({
+                    title: "Access Granted!",
+                    text: "The account now has access",
+                    icon: "success",
+                });
+            }else{
+            Swal.fire({
+                title: "Error!",
+                text: {error},
+                icon: "error",
+            });
+          }
+        }
+      }
+    );
   };
 
   return (

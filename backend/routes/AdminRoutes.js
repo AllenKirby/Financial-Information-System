@@ -17,13 +17,15 @@ const {getAllLogs,
        deleteNameAndOffice,
        addTaxType,
        getTaxType,
-       deleteTax
+       deleteTax,
+       approveDV
         } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
 
 adminRouter.get('/getAllDV', getAllLogs)
 adminRouter.get('/approvedDV', readAdmin_records)
+adminRouter.patch('/approveDocu/:id', approveDV)
 //FUND CLUSTER
 adminRouter.post('/addNewFundCluster', addFundCluster)
 adminRouter.get('/getFundCluster', getFundCluster)

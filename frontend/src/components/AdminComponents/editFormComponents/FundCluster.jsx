@@ -2,15 +2,15 @@ import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
  
  import { useState, useEffect } from "react";
- import { useEditForm } from "../../../hooks/useEditForm";
+import { useApproverHook } from "../../../hooks/useApproverHook";
  
  export const FundCluster = () => {
     
     // Fund Cluster
     const [showInput, setShowInput] = useState(false); // State to toggle input visibility
     const [inputValue, setInputValue] = useState("");
-    const {addNewFundCluster, getFundCluster, deleteFundCluster} = useEditForm();
     const [arrFund, setArrFund] = useState({})
+    const {addNewFundCluster, getFundCluster, deleteFundCluster} = useApproverHook()
 
     // Fund Cluster 
     const handleAddString = () => {
@@ -63,7 +63,7 @@ import { MdRemove } from "react-icons/md";
             }
         }
         gettingData()
-    }, [])
+    }, [getFundCluster])
 
     return (
         <div className="w-full h-72 rounded-lg">

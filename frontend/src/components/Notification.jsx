@@ -28,11 +28,9 @@ const Notification = ({ notification, markAsRead }) => {
       const document = OpDocuments.documents[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }else if(user.role === '4'){
-      // console.log(documents[DV])
       const document = documents[DV]
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }else if(user.role === '2'){
-      console.log('sbashdhas', HeadDocuments)
       const document = HeadDocuments[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }
@@ -49,7 +47,6 @@ const Notification = ({ notification, markAsRead }) => {
     <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-slate-100' 
       onClick={() => {
       markAsRead(notification.key)
-      console.log('hit notif', notification.input)
       const dvNo = notifData.DV
       openNotif(dvNo)
     }}>

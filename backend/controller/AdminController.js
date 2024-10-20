@@ -15,8 +15,7 @@ const getAllLogs = async(req, res) => {
 
       for(const key in logs){
         arrLogs.push(logs[key])
-      } 
-      console.log(arrLogs)
+      }
       res.status(200).json(arrLogs);
     }
     else{
@@ -92,7 +91,6 @@ const addFundCluster = async (req, res) => {
     }else{
       await docRef.set(clusterData)
     }
-    console.log('successfully adding new fundcluster')
     return res.status(200).json({success: true, message: `Successfully added ${newFundCluster}`});
 
   }catch(error){
@@ -328,6 +326,28 @@ const deleteTax = async (req, res) => {
   }
 }
 
+const approveDV = async(req, res) => {
+  const DV = req.params.id
+
+  try{
+    const docRef = db.collection('records').doc(DV);
+    
+    const docSnapshot = await docRef.get();
+    if (!docSnapshot.exists) {
+      return res.status(404).json({ message: 'Document not found' });
+    }
+
+    await docRef.update({
+      status: 'Approved',
+    });
+    
+    res.status(200).json({message: 'Document Approved Successfully'})
+  }catch(error){
+    console.log('Error Approving Document',error)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
 module.exports = {
   getAllLogs,
   readAdmin_records,
@@ -342,5 +362,6 @@ module.exports = {
   deleteNameAndOffice,
   addTaxType,
   getTaxType,
-  deleteTax
+  deleteTax,
+  approveDV
 };

@@ -30,7 +30,6 @@ const Header = ({ currentPage}) => {
 
   useEffect(() => {
     if (!userId) return;
-    console.log('hit notif op, ', userId)
     const notificationsRef = ref(RtDatabase, `users/${userId}/notifications`);
 
     // Listen for changes to the notifications node

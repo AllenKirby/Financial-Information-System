@@ -49,7 +49,6 @@ const AdminPage = () => {
                     })  
                     if(res.status === 200){
                         const docu = res.data
-                        console.log(docu)
                         dispatch({ type: 'SET_ADMINDOCUMENTS', payload: docu });
                     }
                 } catch (error) {
@@ -60,13 +59,12 @@ const AdminPage = () => {
         if(user){
             retrieveDV()
         }
-        const q = query(collection(firestore, 'records'), where('status', '==', 'Approved'));
+        const q = query(collection(firestore, 'records'), where('status', 'in', ['Approved', 'For Approval']));
         const unsubscribe = onSnapshot(q, (snapshot) => {
         const newDocuments = snapshot.docs.reduce((acc, doc) => {
             acc[doc.id] = {data: {...doc.data()}};
             return acc;
         }, {});
-        console.log(newDocuments)
         dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
         })
 

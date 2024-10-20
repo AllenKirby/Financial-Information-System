@@ -53,7 +53,6 @@ const returnRecordTo = async(req, res) => {
         const returnData = {
             [DV] : updatedDocu
         }
-        console.log(`updated docu: ${JSON.stringify(returnData, null, 2)}`)
         const listOfEditorAcc = await getListOfAccount(returnTo);
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
         await setHistoryLogs(dateTimePassed, logs)
@@ -67,7 +66,6 @@ const returnRecordTo = async(req, res) => {
 }
 
 const updateStatus = async (DV, dTPassed, returnToRole) => {
-    console.log(`here: ${returnToRole}`)
     try{
         const returnType = `Returned|${returnToRole}`
         const docref = db.collection('records').doc(DV)
@@ -87,7 +85,7 @@ const updateStatusToApproved = async(DV, DTpass) => {
         const docref = db.collection('records').doc(DV)
         await docref.update({
             reviewedBy: DTpass,
-            status: 'Approved'
+            status: 'For Approval'
         })
         const updatedDoc = await docref.get()
         return updatedDoc.data();
@@ -106,7 +104,6 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
              read: false,
          });
      }
-     console.log('notif sent succesfully')
     }catch(error){
      console.log('error in setNotif:', error)
     }
@@ -126,8 +123,6 @@ const getListOfAccount = async (listNumber) => {
                 uids.push(data.uid)
             }
         })
-
-        console.log('Successfully retrieved uids:', uids);
         return uids;
 
         // const doc = await db.collection('listOfUsers').doc(listNumber).get();
@@ -199,4 +194,8 @@ const setHistoryLogs = async(DT, logs) => {
     }
 }
 
-module.exports = { readHead_records, returnRecordTo, transferDocument}
+module.exports = { 
+    readHead_records, 
+    returnRecordTo, 
+    transferDocument
+}

@@ -2,13 +2,13 @@ import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
 
 import { useState, useEffect } from "react";
-import { useRC } from "../../../hooks/useRC";
+import { useApproverHook } from "../../../hooks/useApproverHook";
 
 export const ResCenter = () => {
 
     const [showInput_RC, setShowInput_RC] = useState(false);
     const [inputValue_RC, setInputValue_RC] = useState("");
-    const {addNewRC, getRC, deleteRC} = useRC();
+    const {addNewRC, getRC, deleteRC} = useApproverHook()
     const [arrRC, setArrRC] = useState({})
 
     const handleAddString_RC = () => {
@@ -65,7 +65,7 @@ export const ResCenter = () => {
         }
 
         gettingData()
-    }, [])
+    }, [getRC])
 
     return (
         <div className="w-1/5 h-72">

@@ -37,7 +37,7 @@ const DisbursementRecords = () => {
                 <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
                 <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                <h1 className='w-1/6 text-center font-bold'>Time Transferred</h1>
+                <h1 className='w-1/6 text-center font-bold'>Time Created</h1>
               </section>
               {documents ? (
                 <section className="w-full h-[340px] overflow-auto">

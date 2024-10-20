@@ -6,10 +6,10 @@ const login = (req, res) => {
         const token = req.user.token;
         const name = req.user.name;
         const uid = req.user.uid;
+        const email = req.user.email
         if(!role){
             admin.auth().deleteUser(uid)
             .then(() => {
-                console.log(`Deleting user with UID: ${uid}. reason: no role`);
                 return
             })
             .catch((error) => {
@@ -22,8 +22,7 @@ const login = (req, res) => {
             secure: true,  
             sameSite: 'Strict' 
         });
-        console.log(`role ${name}`)
-        res.status(200).json({ success: true, role: role, name: name, uid: uid});
+        res.status(200).json({ success: true, role: role, name: name, uid: uid, email: email});
     }catch(error){
         res.status(500).json({ success: false, message: 'Login failed', error: error.message });
     }
@@ -41,11 +40,13 @@ const refreshToken = (req, res) => {
             secure: true,  
             sameSite: 'Strict' 
         });
-        console.log(`refersh token ${name} at ${refreshTime}`)
         res.status(200).json({ success: true, role: role, name: name, uid: uid});
     }catch(error){
         res.status(500).json({ success: false, message: 'refresh token failed', error: error.message });
     }
 }
 
-module.exports = {login, refreshToken};
+module.exports = {
+    login, 
+    refreshToken
+};

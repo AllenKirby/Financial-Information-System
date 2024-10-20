@@ -1,29 +1,24 @@
 import {useState, useEffect} from 'react'
-import  {useCreateDisbursement}  from '../hooks/useCreateDisbursement'
-import {useUpdateDisbursement} from '../hooks/useUpdateDisbursement'
-import { useDV } from '../hooks/useDV'
 import Loader from './Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
-import { useAuthContext } from '../hooks/useAuthContext'
-import { useInputOperator } from '../hooks/useInputOperator'
+
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
 
+import { useAuthContext } from '../hooks/useAuthContext'
+import { usePreparerHook } from '../hooks/usePreparerHook'
+import { useFundingHook } from '../hooks/useFundingHook'
+
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
+
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'', accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
+  //states
   const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
-
   const [optionalAmount, setOptionalAmount] = useState(true)
-
   const [accountOptions, setAccountOptions] = useState([]);
-  const {createDisbursement, isLoading, error} = useCreateDisbursement()
-  const {updateDV, isLoadingForUpdate, errorForUpdate} = useUpdateDisbursement()
-  const {inputOperator, isLoadingForOp, errorForOp} = useInputOperator()
-  const{getFormData} = useDV()
-  const { user } = useAuthContext()
 
   const [fundCluster, setFundCluster] = useState([])
   const [rc, setRc] = useState([])
@@ -31,6 +26,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [taxData, setTaxData] = useState({})
   const [gross, setGross] = useState({})
   const [nameOffice, setNameOffice] = useState({})
+  
+  //hooks
+  const {createDisbursement, updateDV, getFormData, isLoading, error} = usePreparerHook()
+  const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
+  const { user } = useAuthContext() 
 
   useEffect(() => {
     if (flag && document) {
@@ -167,7 +167,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       
     }
     fetchAccountCode();
-  }, [])
+  }, [getFormData])
 
   const handleUpdate = async(e) => {
     e.preventDefault()
@@ -611,12 +611,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       <div className="w-full flex items-center justify-center py-3 gap-4">
         <button 
           type="submit" 
-          disabled={()=> {
-            if(user.role === '3'){
-              return isLoadingForOp
-            }
-            flag ? isLoadingForUpdate : isLoading
-          }}
+          disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
           className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
           >{isLoading ? <Loader /> : 'Save'}</button>
         <button 
@@ -624,9 +619,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           className="py-2 px-10 rounded-md border-2 border-customFontColor text-customFontColor hover:scale-125 transition-all duration-100"
           >Back</button>
       </div>
-      {(error || errorForUpdate || errorForOp) && (
+      {(error ||  errorForFunding) && (
         <div className="w-full text-center">
-          <h4 className="text-sm text-red-500">{error ? error : errorForUpdate}</h4>
+          <h4 className="text-sm text-red-500">{error}</h4>
         </div>
       )}
     </form>
