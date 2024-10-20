@@ -16,7 +16,7 @@ const formatDate = (rawDate) => {
     return formattedDate;
   };
 const createDV = async (req, res) => {
-    const {payee, TIN, address, fund, date, DV, RC, accTitle, accCode, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
+    const {payee, TIN, address, fund, date, DV, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accTitle, accCode,optionalAmount, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
     const {birRC, birParticular, birSubAmount} = req.body.bir_data
     
     const today = new Date()
@@ -43,9 +43,16 @@ const createDV = async (req, res) => {
         fund: fund,
         date: formatDate(date), 
         DV: DV, 
-        RC: RC, 
+        RC: RC,
+        NF_name: NF_name,
+        NF_office: NF_office,
+        TT_tax: TT_tax,
+        TT_formula1: TT_formula1,
+        TT_formula2: TT_formula2,
+        TT_cost: TT_cost, 
         accTitle: accTitle,
-        accCode: accCode, 
+        accCode: accCode,
+        optionalAmount: optionalAmount, 
         amount: amount, 
         particular: particular,
         bir2percent: bir2percent, 
