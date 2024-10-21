@@ -374,6 +374,19 @@ const getFormData = async (req, res) => {
     }
 }
 
+const getPermission = async(req, res) => {
+    try {
+        const docref = await db.collection('Roles').doc('Preparer').get()
+        if(docref.exists){
+            const data = docref.data()
+            res.status(200).json({data: data})
+        }
+    }catch(error){
+        console.log(`Error retrieving Preparer Permision ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = {
     createDV,
     retrieveDV,
@@ -381,5 +394,6 @@ module.exports = {
     deleteDV, 
     passDocument,
     updateDV,
-    getFormData
+    getFormData,
+    getPermission
 };

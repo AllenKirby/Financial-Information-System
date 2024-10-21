@@ -11,14 +11,17 @@ import {auth} from '../config/firebase-config';
 import { getAuth, signOut } from "firebase/auth"; 
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useDispatch } from "react-redux";
+import { setPermission } from "../redux/PermissionRedux.jsx"; 
 
 import Cookies from 'universal-cookie';
 
 export const useAuthHook = () => {
-    const {dispatch} = useAuthContext()
+    const {dispatch: dispatchAuth} = useAuthContext()
     const {dispatch: dispatchDocuments} = useDisbursementContext()
     const { dispatch: dispatchOpDocuments } = useOpDisbursementContext()
     const { dispatch: dispatchHeadDocuments } = useHeadDisbursementContext()
+    const dispatch = useDispatch()
 
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
@@ -49,7 +52,7 @@ export const useAuthHook = () => {
             console.log(response)
             if (response.status === 200) {
               cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
-              dispatch({type: 'LOGIN', payload: response.data})
+              dispatchAuth({type: 'LOGIN', payload: response.data})
               setIsLoading(false)
             }
           }else{
@@ -73,10 +76,11 @@ export const useAuthHook = () => {
             withCredentials: true
           });
           if(response.status === 200){
-            dispatch({type: 'LOGOUT', payload: null})
+            dispatchAuth({type: 'LOGOUT', payload: null})
             dispatchDocuments({type: 'SET_DOCUMENTS', payload: null })
             dispatchOpDocuments({type: 'SET_OPDOCUMENTS', payload: null })
             dispatchHeadDocuments({type: 'SET_HEADDOCUMENTS', payload: null })
+            dispatch(setPermission(null))
             cookies.remove('user', { path: '/' });
             navigate('/', {replace: true})
           }

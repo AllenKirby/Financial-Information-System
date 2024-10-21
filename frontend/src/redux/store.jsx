@@ -1,8 +1,8 @@
 import {configureStore} from "@reduxjs/toolkit"
-import superAdminReducer from "./superAdminRedux"
+import permissionReducer from "./PermissionRedux"
 
 export const store = configureStore({
     reducer : {
-        permission: superAdminReducer
+        permission: permissionReducer
     }
 })

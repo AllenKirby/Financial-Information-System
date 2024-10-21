@@ -17,7 +17,8 @@ import { usePreparerHook } from "../hooks/usePreparerHook";
 import { useFundingHook } from "../hooks/useFundingHook";
 import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useApproverHook } from "../hooks/useApproverHook";
-
+//redux
+import { useSelector } from "react-redux";
 
 const ViewDocument = () => {
   //states
@@ -38,7 +39,8 @@ const ViewDocument = () => {
   const {returnDoc, transferToHead, isLoading: isLoadingForFunding, error: errorForFunding} = useFundingHook()
   const {submitToAdmin, returnDocFromHeader, isLoading: isLoadingForBO, errorForBO} = useBudgetOfficerHook()
   const {approveDV, isLoading: isLoadingForApprover, error: errorForApprover} = useApproverHook()
-
+  //redux
+  const permission = useSelector((state) => state.permission) 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
   } 
@@ -125,6 +127,7 @@ const ViewDocument = () => {
   }
 
   const handleSubmit = async() => {
+    console.log('Preparer Hit')
     const data = {
       DV: idStatus.id,
       payee: doc.payee
@@ -196,6 +199,7 @@ const ViewDocument = () => {
   }
 
   const handleSubmitForOp = async() => {
+    console.log('Funding Hit')
     const data = {
       DV: idStatus.id,
       payee: doc.payee
@@ -354,7 +358,7 @@ const ViewDocument = () => {
           {idStatus.type === '4' && (
             <button
               disabled={isLoading}
-              onClick={handleSubmit}
+              onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
               className={`px-5 py-2 rounded-lg ${
                 isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
               } transition-all duration-150`}
@@ -423,14 +427,14 @@ const ViewDocument = () => {
                   {idStatus.type !== '2' && idStatus.type !== '1' && (
                     <button
                       disabled={isLoadingForFunding || isLoading}
-                      onClick={idStatus.type === '4' ? delDV : returnDV}
+                      onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
                       className={`w-20 rounded-md text-xs py-1 font-semibold ${
                         isLoadingForFunding
                           ? 'bg-gray-200 text-gray-500'
                           : 'text-red-500 hover:bg-gray-200 hover:scale-105'
                       } transition-all duration-100`}
                     >
-                      {idStatus.type === '4' ? 'Delete' : 'Return'}
+                      {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
                     </button>
                   )}
                   <button

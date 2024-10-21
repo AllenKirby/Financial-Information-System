@@ -11,6 +11,8 @@ import { useAuthContext } from '../hooks/useAuthContext'
 import { usePreparerHook } from '../hooks/usePreparerHook'
 import { useFundingHook } from '../hooks/useFundingHook'
 
+import {useSelector} from 'react-redux'
+
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'', accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
@@ -31,6 +33,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const {createDisbursement, updateDV, getFormData, isLoading, error} = usePreparerHook()
   const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
   const { user } = useAuthContext() 
+  //redux
+  const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
     if (flag && document) {
@@ -167,7 +171,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       
     }
     fetchAccountCode();
-  }, [getFormData])
+  }, [])
 
   const handleUpdate = async(e) => {
     e.preventDefault()
@@ -255,7 +259,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   return (
     <form onSubmit={(e) => {
         if(user.role === '3'){
-          handleOpInput(e)
+          if (permission.data.permission) {
+            handleSubmit(e);
+          }else{
+            handleOpInput(e)
+          }
         }else{
           flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
         }
@@ -270,7 +278,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <label>Payee</label>
             <input
               className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-              disabled={isDisabled}
+              disabled={isDisabled && !permission.data.permission}
               type="text" 
               value={payeeData.payee}
               onChange={(e) => setPayeeData({...payeeData, payee: e.target.value})} 
@@ -283,7 +291,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <label>Address</label>
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                disabled={isDisabled}
+                disabled={isDisabled && !permission.data.permission}
                 type="text" 
                 value={payeeData.address}
                 onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
@@ -293,7 +301,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <label>TIN/Employee No.</label>
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                disabled={isDisabled}
+                disabled={isDisabled && !permission.data.permission}
                 type="text" 
                 value={payeeData.TIN}
                 onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
@@ -310,7 +318,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
                 value={payeeData.fund}
-                disabled={isDisabled}
+                disabled={isDisabled && !permission.data.permission}
                 required
                 //value
               >
@@ -333,7 +341,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 type="date" 
-                disabled={isDisabled}
+                disabled={isDisabled && !permission.data.permission}
                 value={payeeData.date}
                 placeholder="Date"
                 onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
@@ -346,7 +354,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 type="text" 
-                disabled={isDisabled} 
+                disabled={isDisabled && !permission.data.permission} 
                 value={payeeData.DV}
                 onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
                 required  />
@@ -356,7 +364,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <select  className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
                 value={payeeData.RC}
-                disabled={isDisabled}
+                disabled={isDisabled && !permission.data.permission}
                 required
               >
                 <option value="" disabled>Select </option>
@@ -384,7 +392,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     setPayeeData({...payeeData, NF_name: e.target.value, NF_office: selectedOption.getAttribute('office')})
                   }}
                   value={payeeData.NF_name}
-                  disabled={isDisabled}
+                  disabled={isDisabled && !permission.data.permission}
                   required
                 >
                   <option value="" disabled>Select</option>
@@ -395,9 +403,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           </option>
                       ))
                   ) : (
-                      <option value="" disabled>
-                          No options available
-                      </option>
+                    <option value="" disabled>
+                        No options available
+                    </option>
                   )}
                 </select>
               </div>
@@ -406,7 +414,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               </div>
             </div>
           </div>
-           {user.role === '3' && 
+           {(user.role === '3' || permission.data.permission) && 
             <div className='w-full'>
               <label>ORS/BURS no.</label>
               <input 
@@ -426,7 +434,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <label>Tax Types</label>
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                    disabled={isDisabled}
+                    disabled={isDisabled && !permission.data.permission}
                     value={payeeData.TT_tax}
                     onChange={(e) => setPayeeData({...payeeData, TT_tax: e.target.value})} 
                     required  >
@@ -439,7 +447,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <label>Cost Categories</label>
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                    disabled={isDisabled}
+                    disabled={isDisabled && !permission.data.permission}
                     value={payeeData.TT_cost}
                     onChange={(e) => setPayeeData({...payeeData, TT_cost: e.target.value})} 
                     required  >
@@ -462,7 +470,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <input 
                     className="w-full flex px-4 py-2 rounded-md border-2 focus:outline-none" 
                     type="number" 
-                    disabled={isDisabled}
+                    disabled={isDisabled && !permission.data.permission}
                     onChange={(e) => computeAmount(e.target.value)}
                     placeholder='0'
                     value={payeeData.amount === 0 ? '' : payeeData.amount}
@@ -506,7 +514,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         }}
                         // value={payeeData.accTitle[payeeData.accTitle.length-1]}
                         value={`${field.accTitle}:${field.accCode}`}
-                        disabled={isDisabled}
+                        disabled={isDisabled && !permission.data.permission}
                         required
                       >
                         <option value="" disabled>Select Account Title</option>
@@ -536,7 +544,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <input
                           className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
                           type="number"
-                          disabled={isDisabled || optionalAmount}
+                          disabled={(isDisabled && !permission.data.permission) || optionalAmount}
                           onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
                           value={field.amount === 0 ? '' : field.amount}
                           placeholder="0"
@@ -561,7 +569,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             </div>
           
           
-          {user.role === '3' && 
+          {(user.role === '3' || permission.data.permission) && 
             <div className='w-full'>
               <label>ASA No.</label>
               <input 
@@ -577,7 +585,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <textarea className="w-full h-52 peer px-4 py-2 rounded-md border-2 focus:outline-none"
               onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
               value={payeeData.particular}
-              disabled={isDisabled}
+              disabled={isDisabled && !permission.data.permission}
               placeholder='Write details here...'
               required
             />
@@ -589,7 +597,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <select  className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
             onChange={(e) => {setBirData({...birData, birRC: e.target.value})}}
             value={birData.birRC}
-            disabled={isDisabled}
+            disabled={isDisabled && !permission.data.permission}
             required
           >
             <option value="" disabled>Select</option>
@@ -602,7 +610,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <textarea className="w-full h-52 px-4 py-2 rounded-md border-2 focus:outline-none"
             onChange={(e) => {setBirData({...birData, birParticular: e.target.value})}}
             value={birData.birParticular}
-            disabled={isDisabled}
+            disabled={isDisabled && !permission.data.permission}
             placeholder='Write details here...'
             required
           />

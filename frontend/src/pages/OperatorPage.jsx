@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom"
 import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 import { firestore } from "../config/firebase-config"
-import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { collection, doc, query, where, onSnapshot } from "firebase/firestore"
 
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
@@ -10,12 +10,17 @@ import { CiViewList } from "react-icons/ci"
 import { useState, useEffect } from "react"
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios"
+import {useDispatch, useSelector} from 'react-redux'
+import { setPermission } from '../redux/PermissionRedux'
 
 const OperatorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
   const { user } = useAuthContext()
-  const { dispatch, documents } = useOpDisbursementContext()
+  const { dispatch: dispatchContext, documents } = useOpDisbursementContext()
+  const [status, setStatus] = useState([])
+  const dispatch = useDispatch()
+  const permission = useSelector((state) => state.permission)
 
   const navItems = [
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
@@ -27,6 +32,49 @@ const OperatorPage = () => {
     }
   }, [page.pathname])
 
+  useEffect(() => {
+    const getPermission = async() => {
+      try {
+        const res = await axios.get('http://localhost:4000/operator/getPermission', {
+          withCredentials: true
+        })
+        if(res.status === 200){
+          const data = res.data
+          console.log(data)
+          dispatch(setPermission(data))
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    getPermission()
+
+    const docRef = doc(firestore, 'Roles', 'Funding'); 
+    const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+    if (docSnapshot.exists()) {
+      const documentData = { data: { ...docSnapshot.data() } };
+
+      console.log('Document Data:', documentData);
+
+      dispatch(setPermission(documentData));
+    } else {
+      console.log('No such document!');
+    }
+    });
+
+    return () => unsubscribe()   
+  }, [dispatch])
+
+  useEffect(() => {
+    if(permission && permission.data.permission){
+      console.log('yes hit')
+      setStatus(['Drafting', 'In Review', 'Returned|3', 'Returned|4'])
+    }
+    else{
+      console.log('no hit')
+      setStatus(['In Review', 'Returned|3'])
+    }
+  }, [permission])
 
   useEffect(() => {
     const retriveData = async() => {
@@ -36,12 +84,12 @@ const OperatorPage = () => {
       }else{
         try{
           console.log('fetching...')
-          const getDocu = await axios.get('http://localhost:4000/operator/read_records', {
+          const getDocu = await axios.get('http://localhost:4000/operator/read_records', {flag: permission.data.permission}, {
             withCredentials: true
           });
           if(getDocu.status === 200){
             const documents = getDocu.data
-            dispatch({type: 'SET_OPDOCUMENTS', payload: documents})
+            dispatchContext({type: 'SET_OPDOCUMENTS', payload: documents})
           }
         }catch(error){
           console.log(`fetching docu in op: ${error}`)
@@ -50,18 +98,20 @@ const OperatorPage = () => {
     };
     retriveData();
 
-    const q = query(collection(firestore, 'records'), where('status', 'in', ['In Review', 'Returned|3']));
+    if (!status.length) return;  
+
+    const q = query(collection(firestore, 'records'), where('status', 'in', status));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = {data: {...doc.data()}};
         return acc;
       }, {})};
       
-      dispatch({type: 'SET_OPDOCUMENTS', payload: newDocuments})
+      dispatchContext({type: 'SET_OPDOCUMENTS', payload: newDocuments})
     })
 
     return () => unsubscribe()
-  }, [user, dispatch, documents])
+  }, [user, dispatchContext, documents, permission.data.permission, status])
 
   return (
     <main className="w-full h-screen flex bg-slate-100">

@@ -1,11 +1,20 @@
 const {admin, db, rtdb}  = require('../firebase')
 
 const readPassed_records = async (req, res) => {
+    const {flag} = req.body
+    let status = []
+
+    if(flag){
+        status = ['Drafting', 'In Review', 'Returned|4', 'Returned|3']
+    }
+    else {
+        status = ['In Review', 'Returned|3']
+    }
     try {
         const documents = {};
        
         const recordsSnapshot = await db.collection('records')
-            .where('status', 'in', ['In Review', 'Returned|3'])
+            .where('status', 'in', status)
             .get();
         
         recordsSnapshot.forEach((recordDoc) => {
@@ -21,37 +30,6 @@ const readPassed_records = async (req, res) => {
         
         })
         return res.status(200).json({success: true, documents});
-
-        // if (dvRecords.exists) {
-        //     const data = dvRecords.data();
-        //     console.log('Document data:', data);
-        //     const keys = Object.keys(data);
-    
-        //     for (const key of keys) {
-        //         const value = data[key];
-        //         const recordDocRef = db.collection('records').doc(key);
-        //         const recordsDoc = await recordDocRef.get();
-    
-        //         if (recordsDoc.exists) {
-        //             const recordData = recordsDoc.data();
-        //             documents[key] = {
-        //                 // key: key,
-        //                 // timePassed: value,
-        //                 data: recordData
-        //             }
-    
-        //             console.log(`Successfully retrieved data from document ${key}:`);
-        //         } else {
-        //             console.log(`No such document for key ${key}`);
-        //         }
-        //     }
-    
-        //     return res.status(200).json({success: true, documents});
-    
-        // } else {
-        //     console.log('No such document!');
-        //     return res.status(404).json({ message: "Document not found" });
-        // }
     } catch (error) {
         console.log(`Error retrieving passed records: ${error}`);
         return res.status(404).json({ message: "Not Found" });
@@ -280,9 +258,24 @@ const setHistoryLogs = async(DT, logs) => {
     }
 }
 
+
+const getPermission = async(req, res) => {
+    try {
+        const docref = await db.collection('Roles').doc('Funding').get()
+        if(docref.exists){
+            const data = docref.data()
+            res.status(200).json({data: data})
+        }
+    }catch(error){
+        console.log(`Error retrieving Preparer Permision ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = {
     readPassed_records, 
     operatorInput, 
     opReturnDocu, 
-    transferDocument
+    transferDocument,
+    getPermission
 }
