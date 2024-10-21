@@ -136,11 +136,11 @@ const Document = ({document}) => {
                   </div>
                   <div className="w-1/5 h-[100px] border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Debit</div>
-                      {doc.optionalAmount.length > 0 ? doc.optionalAmount.map((fixamount, index) => (
+                      {doc.optionalAmount.length > 1 ? doc.optionalAmount.map((fixamount, index) => (
                         <div key={index} className="w-full pt-1 text-end px-2">{fixamount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                       ))
-                      : doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                      <div className="w-full pt-1 text-end px-2"></div>
+                      : (<div className="w-full pt-1 text-end px-2">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>)}
+                      
                   </div>
                   <div className="w-1/5 h-[100px] border-black">
                       <div className="w-full text-center border-b-2 border-black">Credit</div>
