@@ -1,15 +1,29 @@
 import { Outlet, useParams } from 'react-router-dom'
 import { useOpDisbursementContext } from '../../hooks/useOpDisbursementContext'
 import DocumentDetails from '../DocumentDetails'
-import { IoSearchSharp } from "react-icons/io5";
+import { IoSearchSharp, IoAdd } from "react-icons/io5";
+import { useState } from 'react';
+import DisbursementVoucher from '../DisbursementVoucher';
+import { useSelector } from 'react-redux';
 
 const DisbursementRecords = () => {
   const { OpDocuments } = useOpDisbursementContext()
   const { id } = useParams()
-  console.log("documents records: ", OpDocuments)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const permission = useSelector((state) => state.permission)
+
+  const modal = () => setIsModalOpen(!isModalOpen)
+
   return (
     <section className='w-full h-full'>
       <div className='flex items-center justify-end py-1'>
+        {(permission && permission.data.permission) && (
+          <div className="w-full py-1 flex items-center justify-between">
+            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-customgreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
+              <IoAdd size={20} className='font-bold'/>Add DV
+            </button>
+          </div>
+        )}
         <div className='relative'>
           <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
           <input 
@@ -48,6 +62,14 @@ const DisbursementRecords = () => {
             </div>
           </>
       ) : <Outlet/>}
+      {isModalOpen && (
+          <>
+          <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+          <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+            <DisbursementVoucher modal={modal} flag={false}/>
+          </section>
+        </>
+        )}
       </div>
     </section>
     

@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from 'axios';
 import Swal from 'sweetalert2'
-import { useDispatch, useSelector } from "react-redux";
-import { setPermissionAndRole } from "../../redux/superAdminRedux";
 
 import { useSuperAdminHook } from "../../hooks/useSuperAdminHook";
 
@@ -11,10 +9,6 @@ const AccessControl = () => {
   const [roles, setRoles] = useState([]);
   //hooks
   const {changeAccess, isLoading, error} = useSuperAdminHook()
-
-  const dispatch = useDispatch()
-
-  const permissionData = useSelector((state) => state.permission);
 
   useEffect(() => {
     const retrieveRoles = async () => {
@@ -27,7 +21,6 @@ const AccessControl = () => {
           const data = res.data;
           console.log('Roles: ', data);
           setRoles(data);
-          dispatch(setPermissionAndRole(data))
         }
       } catch (error) {
         console.log('Error: ', error);
@@ -35,10 +28,6 @@ const AccessControl = () => {
     };
     retrieveRoles();
   }, []);
-
-  useEffect(() => {
-    console.log('from redux state permissionData:', permissionData);
-  }, [permissionData]); 
 
   const handleToggleChange = async(index, roleName) => {
     const updatedRoles = [...roles];

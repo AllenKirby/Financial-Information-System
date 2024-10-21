@@ -11,7 +11,8 @@ const {
     deleteDV, 
     passDocument,
     updateDV,
-    getFormData
+    getFormData,
+    getPermission
 } = require('../controller/EditorController');
 
 
@@ -24,6 +25,7 @@ editorRouter.get('/getDV', retrieveDV)
 editorRouter.delete('/deleteDV/:id', deleteDV)
 editorRouter.patch('/updateDV/:id', updateDV)
 editorRouter.get('/getFormData', getFormData)
+editorRouter.get('/getPermission', getPermission)
 
 
 module.exports = editorRouter;

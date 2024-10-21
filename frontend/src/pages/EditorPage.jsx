@@ -1,10 +1,12 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
-import { collection, query, onSnapshot, where } from "firebase/firestore"
+import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
+import {useDispatch, useSelector} from 'react-redux'
+import {setPermission} from '../redux/PermissionRedux' 
 
 //Components
 import Navbar from "../components/Navbar"
@@ -18,8 +20,10 @@ const EditorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
   const { user } = useAuthContext()
-  const { dispatch, documents } = useDisbursementContext()
-  const prevDocumentsRef = useRef();
+  const { dispatch: dispatchContext, documents } = useDisbursementContext()
+  //const prevDocumentsRef = useRef();
+  const dispatch = useDispatch()
+  const permission = useSelector((state) => state.permission)
   
   const navItems = [
     { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> } 
@@ -36,17 +40,16 @@ const EditorPage = () => {
     const retrieveDV = async() => {
         if(!documents){
           try{
-            console.log('start')
             const getDocu = await axios.get('http://localhost:4000/editor/getDV', {
               withCredentials: true
             })
             
             if(getDocu.status === 200){
               const documents = getDocu.data
-              dispatch({type: 'SET_DOCUMENTS', payload: documents})
+              dispatchContext({type: 'SET_DOCUMENTS', payload: documents})
             }
           }catch(error){
-          console.log(error)
+            console.log(error)
         }
       }
     }
@@ -62,8 +65,40 @@ const EditorPage = () => {
         return acc;
       }, {});
 
-      dispatch({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
+      dispatchContext({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
     })
+
+    return () => unsubscribe()   
+  }, [dispatchContext])
+
+  useEffect(() => {
+    const getPermission = async() => {
+      try{
+        const res = await axios.get('http://localhost:4000/editor/getPermission', {
+          withCredentials: true
+        })
+        if(res.status === 200){
+          const data = res.data
+          dispatch(setPermission(data))
+        }
+      }catch(error){
+        console.log(error)
+      }
+    }
+    getPermission()
+
+    const docRef = doc(firestore, 'Roles', 'Preparer'); 
+    const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+    if (docSnapshot.exists()) {
+      const documentData = { data: { ...docSnapshot.data() } };
+
+      console.log('Document Data:', documentData);
+
+      dispatch(setPermission(documentData));
+    } else {
+      console.log('No such document!');
+    }
+  });
 
     return () => unsubscribe()   
   }, [dispatch])
