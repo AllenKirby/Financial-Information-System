@@ -100,27 +100,26 @@ const AccountDetails = ({account}) => {
                 <p className="w-1/5 px-2 truncate font-semibold">{account.customClaims.dispName.replace(',', ' ')}</p>
                 <p className="w-1/5 px-2">{role}</p>
                 <p className="w-1/5 px-2 truncate text-blue-500 underline">{account.email}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.disabled ? 'text-red-500' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.emailVerified ? 'text-green-500' : 'text-red-500'}`}>{account.emailVerified ? 'True' : 'False'}</p>
+                <p className={`w-1/5 px-2 text-center font-medium ${account.disabled ? 'text-superAdminMustard' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</p>
+                <p className={`w-1/5 px-2 text-center font-medium ${account.emailVerified ? 'text-green-500' : 'text-superAdminMustard'}`}>{account.emailVerified ? 'True' : 'False'}</p>
             </div>
             <div className='w-[10%] h-auto flex items-center justify-end px-2 gap-2'>
                 {!account.disabled ? 
                     <FaUserAltSlash
                         disabled={isLoading} 
-                        className={`${isLoading ? 'text-slate-100' : 'text-customFontColor'}`} 
+                        className={`text-superAdminMustard ${isLoading ? 'text-slate-100' : 'text-superAdminMustard'}`} 
                         size={17}
                         onClick={() => disableUser(true)} /> :
                     <FaUser 
                         disabled={isLoading}
-                        className={`${isLoading ? 'text-slate-100' : 'text-customFontColor'}`}
+                        className={`text-superAdminMustard ${isLoading ? 'text-slate-100' : 'text-superAdminMustard'}`}
                         size={15}
                         onClick={() => disableUser(false)}/>
                 }
                 <MdDelete 
                     onClick={deleteAcc} 
                     size={20} 
-                    color='red'
-                    className={`${isLoading ? 'text-slate-100' : 'text-red-500'}`}
+                    className={`text-superAdminMustard ${isLoading ? 'text-slate-100' : 'text-superAdminMustard'}`}
                     />
             </div>
         </div>

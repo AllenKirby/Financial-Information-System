@@ -66,8 +66,8 @@ const UserManagement = () => {
               onChange={(e) => setSearch(e.target.value)}
               className='py-2 pr-3 pl-10 text-sm rounded-2xl focus:outline-none border-2' />
           </div>
-          <button onClick={modal} className="flex items-center justify-center gap-1 bg-customgreen text-sm text-white px-3 rounded-lg hover:scale-125 duration-150 transition-all">
-            <IoMdAdd size={20} />Add User
+          <button onClick={modal} className="flex items-center justify-center gap-1 bg-superAdminBlue text-sm text-white px-3 rounded-lg hover:scale-125 duration-150 transition-all">
+            <IoMdAdd size={20} />Add Account
           </button>
           {isModalOpen && (
             <>
@@ -80,15 +80,15 @@ const UserManagement = () => {
         </div>
       </div>
       <div className="w-full h-auto flex items-center justify-start border-b-2">
-        <button onClick={() => sortValue('')} className={`${roleSort === '' ? 'text-customgreen border-b-2 border-b-customgreen' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-customgreen hover:border-b-customgreen`}>All</button>
-        <button onClick={() => sortValue('4')} className={`${roleSort === '4' ? 'text-customgreen border-b-2 border-b-customgreen' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-customgreen hover:border-b-customgreen`}>Preparer</button>
-        <button onClick={() => sortValue('3')} className={`${roleSort === '3' ? 'text-customgreen border-b-2 border-b-customgreen' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-customgreen hover:border-b-customgreen`}>Funding</button>
-        <button onClick={() => sortValue('2')} className={`${roleSort === '2' ? 'text-customgreen border-b-2 border-b-customgreen' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-customgreen hover:border-b-customgreen`}>Budget Officer</button>
-        <button onClick={() => sortValue('1')} className={`${roleSort === '1' ? 'text-customgreen border-b-2 border-b-customgreen' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-customgreen hover:border-b-customgreen`}>Approver</button>
-        <button onClick={() => sortValue('0')} className={`${roleSort === '0' ? 'text-customgreen border-b-2 border-b-customgreen' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-customgreen hover:border-b-customgreen`}>Super Admin</button>
+        <button onClick={() => sortValue('')} className={`${roleSort === '' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>All</button>
+        <button onClick={() => sortValue('4')} className={`${roleSort === '4' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Preparer</button>
+        <button onClick={() => sortValue('3')} className={`${roleSort === '3' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Funding</button>
+        <button onClick={() => sortValue('2')} className={`${roleSort === '2' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Budget Officer</button>
+        <button onClick={() => sortValue('1')} className={`${roleSort === '1' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Approver</button>
+        <button onClick={() => sortValue('0')} className={`${roleSort === '0' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Super Admin</button>
       </div>
       <div className="w-full h-full px-2 pt-5">
-        <div className="w-full h-auto flex rounded-t-lg bg-customgreen text-white px-1">
+        <div className="w-full h-auto flex rounded-t-lg bg-superAdminBlue text-white px-1">
           <div className="w-[90%] h-auto flex">
             <h1 className="w-1/5 px-2 py-1">Fullname</h1>
             <h1 className="w-1/5 px-2 py-1 ">Role</h1>
