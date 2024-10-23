@@ -30,6 +30,7 @@ const readPassed_records = async (req, res) => {
             }
         
         })
+        console.log(documents)
         return res.status(200).json({success: true, documents});
     } catch (error) {
         console.log(`Error retrieving passed records: ${error}`);

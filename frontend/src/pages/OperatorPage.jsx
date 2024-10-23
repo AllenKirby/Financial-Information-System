@@ -87,6 +87,7 @@ const OperatorPage = () => {
           });
           if(getDocu.status === 200){
             const documents = getDocu.data
+            console.log(documents)
             dispatchContext({type: 'SET_OPDOCUMENTS', payload: documents})
           }
         }catch(error){
