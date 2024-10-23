@@ -10,14 +10,15 @@ import { MdRemove } from "react-icons/md";
 import { useAuthContext } from '../hooks/useAuthContext'
 import { usePreparerHook } from '../hooks/usePreparerHook'
 import { useFundingHook } from '../hooks/useFundingHook'
+import { useInitialStateDV } from '../hooks/useInitialStateDV'
 
 import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'', accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: '', bir2percent: 0, bir3percent: 0, subAmount: 0, amountDue: 0})
+  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'', accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
   //states
-  const [birData, setBirData] = useState({ birRC: '', birParticular: '', birSubAmount: 0})
+  const [birData, setBirData] = useState({ birParticular: ''})
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
@@ -32,6 +33,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //hooks
   const {createDisbursement, updateDV, getFormData, isLoading, error} = usePreparerHook()
   const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
+  const {getDVno} = useInitialStateDV()
   const { user } = useAuthContext() 
   //redux
   const permission = useSelector((state) => state.permission)
@@ -64,9 +66,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         amountDue: document.amountDue || 0,
       });
       setBirData({
-        birRC: document.birRC || '',
         birParticular: document.birParticular || '',
-        birSubAmount: document.birSubAmount || 0,
       });
       setOperatorInput({
         ors: document.ORSBURS || '',
@@ -120,24 +120,12 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     modal()
   }
 
-  const computeAmount = (amount) => {
-    const parsedAmount = parseFloat(amount)
-    const bir3percent = parsedAmount * 0.03;
-    const bir2percent = parsedAmount * 0.02;
-    const subAmount = bir2percent + bir3percent;
-    const amountDue = parsedAmount - subAmount;
-
-    const birSubAmount = subAmount;
-    const birAmountDue = amountDue;
-
-    setPayeeData({...payeeData, amount: parsedAmount, bir2percent: bir2percent, bir3percent: bir3percent, subAmount: subAmount, amountDue: amountDue});
-    setBirData({...birData, birSubAmount: birSubAmount, birAmountDue: birAmountDue});
-  }
-
   useEffect(() => {
     
     const fetchAccountCode = async () => {
-      const form = await getFormData()
+      const storedFormData = sessionStorage.getItem('FormData');
+      let form = storedFormData ? JSON.parse(storedFormData) : await getFormData()
+
       setFundCluster(Object.values(form.fundCluster))
       setRc(Object.values(form.ResponsibilityCenter))
 
@@ -262,6 +250,20 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   }, [payeeData.TT_tax, payeeData.TT_cost])
 
+  useEffect(() => {
+    const gettingNumber = async () => {
+      const fundNoSpace = payeeData.fund.replace(/ /g, '')
+      console.log(`getting dv no for ${fundNoSpace}`)
+      if(fundNoSpace !== ''){
+        const {template, value, currentVal} = await getDVno(fundNoSpace)
+        setPayeeData({...payeeData, DV: `${template}${value}`, origNumber: currentVal, template: template})
+      }else{
+        console.log('no fund selected yet (disbursement voucher)')
+      }
+    }
+    gettingNumber()
+  }, [payeeData.fund])
+
   const isDisabled = user.role === '3'
 
   return (
@@ -289,7 +291,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               disabled={isDisabled && !permission.data.permission}
               type="text" 
               value={payeeData.payee}
-              onChange={(e) => setPayeeData({...payeeData, payee: e.target.value})} 
+              onChange={(e) => setPayeeData({...payeeData, payee: e.target.value.toUpperCase()})} 
               required  />
           </div>
 
@@ -312,7 +314,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 disabled={isDisabled && !permission.data.permission}
                 type="text" 
                 value={payeeData.TIN}
-                onChange={(e) => setPayeeData({...payeeData, TIN: e.target.value})} 
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const filteredValue = value.replace(/[^0-9\-]/g, '');
+                  setPayeeData({...payeeData, TIN: filteredValue})
+                }} 
                 required  />
             </div>
           </div>
@@ -362,9 +368,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <input 
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 type="text" 
-                disabled={isDisabled && !permission.data.permission} 
+                disabled={true}
                 value={payeeData.DV}
-                onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
                 required  />
             </div>
             <div className="flex flex-col w-1/2">
@@ -429,7 +434,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 type="text" 
                 value={operatorInput.ors}
-                onChange={(e) => setOperatorInput({...operatorInput, ors: e.target.value})}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const filteredValue = value.replace(/[^0-9\-]/g, '');
+                  setOperatorInput({...operatorInput, ors: filteredValue})
+                }}
                 required  />
             </div>
            }
@@ -448,7 +457,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     required  >
                       <option value="" disabled>Select Tax Type</option>
                       <option value="VAT">VAT</option>
-                      <option value="NON-VAT">NONVAT</option>
+                      <option value="NON VAT">NONVAT</option>
                   </select>  
                 </div>
                 <div className='w-1/3'>
@@ -478,8 +487,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <input 
                     className="w-full flex px-4 py-2 rounded-md border-2 focus:outline-none" 
                     type="number" 
+                    step='0.01'
                     disabled={isDisabled && !permission.data.permission}
-                    onChange={(e) => computeAmount(e.target.value)}
+                    onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
                     placeholder='0'
                     value={payeeData.amount === 0 ? '' : payeeData.amount}
                     required  />
@@ -600,19 +610,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           </div>
         </div>
         <h1 className="font-semibold text-lg mt-5 mb-2">BIR Information</h1>
-        <div className="flex flex-col py-3">
-          <label>Responsibility Center</label>
-          <select  className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-            onChange={(e) => {setBirData({...birData, birRC: e.target.value})}}
-            value={birData.birRC}
-            disabled={isDisabled && !permission.data.permission}
-            required
-          >
-            <option value="" disabled>Select</option>
-            <option value="RO">RO</option>
-            <option value="ROO">ROO</option>
-          </select>
-        </div>
         <div className='w-full'>
           <label>Particulars</label>
           <textarea className="w-full h-52 px-4 py-2 rounded-md border-2 focus:outline-none"

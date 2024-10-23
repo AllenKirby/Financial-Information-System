@@ -19,6 +19,7 @@ export const usePreparerHook = () => {
               setIsLoading(false)
               const docu = res.data
               dispatch({type: 'CREATE_DOCUMENT', payload: docu})
+              sessionStorage.removeItem('pendingDVNumbers')
               return true
             }
           }
@@ -59,10 +60,9 @@ export const usePreparerHook = () => {
             })
 
             if(res.status === 200){
+                const arr = res.data.form
+                sessionStorage.setItem('FormData', JSON.stringify(arr));
                 return res.data.form
-                // const formData = res.data.form
-                // setArrFundCluster(Object.values(formData.fundCluster))
-                // console.log(Object.values(formData.fundCluster))
             }
 
         }catch(error){

@@ -25,6 +25,7 @@ const ViewDocument = () => {
   const [doc, setDoc] = useState(null);
   const [idStatus, setIdStatus] = useState({id: '', status: '', type: ''})
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [userRecord, setUserRecord] = useState('')
   const [primaryColor, setPrimaryColor] = useState('')
   const [secondaryColor, setSecondaryColor] = useState('')
   
@@ -498,6 +499,37 @@ const ViewDocument = () => {
             )}
           </div>
         </div>
+        
+      </div>
+  
+      <section className="w-full h-96 relative overflow-y-auto">
+          <Document document={doc} />
+          {/* add comment here */}
+        </section>
+      <select 
+        className="w-40 px-4 py-2 rounded-md border-2 focus:outline-none"
+        onChange={(e) => setUserRecord(e.target.value)}
+        value={userRecord}>
+        <option value='' disabled>Select action:</option>
+      
+        {(() => {
+          const { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy } = doc;
+          const userActions = { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy };
+
+          return Object.keys(userActions).map((key) => {
+            const formattedKey = key
+              .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
+              .trim()                      // Trim leading/trailing spaces
+              .toLowerCase()               // Convert all to lowercase first
+              .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+
+            return <option key={key} value={doc[key]}>{formattedKey}:</option>;
+          });
+        })()}
+      </select>
+      <div className="pl-5">
+        <p>{userRecord.replace(/,/g, ' ')}</p>
+      </div>
     </section>
   );
   

@@ -109,7 +109,10 @@ const OperatorPage = () => {
     })
 
     return () => unsubscribe()
+
   }, [user, dispatchContext, documents, permission?.data?.permission, status])
+  // permission.data.permission 
+
 
   return (
     <main className="w-full h-screen flex bg-slate-100">

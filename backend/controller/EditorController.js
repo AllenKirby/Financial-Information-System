@@ -16,9 +16,14 @@ const formatDate = (rawDate) => {
     return formattedDate;
   };
 const createDV = async (req, res) => {
-    const {payee, TIN, address, fund, date, DV, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accTitle, accCode,optionalAmount, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
-    const {birRC, birParticular, birSubAmount} = req.body.bir_data
+    const {payee, TIN, address, fund, date, DV, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
+    const {birParticular} = req.body.bir_data
+    const createdBy = req.user.name
     
+    const DVnoKey = `DVno${fund.replace(/\s/g, '')}`
+    const finalizeDVNo = await getOrigNumberOfCopies(DVnoKey, origNumber, DV, template)
+
+
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
         year: "numeric",
@@ -34,6 +39,7 @@ const createDV = async (req, res) => {
     });
 
     const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+    const createdByDetails = `${createdBy} at ${dateTimeCollection}`
 
     dvData = {
         //payee data
@@ -42,7 +48,7 @@ const createDV = async (req, res) => {
         address: address,
         fund: fund,
         date: formatDate(date), 
-        DV: DV, 
+        DV: finalizeDVNo, 
         RC: RC,
         NF_name: NF_name,
         NF_office: NF_office,
@@ -55,16 +61,11 @@ const createDV = async (req, res) => {
         optionalAmount: optionalAmount, 
         amount: amount, 
         particular: particular,
-        bir2percent: bir2percent, 
-        bir3percent: bir3percent, 
-        subAmount: subAmount,
-        amountDue: amountDue,
         //BIR data
-        birRC: birRC, 
         birParticular: birParticular,
-        birSubAmount: birSubAmount,
         //other data
         createdAt: dateTimeCollection,
+        createdBy: createdByDetails,
         status: 'Drafting',
         //open for necessary data needed
     }
@@ -387,6 +388,66 @@ const getPermission = async(req, res) => {
     }
 }
 
+const getNumberOfCopies = async (req, res) => {
+
+    try{
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+        const day = today.getDate();
+        const docRef = db.collection('NumberOfRecords').doc(year.toString());
+        if (month === 1 && day === 1) {
+            const data = {
+                DVno501CARP: '0000',
+                DVno501COB: '0000',
+                DVno501LFP: '0000',
+                DVnoContractFarming: '0000',
+            }
+            await docRef.set(data);
+            return res.status(200).json({data: data})
+        }else{
+            const doc = await docRef.get()
+            if(doc.exists){
+                const data = doc.data()
+                res.status(200).json({data: data})
+            }
+        }
+        
+    }catch(error){
+        console.log(`Error on getNumberOfCopies(editor controller) ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
+    try{
+        const today = new Date();
+        const year = today.getFullYear();
+        const docRef = db.collection('NumberOfRecords').doc(year.toString());
+        const doc = await docRef.get()
+        if (doc.exists) {
+            const data = doc.data()
+            const currentNoOfCopies = data[dvno]
+            if(currentNoOfCopies === givenNo){
+                const incrementedByOne = (parseInt(givenNo, 10) + 1).toString().padStart(4, '0');
+                await docRef.update({
+                    [dvno]: incrementedByOne
+                })
+                return DV
+            }else{
+                const incrementedByOne = (parseInt(currentNoOfCopies, 10) + 1).toString().padStart(4, '0');
+                await docRef.update({
+                    [dvno]: incrementedByOne
+                })
+                return `${template}${incrementedByOne}`
+            }
+        }
+    }catch(error){
+        console.log(`Error on get_ORIG_NumberOfCopies(editor controller) ${error}`)
+        return 0
+    }
+}
+
 module.exports = {
     createDV,
     retrieveDV,
@@ -395,5 +456,6 @@ module.exports = {
     passDocument,
     updateDV,
     getFormData,
-    getPermission
+    getPermission,
+    getNumberOfCopies
 };
