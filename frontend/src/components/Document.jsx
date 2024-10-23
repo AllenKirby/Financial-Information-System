@@ -9,9 +9,17 @@ import Text2 from '../assets/images/dasda.png'
 
 const Document = ({document}) => {
   const doc = document
+  const val1 = eval(doc.amount + doc.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const val2 = eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const total_val = eval(val1 + '+' + val2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const amount_due = eval(doc.amount + '-' + total_val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+
+  const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
+  const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
+
   console.log('document', doc)
   return (
-    <main id="pdf" className="w-auto h-auto flex flex-col items-center justify-center font-times">
+    <main id="pdf" className="w-4/5 h-auto flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-a4-height text-black text-xs'>
         <header className='w-full h-auto flex'>
           <div className='w-3/4 h-28 relative'>
@@ -99,7 +107,7 @@ const Document = ({document}) => {
                 <div className="w-full h-3/6 flex items-center justify-end p-1">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 <div className="w-full h-24 flex justify-between items-end font-bold">
                   <div>₱</div>
-                  <div>{doc.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div>{amount_due}</div>
                 </div>
               </div>
           </div>
@@ -145,9 +153,9 @@ const Document = ({document}) => {
                   <div className="w-1/5 h-[100px] border-black">
                       <div className="w-full text-center border-b-2 border-black">Credit</div>
                       <div className="w-full pt-1 text-end px-2"><br/></div>
-                      <div className="w-full pt-1 text-end px-2">{doc.bir3percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      <div className="w-full pt-1 text-end px-2">{doc.bir2percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      <div className="w-full pt-1 text-end px-2">{doc.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full pt-1 text-end px-2">{val1}</div>
+                      <div className="w-full pt-1 text-end px-2">{val2}</div>
+                      <div className="w-full pt-1 text-end px-2">{amount_due}</div>
                   </div>
               </div>
           </div>
@@ -175,7 +183,7 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div>
-                  <div className='flex justify-center items-center h-full'>{`${toWords(doc.amountDue).charAt(0).toUpperCase() + toWords(doc.amountDue).slice(1)} pesos`}</div> 
+                  <div className='flex justify-center items-center h-full'>{`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} pesos`}</div> 
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
@@ -347,7 +355,7 @@ const Document = ({document}) => {
               </div>
               <div className='w-36 border-r-2 border-black flex-col'>
                 <div className="w-full text-center border-b-2 border-black">Responsibilty Center</div>
-                <div className="w-full h-3/6 flex items-center justify-center p-1">{doc.birRC}</div>
+                <div className="w-full h-3/6 flex items-center justify-center p-1">RO</div>
               </div>
               <div className='w-32 border-r-2 border-black'>
                 <div className="w-full text-center border-b-2 border-black">MFO/PAP</div>
@@ -355,10 +363,10 @@ const Document = ({document}) => {
               </div>
               <div className='w-60'>
                 <div className="w-full text-center border-b-2 border-black">Amount</div>
-                <div className="w-full h-3/6 flex items-center justify-end p-1">{doc.birSubAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div className="w-full h-3/6 flex items-center justify-end p-1">{total_val}</div>
                 <div className="w-full h-24 flex justify-between items-end font-bold">
                   <div>₱</div>
-                  <div>{doc.birSubAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div>{total_val}</div>
                 </div>
               </div>
           </div>
@@ -389,15 +397,15 @@ const Document = ({document}) => {
                   </div>
                   <div className="w-1/5 h-[100px] border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Debit</div>
-                      <div className="w-full pt-1 text-end px-2">{doc.bir3percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      <div className="w-full pt-1 text-end px-2">{doc.bir2percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full pt-1 text-end px-2">{val1}</div>
+                      <div className="w-full pt-1 text-end px-2">{val2}</div>
                       <div className="w-full pt-1 text-end px-2">-</div>
                   </div>
                   <div className="w-1/5 h-[100px] border-black">
                       <div className="w-full text-center border-b-2 border-black">Credit</div>
                       <div className="w-full pt-1 text-end px-2">-</div>
                       <div className="w-full pt-1 text-end px-2">-</div>
-                      <div className="w-full pt-1 text-end px-2">{doc.birSubAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full pt-1 text-end px-2">{total_val}</div>
                   </div>
               </div>
           </div>
@@ -425,7 +433,7 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div> 
-                  <div className='flex justify-center items-center h-full'>{`${toWords(doc.birSubAmount)} pesos`}</div>
+                  <div className='flex justify-center items-center h-full'>{`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} pesos`}</div>
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
