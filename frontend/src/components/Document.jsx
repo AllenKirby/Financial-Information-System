@@ -17,9 +17,8 @@ const Document = ({document}) => {
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
   const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
 
-  console.log('document', doc)
   return (
-    <main id="pdf" className="w-4/5 h-auto flex flex-col items-center justify-center font-times">
+    <main id="pdf" className="w-full h-auto flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-a4-height text-black text-xs'>
         <header className='w-full h-auto flex'>
           <div className='w-3/4 h-28 relative'>

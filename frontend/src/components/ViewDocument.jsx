@@ -141,7 +141,7 @@ const ViewDocument = () => {
   }, [OpDocuments, HeadDocuments, documents, idStatus, AdminDocuments]); 
 
   if (!doc) {
-    return <div className="w-a4-width bg-gray-200 h-full animate-blink rounded-md"></div>;
+    return <div className="w-a4-width bg-gray-200 h-full animate-blink rounded-lg"></div>;
   }
 
   const handleDownload = () => {
@@ -375,164 +375,145 @@ const ViewDocument = () => {
   }
 
   return (
-    <section className="w-full h-auto flex">
-        <div className="w-5/6 h-[450px] overflow-y-auto">
-          <Document document={doc} />
-        </div>
-        <div className="w-1/6 h-full p-3">
-          <div className="flex flex-col gap-2">
-            {idStatus.type === '4' && (
-              <button
-                disabled={isLoading}
-                onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Submit
-              </button>
-            )}
-    
-            {idStatus.type === '3' && (
-              <button
-                disabled={isLoadingForFunding}
-                onClick={handleSubmitForOp}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Submit
-              </button>
-            )}
-    
-            {(idStatus.type === '2' && !permission.data.permission) && (
-              <button
-                disabled={isLoadingForBO}
-                onClick={handleSubmitForHead}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Submit
-              </button>
-            )}
-    
-            {((idStatus.type === '1' && idStatus.status !== 'Approved') ||( permission.data.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
-              <button
-                disabled={isLoadingForApprover}
-                onClick={approve}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Approve
-              </button>
-            )}
-            {idStatus.type !== '2' && idStatus.type !== '1' && (
-              <button
-                onClick={modal}
-                className="w-full rounded-md text-xs py-1 font-semibold 'text-customFontGreen hover:bg-gray-200 hover:scale-105' transition-all duration-100"
-                >
-                Update
-              </button>
-            )}
-            {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
-              <button
-                disabled={isLoadingForFunding || isLoading}
-                onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
-                className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                  isLoadingForFunding
-                    ? 'bg-gray-200 text-gray-500'
-                    : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                } transition-all duration-100`}
-              >
-                {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
-              </button>
-            )}
-            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-              <button
-                onClick={() => handleReturn('3')}
-                disabled={isLoadingForBO}
-                className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                } transition-all duration-100`}
-              >
-                Return to Funding
-              </button>
-            )}
-            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-              <button
-                onClick={() => handleReturn('4')}
-                disabled={isLoadingForBO}
-                className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                } transition-all duration-100`}
-              >
-                Return to Preparer
-              </button>
-            )}
+    <section className="w-full h-auto flex ">
+      <div className="w-5/6 h-[450px] overflow-y-auto">
+        <Document document={doc} />
+      </div>
+      <div className="w-1/6 h-full p-3">
+        <div className="flex flex-col gap-2">
 
+          {idStatus.type === '4' && (
             <button
-              onClick={handleDownload}
-              className={`w-full rounded-lg py-1 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
+              disabled={isLoading}
+              onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
+              className={`w-full px-5 py-2 rounded-lg ${isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
               >
-              Download
+              Submit
             </button>
+          )}
 
+          {idStatus.type === '3' && (
             <button
-              onClick={() => window.history.back()}
-              className={`w-full py-1 rounded-lg text-white bg-${secondaryColor} hover:scale-125 transition-all duration-150`}
+              disabled={isLoadingForFunding}
+              onClick={handleSubmitForOp}
+              className={`w-full px-5 py-2 rounded-lg ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
               >
-              Back
+              Submit
             </button>
-    
-            {isModalOpen && (
-              <>
-                <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-                <section
-                  onClick={(e) => e.stopPropagation()}
-                  className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+          )}
+
+          {(idStatus.type === '2' && !permission.data.permission) && (
+            <button
+              disabled={isLoadingForBO}
+              onClick={handleSubmitForHead}
+              className={`w-full px-5 py-2 rounded-lg ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              >
+              Submit
+            </button>
+          )}
+
+          {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission.data.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
+            <button
+              disabled={isLoadingForApprover}
+              onClick={approve}
+              className={`w-full px-5 py-2 rounded-lg ${isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              >
+              Approve
+            </button>
+          )}
+
+          {idStatus.type !== '2' && idStatus.type !== '1' && (
+            <button
+              onClick={modal}
+              className={`w-full rounded-lg py-2 bg-${primaryColor} text-white hover:scale-125 transition-all duration-100`}
+              >
+              Update
+            </button>
+          )}
+
+          <button
+            onClick={handleDownload}
+            className={`w-full rounded-lg py-1 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
+            >
+            Download
+          </button>
+
+          {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
+            <button
+              disabled={isLoadingForFunding || isLoading}
+              onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
+              className={`w-full rounded-lg py-2 text-white bg-${secondaryColor} ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:scale-125'} transition-all duration-100`}
+              >
+              {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
+            </button>
+          )}
+
+          {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+            <button
+              onClick={() => handleReturn('3')}
+              disabled={isLoadingForBO}
+              className={`w-full rounded-lg text-xs py-2 font-semibold ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+              >
+              Return to Funding
+            </button>
+          )}
+
+          {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+            <button
+              onClick={() => handleReturn('4')}
+              disabled={isLoadingForBO}
+              className={`w-20 rounded-lg text-xs py-2 font-semibold ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+              >
+              Return to Preparer
+            </button>
+          )}
+
+          <button
+            onClick={() => window.history.back()}
+            className={`w-full py-2 rounded-lg text-white bg-${secondaryColor} hover:scale-125 transition-all duration-150`}
+            >
+            Back
+          </button>
+
+          {isModalOpen && (
+            <>
+              <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+              <section
+                onClick={(e) => e.stopPropagation()}
+                className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
                 >
-                  <DisbursementVoucher modal={modal} document={doc} flag={true} />
-                </section>
-              </>
-            )}
+                <DisbursementVoucher modal={modal} document={doc} flag={true} />
+              </section>
+            </>
+          )}
+          <select 
+            className="w-40 px-4 py-2 rounded-lg border-2 focus:outline-none"
+            onChange={(e) => setUserRecord(e.target.value)}
+            value={userRecord}>
+            <option value='' disabled>Select action:</option>
+        
+            {(() => {
+              const { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy } = doc;
+              const userActions = { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy };
+
+              return Object.keys(userActions).map((key) => {
+                const formattedKey = key
+                  .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
+                  .trim()                      // Trim leading/trailing spaces
+                  .toLowerCase()               // Convert all to lowercase first
+                  .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+
+                return <option key={key} value={doc[key]}>{formattedKey}:</option>;
+                });
+            })()}
+          </select>
+          <div className="pl-5">
+            <p>{userRecord.replace(/,/g, ' ')}</p>
           </div>
         </div>
-        
-      </div>
-  
-      <section className="w-full h-96 relative overflow-y-auto">
-          <Document document={doc} />
-          {/* add comment here */}
-        </section>
-      <select 
-        className="w-40 px-4 py-2 rounded-md border-2 focus:outline-none"
-        onChange={(e) => setUserRecord(e.target.value)}
-        value={userRecord}>
-        <option value='' disabled>Select action:</option>
-      
-        {(() => {
-          const { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy } = doc;
-          const userActions = { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy };
-
-          return Object.keys(userActions).map((key) => {
-            const formattedKey = key
-              .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
-              .trim()                      // Trim leading/trailing spaces
-              .toLowerCase()               // Convert all to lowercase first
-              .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
-
-            return <option key={key} value={doc[key]}>{formattedKey}:</option>;
-          });
-        })()}
-      </select>
-      <div className="pl-5">
-        <p>{userRecord.replace(/,/g, ' ')}</p>
       </div>
     </section>
   );
-  
 };
 
 export default ViewDocument;
