@@ -22,7 +22,7 @@ const createDV = async (req, res) => {
     
     const DVnoKey = `DVno${fund.replace(/\s/g, '')}`
     const finalizeDVNo = await getOrigNumberOfCopies(DVnoKey, origNumber, DV, template)
-
+    const DVKey = `${finalizeDVNo}|${fund.replace(/\s/g, '')}`
 
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -48,7 +48,8 @@ const createDV = async (req, res) => {
         address: address,
         fund: fund,
         date: formatDate(date), 
-        DV: finalizeDVNo, 
+        DV: finalizeDVNo,
+        DVKey: DVKey, 
         RC: RC,
         NF_name: NF_name,
         NF_office: NF_office,
@@ -70,9 +71,9 @@ const createDV = async (req, res) => {
         //open for necessary data needed
     }
     try{
-        await db.collection('records').doc(dvData.DV).set(dvData);
+        await db.collection('records').doc(dvData.DVKey).set(dvData);
         document = {
-            [DV]: dvData
+            [DVKey]: dvData
         }
         return res.status(200).json(document);
 
@@ -133,7 +134,7 @@ const passDocument = async (req, res) => {
         }
         const listOfOpAcc = await getListOfOperatorAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
-        await setHistoryLogs(dateTimePassed, logs)
+        // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});
@@ -276,8 +277,9 @@ const deleteDV = async(req, res) => {
 
 const updateDV = async(req, res) => {
     const { id } = req.params
-    const {payee, TIN, address, fund, date, DV, RC, accTitle, accCode, amount, particular, bir2percent, bir3percent, subAmount, amountDue } = req.body.payee_data;
-    const {birRC, birParticular, birSubAmount} = req.body.bir_data
+    // const {payee, TIN, address, fund, date, DV, DVKey, RC, NF_name, NF_office, TT_cost, TT_formula1, TT_formula2, TT_tax, optionalAmount,accTitle, accCode, amount, particular} = req.body.payee_data;
+    const {birParticular} = req.body.bir_data
+    const payeeData = req.body.payee_data
 
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -294,31 +296,39 @@ const updateDV = async(req, res) => {
     });
 
     const dateTimeCollection = `${dateCollection} ${timeCollection}`;
-
-    dvData = {
-        //payee data
-        payee: payee, 
-        TIN: TIN, 
-        address: address,
-        fund: fund,
-        date: formatDate(date), 
-        DV: DV, 
-        RC: RC, 
-        accTitle: accTitle,
-        accCode: accCode, 
-        amount: amount, 
-        particular: particular,
-        bir2percent: bir2percent, 
-        bir3percent: bir3percent, 
-        subAmount: subAmount,
-        amountDue: amountDue,
-        //BIR data
-        birRC: birRC, 
-        birParticular: birParticular,
-        birSubAmount: birSubAmount,
-        //other data
+    const dvData = {
+        ...payeeData,
+        birParticular,
         updatedAt: dateTimeCollection
     }
+
+    console.log(dvData)
+    // dvData = {
+    //     //payee data
+    //     payee: payee, 
+    //     TIN: TIN, 
+    //     address: address,
+    //     fund: fund,
+    //     date: formatDate(date), 
+    //     DV: DV,
+    //     DVKey: DVKey,
+    //     NF_name: NF_name,
+    //     NF_office: NF_office,
+    //     TT_cost: TT_cost,
+    //     TT_formula1: TT_formula1,
+    //     TT_formula2: TT_formula2,
+    //     TT_tax: TT_tax,
+    //     optionalAmount: optionalAmount,
+    //     RC: RC, 
+    //     accTitle: accTitle,
+    //     accCode: accCode, 
+    //     amount: amount, 
+    //     particular: particular,
+    //     //BIR data
+    //     birParticular: birParticular,
+    //     //other data
+    //     updatedAt: dateTimeCollection
+    // }
     try {
         const docref = db.collection('records').doc(id)
         await docref.update(dvData)
@@ -326,7 +336,7 @@ const updateDV = async(req, res) => {
         if(updatedDoc.exists){
             const doc = updatedDoc.data()
             document = {
-                [doc.DV] : doc
+                [doc.DVKey] : doc
             }
         }
 
@@ -424,24 +434,29 @@ const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
         const today = new Date();
         const year = today.getFullYear();
         const docRef = db.collection('NumberOfRecords').doc(year.toString());
-        const doc = await docRef.get()
-        if (doc.exists) {
-            const data = doc.data()
-            const currentNoOfCopies = data[dvno]
-            if(currentNoOfCopies === givenNo){
-                const incrementedByOne = (parseInt(givenNo, 10) + 1).toString().padStart(4, '0');
-                await docRef.update({
-                    [dvno]: incrementedByOne
-                })
-                return DV
-            }else{
-                const incrementedByOne = (parseInt(currentNoOfCopies, 10) + 1).toString().padStart(4, '0');
-                await docRef.update({
-                    [dvno]: incrementedByOne
-                })
-                return `${template}${incrementedByOne}`
+        return await db.runTransaction(async(transaction) => {
+            const doc = await transaction.get(docRef);
+            if (!doc.exists) {
+                throw new Error('Document does not exist!');
             }
-        }
+
+            const data = doc.data();
+            const currentNoOfCopies = data[dvno] || givenNo
+
+            let incrementedByOne;
+            if (currentNoOfCopies === givenNo) {
+                incrementedByOne = (parseInt(givenNo, 10) + 1).toString().padStart(4, '0');
+            } else {
+                incrementedByOne = (parseInt(currentNoOfCopies, 10) + 1).toString().padStart(4, '0');
+            }
+
+            transaction.update(docRef, {
+                [dvno]: incrementedByOne
+            });
+
+            return `${template}${incrementedByOne}`;
+        })
+        
     }catch(error){
         console.log(`Error on get_ORIG_NumberOfCopies(editor controller) ${error}`)
         return 0

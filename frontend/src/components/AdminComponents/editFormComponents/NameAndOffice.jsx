@@ -10,7 +10,7 @@ export const NameAndOffice = () => {
     const [name, setName] = useState('');
     const [office, setOffice] = useState('');
     const [entries, setEntries] = useState({});
-    const {addNewNameAndOffice, getNameAndOffice, deleteNameAndOffice} = useApproverHook
+    const {addNewNameAndOffice, getNameAndOffice, deleteNameAndOffice} = useApproverHook()
 
     const handleAddNameOffice = () => {
         setShowInputBoxA(!showInpuTBoxA);
@@ -74,7 +74,7 @@ export const NameAndOffice = () => {
             
         }
         gettingData()
-    }, [getNameAndOffice])
+    }, [])
 
     const addObjectToEntries = (dataObject) => {
         const updatedEntries = Object.entries(dataObject).reduce((acc, [key, value]) => {

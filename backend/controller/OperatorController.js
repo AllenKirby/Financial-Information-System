@@ -54,7 +54,7 @@ const operatorInput = async(req, res) => {
         const updatedDoc = await docref.get()
         if(updatedDoc.exists){
             const doc = updatedDoc.data()
-            document[doc.DV] = {
+            document[doc.DVKey] = {
                 data : doc
             }
         }
@@ -85,7 +85,7 @@ const opReturnDocu = async (req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
-    const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
+    // const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
 
     try{
         const updatedDocu = await updateStatus(DV, returnedBy, true)
@@ -94,7 +94,7 @@ const opReturnDocu = async (req, res) => {
         }
         const listOfEditorAcc = await getListOfEditorAccounts();
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
-        await setHistoryLogs(dateTimePassed, logs)
+        // await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
     }catch(error){
@@ -193,7 +193,7 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const updatedBy = `${dispName}|${dateTimePassed}`
-    const logs = `${payee}|${DV}|Updated By ${dispName}|${dateTimePassed}`
+    // const logs = `${payee}|${DV}|Updated By ${dispName}|${dateTimePassed}`
 
     try {
         const updatedDocu = await updateStatus(DV, updatedBy, false)
@@ -202,7 +202,7 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
         }
         const listOfOpAcc = await getListOfHeadAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
-        await setHistoryLogs(dateTimePassed, logs)
+        // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});

@@ -12,14 +12,14 @@ const Document = ({document}) => {
   const val1 = eval(doc.amount + doc.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const val2 = eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const total_val = eval(val1 + '+' + val2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  const amount_due = eval(doc.amount + '-' + total_val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
+  const amount_due = eval(doc.amount - floatTotal_val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
-  const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
 
   console.log('document', doc)
   return (
-    <main id="pdf" className="w-4/5 h-auto flex flex-col items-center justify-center font-times">
+    <main id="pdf" className="w-full h-auto flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-a4-height text-black text-xs'>
         <header className='w-full h-auto flex'>
           <div className='w-3/4 h-28 relative'>

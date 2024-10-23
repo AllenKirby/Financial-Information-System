@@ -54,16 +54,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         TT_cost: document.TT_cost || '',
         date: formatDateforUpdate(document.date) || '',
         DV: document.DV || '',
+        DVKey: document.DVKey || '',
         RC: document.RC || '',
         accTitle: document.accTitle || '',
         optionalAmount: document.optionalAmount || '',
         accCode: document.accCode || '',
         amount: document.amount || 0,
         particular: document.particular || '',
-        bir2percent: document.bir2percent || 0,
-        bir3percent: document.bir3percent || 0,
-        subAmount: document.subAmount || 0,
-        amountDue: document.amountDue || 0,
       });
       setBirData({
         birParticular: document.birParticular || '',
@@ -176,8 +173,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       payee_data: payeeData,
       bir_data: birData
     }
-
-    const res = await updateDV(data, document.DV)
+    console.log(data)
+    const res = await updateDV(data, document.DVKey)
     if(res){
       Swal.fire({
         title: "Saved",
@@ -192,7 +189,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleOpInput = async(e) => {
     e.preventDefault()
 
-    const res = await inputOperator(operatorInput, payeeData.DV)
+    const res = await inputOperator(operatorInput, payeeData.DVKey)
     if(res){
       Swal.fire({
         title: "Saved",

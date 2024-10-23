@@ -51,7 +51,7 @@ const readAdmin_records = async(req, res) => {
       const documents = {};
      
       const recordsSnapshot = await db.collection('records')
-          .where('status', '==', 'Approved')
+          .where('status', '==', 'For Approval')
           .get();
       
       recordsSnapshot.forEach((recordDoc) => {

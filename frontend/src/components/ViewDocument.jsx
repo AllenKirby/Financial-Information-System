@@ -86,7 +86,8 @@ const ViewDocument = () => {
   useEffect(() => {
     if(id){
       const decoded = decodeURIComponent(id)
-      setIdStatus({id: decoded.split('|').slice()[0], status: decoded.split('|').slice()[1], type: decoded.split('|').slice()[2]})
+      console.log(decoded)
+      setIdStatus({id: `${decoded.split('|').slice()[0]}|${decoded.split('|').slice()[1]}`, status: decoded.split('|').slice()[2], type: decoded.split('|').slice()[3]})
     }
   }, [id])
 
@@ -95,7 +96,7 @@ const ViewDocument = () => {
     if (idStatus.type === '4') {
       if (documents && Object.keys(documents).length > 0) {
 
-        const selectedDocument = Object.entries(documents).find(([, document]) => document.DV === idStatus.id);
+        const selectedDocument = Object.entries(documents).find(([, document]) => document.DVKey === idStatus.id);
         
         if (selectedDocument) {
           setDoc(selectedDocument[1]);
@@ -109,7 +110,7 @@ const ViewDocument = () => {
     else if (idStatus.type === '3'){
       if(OpDocuments && Object.keys(OpDocuments).length > 0){
 
-        const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
+        const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -120,7 +121,7 @@ const ViewDocument = () => {
     }else if (idStatus.type === '2'){
       if(HeadDocuments && Object.keys(HeadDocuments).length > 0){
 
-        const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
+        const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -130,7 +131,7 @@ const ViewDocument = () => {
       }
     }else if(idStatus.type === '1'){
       if(AdminDocuments && Object.keys(AdminDocuments).length > 0){
-        const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DV === idStatus.id);
+        const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DVKey === idStatus.id);
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
         } else {
@@ -375,163 +376,147 @@ const ViewDocument = () => {
   }
 
   return (
-    <section className="w-full h-auto flex">
+    <section className="w-full h-auto">
         <div className="w-5/6 h-[450px] overflow-y-auto">
-          <Document document={doc} />
+            <Document document={doc} />
         </div>
         <div className="w-1/6 h-full p-3">
-          <div className="flex flex-col gap-2">
-            {idStatus.type === '4' && (
-              <button
-                disabled={isLoading}
-                onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Submit
-              </button>
-            )}
-    
-            {idStatus.type === '3' && (
-              <button
-                disabled={isLoadingForFunding}
-                onClick={handleSubmitForOp}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Submit
-              </button>
-            )}
-    
-            {(idStatus.type === '2' && !permission.data.permission) && (
-              <button
-                disabled={isLoadingForBO}
-                onClick={handleSubmitForHead}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Submit
-              </button>
-            )}
-    
-            {((idStatus.type === '1' && idStatus.status !== 'Approved') ||( permission.data.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
-              <button
-                disabled={isLoadingForApprover}
-                onClick={approve}
-                className={`px-5 py-2 rounded-lg ${
-                  isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-                } transition-all duration-150`}
-              >
-                Approve
-              </button>
-            )}
-            {idStatus.type !== '2' && idStatus.type !== '1' && (
-              <button
-                onClick={modal}
-                className="w-full rounded-md text-xs py-1 font-semibold 'text-customFontGreen hover:bg-gray-200 hover:scale-105' transition-all duration-100"
-                >
-                Update
-              </button>
-            )}
-            {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
-              <button
-                disabled={isLoadingForFunding || isLoading}
-                onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
-                className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                  isLoadingForFunding
-                    ? 'bg-gray-200 text-gray-500'
-                    : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                } transition-all duration-100`}
-              >
-                {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
-              </button>
-            )}
-            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-              <button
-                onClick={() => handleReturn('3')}
-                disabled={isLoadingForBO}
-                className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                } transition-all duration-100`}
-              >
-                Return to Funding
-              </button>
-            )}
-            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-              <button
-                onClick={() => handleReturn('4')}
-                disabled={isLoadingForBO}
-                className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                } transition-all duration-100`}
-              >
-                Return to Preparer
-              </button>
-            )}
+            <div className="flex flex-col gap-2">
+                {idStatus.type === '4' && (
+                    <button
+                        disabled={isLoading}
+                        onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
+                        className={`px-5 py-2 rounded-lg ${isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+                    >
+                        Submit
+                    </button>
+                )}
 
-            <button
-              onClick={handleDownload}
-              className={`w-full rounded-lg py-1 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
-              >
-              Download
-            </button>
+                {idStatus.type === '3' && (
+                    <button
+                        disabled={isLoadingForFunding}
+                        onClick={handleSubmitForOp}
+                        className={`px-5 py-2 rounded-lg ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+                    >
+                        Submit
+                    </button>
+                )}
 
-            <button
-              onClick={() => window.history.back()}
-              className={`w-full py-1 rounded-lg text-white bg-${secondaryColor} hover:scale-125 transition-all duration-150`}
-              >
-              Back
-            </button>
-    
-            {isModalOpen && (
-              <>
-                <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-                <section
-                  onClick={(e) => e.stopPropagation()}
-                  className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+                {(idStatus.type === '2' && !permission.data.permission) && (
+                    <button
+                        disabled={isLoadingForBO}
+                        onClick={handleSubmitForHead}
+                        className={`px-5 py-2 rounded-lg ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+                    >
+                        Submit
+                    </button>
+                )}
+
+                {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission?.data?.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
+                    <button
+                        disabled={isLoadingForApprover}
+                        onClick={approve}
+                        className={`px-5 py-2 rounded-lg ${isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+                    >
+                        Approve
+                    </button>
+                )}
+                {idStatus.type !== '2' && idStatus.type !== '1' && (
+                    <button
+                        onClick={modal}
+                        className="w-full rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100"
+                    >
+                        Update
+                    </button>
+                )}
+                {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
+                    <button
+                        disabled={isLoadingForFunding || isLoading}
+                        onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
+                        className={`w-20 rounded-md text-xs py-1 font-semibold ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+                    >
+                        {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
+                    </button>
+                )}
+                {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+                    <button
+                        onClick={() => handleReturn('3')}
+                        disabled={isLoadingForBO}
+                        className={`w-20 rounded-md text-xs py-1 font-semibold ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+                    >
+                        Return to Funding
+                    </button>
+                )}
+                {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+                    <button
+                        onClick={() => handleReturn('4')}
+                        disabled={isLoadingForBO}
+                        className={`w-20 rounded-md text-xs py-1 font-semibold ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+                    >
+                        Return to Preparer
+                    </button>
+                )}
+
+                <button
+                    onClick={handleDownload}
+                    className={`w-full rounded-lg py-1 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
                 >
-                  <DisbursementVoucher modal={modal} document={doc} flag={true} />
-                </section>
-              </>
-            )}
-          </div>
+                    Download
+                </button>
+
+                <button
+                    onClick={() => window.history.back()}
+                    className={`w-full py-1 rounded-lg text-white bg-${secondaryColor} hover:scale-125 transition-all duration-150`}
+                >
+                    Back
+                </button>
+
+                {isModalOpen && (
+                    <>
+                        <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+                        <section
+                            onClick={(e) => e.stopPropagation()}
+                            className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+                        >
+                            <DisbursementVoucher modal={modal} document={doc} flag={true} />
+                        </section>
+                    </>
+                )}
+            </div>
         </div>
         
-      </div>
-  
-      <section className="w-full h-96 relative overflow-y-auto">
-          <Document document={doc} />
-          {/* add comment here */}
-        </section>
-      <select 
-        className="w-40 px-4 py-2 rounded-md border-2 focus:outline-none"
-        onChange={(e) => setUserRecord(e.target.value)}
-        value={userRecord}>
-        <option value='' disabled>Select action:</option>
-      
-        {(() => {
-          const { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy } = doc;
-          const userActions = { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy };
+        {/* Remove the second <section> and include Document directly
+        <div className="w-full h-96 relative overflow-y-auto">
+            <Document document={doc} />
+        </div> */}
 
-          return Object.keys(userActions).map((key) => {
-            const formattedKey = key
-              .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
-              .trim()                      // Trim leading/trailing spaces
-              .toLowerCase()               // Convert all to lowercase first
-              .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+        <select 
+            className="w-40 px-4 py-2 rounded-md border-2 focus:outline-none"
+            onChange={(e) => setUserRecord(e.target.value)}
+            value={userRecord}>
+            <option value='' disabled>Select action:</option>
+        
+            {(() => {
+                const { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy } = doc;
+                const userActions = { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy };
 
-            return <option key={key} value={doc[key]}>{formattedKey}:</option>;
-          });
-        })()}
-      </select>
-      <div className="pl-5">
-        <p>{userRecord.replace(/,/g, ' ')}</p>
-      </div>
+                return Object.keys(userActions).map((key) => {
+                    const formattedKey = key
+                        .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
+                        .trim()                      // Trim leading/trailing spaces
+                        .toLowerCase()               // Convert all to lowercase first
+                        .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+
+                    return <option key={key} value={doc[key]}>{formattedKey}:</option>;
+                });
+            })()}
+        </select>
+        <div className="pl-5">
+            <p>{userRecord.replace(/,/g, ' ')}</p>
+        </div>
     </section>
-  );
+);
+
   
 };
 

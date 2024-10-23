@@ -6,6 +6,7 @@ import { useAuthContext } from '../hooks/useAuthContext';
 import { useEffect, useState } from 'react';
 import { useDisbursementContext } from '../hooks/useDisbursementContext';
 import { useHeadDisbursementContext } from '../hooks/useHeadDisbursementContext';
+import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext';
 
 
 const Notification = ({ notification, markAsRead }) => {
@@ -15,11 +16,14 @@ const Notification = ({ notification, markAsRead }) => {
   const [notifData, setNotifData] = useState({date: '', time: '', docName: '', name: '', DV: ''})
   const { documents } = useDisbursementContext()
   const { HeadDocuments } = useHeadDisbursementContext()
+  const {AdminDocuments} = useAdminDisbursementContext()
 
   
   useEffect(() => {
-    const [date, time, docName, name, DV] = notification.input.split('|');
-    setNotifData({ date, time, docName, name, DV });
+    console.log(notification.input)
+    const [date, time, docName, name, DV, fund] = notification.input.split('|');
+    const DV_key = `${DV}|${fund}`
+    setNotifData({ date, time, docName, name, DV_key });
   }, [notification.input]);
 
   const openNotif = (DV) =>{
@@ -32,6 +36,9 @@ const Notification = ({ notification, markAsRead }) => {
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }else if(user.role === '2'){
       const document = HeadDocuments[DV].data
+      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+    }else if(user.role === '1'){
+      const document = AdminDocuments[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }
   }
@@ -47,7 +54,7 @@ const Notification = ({ notification, markAsRead }) => {
     <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-slate-100' 
       onClick={() => {
       markAsRead(notification.key)
-      const dvNo = notifData.DV
+      const dvNo = notifData.DV_key
       openNotif(dvNo)
     }}>
       <p ><strong>{notifData.name.replace(',', ' ')}</strong> has successfully transferred the document: <strong>{notifData.docName}</strong></p>

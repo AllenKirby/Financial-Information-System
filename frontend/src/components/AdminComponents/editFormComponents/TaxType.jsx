@@ -73,7 +73,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
             }
         }
         gettingData()
-    }, [getTaxType])
+    }, [])
 
     const addObjectToEntries = (dataObject) => {
         const updatedEntries = Object.entries(dataObject).reduce((acc, [key, value]) => {

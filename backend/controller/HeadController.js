@@ -58,7 +58,7 @@ const returnRecordTo = async(req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
-    const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
+    // const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
     
     try{
         const updatedDocu = await updateStatus(DV, returnedBy, returnTo)
@@ -67,7 +67,7 @@ const returnRecordTo = async(req, res) => {
         }
         const listOfEditorAcc = await getListOfAccount(returnTo);
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
-        await setHistoryLogs(dateTimePassed, logs)
+        // await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
 
@@ -171,7 +171,7 @@ const transferDocument = async (req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const reviewedBy = `${dispName}|${dateTimePassed}`
-    const logs = `${payee}|${DV}|Reviewed By ${dispName}|${dateTimePassed}`
+    // const logs = `${payee}|${DV}|Reviewed By ${dispName}|${dateTimePassed}`
 
     try {
         const updatedDocu = await updateStatusToApproved(DV, reviewedBy)
@@ -180,7 +180,7 @@ const transferDocument = async (req, res) => {
         }
         const listOfOpAcc = await getListOfAccount('1');
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
-        await setHistoryLogs(dateTimePassed, logs)
+        // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});
