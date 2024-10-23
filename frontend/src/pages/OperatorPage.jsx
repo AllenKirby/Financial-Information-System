@@ -66,12 +66,10 @@ const OperatorPage = () => {
   }, [dispatch])
 
   useEffect(() => {
-    if(permission && permission.data.permission){
-      console.log('yes hit')
+    if(permission?.data?.permission){
       setStatus(['Drafting', 'In Review', 'Returned|3', 'Returned|4'])
     }
     else{
-      console.log('no hit')
       setStatus(['In Review', 'Returned|3'])
     }
   }, [permission])
@@ -84,7 +82,7 @@ const OperatorPage = () => {
       }else{
         try{
           console.log('fetching...')
-          const getDocu = await axios.get('http://localhost:4000/operator/read_records', {flag: permission.data.permission}, {
+          const getDocu = await axios.get('http://localhost:4000/operator/read_records', {flag: permission?.data?.permission}, {
             withCredentials: true
           });
           if(getDocu.status === 200){
@@ -111,7 +109,7 @@ const OperatorPage = () => {
     })
 
     return () => unsubscribe()
-  }, [user, dispatchContext, documents, permission.data.permission, status])
+  }, [user, dispatchContext, documents, permission?.data?.permission, status])
 
   return (
     <main className="w-full h-screen flex bg-slate-100">

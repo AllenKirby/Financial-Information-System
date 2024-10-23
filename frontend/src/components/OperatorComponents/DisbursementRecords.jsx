@@ -17,7 +17,7 @@ const DisbursementRecords = () => {
   return (
     <section className='w-full h-full'>
       <div className='flex items-center justify-end py-1'>
-        {(permission && permission.data.permission) && (
+        {(permission && permission?.data?.permission) && (
           <div className="w-full py-1 flex items-center justify-between">
             <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-customgreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
               <IoAdd size={20} className='font-bold'/>Add DV

@@ -118,7 +118,7 @@ export const NameAndOffice = () => {
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 bg-blue-500 text-white rounded"
+                            className="w-1/5 bg-adminBrown text-white rounded"
                         >
                             Submit
                         </button>

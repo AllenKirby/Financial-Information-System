@@ -2,8 +2,6 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import html2pdf from 'html2pdf.js'
 import Swal from 'sweetalert2';
-//icons
-import { FaAngleDown, FaAngleUp, FaAngleLeft } from "react-icons/fa";
 //components
 import DisbursementVoucher from './DisbursementVoucher';
 import Document from "./Document";
@@ -19,20 +17,23 @@ import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useApproverHook } from "../hooks/useApproverHook";
 //redux
 import { useSelector } from "react-redux";
+import { useAuthContext } from "../hooks/useAuthContext";
 
 const ViewDocument = () => {
   //states
   const { id } = useParams();
   const [doc, setDoc] = useState(null);
   const [idStatus, setIdStatus] = useState({id: '', status: '', type: ''})
-  const [dropDown, setDropDown] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [primaryColor, setPrimaryColor] = useState('')
+  const [secondaryColor, setSecondaryColor] = useState('')
   
   //contexts
   const { documents } = useDisbursementContext();
   const {OpDocuments} = useOpDisbursementContext();
   const { HeadDocuments} = useHeadDisbursementContext()
   const { AdminDocuments } = useAdminDisbursementContext()
+  const { user } = useAuthContext()
 
   //hooks
   const {deleteDV, submitDoc, isLoading, error} = usePreparerHook()
@@ -44,6 +45,17 @@ const ViewDocument = () => {
   const modal = () => {
     setIsModalOpen(!isModalOpen)
   } 
+
+  useEffect(() => {
+    if(user && user.role === '1'){
+      setPrimaryColor('customgreen')
+      setSecondaryColor('adminBrown')
+    }
+    else {
+      setPrimaryColor('customgreen')
+      setSecondaryColor('customFontColor')
+    }
+  },[user])
   
   const delDV = async (e) => {
     e.stopPropagation();
@@ -80,32 +92,49 @@ const ViewDocument = () => {
   useEffect(() => {
 
     if (idStatus.type === '4') {
-      const selectedDocument = Object.entries(documents).find(([,document]) => document.DV === idStatus.id);
-      if (selectedDocument) {
-        setDoc(selectedDocument[1]);
+      if (documents && Object.keys(documents).length > 0) {
+
+        const selectedDocument = Object.entries(documents).find(([, document]) => document.DV === idStatus.id);
+        
+        if (selectedDocument) {
+          setDoc(selectedDocument[1]);
+        } else {
+          console.log(`Error: No document found with DV matching idStatus.id: ${idStatus.id}`);
+        }
       } else {
-        console.log("Error finding the document");
+        console.log("Error: Documents are empty or undefined.");
       }
-    }else if (idStatus.type === '3'){
-      const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
-      if (selectedDocument) {
-        setDoc(selectedDocument[1].data);
-      } else {
-        console.log("Error finding the operator document");
+    }
+    else if (idStatus.type === '3'){
+      if(OpDocuments && Object.keys(OpDocuments).length > 0){
+
+        const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
+
+        if (selectedDocument) {
+          setDoc(selectedDocument[1].data);
+        } else {
+          console.log("Error finding the operator document");
+        }
       }
     }else if (idStatus.type === '2'){
-      const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
-      if (selectedDocument) {
-        setDoc(selectedDocument[1].data);
-      } else {
-        console.log("Error finding the Head document");
+      if(HeadDocuments && Object.keys(HeadDocuments).length > 0){
+
+        const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
+
+        if (selectedDocument) {
+          setDoc(selectedDocument[1].data);
+        } else {
+          console.log("Error finding the Head document");
+        }
       }
     }else if(idStatus.type === '1'){
-      const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DV === idStatus.id);
-      if (selectedDocument) {
-        setDoc(selectedDocument[1].data);
-      } else {
-        console.log("Error finding the Head document");
+      if(AdminDocuments && Object.keys(AdminDocuments).length > 0){
+        const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DV === idStatus.id);
+        if (selectedDocument) {
+          setDoc(selectedDocument[1].data);
+        } else {
+          console.log("Error finding the Head document");
+        }
       }
     }
   }, [OpDocuments, HeadDocuments, documents, idStatus, AdminDocuments]); 
@@ -345,148 +374,130 @@ const ViewDocument = () => {
   }
 
   return (
-    <section className="w-full h-auto">
-      <div className="px-5 py-4 flex items-center justify-between">
-        <button
-          onClick={() => window.history.back()}
-          className="px-5 py-2 border-2 rounded-lg text-customgreen hover:scale-125 transition-all duration-150"
-        >
-          <FaAngleLeft size={20} />
-        </button>
-        {/*Submit Buttons*/}
-        <div className="flex items-center justify-center gap-16">
-          {idStatus.type === '4' && (
+    <section className="w-full h-auto flex">
+        <div className="w-5/6 h-[450px] overflow-y-auto">
+          <Document document={doc} />
+        </div>
+        <div className="w-1/6 h-full p-3">
+          <div className="flex flex-col gap-2">
+            {idStatus.type === '4' && (
+              <button
+                disabled={isLoading}
+                onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
+                className={`px-5 py-2 rounded-lg ${
+                  isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+                } transition-all duration-150`}
+              >
+                Submit
+              </button>
+            )}
+    
+            {idStatus.type === '3' && (
+              <button
+                disabled={isLoadingForFunding}
+                onClick={handleSubmitForOp}
+                className={`px-5 py-2 rounded-lg ${
+                  isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+                } transition-all duration-150`}
+              >
+                Submit
+              </button>
+            )}
+    
+            {(idStatus.type === '2' && !permission.data.permission) && (
+              <button
+                disabled={isLoadingForBO}
+                onClick={handleSubmitForHead}
+                className={`px-5 py-2 rounded-lg ${
+                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+                } transition-all duration-150`}
+              >
+                Submit
+              </button>
+            )}
+    
+            {((idStatus.type === '1' && idStatus.status !== 'Approved') ||( permission.data.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
+              <button
+                disabled={isLoadingForApprover}
+                onClick={approve}
+                className={`px-5 py-2 rounded-lg ${
+                  isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
+                } transition-all duration-150`}
+              >
+                Approve
+              </button>
+            )}
+            {idStatus.type !== '2' && idStatus.type !== '1' && (
+              <button
+                onClick={modal}
+                className="w-full rounded-md text-xs py-1 font-semibold 'text-customFontGreen hover:bg-gray-200 hover:scale-105' transition-all duration-100"
+                >
+                Update
+              </button>
+            )}
+            {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
+              <button
+                disabled={isLoadingForFunding || isLoading}
+                onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
+                className={`w-20 rounded-md text-xs py-1 font-semibold ${
+                  isLoadingForFunding
+                    ? 'bg-gray-200 text-gray-500'
+                    : 'text-red-500 hover:bg-gray-200 hover:scale-105'
+                } transition-all duration-100`}
+              >
+                {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
+              </button>
+            )}
+            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+              <button
+                onClick={() => handleReturn('3')}
+                disabled={isLoadingForBO}
+                className={`w-20 rounded-md text-xs py-1 font-semibold ${
+                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
+                } transition-all duration-100`}
+              >
+                Return to Funding
+              </button>
+            )}
+            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+              <button
+                onClick={() => handleReturn('4')}
+                disabled={isLoadingForBO}
+                className={`w-20 rounded-md text-xs py-1 font-semibold ${
+                  isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
+                } transition-all duration-100`}
+              >
+                Return to Preparer
+              </button>
+            )}
+
             <button
-              disabled={isLoading}
-              onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-              className={`px-5 py-2 rounded-lg ${
-                isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-              } transition-all duration-150`}
-            >
-              Submit
+              onClick={handleDownload}
+              className={`w-full rounded-lg py-1 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
+              >
+              Download
             </button>
-          )}
-  
-          {idStatus.type === '3' && (
+
             <button
-              disabled={isLoadingForFunding}
-              onClick={handleSubmitForOp}
-              className={`px-5 py-2 rounded-lg ${
-                isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-              } transition-all duration-150`}
-            >
-              Submit
+              onClick={() => window.history.back()}
+              className={`w-full py-1 rounded-lg text-white bg-${secondaryColor} hover:scale-125 transition-all duration-150`}
+              >
+              Back
             </button>
-          )}
-  
-          {idStatus.type === '2' && (
-            <button
-              disabled={isLoadingForBO}
-              onClick={handleSubmitForHead}
-              className={`px-5 py-2 rounded-lg ${
-                isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-              } transition-all duration-150`}
-            >
-              Submit
-            </button>
-          )}
-  
-          {idStatus.type === '1' && (
-            <button
-              disabled={isLoadingForApprover}
-              onClick={approve}
-              className={`px-5 py-2 rounded-lg ${
-                isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'
-              } transition-all duration-150`}
-            >
-              Approve
-            </button>
-          )}
-  
-          {/* Options column */}
-          <div className="flex items-center justify-end w-1/6 relative">
-            <button
-              onClick={() => setDropDown(!dropDown)}
-              className="flex z-10 px-3 py-2 gap-2 rounded-lg bg-customgreen text-white"
-            >
-              {dropDown ? <FaAngleDown size={20} /> : <FaAngleUp size={20} />} More
-            </button>
-  
-            {dropDown && (
+    
+            {isModalOpen && (
               <>
-                <div className="fixed inset-0 z-0" onClick={() => setDropDown(!dropDown)} />
-                <div className="absolute top-6 z-0 right-0 bg-white rounded-xl px-1 pb-1 pt-5 border-2 border-gray-200 flex flex-col gap-1">
-                  {idStatus.type !== '2' && idStatus.type !== '1' && (
-                    <button
-                      onClick={modal}
-                      className="w-20 rounded-md text-xs py-1 font-semibold 'text-customFontGreen hover:bg-gray-200 hover:scale-105' transition-all duration-100"
-                    >
-                      Update
-                    </button>
-                  )}
-                  {idStatus.type !== '2' && idStatus.type !== '1' && (
-                    <button
-                      disabled={isLoadingForFunding || isLoading}
-                      onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
-                      className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                        isLoadingForFunding
-                          ? 'bg-gray-200 text-gray-500'
-                          : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                      } transition-all duration-100`}
-                    >
-                      {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
-                    </button>
-                  )}
-                  <button
-                    onClick={handleDownload}
-                    className="w-20 rounded-md text-xs py-1 font-semibold text-customFontGreen hover:bg-gray-200 hover:scale-105 transition-all duration-100"
-                  >
-                    Download
-                  </button>
-                  {idStatus.type === '2' && (
-                    <button
-                      onClick={() => handleReturn('3')}
-                      disabled={isLoadingForBO}
-                      className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                        isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                      } transition-all duration-100`}
-                    >
-                      Return to Funding
-                    </button>
-                  )}
-                  {idStatus.type === '2' && (
-                    <button
-                      onClick={() => handleReturn('4')}
-                      disabled={isLoadingForBO}
-                      className={`w-20 rounded-md text-xs py-1 font-semibold ${
-                        isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'
-                      } transition-all duration-100`}
-                    >
-                      Return to Preparer
-                    </button>
-                  )}
-                </div>
+                <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+                <section
+                  onClick={(e) => e.stopPropagation()}
+                  className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+                >
+                  <DisbursementVoucher modal={modal} document={doc} flag={true} />
+                </section>
               </>
             )}
           </div>
-  
-          {isModalOpen && (
-            <>
-              <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-              <section
-                onClick={(e) => e.stopPropagation()}
-                className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
-              >
-                <DisbursementVoucher modal={modal} document={doc} flag={true} />
-              </section>
-            </>
-          )}
         </div>
-      </div>
-  
-      <section className="w-full h-96 overflow-y-auto">
-        <Document document={doc} />
-      </section>
     </section>
   );
   

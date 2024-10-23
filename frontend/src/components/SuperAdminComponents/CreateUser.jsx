@@ -46,7 +46,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
   }
   return (
     <form onSubmit={handleSubmit} className="bg-white w-2/5 rounded-lg border-[1px] mr-3 p-5">
-      <h1 className="text-center text-2xl font-bold">Create User</h1>
+      <h1 className="text-center text-3xl mb-3 font-bold text-superAdminBlue">Create User</h1>
       <h1 className="mb-3 font-semibold text-lg">Personal Information</h1>
       <div className="h-auto w-full flex gap-3">
         <div className="flex flex-col w-1/2">
@@ -126,18 +126,18 @@ const UserManagement = ({modal, account = {}, flag}) => {
         )}
         </div>
         {passwordError && (
-          <div className="text-red-600 font-semibold">
+          <div className="text-superAdminMustard font-semibold">
             {passwordError}
           </div>
         )}
       </div>
       <div className="w-full h-auto py-4 flex items-center justify-end gap-3">
-        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-customgreen rounded-lg text-white hover:scale-125 transition-all duration-100">{isLoading ? <Loader /> : 'Save'}</button>
-        <button onClick={modal} className="px-10 py-2 border-2 rounded-lg text-customFontColor bg-white hover:scale-125 transition-all duration-100">Back</button>
+        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white hover:scale-125 transition-all duration-100">{isLoading ? <Loader /> : 'Save'}</button>
+        <button onClick={modal} className="px-10 py-2 bg-slate-100 rounded-lg text-superAdminBlue font-semibold hover:scale-125 transition-all duration-100">Back</button>
       </div>
       {error && (
         <div className="h-auto w-full py-3 text-center">
-          <h5 className="text-red-600 font-semibold">{error}</h5>
+          <h5 className="text-superAdminMustard font-semibold">{error}</h5>
         </div>
       )}
     </form>
