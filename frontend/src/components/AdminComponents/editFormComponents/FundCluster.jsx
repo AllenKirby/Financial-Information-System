@@ -1,5 +1,6 @@
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
  
  import { useState, useEffect } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
@@ -63,7 +64,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
             }
         }
         gettingData()
-    }, [getFundCluster])
+    }, [])
 
     return (
         <div className="w-full h-72 rounded-lg">
@@ -81,14 +82,14 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
                             type="text"
                             value={inputValue}
                             onChange={handleInputChange}
-                            placeholder="Enter a new fund cluster"
+                            placeholder="e.g. 501 COB"
                             className="border border-gray-300 p-2 rounded w-4/5"
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 bg-blue-500 text-white rounded"
+                            className="w-1/5 h-auto bg-adminBrown text-white rounded-lg flex items-center justify-center"
                         >
-                            Submit
+                            <FaCheck size={12} />
                         </button>
                     </div>
                 )}

@@ -39,16 +39,24 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
+    console.log('Document', document)
     if (flag && document) {
       setPayeeData({
         payee: document.payee || '',
         TIN: document.TIN || '',
         address: document.address || '',
         fund: document.fund || '',
+        NF_name: document.NF_name || '',
+        NF_office: document.NF_office || '',
+        TT_tax: document.TT_tax || '',
+        TT_formula1: document.TT_formula1 || '',
+        TT_formula2: document.TT_formula2 || '',
+        TT_cost: document.TT_cost || '',
         date: formatDateforUpdate(document.date) || '',
         DV: document.DV || '',
         RC: document.RC || '',
         accTitle: document.accTitle || '',
+        optionalAmount: document.optionalAmount || '',
         accCode: document.accCode || '',
         amount: document.amount || 0,
         particular: document.particular || '',

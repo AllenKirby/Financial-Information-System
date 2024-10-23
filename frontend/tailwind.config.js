@@ -13,7 +13,9 @@ export default {
       colors: {
         customgreen: '#009933',
         customFontColor: '#013237',
-        customBg: '#eaebeb'
+        superAdminBlue: '#00356b',
+        superAdminMustard: '#F4BC1C',
+        adminBrown: '#993300'
       },
       boxShadow: {
         'customShadowStyle': '2px 0 10px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.19)',

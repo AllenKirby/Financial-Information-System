@@ -19,6 +19,7 @@ const Header = ({ currentPage}) => {
   const [notifications, setNotifications] = useState([]);
   const { user } = useAuthContext();
   const userId = user?.uid
+  const [fontColor, setFontColor] = useState('')
 
   const notifs = (n) => setUnreadNotifs(n)
 
@@ -73,13 +74,21 @@ const Header = ({ currentPage}) => {
     notifs(unreadnotifs())
   }, [notifications])
 
-
-
+  useEffect(()=> {
+    if(user && user.role === '0'){
+      setFontColor('text-superAdminBlue')
+    }else if(user && user.role === '1'){
+      setFontColor('text-customgreen')
+    }
+    else {
+      setFontColor('text-customFontColor')
+    }
+  },[user])
 
   return (
     <header className="w-full h-auto flex pt-2 gap-2">
       <div className="w-4/6 p-5 flex items-center">
-        <h1 className="text-2xl font-semibold text-customgreen">{currentPage}</h1>
+        <h1 className={`text-2xl font-semibold ${fontColor}`}>{currentPage}</h1>
       </div>
       <div className="h-14 w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
         {/* Notification Icon */}
@@ -124,7 +133,7 @@ const Header = ({ currentPage}) => {
         </div>
 
         <div className="w-auto flex py-1 px-5 px gap-1 rounded-full border-[1px] border-customFontColor font-medium relative">
-          <p className='flex items-center justify-center text-lg gap-2'><FaUserCircle size={20} />{user?.name ? user.name.split(',')[0] : 'User'}</p>
+          <p className={`flex items-center justify-center text-lg gap-2 ${fontColor}`}> <FaUserCircle size={20} className='text-customFontColor' />{user?.name ? user.name.split(',')[0] : 'User'}</p>
         </div>
       </div>
     </header>

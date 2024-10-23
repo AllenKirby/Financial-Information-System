@@ -1,11 +1,23 @@
 const {admin, db, rtdb}  = require('../firebase')
 
 const readHead_records = async(req, res) => {
+    const {flag} = req.body
+    let status = []
+
+    console.log('flag', flag)
+
+    if(flag){
+        status = ['Approved', 'Under Review']
+    }
+    else {
+        status = ['Under Review']
+    }
+
     try {
         const documents = {};
        
         const recordsSnapshot = await db.collection('records')
-            .where('status', '==', 'Under Review')
+            .where('status', 'in', status)
             .get();
         
         recordsSnapshot.forEach((recordDoc) => {
@@ -194,8 +206,22 @@ const setHistoryLogs = async(DT, logs) => {
     }
 }
 
+const getPermission = async(req, res) => {
+    try {
+        const docref = await db.collection('Roles').doc('Budget Officer').get()
+        if(docref.exists){
+            const data = docref.data()
+            res.status(200).json({data: data})
+        }
+    }catch(error){
+        console.log(`Error retrieving Preparer Permision ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = { 
     readHead_records, 
     returnRecordTo, 
-    transferDocument
+    transferDocument,
+    getPermission
 }
