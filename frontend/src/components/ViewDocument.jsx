@@ -86,7 +86,8 @@ const ViewDocument = () => {
   useEffect(() => {
     if(id){
       const decoded = decodeURIComponent(id)
-      setIdStatus({id: decoded.split('|').slice()[0], status: decoded.split('|').slice()[1], type: decoded.split('|').slice()[2]})
+      console.log(decoded)
+      setIdStatus({id: `${decoded.split('|').slice()[0]}|${decoded.split('|').slice()[1]}`, status: decoded.split('|').slice()[2], type: decoded.split('|').slice()[3]})
     }
   }, [id])
 
@@ -95,7 +96,7 @@ const ViewDocument = () => {
     if (idStatus.type === '4') {
       if (documents && Object.keys(documents).length > 0) {
 
-        const selectedDocument = Object.entries(documents).find(([, document]) => document.DV === idStatus.id);
+        const selectedDocument = Object.entries(documents).find(([, document]) => document.DVKey === idStatus.id);
         
         if (selectedDocument) {
           setDoc(selectedDocument[1]);
@@ -109,7 +110,7 @@ const ViewDocument = () => {
     else if (idStatus.type === '3'){
       if(OpDocuments && Object.keys(OpDocuments).length > 0){
 
-        const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DV === idStatus.id);
+        const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -120,7 +121,7 @@ const ViewDocument = () => {
     }else if (idStatus.type === '2'){
       if(HeadDocuments && Object.keys(HeadDocuments).length > 0){
 
-        const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DV === idStatus.id);
+        const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -130,7 +131,7 @@ const ViewDocument = () => {
       }
     }else if(idStatus.type === '1'){
       if(AdminDocuments && Object.keys(AdminDocuments).length > 0){
-        const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DV === idStatus.id);
+        const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DVKey === idStatus.id);
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
         } else {

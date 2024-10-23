@@ -65,7 +65,7 @@ export const ResCenter = () => {
         }
 
         gettingData()
-    }, [getRC])
+    }, [])
 
     return (
         <div className="w-1/5 h-72">

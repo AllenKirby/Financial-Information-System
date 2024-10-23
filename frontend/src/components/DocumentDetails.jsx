@@ -103,7 +103,7 @@ const DocumentDetails = ({ documents, type }) => {
 
   return (
     <div
-      onClick={() => navigate(`${docu?.DV}|${Status}|${type}`)}
+      onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
       className="w-full h-12 rounded-md my-1 bg-white border-[1px] text-customFontGreen cursor-pointer flex items-center justify-center"
     >
       {/* Payee column */}
