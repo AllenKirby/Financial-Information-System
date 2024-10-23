@@ -56,7 +56,7 @@ const Navbar = ({ items }) => {
               key={item.label}
               to={item.path}
               className={({ isActive }) =>
-                `w-full h-auto flex items-center justify-start gap-2 px-3 py-3 mt-1 font-normal text-xs rounded-xl transition-all duration-150 ${isActive ? `${fontColor} text-white` : 'text-customFontColor'} text-customFontColor hover:${fontColor} hover:text-white`
+                `w-full h-auto flex items-center justify-start gap-2 px-3 py-3 mt-1 font-normal text-xs rounded-xl transition-all duration-150 ${isActive ? `${fontColor} text-white` : 'text-customFontColor'} text-customFontColor`
               }
             >
               {item.icon}
@@ -68,7 +68,7 @@ const Navbar = ({ items }) => {
       <div className="flex items-center justify-start p-2">
         <button
           onClick={handleLogout}
-          className={`w-full flex items-center justify-start py-2 px-4 rounded-lg gap-2 text-sm hover:${fontColor} hover:text-white transition-all duration-150`}
+          className={`w-full flex items-center justify-start py-2 px-4 rounded-lg gap-2 text-sm transition-all duration-150`}
         >
           <MdLogout size={20} />Logout
         </button>
