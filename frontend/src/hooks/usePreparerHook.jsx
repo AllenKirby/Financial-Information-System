@@ -55,6 +55,7 @@ export const usePreparerHook = () => {
 
     const getFormData = async () => {
         try{
+            console.log('gerformdata')
             const res = await axios.get('http://localhost:4000/editor/getFormData', {
                 withCredentials: true
             })
