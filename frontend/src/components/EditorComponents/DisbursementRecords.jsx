@@ -25,10 +25,13 @@ const DisbursementRecords = () => {
   useEffect(() => {
     if (documents && Object.keys(documents).length > 0) {
       const filteredResults = Object.fromEntries(
+
         Object.entries(documents).filter(([, document]) => 
           document.fund.toLowerCase().includes(filter.toLowerCase())
         )
+
       );
+      console.log(filteredResults)
       setFilteredDocuments(filteredResults);
     } else {
       setFilteredDocuments({}); 

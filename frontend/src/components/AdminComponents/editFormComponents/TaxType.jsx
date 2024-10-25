@@ -121,7 +121,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
                         >
                             <option value="" disabled>Select Tax Type</option>
                             <option value="VAT">VAT</option>
-                            <option value="NON-VAT">NON-VAT</option>
+                            <option value="NONVAT">NON VAT</option>
                         </select>
                         <input
                             type="text"

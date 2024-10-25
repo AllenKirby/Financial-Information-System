@@ -3,6 +3,8 @@ import Loader from './Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
+import { firestore } from "../config/firebase-config"
+import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
 
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
@@ -23,9 +25,21 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
 
+  //payee
+  const [options] = useState(['Option 1', 'Option 2', 'Option 3', 'Option 4']);
+  const [filteredOptions, setFilteredOptions] = useState({});
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+
+  //acount title test
+  const [inputAccTitle, setInputAccTitle] = useState('');
+  const [filteredAcc, setFilteredAcc] = useState({});
+  const [showDropdownAcc, setShowDropdownAcc] = useState(false);
+  const [activeDropdownIndex, setActiveDropdownIndex] = useState(null)
+
   const [fundCluster, setFundCluster] = useState([])
   const [rc, setRc] = useState([])
-  const [cost, setCost] = useState([])
+  const [cost, setCost] = useState({})
   const [taxData, setTaxData] = useState({})
   const [gross, setGross] = useState({})
   const [nameOffice, setNameOffice] = useState({})
@@ -35,11 +49,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
   const {getDVno} = useInitialStateDV()
   const { user } = useAuthContext() 
+  
   //redux
   const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
-    console.log('Document', document)
     if (flag && document) {
       setPayeeData({
         payee: document.payee || '',
@@ -87,6 +101,48 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     return 
   };
 
+  const handleChangePayee = (e) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    if (value) {
+      const filtered = options.filter((option) =>
+        option.toLowerCase().includes(value.toLowerCase())
+      );
+      setFilteredOptions(filtered);
+      setShowDropdown(true);
+    } else {
+      setShowDropdown(false);
+    }
+  };
+
+  const handleSelectPayee = (option) => {
+    setInputValue(option);
+    setShowDropdown(false);
+  };
+
+  const handleChangeAcc = (e, index) => {
+    const value = e.target.value;
+    setInputAccTitle(value);
+    handleFieldChange(index, 'accTitle', value);  
+
+    if (value) {
+      const filteredAccounts = Object.entries(accountOptions.account_codes).filter(([key, value]) => {
+        return typeof value === 'string' && value.toLowerCase().includes(inputAccTitle)
+      });
+      const objAcc = Object.fromEntries(filteredAccounts)
+      setFilteredAcc((prevFilteredAcc) => ({
+        ...prevFilteredAcc,
+        [index]: objAcc,
+      }));
+      setShowDropdownAcc(Object.keys(objAcc).length > 0);
+      setActiveDropdownIndex(index);
+    } else {
+      setShowDropdownAcc(false);
+      setFilteredAcc({})
+      setActiveDropdownIndex(null);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,31 +160,76 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       bir_data: birData
     }
 
-    const res = await createDisbursement(data)
-
-    if(res){
-      Swal.fire({
-        title: "Saved",
-        text: "Dibursement Voucher is successfully created!",
-        icon: "success",
-        confirmButtonColor: "#009933"
-      });
+    const sum = eval(data.payee_data.optionalAmount.join('+'))
+    console.log(sum)
+    if(Number(data.payee_data.amount) === sum){
+      const res = await createDisbursement(data)
+      if(res){
+        Swal.fire({
+          title: "Saved",
+          text: "Dibursement Voucher is successfully created!",
+          icon: "success",
+          confirmButtonColor: "#009933"
+        });
+      }
+      modal()
+    }else{
+      console.log(Number(data.payee_data.amount) === sum)
+      alert('Make sure the amount you input is equal to the total amount.')
+      return;
     }
-    modal()
+    
+
+    
   }
+
+  //FORM DATA LISTNER
+  useEffect(() => {
+    const formDataCollection = collection(firestore,'formData');
+    const unsubscribe = onSnapshot(formDataCollection, (snapshot) => {
+      const newFormData = snapshot.docs.reduce((acc, doc) => {
+        acc[doc.id] = doc.data();
+        return acc;
+      }, {});
+
+      sessionStorage.setItem('FormData', JSON.stringify(newFormData));
+    }, (error) => {
+      console.error("Error fetching formData: ", error);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     
     const fetchAccountCode = async () => {
       const storedFormData = sessionStorage.getItem('FormData');
       let form = storedFormData ? JSON.parse(storedFormData) : await getFormData()
+      
 
       setFundCluster(Object.values(form.fundCluster))
       setRc(Object.values(form.ResponsibilityCenter))
 
-      const costOnly = Object.values(form.TaxType).map(arr => arr[1]);
-      const uniqueCost = [...new Set(costOnly)]
-      setCost(uniqueCost)
+      // instead of array create an object = vat: goods, services then nonvat: goods then GSIS: *5% then meralco
+      // const costOnly = Object.values(form.TaxType).map(arr => arr[1]);
+      // const uniqueCost = [...new Set(costOnly)]
+      const result = {}
+      Object.entries(form.TaxType).forEach(([key, value]) => {
+        const taxCategpry = value[0];
+        const type = value[1];
+        if(!result[taxCategpry]){
+          result[taxCategpry] = new Set();
+        }
+        result[taxCategpry].add(type);
+      });
+
+      Object.keys(result).forEach(key => {
+        result[key] = Array.from(result[key]);
+      });
+
+      setCost(result)
+
+      setCost(result)
 
       setTaxData(form.TaxType)
 
@@ -231,8 +332,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
 
   useEffect(() => {
+    console.log(payeeData.TT_tax, payeeData.TT_cost)
     if (payeeData.TT_tax && payeeData.TT_cost){
       const key = payeeData.TT_tax + payeeData.TT_cost
+      console.log(key)
       if (taxData[key] && taxData[key].length >= 3) {
         setGross({
           value2: taxData[key][2],
@@ -275,21 +378,36 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
         }
       }} action="" className="bg-white w-3/5 h-5/6 p-7 rounded-xl">
-      <div className='w-full h-auto py-2 text-center'>
+      <div className='w-full h-auto py-2 text-center '>
         <h1 className='text-xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
       </div>
       <div className='w-full h-4/5 p-3 overflow-y-auto'>
         <h1 className="font-semibold text-lg mb-2">Personal/Payee Information</h1>
         <div className="w-full h-auto">
-          <div className='w-full py-2'>
+          <div className='w-full py-2 relative'>
             <label>Payee</label>
             <input
               className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
               disabled={isDisabled && !permission.data.permission}
               type="text" 
               value={payeeData.payee}
+              // value={inputValue}
+              // onChange={handleChangePayee}
               onChange={(e) => setPayeeData({...payeeData, payee: e.target.value.toUpperCase()})} 
               required  />
+              {showDropdown && (
+                <ul className="absolute w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
+                  {filteredOptions.map((option, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleSelectPayee(option)}
+                      className="p-2 cursor-pointer hover:bg-gray-200"
+                    >
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+              )}
           </div>
 
           {/* ADDRESS */}
@@ -448,13 +566,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <label>Tax Types</label>
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
-                    disabled={isDisabled && !permission.data.permission}
+                    disabled={true}
                     value={payeeData.TT_tax}
                     onChange={(e) => setPayeeData({...payeeData, TT_tax: e.target.value})} 
                     required  >
                       <option value="" disabled>Select Tax Type</option>
                       <option value="VAT">VAT</option>
-                      <option value="NON VAT">NONVAT</option>
+                      <option value="NONVAT">NON VAT</option>
                   </select>  
                 </div>
                 <div className='w-1/3'>
@@ -462,16 +580,29 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                     disabled={isDisabled && !permission.data.permission}
-                    value={payeeData.TT_cost}
-                    onChange={(e) => setPayeeData({...payeeData, TT_cost: e.target.value})} 
+                    value={`${payeeData.TT_tax}-${payeeData.TT_cost}`}
+                    onChange={(e) => {
+                      const [taxCategory, type] = e.target.value.split('-');
+                      setPayeeData({
+                        ...payeeData, 
+                        TT_cost: type,   
+                        TT_tax: taxCategory
+                      });
+                    }} 
                     required  >
                       <option value="" disabled>Select Cost Category</option>
                       {
-                        cost.length > 0 ? (
-                          cost.map((uniquecost, index) => (
-                            <option key={index} value={uniquecost}>
-                              {uniquecost}
-                            </option>
+                        Object.keys(cost).length > 0 ? (
+                          Object.entries(cost).map(([taxCategory, types]) => (
+                            <optgroup label={taxCategory} key={taxCategory}>
+                              {
+                                types.map(type => (
+                                  <option key={`${taxCategory}-${type}`} value={`${taxCategory}-${type}`} category={taxCategory}>
+                                    {type}
+                                  </option>
+                                ))
+                              }
+                            </optgroup>
                           ))
                         ) : (
                           <option value="" disabled>No options available</option>
@@ -511,47 +642,41 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <div key={index} className='w-full flex gap-2 mb-4'>
                     <div className='w-3/5 mb-2'>
                       <label>Account Title</label>
-                      <select
+                      <input
                         className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
-                        onChange={(e) => {
-                          // const selectedOption = e.target.options[e.target.selectedIndex];
-                          // const newTitle = e.target.value;
-                          // const newCode = selectedOption.getAttribute('accCode');
-                          // setPayeeData(prevData => ({
-                          //   ...prevData,
-                          //   accTitle: [...prevData.accTitle, newTitle],
-                          //   accCode: [...prevData.accCode, newCode]
-                          // }))
-
-                          const [title, code] = e.target.value.split(':');
-                          handleFieldChange(index, 'accTitle', title);
-                          handleFieldChange(index, 'accCode', code);
-                        }}
-                        // value={payeeData.accTitle[payeeData.accTitle.length-1]}
-                        value={`${field.accTitle}:${field.accCode}`}
+                        type="text" 
+                        placeholder='search here...'
+                        value={field.accTitle}
                         disabled={isDisabled && !permission.data.permission}
-                        required
-                      >
-                        <option value="" disabled>Select Account Title</option>
-                        {
-                          accountOptions.account_codes && Object.keys(accountOptions.account_codes).length > 0 ? (
-                            Object.entries(accountOptions.account_codes).map(([key, value]) => {
-                              const parts = value.split(':');
-                              const lastPart = parts[parts.length - 1];
-                              return (
-                                // <option key={key} value={lastPart} accCode={key}>
-                                //   {lastPart}
-                                // </option>
-                                <option key={key} value={`${lastPart}:${key}`}>
+                        onChange={(e) => {handleChangeAcc(e, index)}}
+                        required  />
+                        {showDropdownAcc&& activeDropdownIndex === index && (
+                          <ul className="w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
+                            {Object.entries(filteredAcc[index]).length > 0 ? (
+                              Object.entries(filteredAcc[index]).map(([key, value]) => {
+                                const parts = value.split(':');
+                                const lastPart = parts[parts.length - 1];
+                                return (
+                                <li
+                                  key={key}
+                                  onClick={() => {
+                                    handleFieldChange(index, 'accTitle', lastPart);
+                                    handleFieldChange(index, 'accCode', key);
+                                    setShowDropdownAcc(false)
+                                    setActiveDropdownIndex(null);
+                                  }} 
+                                  value={lastPart}
+                                  className="p-2 cursor-pointer hover:bg-gray-200"
+                                >
                                   {lastPart}
-                                </option>
-                              );
-                            })
-                          ) : (
-                            <option>Loading...</option>
-                          )
-                        }
-                      </select>
+                                </li>
+                              )}
+                            )
+                            ) : (
+                              <li className="p-2">No matches found</li> // Show message if no matches
+                            )}
+                          </ul>
+                        )}
                     </div>
                     <div className='w-2/5 flex gap-2'>
                       <div className='w-4/5 mb-2'>
@@ -581,7 +706,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   </div>
                 ))
               }
-            </div>
+              
+          </div>
+            
           
           
           {(user.role === '3' || permission.data.permission) && 
