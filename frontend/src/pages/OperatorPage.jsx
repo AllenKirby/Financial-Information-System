@@ -8,6 +8,8 @@ import Header from "../components/Header"
 
 import { CiViewList } from "react-icons/ci"
 import { useState, useEffect } from "react"
+import { GoGraph } from "react-icons/go";
+
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios"
 import {useDispatch, useSelector} from 'react-redux'
@@ -24,6 +26,7 @@ const OperatorPage = () => {
 
   const navItems = [
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
+    { label: 'Dashboard', path: '/operator/dashboard', icon: <GoGraph size={18} /> },
   ]
 
   useEffect(() => {
