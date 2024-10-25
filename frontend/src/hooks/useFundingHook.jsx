@@ -64,5 +64,25 @@ export const useFundingHook = () => {
         }
     }
 
-    return {returnDoc, inputOperator, transferToHead, isLoading, error}
+    const appendDataToSheet = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post('http://localhost:4000/operator/appendDataToSheet', data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                const response = res.data
+                console.log(response)
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    return {returnDoc, inputOperator, transferToHead, appendDataToSheet, isLoading, error}
 }

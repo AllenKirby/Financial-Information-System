@@ -20,6 +20,7 @@ import ForbiddenPage from "./ForbiddenPage";
 import SuperAdminPage from "./SuperAdminPage";
 import Editform from "../components/AdminComponents/EditForm";
 import AccessControl from "../components/SuperAdminComponents/AccessControl";
+import DashboardFunding from "../components/OperatorComponents/Dashboard"
 
 
 const Mainpage = () => {
@@ -47,6 +48,7 @@ const Mainpage = () => {
           <Route path="disbursementrecords" element={<Disbursementrecords/>}>
             <Route path=":id" element={<ViewDocument/>}/>
           </Route>
+          <Route path="dashboard" element={<DashboardFunding/>}/>
         </Route>
         <Route path="/head" element={<HeadPage/>}>
           <Route path="disbursementrecords" element={<DisbursementRecordsHead/>}>

@@ -77,8 +77,8 @@ const HeadPage = () => {
                   withCredentials: true
                 })
                 if(res.status === 200){
-                    const docu = res.data
-                    dispatchContext({type: 'SET_HEADDOCUMENTS', payload: docu})
+                  const docu = res.data
+                  dispatchContext({type: 'SET_HEADDOCUMENTS', payload: docu})
                 }
               } catch (error) {
                   console.log(error)
@@ -86,9 +86,10 @@ const HeadPage = () => {
             }
         }
 
-        if(user){
-            retrieveDV()
-        }
+        // if(user){
+        //     retrieveDV()
+        // }
+        retrieveDV()
 
         if (!status.length) return;  
 

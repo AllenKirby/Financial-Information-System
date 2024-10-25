@@ -17,12 +17,12 @@ const DisbursementRecordsHead = () => {
       setFilter(value)
       setFilterFlag(!filterFlag)
     }
-  
+    console.log(HeadDocuments)
     useEffect(() => {
       if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
         const filteredResults = Object.fromEntries(
           Object.entries(HeadDocuments).filter(([, document]) =>
-            document.fund.toLowerCase().includes(filter.toLowerCase())
+            document.data.fund.toLowerCase().includes(filter.toLowerCase())
           )
         );
         setFilteredDocuments(filteredResults);

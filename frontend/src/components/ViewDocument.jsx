@@ -434,7 +434,7 @@ const ViewDocument = () => {
 
           <button
             onClick={handleDownload}
-            className={`w-full rounded-lg py-1 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
+            className={`w-full rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
             >
             Download
           </button>
@@ -453,7 +453,7 @@ const ViewDocument = () => {
             <button
               onClick={() => handleReturn('3')}
               disabled={isLoadingForBO}
-              className={`w-full rounded-lg text-xs py-2 font-semibold ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white bg-${secondaryColor}  hover:scale-125`} transition-all duration-100`}
               >
               Return to Funding
             </button>
@@ -463,7 +463,7 @@ const ViewDocument = () => {
             <button
               onClick={() => handleReturn('4')}
               disabled={isLoadingForBO}
-              className={`w-20 rounded-lg text-xs py-2 font-semibold ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:bg-gray-200 hover:scale-105'} transition-all duration-100`}
+              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white bg-${secondaryColor}  hover:scale-125`} transition-all duration-100`}
               >
               Return to Preparer
             </button>
