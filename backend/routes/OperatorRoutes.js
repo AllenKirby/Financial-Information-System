@@ -9,7 +9,8 @@ const {
     operatorInput, 
     opReturnDocu, 
     transferDocument,
-    getPermission
+    getPermission,
+    appendDataToSheet
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -19,5 +20,6 @@ OperatorRouter.patch('/update_records/:id', operatorInput)
 OperatorRouter.post('/return_record', opReturnDocu)
 OperatorRouter.post('/transferDocu', transferDocument)
 OperatorRouter.get('/getPermission', getPermission)
+OperatorRouter.post('/appendDataToSheet', appendDataToSheet)
 
 module.exports = OperatorRouter

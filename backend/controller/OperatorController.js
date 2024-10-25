@@ -1,4 +1,6 @@
 const {admin, db, rtdb}  = require('../firebase')
+const { google } = require('googleapis');
+const sheets = google.sheets('v4');
 
 const readPassed_records = async (req, res) => {
     const {flag} = req.body
@@ -274,10 +276,45 @@ const getPermission = async(req, res) => {
     }
 }
 
+const auth = new google.auth.GoogleAuth({
+    keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+  
+const appendDataToSheet = async (req, res) => {
+    const  values  = req.body
+    const spreadsheetId = process.env.SPREADSHEETID
+    const client = await auth.getClient();
+
+    console.log(values)
+    console.log(spreadsheetId)
+    
+    // Append values to the next available row
+    const request = {
+      spreadsheetId, // Google Sheets ID
+      range: 'A1:Z', // The sheet/tab name where data will be appended
+      valueInputOption: 'RAW', // You can also use 'USER_ENTERED' to auto-format data
+      insertDataOption: 'INSERT_ROWS', // Automatically finds the next available row
+      resource: {
+        values, // This is a 2D array representing rows and columns (e.g. [[row1data], [row2data]])
+      },
+      auth: client,
+    };
+  
+    try {
+        console.log('hit')
+        const response = await sheets.spreadsheets.values.append(request);
+        res.status(200).send({message: 'Data appended successfully', data: response.data.updates});
+    } catch (err) {
+        console.error('Error appending data:', err);
+    }
+  };
+
 module.exports = {
     readPassed_records, 
     operatorInput, 
     opReturnDocu, 
     transferDocument,
-    getPermission
+    getPermission,
+    appendDataToSheet
 }
