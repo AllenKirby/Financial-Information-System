@@ -44,11 +44,11 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>
         </Route>
-        <Route path="/operator" element={<OperatorPage/>}>
-          <Route path="disbursementrecords" element={<Disbursementrecords/>}>
-            <Route path=":id" element={<ViewDocument/>}/>
+        <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
+          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
+            <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-          <Route path="dashboard" element={<DashboardFunding/>}/>
+          <Route path="dashboard" element={<PrivateRoute allowedRoles={['3']}><DashboardFunding/></PrivateRoute>}/>
         </Route>
         <Route path="/head" element={<HeadPage/>}>
           <Route path="disbursementrecords" element={<DisbursementRecordsHead/>}>

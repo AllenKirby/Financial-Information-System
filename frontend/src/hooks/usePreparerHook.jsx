@@ -113,5 +113,24 @@ export const usePreparerHook = () => {
 
     }
 
-  return {createDisbursement, deleteDV, getFormData, submitDoc, updateDV, isLoading, error}
+    const savePayeeData = async (data) => {
+        try{
+           const key = `${data.payee}${data.tin}`
+           const sanitizedKey = key.replace(/[\/.*`,\\\0\s]/g, '')
+           const payeeData = {
+                key: sanitizedKey,
+                data : data
+           }            
+           const res = axios.post('http://localhost:4000/editor/savePayeeData', payeeData, {
+            withCredentials: true
+           })
+           if(res.status === 200){
+                console.log(res.data)
+           }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+  return {createDisbursement, deleteDV, getFormData, submitDoc, updateDV, savePayeeData, isLoading, error}
 }

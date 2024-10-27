@@ -348,6 +348,23 @@ const approveDV = async(req, res) => {
   }
 }
 
+const getNumberOfRecords = async (req, res) => {
+  try{
+    const year = new Date().getFullYear()
+    const docRef = db.collection('NumberOfRecords').doc(year.toString())
+    const data = await docRef.get()
+    if(data.exists){
+      const totalRecords = data.data()
+      res.status(200).json({records: totalRecords})
+    }else{
+      console.log(`year ${year} is not found`)
+    } 
+  }catch(error){
+    console.log('error on getting number of records', error)
+    res.status(500)
+  }
+}
+
 module.exports = {
   getAllLogs,
   readAdmin_records,
@@ -363,5 +380,6 @@ module.exports = {
   addTaxType,
   getTaxType,
   deleteTax,
-  approveDV
+  approveDV,
+  getNumberOfRecords
 };

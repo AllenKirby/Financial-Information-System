@@ -463,6 +463,44 @@ const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
     }
 }
 
+const savePayeeData = async (req, res) => {
+    try{
+        const {key, data} = req.body
+        
+        await db.collection('payee').doc(key).set(data)
+        const document = {
+            [key] : data
+        }
+        res.status(200).json(document)
+    }catch(error){
+        console.log(`Error on saving payee data ${error}`)
+        res.status(500)
+    }
+}
+
+const getPayeeData = async (req,res) => {
+    try{
+        const docRef = db.collection('formData')
+        const snapshot = await docRef.get()
+
+        if (snapshot.empty) {
+            res.status(404).json({ success: false, message: 'No form data found.' });
+            return;
+        }
+
+        const formData = {};
+            snapshot.forEach(doc => {
+            formData[doc.id] = doc.data();
+        });
+
+        res.status(200).json({ success: true, form: formData });
+
+    }catch(error){
+        console.log(`Error getting payee collection ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = {
     createDV,
     retrieveDV,
@@ -472,5 +510,6 @@ module.exports = {
     updateDV,
     getFormData,
     getPermission,
-    getNumberOfCopies
+    getNumberOfCopies,
+    savePayeeData
 };

@@ -79,6 +79,7 @@ const EditorPage = () => {
         })
         if(res.status === 200){
           const data = res.data
+          console.log(data)
           dispatch(setPermission(data))
         }
       }catch(error){
