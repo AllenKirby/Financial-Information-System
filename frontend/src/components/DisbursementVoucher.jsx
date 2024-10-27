@@ -45,7 +45,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [nameOffice, setNameOffice] = useState({})
   
   //hooks
-  const {createDisbursement, updateDV, getFormData, isLoading, error} = usePreparerHook()
+  const {createDisbursement, updateDV, getFormData,savePayeeData, isLoading, error} = usePreparerHook()
   const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
   const {getDVno} = useInitialStateDV()
   const { user } = useAuthContext() 
@@ -160,23 +160,46 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       bir_data: birData
     }
 
-    const sum = eval(data.payee_data.optionalAmount.join('+'))
-    console.log(sum)
-    if(Number(data.payee_data.amount) === sum){
-      const res = await createDisbursement(data)
-      if(res){
-        Swal.fire({
-          title: "Saved",
-          text: "Dibursement Voucher is successfully created!",
-          icon: "success",
-          confirmButtonColor: "#009933"
-        });
-      }
-      modal()
+    const pData = {
+      payee: payeeData.payee,
+      tin: payeeData.TIN,
+      address: payeeData.address,
+      tax: payeeData.TT_tax,
+      cost: payeeData.TT_cost
+    }
+
+    if(data.payee_data.accCode.length === 1){
+        savePayeeData(pData)
+        const res = await createDisbursement(data)
+        if(res){
+          Swal.fire({
+            title: "Saved",
+            text: "Dibursement Voucher is successfully created!",
+            icon: "success",
+            confirmButtonColor: "#009933"
+          });
+        }
+        modal()
     }else{
-      console.log(Number(data.payee_data.amount) === sum)
-      alert('Make sure the amount you input is equal to the total amount.')
-      return;
+      const sum = eval(data.payee_data.optionalAmount.join('+'))
+      console.log(sum)
+      if(Number(data.payee_data.amount) === sum){
+        savePayeeData(pData)
+        const res = await createDisbursement(data)
+        if(res){
+          Swal.fire({
+            title: "Saved",
+            text: "Dibursement Voucher is successfully created!",
+            icon: "success",
+            confirmButtonColor: "#009933"
+          });
+        }
+        modal()
+      }else{
+        console.log(Number(data.payee_data.amount) === sum)
+        alert('Make sure the amount you input is equal to the total amount.')
+        return;
+      }
     }
     
 

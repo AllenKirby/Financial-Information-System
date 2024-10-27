@@ -13,7 +13,8 @@ const {
     updateDV,
     getFormData,
     getPermission,
-    getNumberOfCopies
+    getNumberOfCopies,
+    savePayeeData
 } = require('../controller/EditorController');
 
 
@@ -29,6 +30,8 @@ editorRouter.get('/getFormData', getFormData)
 editorRouter.get('/getPermission', getPermission)
 
 editorRouter.get('/getNumberOfCopies', getNumberOfCopies)
+
+editorRouter.post('/savePayeeData', savePayeeData)
 
 
 module.exports = editorRouter;

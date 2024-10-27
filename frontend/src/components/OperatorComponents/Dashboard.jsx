@@ -4,8 +4,8 @@ const Dashboard = () => {
     const { appendDataToSheet, isLoading,} = useFundingHook()
 
     const values = [
-        ['Data1', 'Data2', 'Data3'], // Row 1 data
-        ['MoreData1', 'MoreData2', 'MoreData3'], // Row 2 data
+        ['Data11', 'Data21', 'Data31'], // Row 1 data
+        ['MoreData11', 'MoreData21', 'MoreData31'], // Row 2 data
       ];
       
   return (
