@@ -22,7 +22,8 @@ const login = (req, res) => {
             secure: true,  
             sameSite: 'Strict' 
         });
-        res.status(200).json({ success: true, role: role, name: name, uid: uid, email: email});
+        
+        res.status(200).json({ success: true, role: role, name: name, uid: uid, uemail: email});
     }catch(error){
         res.status(500).json({ success: false, message: 'Login failed', error: error.message });
     }

@@ -79,6 +79,12 @@ const Header = ({ currentPage}) => {
       setFontColor('text-superAdminBlue')
     }else if(user && user.role === '1'){
       setFontColor('text-customgreen')
+    }else if(user && user.role === '2'){
+      setFontColor('text-BOGreen')
+    }else if(user && user.role === '3'){
+      setFontColor('text-fundingBlueGreen')
+    }else if(user && user.role === '4'){
+      setFontColor('text-preparerPrimary')
     }
     else {
       setFontColor('text-customFontColor')
@@ -132,8 +138,14 @@ const Header = ({ currentPage}) => {
           </div>
         </div>
 
-        <div className="w-auto flex py-1 px-5 px gap-1 rounded-full border-[1px] border-customFontColor font-medium relative">
-          <p className={`flex items-center justify-center text-lg gap-2 ${fontColor}`}> <FaUserCircle size={20} className='text-customFontColor' />{user?.name ? user.name.split(',')[0] : 'User'}</p>
+        <div className="w-auto flex py-1 pl-1 pr-3 gap-1 rounded-full border-[1px] border-customFontColor font-medium relative">
+          <div className='flex items-center justify-center'>
+            <FaUserCircle size={40} className='text-customFontColor' />
+          </div>
+          <div>
+            <p className={`rounded-full gap-2 ${fontColor}`}>{user?.name ? user.name.replace(',', ' ') : 'User'}</p>
+            <p className={`rounded-full text-xs gap-2 ${fontColor}`}>{user?.uemail ? user.uemail : 'email@gmail.com'}</p>
+          </div>
         </div>
       </div>
     </header>

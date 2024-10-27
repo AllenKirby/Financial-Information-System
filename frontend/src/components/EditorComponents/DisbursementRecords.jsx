@@ -43,8 +43,8 @@ const DisbursementRecords = () => {
     <section className='w-full h-full'>
       <div className='w-full p-1 flex items-center justify-between'>
         <div className="w-1/2 py-1 flex items-center justify-between">
-          <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-customgreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
-              <IoAdd size={20} className='font-bold'/>Add DV
+          <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-preparerPrimary text-white font-semibold border-2 hover:scale-125 transition-all duration-100">
+            <IoAdd size={20} className='font-bold'/>Add DV
           </button>
         </div>
         <div className='relative w-1/2 flex items-center justify-end gap-2'>
@@ -71,11 +71,12 @@ const DisbursementRecords = () => {
           </div>
         </div>
       </div>
-        <div className="w-full p-3 h-full rounded-lg border-[1px] bg-white">
+      <div className='w-full h-full flex gap-2'>
+      <div className="w-5/6 p-3 h-full rounded-lg border-[1px] bg-white">
         {!id ? ( 
           <>
             <div className='w-full h-full p-2'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
                 <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
                 <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
@@ -106,15 +107,15 @@ const DisbursementRecords = () => {
         ) : <Outlet/>}
         {isModalOpen && (
           <>
-          <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-          <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+            <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+            <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
             <DisbursementVoucher modal={modal} flag={false}/>
-          </section>
-        </>
-        )}
+              </section>
+          </>
+          )}
+        </div>
       </div>
     </section>
-    
   )
 }
 

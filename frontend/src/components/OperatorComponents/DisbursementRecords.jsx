@@ -43,7 +43,7 @@ const DisbursementRecords = () => {
       <div className='flex items-center justify-end py-1'>
         {(permission && permission?.data?.permission) && (
           <div className="w-full py-1 flex items-center justify-between">
-            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-customgreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
+            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-fundingBlueGreen text-white font-semibold border-2 border-customgreen hover:scale-125 transition-all duration-100">
               <IoAdd size={20} className='font-bold'/>Add DV
             </button>
           </div>
@@ -76,7 +76,7 @@ const DisbursementRecords = () => {
         {!id ? ( 
           <>
             <div className='w-full h-full p-2'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-fundingBlueGreen text-white'>
                 <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
                 <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>

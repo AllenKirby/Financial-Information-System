@@ -46,7 +46,7 @@ const DisbursementRecords = () => {
               className='py-2 pr-3 pl-10 rounded-3xl focus:outline-none border-2' />
           </div>
           <div className='relative'>
-            <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-20 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-full text-sm'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+            <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-full text-sm'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
             {filterFlag && (
               <>
                 <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
