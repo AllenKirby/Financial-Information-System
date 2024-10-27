@@ -72,47 +72,64 @@ const DisbursementRecords = () => {
         </div>
       </div>
       <div className='w-full h-full flex gap-2'>
-      <div className="w-5/6 p-3 h-full rounded-lg border-[1px] bg-white">
-        {!id ? ( 
-          <>
-            <div className='w-full h-full p-2'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
-                <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
-                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-                <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                <h1 className='w-1/6 text-center font-bold'>Time Created</h1>
-              </section>
-              {Object.keys(filteredDocuments).length > 0 ? (
-                <section className="w-full h-[340px] overflow-auto">
-                  {Object.entries(filteredDocuments).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={'4'}/>
-                  ))}
+        <div className="w-5/6 p-3 h-full rounded-lg border-[1px] bg-white">
+          {!id ? ( 
+            <>
+              <div className='w-full h-full p-2'>
+                <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
+                  <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
+                  <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
+                  <h1 className='w-1/6 text-center font-bold'>Status</h1>
+                  <h1 className='w-1/6 text-center font-bold'>Time Created</h1>
                 </section>
-              ) : (
-                <div className='w-full h-full flex items-center justify-center'>
-                  <div>No Documents Found</div>
-                </div>
-                // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                // </div>
-              )}
-            </div>
-          </>
-        ) : <Outlet/>}
-        {isModalOpen && (
-          <>
-            <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-            <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <DisbursementVoucher modal={modal} flag={false}/>
+                {Object.keys(filteredDocuments).length > 0 ? (
+                  <section className="w-full h-[340px] overflow-auto">
+                    {Object.entries(filteredDocuments).map(([key, document]) => (
+                      <DocumentDetails key={key} documents={document} type={'4'}/>
+                    ))}
+                  </section>
+                ) : (
+                  <div className='w-full h-full flex items-center justify-center'>
+                    <div>No Documents Found</div>
+                  </div>
+                  // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  // </div>
+                )}
+              </div>
+            </>
+          ) : <Outlet/>}
+          {isModalOpen && (
+            <>
+              <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+              <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                <DisbursementVoucher modal={modal} flag={false}/>
               </section>
-          </>
+            </>
           )}
+        </div>
+        <div className='w-1/6 h-full flex flex-col gap-2'>
+          <div className='w-full h-1/3 bg-white rounded-lg text-center'>
+
+          </div>
+          <div className='w-full h-1/3 bg-gray-200 text-preparerPrimary rounded-lg text-center p-3 flex items-center justify-center'>
+            <div>
+              <h1 className='text-7xl text-'>3</h1>
+              <p className='text-xs '>Number of Disbursement Vouchers with Drafting Status</p>
+            </div>
+          </div>
+          <div className='w-full h-1/3 bg-red-500 text-white rounded-lg text-center p-3 flex items-center justify-center'>
+          <div>
+              <h1 className='text-7xl text-'>3</h1>
+              <p className='text-xs '>Number of Disbursement Vouchers with Returned Status</p>
+            </div>
+          </div>
         </div>
       </div>
     </section>
