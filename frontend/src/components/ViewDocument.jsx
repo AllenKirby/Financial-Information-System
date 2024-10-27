@@ -50,7 +50,16 @@ const ViewDocument = () => {
   useEffect(() => {
     if(user && user.role === '1'){
       setPrimaryColor('customgreen')
-      setSecondaryColor('adminBrown')
+      setSecondaryColor('adminBlue')
+    }else if(user && user.role === '2'){
+      setPrimaryColor('BOGreen')
+      setSecondaryColor('BOLightGreen')
+    }else if(user && user.role === '3'){
+      setPrimaryColor('fundingBlueGreen')
+      setSecondaryColor('fundingGray')
+    }else if(user && user.role === '4'){
+      setPrimaryColor('preparerPrimary')
+      setSecondaryColor('preparerSecondary')
     }
     else {
       setPrimaryColor('customgreen')
@@ -387,7 +396,7 @@ const ViewDocument = () => {
             <button
               disabled={isLoading}
               onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-              className={`w-full px-5 py-2 rounded-lg ${isLoading ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              className={`w-full px-5 py-2 rounded-lg ${isLoading ? 'bg-gray-200 text-gray-500' : 'bg-preparerPrimary text-white hover:scale-125'} transition-all duration-150`}
               >
               Submit
             </button>
@@ -397,7 +406,7 @@ const ViewDocument = () => {
             <button
               disabled={isLoadingForFunding}
               onClick={handleSubmitForOp}
-              className={`w-full px-5 py-2 rounded-lg ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              className={`w-full px-5 py-2 rounded-lg ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-fundingBlueGreen text-white hover:scale-125'} transition-all duration-150`}
               >
               Submit
             </button>
@@ -407,7 +416,7 @@ const ViewDocument = () => {
             <button
               disabled={isLoadingForBO}
               onClick={handleSubmitForHead}
-              className={`w-full px-5 py-2 rounded-lg ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              className={`w-full px-5 py-2 rounded-lg ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `bg-fundingBlueGreen text-white hover:scale-125`} transition-all duration-150`}
               >
               Submit
             </button>

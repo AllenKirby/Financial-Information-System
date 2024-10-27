@@ -106,19 +106,19 @@ export const NameAndOffice = () => {
                             type="text"
                             value={name}
                             onChange={handleInputChangeName}
-                            placeholder="Enter a new Name"
+                            placeholder="e.g. Juan Dela Cruz"
                             className="border border-gray-300 p-2 rounded w-2/5"
                         />
                         <input
                             type="text"
                             value={office}
                             onChange={handleInputChangeOffice}
-                            placeholder="Enter the office"
+                            placeholder="e.g. Division Manager A, AFD"
                             className="border border-gray-300 p-2 rounded w-2/5"
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 bg-adminBrown text-white rounded"
+                            className="w-1/5 bg-adminBlue text-white rounded"
                         >
                             Submit
                         </button>

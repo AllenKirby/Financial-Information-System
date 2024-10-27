@@ -1,5 +1,6 @@
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
 
 import { useState, useEffect } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
@@ -71,7 +72,7 @@ export const ResCenter = () => {
         <div className="w-1/5 h-72">
             <div className="w-full rounded-lg">
                 <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
-                    <h1 className='w-4/5 text-left font-bold px-2'>Responsibility Center</h1>
+                    <h1 className='w-4/5 flex items-center text-xs font-bold px-2'>Responsibility Center</h1>
                     <div className="w-1/5 flex justify-center items-center">
                         <button 
                             className='bg-customgreen text-white text-2xl rounded-full hover:bg-white hover:text-customgreen'
@@ -84,21 +85,21 @@ export const ResCenter = () => {
                             type="text"
                             value={inputValue_RC}
                             onChange={handleInputChange_RC}
-                            placeholder="Enter a new fund cluster"
+                            placeholder="e.g. AFD"
                             className="border border-gray-300 p-2 rounded w-4/5"
                         />
                         <button
                             onClick={handleSubmitRC}
-                            className="w-1/5 bg-blue-500 text-white rounded"
+                            className="w-1/5 bg-adminBlue text-white rounded-lg flex items-center justify-center"
                         >
-                            Submit
+                            <FaCheck size={12} />
                         </button>
                     </div>
                 )}
                 <div className="h-50 overflow-y-auto">
                     {Object.keys(arrRC).length > 0 ? (
                         Object.entries(arrRC).map(([key, value], index) => (
-                            <div key={index} className="w-full h-12 rounded-md my-1 px-2 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
+                            <div key={index} className="w-full h-12 rounded-md my-1 px-4 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
                                 <span className="flex-1 text-left">{value}</span> {/* Display only the value */}
                                 <button 
                                     onClick={() => handleDeleteRC(key)} // Pass the key to delete

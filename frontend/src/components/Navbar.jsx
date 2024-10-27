@@ -33,8 +33,13 @@ const Navbar = ({ items }) => {
       setFontColor('bg-superAdminBlue'); // For the background color
     }else if(user && user.role === '1'){
       setFontColor('bg-customgreen')
-    }
-    else {
+    }else if(user && user.role === '2'){
+      setFontColor('bg-BOGreen')
+    }else if(user && user.role === '3'){
+      setFontColor('bg-fundingBlueGreen')
+    }else if(user && user.role === '4'){
+      setFontColor('bg-preparerPrimary')
+    }else {
       setFontColor('bg-customFontColor')
     }
   }, [user]);

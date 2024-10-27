@@ -62,7 +62,7 @@ const DisbursementRecordsHead = () => {
         {!id ? ( 
           <>
             <div className='w-full h-full p-2'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-BOGreen text-white'>
                 <h1 className='w-4/6 text-left font-bold'>Payee</h1>
                 <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>

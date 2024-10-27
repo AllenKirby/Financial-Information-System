@@ -87,7 +87,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 h-auto bg-adminBrown text-white rounded-lg flex items-center justify-center"
+                            className="w-1/5 h-auto bg-adminBlue text-white rounded-lg flex items-center justify-center"
                         >
                             <FaCheck size={12} />
                         </button>
@@ -96,7 +96,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
             <div className="h-80 overflow-y-auto">
                 {Object.keys(arrFund).length > 0 ? (
                     Object.entries(arrFund).map(([key, value], index) => (
-                        <div key={index} className="w-full h-12 rounded-md my-1 px-2 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
+                        <div key={index} className="w-full h-12 rounded-md my-1 px-4 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
                             <span className="flex-1 text-left">{value}</span> {/* Display only the value */}
                             <button 
                                 onClick={() => handleDeleteFund(key)} // Pass the key to delete

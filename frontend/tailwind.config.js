@@ -15,7 +15,14 @@ export default {
         customFontColor: '#013237',
         superAdminBlue: '#00356b',
         superAdminMustard: '#F4BC1C',
-        adminBrown: '#993300'
+        adminBrown: '#993300',
+        adminBlue: '#000080',
+        BOGreen: '#2C5F2D',
+        BOLightGreen: '#97BC62FF',
+        fundingBlueGreen: '#317773',
+        fundingGray: '#E2D0F9',
+        preparerPrimary: '#195190',
+        preparerSecondary: '#A2A2A1'
       },
       boxShadow: {
         'customShadowStyle': '2px 0 10px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.19)',

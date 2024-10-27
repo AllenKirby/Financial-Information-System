@@ -127,7 +127,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
                             type="text"
                             value={cost}
                             onChange={(e) => setCost(capitalize(e.target.value))}
-                            placeholder="Title for Cost Category"
+                            placeholder="e.g. Services"
                             className="border border-gray-300 p-2 rounded w-1/5"
                         />
                         <input
@@ -148,7 +148,7 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 bg-blue-500 text-white rounded"
+                            className="w-1/5 bg-adminBlue text-white rounded"
                         >
                             Submit
                         </button>
