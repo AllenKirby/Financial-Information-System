@@ -132,5 +132,21 @@ export const usePreparerHook = () => {
         }
     }
 
-  return {createDisbursement, deleteDV, getFormData, submitDoc, updateDV, savePayeeData, isLoading, error}
+    const loadPayee =async() => {
+        try{
+            const res = await axios.get('http://localhost:4000/editor/getPayeeData', {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                const response = res.data.document
+                console.log(response)
+                // sessionStorage.setItem('FormData', JSON.stringify(arr));
+                return response
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+  return {createDisbursement, deleteDV, getFormData, submitDoc, updateDV, savePayeeData,loadPayee, isLoading, error}
 }

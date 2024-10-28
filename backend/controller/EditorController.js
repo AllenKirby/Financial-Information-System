@@ -480,7 +480,7 @@ const savePayeeData = async (req, res) => {
 
 const getPayeeData = async (req,res) => {
     try{
-        const docRef = db.collection('formData')
+        const docRef = db.collection('payee')
         const snapshot = await docRef.get()
 
         if (snapshot.empty) {
@@ -488,12 +488,12 @@ const getPayeeData = async (req,res) => {
             return;
         }
 
-        const formData = {};
+        const listofpayee = {};
             snapshot.forEach(doc => {
-            formData[doc.id] = doc.data();
+                listofpayee[doc.id] = doc.data();
         });
 
-        res.status(200).json({ success: true, form: formData });
+        res.status(200).json({ success: true, document: listofpayee });
 
     }catch(error){
         console.log(`Error getting payee collection ${error}`)
@@ -511,5 +511,6 @@ module.exports = {
     getFormData,
     getPermission,
     getNumberOfCopies,
-    savePayeeData
+    savePayeeData,
+    getPayeeData
 };
