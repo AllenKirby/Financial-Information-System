@@ -14,6 +14,8 @@ const DisbursementRecords = () => {
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
+  const [drafting, setDrafting] = useState(0)
+  const [returned, setReturned] = useState(0)
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -25,11 +27,9 @@ const DisbursementRecords = () => {
   useEffect(() => {
     if (documents && Object.keys(documents).length > 0) {
       const filteredResults = Object.fromEntries(
-
         Object.entries(documents).filter(([, document]) => 
           document.fund.toLowerCase().includes(filter.toLowerCase())
         )
-
       );
       console.log(filteredResults)
       setFilteredDocuments(filteredResults);
@@ -37,42 +37,66 @@ const DisbursementRecords = () => {
       setFilteredDocuments({}); 
     }
   }, [filter, documents]);
+
+  useEffect(() => {
+    const countDrafting = () => {
+      return Object.entries(documents).filter(([, document]) => 
+        document.status === 'Drafting'
+      )
+    }
+    const countReturned = () => {
+      return Object.entries(documents).filter(([, document]) => 
+        document.status === 'Returned|4'
+      )
+    }
+    if (documents && Object.keys(documents).length > 0) {
+      const resultDrafting = countDrafting()
+      const resultReturned = countReturned()
+      setDrafting(Object.entries(resultDrafting).length)
+      setReturned(Object.entries(resultReturned).length)
+    }
+  }, [documents])
   
 
   return (
     <section className='w-full h-full'>
-      <div className='w-full p-1 flex items-center justify-between'>
-        <div className="w-1/2 py-1 flex items-center justify-between">
-          <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-preparerPrimary text-white font-semibold border-2 hover:scale-125 transition-all duration-100">
-            <IoAdd size={20} className='font-bold'/>Add DV
-          </button>
+      <div className='w-full h-auto p-1 flex'>
+        <div className="w-1/2 flex flex-col">
+          <div className='flex items-center justify-start gap-2'>
+            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-preparerPrimary text-white font-semibold border-2 hover:scale-125 transition-all duration-100">
+              <IoAdd size={20} className='font-bold'/>New
+            </button>
+            <div className='relative'>
+              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-20 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+              {filterFlag && (
+                <>
+                  <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
+                  <div className='absolute w-full bg-white pt-5 top-5 z-0 p-1 border-[1px]'>
+                    <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 COB</div>
+                    <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 LFP</div>
+                    <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 CARP</div>
+                    <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>Contract Farming</div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+          <div className='pt-3'>
+            <p className='font-semibold text-preparerPrimary px-2'>All Disbursement Voucher</p>
+          </div>
         </div>
-        <div className='relative w-1/2 flex items-center justify-end gap-2'>
+        <div className='w-1/2 flex items-end justify-end py-1'>
           <div className='relative w-auto'>
             <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
             <input 
               type="search"
               placeholder='Search'
-              className='py-2 pr-3 pl-10 rounded-3xl focus:outline-none border-2' />
-          </div>
-          <div className='relative'>
-            <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-20 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-full text-sm'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
-            {filterFlag && (
-              <>
-                <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
-                <div className='absolute w-full bg-white pt-5 top-5 z-0 p-1 border-[1px]'>
-                  <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
-                  <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
-                  <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
-                  <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Contract Farming</div>
-                </div>
-              </>
-            )}
+              className='py-2 pr-3 text-sm pl-10 rounded-3xl focus:outline-none border-2' />
           </div>
         </div>
       </div>
       <div className='w-full h-full flex gap-2'>
-        <div className="w-5/6 p-3 h-full rounded-lg border-[1px] bg-white">
+        <div className="w-5/6 h-full rounded-lg border-[1px] bg-white">
           {!id ? ( 
             <>
               <div className='w-full h-full p-2'>
@@ -115,18 +139,15 @@ const DisbursementRecords = () => {
           )}
         </div>
         <div className='w-1/6 h-full flex flex-col gap-2'>
-          <div className='w-full h-1/3 bg-white rounded-lg text-center'>
-
-          </div>
           <div className='w-full h-1/3 bg-gray-200 text-preparerPrimary rounded-lg text-center p-3 flex items-center justify-center'>
             <div>
-              <h1 className='text-7xl text-'>3</h1>
+              <h1 className='text-7xl font-semibold'>{drafting}</h1>
               <p className='text-xs '>Number of Disbursement Vouchers with Drafting Status</p>
             </div>
           </div>
           <div className='w-full h-1/3 bg-red-500 text-white rounded-lg text-center p-3 flex items-center justify-center'>
           <div>
-              <h1 className='text-7xl text-'>3</h1>
+              <h1 className='text-7xl font-semibold'>{returned}</h1>
               <p className='text-xs '>Number of Disbursement Vouchers with Returned Status</p>
             </div>
           </div>

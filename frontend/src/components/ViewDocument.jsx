@@ -50,20 +50,20 @@ const ViewDocument = () => {
   useEffect(() => {
     if(user && user.role === '1'){
       setPrimaryColor('customgreen')
-      setSecondaryColor('adminBlue')
+      setSecondaryColor('bg-adminBlue')
     }else if(user && user.role === '2'){
       setPrimaryColor('BOGreen')
-      setSecondaryColor('BOLightGreen')
+      setSecondaryColor('bg-BOLightGreen')
     }else if(user && user.role === '3'){
       setPrimaryColor('fundingBlueGreen')
-      setSecondaryColor('fundingGray')
+      setSecondaryColor('bg-fundingGray')
     }else if(user && user.role === '4'){
       setPrimaryColor('preparerPrimary')
-      setSecondaryColor('preparerSecondary')
+      setSecondaryColor('bg-preparerSecondary')
     }
     else {
       setPrimaryColor('customgreen')
-      setSecondaryColor('customFontColor')
+      setSecondaryColor('bg-customFontColor')
     }
   },[user])
   
@@ -452,7 +452,7 @@ const ViewDocument = () => {
             <button
               disabled={isLoadingForFunding || isLoading}
               onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
-              className={`w-full rounded-lg py-2 text-white bg-${secondaryColor} ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:scale-125'} transition-all duration-100`}
+              className={`w-full rounded-lg py-2 text-white ${secondaryColor} ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:scale-125'} transition-all duration-100`}
               >
               {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
             </button>
@@ -462,7 +462,7 @@ const ViewDocument = () => {
             <button
               onClick={() => handleReturn('3')}
               disabled={isLoadingForBO}
-              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white bg-${secondaryColor}  hover:scale-125`} transition-all duration-100`}
+              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white ${secondaryColor}  hover:scale-125`} transition-all duration-100`}
               >
               Return to Funding
             </button>
@@ -472,7 +472,7 @@ const ViewDocument = () => {
             <button
               onClick={() => handleReturn('4')}
               disabled={isLoadingForBO}
-              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white bg-${secondaryColor}  hover:scale-125`} transition-all duration-100`}
+              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white ${secondaryColor}  hover:scale-125`} transition-all duration-100`}
               >
               Return to Preparer
             </button>
@@ -480,7 +480,7 @@ const ViewDocument = () => {
 
           <button
             onClick={() => window.history.back()}
-            className={`w-full py-2 rounded-lg text-white bg-${secondaryColor} hover:scale-125 transition-all duration-150`}
+            className={`w-full py-2 rounded-lg text-white ${secondaryColor} hover:scale-125 transition-all duration-150`}
             >
             Back
           </button>
@@ -497,7 +497,7 @@ const ViewDocument = () => {
             </>
           )}
           <select 
-            className="w-40 px-4 py-2 rounded-lg border-2 focus:outline-none"
+            className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none"
             onChange={(e) => setUserRecord(e.target.value)}
             value={userRecord}>
             <option value='' disabled>Select action:</option>
