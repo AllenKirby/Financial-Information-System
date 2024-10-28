@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { parse, formatDistanceToNow } from 'date-fns';
+import { IoDocumentOutline } from "react-icons/io5";
 
 const DocumentDetails = ({ documents, type }) => {
   const navigate = useNavigate();
@@ -107,8 +108,8 @@ const DocumentDetails = ({ documents, type }) => {
       className="w-full h-12 rounded-md my-1 bg-white border-[1px] text-customFontGreen cursor-pointer flex items-center justify-center"
     >
       {/* Payee column */}
-      <h2 className="font-semibold text-lg text-left w-4/6 px-3">
-        {docu?.payee}
+      <h2 className="font-semibold text-left w-4/6 px-3 flex items-center justify-start gap-2">
+      <IoDocumentOutline size={25}/> {docu?.payee}.pdf
       </h2>
       {/* DV No. column */}
       <h2 className="text-xs font-light text-center w-1/6">{docu?.DV}</h2>
