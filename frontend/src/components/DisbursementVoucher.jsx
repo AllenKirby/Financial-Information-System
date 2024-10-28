@@ -26,10 +26,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [accountOptions, setAccountOptions] = useState([]);
 
   //payee
-  const [options] = useState(['Option 1', 'Option 2', 'Option 3', 'Option 4']);
-  const [filteredOptions, setFilteredOptions] = useState({});
+  const [payeeOptions, setPayeeOptions] = useState({});
+  const [filteredOptions, setFilteredOptions] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [payeeKey, setPayeeKey] = useState('');
 
   //acount title test
   const [inputAccTitle, setInputAccTitle] = useState('');
@@ -45,7 +45,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [nameOffice, setNameOffice] = useState({})
   
   //hooks
-  const {createDisbursement, updateDV, getFormData,savePayeeData, isLoading, error} = usePreparerHook()
+  const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
   const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
   const {getDVno} = useInitialStateDV()
   const { user } = useAuthContext() 
@@ -102,23 +102,37 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   };
 
   const handleChangePayee = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
+    const target = e.target.value.toUpperCase();
+    setPayeeData({...payeeData, payee: target})
 
-    if (value) {
-      const filtered = options.filter((option) =>
-        option.toLowerCase().includes(value.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-      setShowDropdown(true);
+    if (target) {
+      const filtered = Object.entries(payeeOptions)
+        .filter(([key]) => key.toLowerCase().includes(target.toLowerCase()))
+        .map(([key]) => key)
+      setFilteredOptions(filtered)
+      if(filtered.length === 0){
+        setShowDropdown(false);
+      }else{
+        setShowDropdown(true);
+      }
+      console.log(filtered)
+      
     } else {
       setShowDropdown(false);
     }
   };
 
   const handleSelectPayee = (option) => {
-    setInputValue(option);
+    
+    
+    const selectedPayee = payeeOptions[option].payee
+    const selectedAddress = payeeOptions[option].address
+    const selectedCost = payeeOptions[option].cost
+    const selectedTax = payeeOptions[option].tax
+    const selectedTin = payeeOptions[option].tin
     setShowDropdown(false);
+    setPayeeKey(option)
+    setPayeeData({...payeeData, payee: selectedPayee, address: selectedAddress, TT_cost: selectedCost, TT_tax: selectedTax, TIN: selectedTin})
   };
 
   const handleChangeAcc = (e, index) => {
@@ -144,6 +158,28 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   };
 
+
+  const deepEqual = (obj1, obj2) => {
+    if (obj1 === obj2) return true;
+
+    if (typeof obj1 !== "object" || typeof obj2 !== "object" || obj1 === null || obj2 === null) {
+      return false;
+    }
+
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) return false;
+
+    for (let key of keys1) {
+      if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const updatedPayeeData = {
@@ -168,23 +204,33 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       cost: payeeData.TT_cost
     }
 
+    
+
     if(data.payee_data.accCode.length === 1){
+      if(!deepEqual(pData, payeeOptions[payeeKey])){
         savePayeeData(pData)
-        const res = await createDisbursement(data)
-        if(res){
-          Swal.fire({
-            title: "Saved",
-            text: "Dibursement Voucher is successfully created!",
-            icon: "success",
-            confirmButtonColor: "#009933"
-          });
-        }
-        modal()
+        console.log('saving payee data', pData)
+      }
+      console.log('creating DV')
+      const res = await createDisbursement(data)
+      if(res){
+        Swal.fire({
+          title: "Saved",
+          text: "Dibursement Voucher is successfully created!",
+          icon: "success",
+          confirmButtonColor: "#009933"
+        });
+      }
+      modal()
     }else{
       const sum = eval(data.payee_data.optionalAmount.join('+'))
       console.log(sum)
       if(Number(data.payee_data.amount) === sum){
-        savePayeeData(pData)
+        if(!deepEqual(pData, payeeOptions[payeeKey])){
+          savePayeeData(pData)
+          console.log('saving payee data', pData)
+        }
+        console.log('creating DV')
         const res = await createDisbursement(data)
         if(res){
           Swal.fire({
@@ -258,6 +304,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
       setNameOffice(form.NameOffice)
 
+      const loadData = await loadPayee()
+      setPayeeOptions(loadData)
 
       
       const storedAccountOptions = localStorage.getItem('account_fields')
@@ -413,10 +461,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
               disabled={isDisabled && !permission.data.permission}
               type="text" 
+              // value={payeeData.payee}
               value={payeeData.payee}
-              // value={inputValue}
-              // onChange={handleChangePayee}
-              onChange={(e) => setPayeeData({...payeeData, payee: e.target.value.toUpperCase()})} 
+              onChange={handleChangePayee}
+              // onChange={(e) => setPayeeData({...payeeData, payee: e.target.value.toUpperCase()})} 
               required  />
               {showDropdown && (
                 <ul className="absolute w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
@@ -426,7 +474,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       onClick={() => handleSelectPayee(option)}
                       className="p-2 cursor-pointer hover:bg-gray-200"
                     >
-                      {option}
+                      {option.replace(/\|/g, ' ')} {/* Each `option` is a name string now */}
                     </li>
                   ))}
                 </ul>
