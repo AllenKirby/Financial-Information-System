@@ -19,7 +19,7 @@ const UserManagement = () => {
     const getAllAccounts = async () => {
       try {
         console.log('Fetching all accounts');
-        const res = await axios.get('http://localhost:4000/superadmin/getAllAccounts', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/superadmin/getAllAccounts`, {
           withCredentials: true
         });
         if (res.status === 200) {

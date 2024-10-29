@@ -83,9 +83,12 @@ const Login = () => {
                 </div>
             </form>
         </div>
-        <div className="w-2/3 h-full py-5 flex flex-col items-center justify-center gap-2 rounded-3xl px-5 bg-gradient-to-tr from-customgreen to-white">
-            <img className="w-72" src={NIAlogo} alt="" />
-            <h1 className="text-white text-center text-4xl font-bold">Financial Information System</h1>
+        <div className="relative w-2/3 h-full py-5 flex flex-col items-center justify-center gap-2 rounded-l-3xl px-5 bg-gradient-to-tr from-customgreen to-white overflow-hidden">
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+                <div className="absolute -top-16 -left-10 w-screen h-2/3 transform rotate-12 bg-gradient-to-tr from-customgreen to-white opacity-50"></div>
+            </div>
+            <img className="w-72 z-10" src={NIAlogo} alt="" />
+            <h1 className="text-white text-center text-4xl font-bold z-10">Financial Information System</h1>
         </div>
     </section>
   )

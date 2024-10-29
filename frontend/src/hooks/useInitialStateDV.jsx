@@ -1,9 +1,10 @@
 import axios from "axios"
 
 export const useInitialStateDV = () => {
+    const apiURL = import.meta.env.VITE_API_URL
     const setDVno = async (fundCluster) => {
         try{
-            const res = await axios.get('http://localhost:4000/editor/getNumberOfCopies', {
+            const res = await axios.get(`${apiURL}/editor/getNumberOfCopies`, {
                 params: {cluster: fundCluster},
                 withCredentials: true
             })

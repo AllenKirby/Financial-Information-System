@@ -25,7 +25,7 @@ const Editform = () => {
                     <NameAndOffice/>
                     <ResCenter/>
                 </div>
-                <div className="w-full border border-gray-400 h-96 mt-2">
+                <div className="w-full h-96 mt-2">
                     <TaxType/>
                 </div>
             </div>

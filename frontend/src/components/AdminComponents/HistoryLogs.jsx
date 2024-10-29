@@ -10,7 +10,7 @@ const HistoryLogs = () => {
         const getDV = async() => {
             try{
                 if(!historyLogs){
-                    const res = await axios.get('http://localhost:4000/admin/getAllDV', {
+                    const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getAllDV`, {
                         withCredentials: true
                     })
                     if(res.status === 200){

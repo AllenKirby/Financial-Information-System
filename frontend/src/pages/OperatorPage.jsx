@@ -23,6 +23,7 @@ const OperatorPage = () => {
   const [status, setStatus] = useState([])
   const dispatch = useDispatch()
   const permission = useSelector((state) => state.permission)
+  const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
@@ -38,7 +39,7 @@ const OperatorPage = () => {
   useEffect(() => {
     const getPermission = async() => {
       try {
-        const res = await axios.get('http://localhost:4000/operator/getPermission', {
+        const res = await axios.get(`${apiURL}/operator/getPermission`, {
           withCredentials: true
         })
         if(res.status === 200){
@@ -85,7 +86,7 @@ const OperatorPage = () => {
       }else{
         try{
           console.log('fetching...')
-          const getDocu = await axios.get('http://localhost:4000/operator/read_records', {flag: permission?.data?.permission}, {
+          const getDocu = await axios.get(`${apiURL}/operator/read_records`, {flag: permission?.data?.permission}, {
             withCredentials: true
           });
           if(getDocu.status === 200){

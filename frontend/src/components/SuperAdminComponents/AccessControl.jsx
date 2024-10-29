@@ -13,7 +13,7 @@ const AccessControl = () => {
   useEffect(() => {
     const retrieveRoles = async () => {
       try {
-        const res = await axios.get('http://localhost:4000/superadmin/roles', {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/superadmin/roles`, {
           withCredentials: true
         });
 

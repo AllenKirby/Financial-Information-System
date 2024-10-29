@@ -4,12 +4,13 @@ import axios from "axios";
 export const useFundingHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const apiURL = import.meta.env.VITE_API_URL
 
     const returnDoc = async (data) => {
         setError(null)
         setIsLoading(true)
         try{
-            const res = await axios.post('http://localhost:4000/operator/return_record', data, {
+            const res = await axios.post(`${apiURL}/operator/return_record`, data, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -28,7 +29,7 @@ export const useFundingHook = () => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.patch(`http://localhost:4000/operator/update_records/${DV}`, data, {
+            const res = await axios.patch(`${apiURL}/operator/update_records/${DV}`, data, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -47,7 +48,7 @@ export const useFundingHook = () => {
         setError(null)
         setIsLoading(true)
         try {  
-            const res = await axios.post('http://localhost:4000/operator/transferDocu', data, {
+            const res = await axios.post(`${apiURL}/operator/transferDocu`, data, {
                 withCredentials: true
             })
 
@@ -68,7 +69,7 @@ export const useFundingHook = () => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.post('http://localhost:4000/operator/appendDataToSheet', data, {
+            const res = await axios.post(`${apiURL}/operator/appendDataToSheet`, data, {
                 withCredentials: true
             })
             if(res.status === 200){
