@@ -24,6 +24,7 @@ const EditorPage = () => {
   const { dispatch: dispatchContext, documents } = useDisbursementContext()
   //const prevDocumentsRef = useRef();
   const dispatch = useDispatch()
+  const apiURL = import.meta.env.VITE_API_URL
   
   const navItems = [
     { label: 'Dashboard', path: '/editor/dashboard', icon: <LuLayoutDashboard size={18} /> },
@@ -43,7 +44,7 @@ const EditorPage = () => {
     const retrieveDV = async() => {
         if(!documents){
           try{
-            const getDocu = await axios.get('http://localhost:4000/editor/getDV', {
+            const getDocu = await axios.get(`${apiURL}/editor/getDV`, {
               withCredentials: true
             })
             
@@ -77,7 +78,7 @@ const EditorPage = () => {
   useEffect(() => {
     const getPermission = async() => {
       try{
-        const res = await axios.get('http://localhost:4000/editor/getPermission', {
+        const res = await axios.get(`${apiURL}/editor/getPermission`, {
           withCredentials: true
         })
         if(res.status === 200){

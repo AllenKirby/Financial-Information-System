@@ -10,7 +10,7 @@ const AccountsManagement = () => {
         const getAllAccount = async () => {
             try{
                 console.log('fetching all accounts')
-                const res = await axios.get('http://localhost:4000/admin/getAllAccounts', {
+                const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getAllAccounts`, {
                 withCredentials: true
                 })
                 if(res.status === 200){

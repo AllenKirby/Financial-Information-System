@@ -4,12 +4,13 @@ import { useState } from "react"
 export const useBudgetOfficerHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const apiURL = import.meta.env.VITE_API_URL
 
     const submitToAdmin = async(data) => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.post('http://localhost:4000/head/passToAdmin',data, {
+            const res = await axios.post(`${apiURL}/head/passToAdmin`,data, {
                 withCredentials: true
             } )
             if(res.status === 200){
@@ -28,7 +29,7 @@ export const useBudgetOfficerHook = () => {
         setError(null)
         setIsLoading(true)
         try{
-            const res = await axios.post('http://localhost:4000/head/return_record', data, {
+            const res = await axios.post(`${apiURL}/head/return_record`, data, {
                 withCredentials: true
             })
             if(res.status === 200){

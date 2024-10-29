@@ -19,6 +19,7 @@ const AdminPage = () => {
     const [location, setLocation] = useState('')
     const { user } = useAuthContext()
     const {documents, dispatch } = useAdminDisbursementContext()
+    const apiURL = import.meta.env.VITE_API_URL
 
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
@@ -44,7 +45,7 @@ const AdminPage = () => {
         const retrieveDV = async () => {
             if(!documents){
                 try {
-                    const res = await axios.get('http://localhost:4000/admin/approvedDV', {
+                    const res = await axios.get(`${apiURL}/admin/approvedDV`, {
                         withCredentials: true
                     })  
                     if(res.status === 200){

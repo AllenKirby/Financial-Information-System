@@ -6,12 +6,13 @@ export const usePreparerHook = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const { dispatch } = useDisbursementContext()
+    const apiURL = import.meta.env.VITE_API_URL
 
     const createDisbursement = async(data) => {
         setError(null)
         setIsLoading(true)
         try{
-            const res = await axios.post('http://localhost:4000/editor/createDV', data, {
+            const res = await axios.post(`${apiURL}/editor/createDV`, data, {
               withCredentials: true,
             });
       
@@ -35,7 +36,7 @@ export const usePreparerHook = () => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.delete(`http://localhost:4000/editor/deleteDV/${id}`, {
+            const res = await axios.delete(`${apiURL}/editor/deleteDV/${id}`, {
                 withCredentials: true
             })
 
@@ -56,7 +57,7 @@ export const usePreparerHook = () => {
     const getFormData = async () => {
         try{
             console.log('gerformdata')
-            const res = await axios.get('http://localhost:4000/editor/getFormData', {
+            const res = await axios.get(`${apiURL}/editor/getFormData`, {
                 withCredentials: true
             })
 
@@ -75,7 +76,7 @@ export const usePreparerHook = () => {
         setError(null)
         setIsLoading(true)
         try{
-            const res = await axios.post('http://localhost:4000/editor/passRecord', data, {
+            const res = await axios.post(`${apiURL}/editor/passRecord`, data, {
               withCredentials: true
             });
             if(res.status === 200){
@@ -95,7 +96,7 @@ export const usePreparerHook = () => {
         setError(null)
         setIsLoading(true)
         try {
-            const res = await axios.patch(`http://localhost:4000/editor/updateDV/${id}`, data, {
+            const res = await axios.patch(`${apiURL}/editor/updateDV/${id}`, data, {
                 withCredentials: true
             })
 
@@ -121,7 +122,7 @@ export const usePreparerHook = () => {
                 key: sanitizedKey,
                 data : data
            }            
-           const res = axios.post('http://localhost:4000/editor/savePayeeData', payeeData, {
+           const res = axios.post(`${apiURL}/editor/savePayeeData`, payeeData, {
             withCredentials: true
            })
            if(res.status === 200){
@@ -134,7 +135,7 @@ export const usePreparerHook = () => {
 
     const loadPayee =async() => {
         try{
-            const res = await axios.get('http://localhost:4000/editor/getPayeeData', {
+            const res = await axios.get(`${apiURL}/editor/getPayeeData`, {
                 withCredentials: true
             })
             if(res.status === 200){

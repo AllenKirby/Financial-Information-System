@@ -4,12 +4,13 @@ import { useState } from "react"
 export const useApproverHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const apiURL = import.meta.env.VITE_API_URL
 
     const approveDV = async(DV) => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.patch(`http://localhost:4000/admin/approveDocu/${DV}`, {}, {
+            const res = await axios.patch(`${apiURL}/admin/approveDocu/${DV}`, {}, {
                 withCredentials: true
             })
             if(res.status == 200){
@@ -30,7 +31,7 @@ export const useApproverHook = () => {
                 key: randKey
             }
 
-            const res = await axios.post('http://localhost:4000/admin/addNewFundCluster', data, {
+            const res = await axios.post(`${apiURL}/admin/addNewFundCluster`, data, {
                 withCredentials: true
             })
 
@@ -44,7 +45,7 @@ export const useApproverHook = () => {
 
     const getFundCluster = async () => {
         try{
-            const res = await axios.get('http://localhost:4000/admin/getFundCluster', {
+            const res = await axios.get(`${apiURL}/admin/getFundCluster`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -59,7 +60,7 @@ export const useApproverHook = () => {
 
     const deleteFundCluster = async (field_key) => {
         try{
-            const res = await axios.delete(`http://localhost:4000/admin/deleteFundCluster/${field_key}`, {
+            const res = await axios.delete(`${apiURL}/admin/deleteFundCluster/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -80,7 +81,7 @@ export const useApproverHook = () => {
                 key: key
             }
 
-            const res = await axios.post('http://localhost:4000/admin/addNameAndOffice', data, {
+            const res = await axios.post(`${apiURL}/admin/addNameAndOffice`, data, {
                 withCredentials: true
             })
 
@@ -94,7 +95,7 @@ export const useApproverHook = () => {
 
     const getNameAndOffice = async () => {
         try{
-            const res = await axios.get('http://localhost:4000/admin/getNameAndOffice', {
+            const res = await axios.get(`${apiURL}/admin/getNameAndOffice`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -109,7 +110,7 @@ export const useApproverHook = () => {
 
     const deleteNameAndOffice = async (field_key) => {
         try{
-            const res = await axios.delete(`http://localhost:4000/admin/deleteNameAndOffice/${field_key}`, {
+            const res = await axios.delete(`${apiURL}/admin/deleteNameAndOffice/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -129,7 +130,7 @@ export const useApproverHook = () => {
                 key: randKey
             }
 
-            const res = await axios.post('http://localhost:4000/admin/addRC', data, {
+            const res = await axios.post(`${apiURL}/admin/addRC`, data, {
                 withCredentials: true
             })
 
@@ -143,7 +144,7 @@ export const useApproverHook = () => {
 
     const getRC = async () => {
         try{
-            const res = await axios.get('http://localhost:4000/admin/getRC', {
+            const res = await axios.get(`${apiURL}/admin/getRC`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -160,7 +161,7 @@ export const useApproverHook = () => {
 
     const deleteRC = async (field_key) => {
         try{
-            const res = await axios.delete(`http://localhost:4000/admin/deleteRC/${field_key}`, {
+            const res = await axios.delete(`${apiURL}/admin/deleteRC/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -183,7 +184,7 @@ export const useApproverHook = () => {
                 key: key
             }
 
-            const res = await axios.post('http://localhost:4000/admin/addTaxType', data, {
+            const res = await axios.post(`${apiURL}/admin/addTaxType`, data, {
                 withCredentials: true
             })
 
@@ -197,7 +198,7 @@ export const useApproverHook = () => {
 
     const getTaxType = async () => {
         try{
-            const res = await axios.get('http://localhost:4000/admin/getTaxType', {
+            const res = await axios.get(`${apiURL}/admin/getTaxType`, {
                 withCredentials: true
             })
             if(res.status === 200){
@@ -213,7 +214,7 @@ export const useApproverHook = () => {
 
     const deleteTax = async (field_key) => {
         try{
-            const res = await axios.delete(`http://localhost:4000/admin/deleteTax/${field_key}`, {
+            const res = await axios.delete(`${apiURL}/admin/deleteTax/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){

@@ -315,7 +315,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         setAccountOptions(JSON.parse(storedAccountOptions));
       }else{
         try{
-          const response = await axios.get('http://localhost:4000/editor/getAccountCode', {
+          const response = await axios.get(`${import.meta.env.VITE_API_URL}/editor/getAccountCode`, {
             withCredentials: true
           })
 
