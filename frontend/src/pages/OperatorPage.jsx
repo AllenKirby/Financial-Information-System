@@ -8,7 +8,7 @@ import Header from "../components/Header"
 
 import { CiViewList } from "react-icons/ci"
 import { useState, useEffect } from "react"
-import { GoGraph } from "react-icons/go";
+import { LuLayoutDashboard } from "react-icons/lu";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios"
@@ -26,13 +26,15 @@ const OperatorPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
+    { label: 'Dashboard', path: '/operator/dashboard', icon: <LuLayoutDashboard size={18} /> },
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
-    { label: 'Dashboard', path: '/operator/dashboard', icon: <GoGraph size={18} /> },
   ]
 
   useEffect(() => {
     if(page.pathname === "/operator/disbursementrecords"){
       setLocation('Disbursement Records')
+    }else if(page.pathname === "/operator/dashboard"){
+      setLocation('Dashboard')
     }
   }, [page.pathname])
 

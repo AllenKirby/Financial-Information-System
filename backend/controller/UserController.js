@@ -22,7 +22,7 @@ const login = (req, res) => {
             secure: true,  
             sameSite: 'Strict' 
         });
-        
+        console.Console(email)
         res.status(200).json({ success: true, role: role, name: name, uid: uid, uemail: email});
     }catch(error){
         res.status(500).json({ success: false, message: 'Login failed', error: error.message });
@@ -36,8 +36,7 @@ const refreshToken = (req, res) => {
         const token = req.user.token;
         const name = req.user.name;
         const uid = req.user.uid;
-        const email = req.user.email;
-        console.log(email)
+        const email = req.user.email
         res.cookie('token', token, {
             httpOnly: true,  
             secure: true,  

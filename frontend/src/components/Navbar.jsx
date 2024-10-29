@@ -53,7 +53,10 @@ const Navbar = ({ items }) => {
       <div>
         <div className="h-auto w-full px-3 py-6 flex items-center justify-start">
           <img src={bgImage} alt="" className="w-10 mr-3" />
-          <h1 className={`font-semibold text-sm`}>National Irrigation Administration</h1>
+          <h1 className={`font-semibold text-sm text-customgreen`}>National Irrigation Administration</h1>
+        </div>
+        <div className='w-full px-3'>
+          <hr/>
         </div>
         <div className="flex flex-col p-2">
           {items.map((item) => (

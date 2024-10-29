@@ -21,6 +21,8 @@ import SuperAdminPage from "./SuperAdminPage";
 import Editform from "../components/AdminComponents/EditForm";
 import AccessControl from "../components/SuperAdminComponents/AccessControl";
 import DashboardFunding from "../components/OperatorComponents/Dashboard"
+import DashboardPreparer from "../components/EditorComponents/Dashboard"
+import DashboardBO from "../components/HeadComponents/Dashboard"
 
 
 const Mainpage = () => {
@@ -43,6 +45,7 @@ const Mainpage = () => {
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>
+          <Route path="dashboard" element={<PrivateRoute allowedRoles={['4']}><DashboardPreparer/></PrivateRoute>}/>
         </Route>
         <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
@@ -51,6 +54,7 @@ const Mainpage = () => {
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['3']}><DashboardFunding/></PrivateRoute>}/>
         </Route>
         <Route path="/head" element={<HeadPage/>}>
+          <Route path="dashboard" element={<PrivateRoute allowedRoles={['2']}><DashboardBO/></PrivateRoute>}/>
           <Route path="disbursementrecords" element={<DisbursementRecordsHead/>}>
             <Route path=":id" element={<ViewDocument/>}/>
           </Route>

@@ -1,33 +1,25 @@
 import ReactApexChart from 'react-apexcharts';
 
 import { useState, useEffect } from 'react';
-import { useOpDisbursementContext } from '../../hooks/useOpDisbursementContext';
+import { useHeadDisbursementContext } from '../../hooks/useHeadDisbursementContext';
 
 const Dashboard = () => {
-  const [inReview, setInReview] = useState(0)
-  const [returned, setReturned] = useState(0)
+  const [underReview, setUnderReview] = useState(0)
   const [total, setTotal] = useState(0)
-  const {OpDocuments} = useOpDisbursementContext()
+  const { HeadDocuments } = useHeadDisbursementContext()
 
   useEffect(() => {
-    const countInReview = () => {
-      return Object.entries(OpDocuments.documents).filter(([, document]) => 
-        document.data.status === 'In Review'
+    const countUnderReview = () => {
+      return Object.entries(HeadDocuments).filter(([, document]) => 
+        document.data.status === 'Under Review'
       )
     }
-    const countReturned = () => {
-      return Object.entries(OpDocuments.documents).filter(([, document]) => 
-        document.data.status === 'Returned|3'
-      )
+    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
+      const resultUnderReview = countUnderReview()
+      setUnderReview(Object.entries(resultUnderReview).length)
+      setTotal(Object.entries(HeadDocuments).length)
     }
-    if (OpDocuments && Object.keys(OpDocuments).length > 0) {
-      const resultInReview = countInReview()
-      const resultReturned = countReturned()
-      setInReview(Object.entries(resultInReview).length)
-      setReturned(Object.entries(resultReturned).length)
-      setTotal(Object.entries(OpDocuments).length)
-    }
-  }, [OpDocuments])
+  }, [HeadDocuments])
 
   const [lineOptions, ] = useState({
     series: [{
@@ -140,16 +132,16 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="w-1/5 h-full flex flex-col gap-2">
-        <div className="w-full h-1/3 bg-blue-500 text-white flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
+        <div className="w-full h-1/3 bg-gray-200 flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
           <div className="text-center p-2">
-            <h1 className='text-7xl font-semibold'>{inReview}</h1>
-            <p className='text-xs '>Number of Disbursement Vouchers with In Review Status</p>
+            <h1 className='text-7xl font-semibold'>3</h1>
+            <p className='text-xs '>Number of Disbursement Vouchers with Drafting Status</p>
           </div>
         </div>
-        <div className="w-full h-1/3 bg-red-500 text-white flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
+        <div className="w-full h-1/3 bg-orange-500 text-white flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
           <div className="text-center p-2">
-            <h1 className='text-7xl font-semibold'>{returned}</h1>
-            <p className='text-xs '>Number of Disbursement Vouchers with Returned Status</p>
+            <h1 className='text-7xl font-semibold'>{underReview}</h1>
+            <p className='text-xs '>Number of Disbursement Vouchers with Under Review Status</p>
           </div>
         </div>
         <div className="w-full h-1/3 bg-customFontColor text-white flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">

@@ -25,6 +25,7 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
       const userCookie = cookies.get('user');
         if (userCookie) {
+            console.log('email', userCookie)
           dispatch({ type: 'LOGIN', payload: userCookie });
         }
 

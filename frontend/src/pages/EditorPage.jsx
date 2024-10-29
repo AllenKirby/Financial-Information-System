@@ -5,7 +5,7 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import {setPermission} from '../redux/PermissionRedux' 
 
 //Components
@@ -14,6 +14,7 @@ import Header from "../components/Header";
 
 //Icons
 import { CiViewList } from "react-icons/ci";
+import { LuLayoutDashboard } from "react-icons/lu";
 
 
 const EditorPage = () => {
@@ -23,16 +24,18 @@ const EditorPage = () => {
   const { dispatch: dispatchContext, documents } = useDisbursementContext()
   //const prevDocumentsRef = useRef();
   const dispatch = useDispatch()
-  const permission = useSelector((state) => state.permission)
   const apiURL = import.meta.env.VITE_API_URL
   
   const navItems = [
+    { label: 'Dashboard', path: '/editor/dashboard', icon: <LuLayoutDashboard size={18} /> },
     { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> } 
   ];
 
   useEffect(() => {
     if(page.pathname === "/editor/disbursementrecords"){
       setLocation('Disbursement Records')
+    }else if(page.pathname === "/editor/dashboard"){
+      setLocation('Dashboard')
     }
   }, [page.pathname])
 
