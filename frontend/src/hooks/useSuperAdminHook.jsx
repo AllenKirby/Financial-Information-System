@@ -6,6 +6,7 @@ import axios from 'axios'
 export const useSuperAdminHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const apiURL = import.meta.env.VITE_API_URL
 
     const createAcc = async(userData) =>{   
         setIsLoading(true)
@@ -19,7 +20,7 @@ export const useSuperAdminHook = () => {
                 role: userData.role,
                 name: `${userData.firstname},${userData.lastname}`
             }
-            const res = await axios.post('http://localhost:4000/superadmin/create', data, {
+            const res = await axios.post(`${apiURL}/superadmin/create`, data, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${newUser_token}` 
@@ -45,7 +46,7 @@ export const useSuperAdminHook = () => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.delete(`http://localhost:4000/superadmin/deleteAcc/${uid}` ,{
+            const res = await axios.delete(`${apiURL}/superadmin/deleteAcc/${uid}` ,{
                 withCredentials: true
             })
             if(res.status === 200){
@@ -64,7 +65,7 @@ export const useSuperAdminHook = () => {
         setIsLoading(true)
         setError(null)
         try{
-            const res = await axios.patch(`http://localhost:4000/superadmin/disableAcc/${uid}`, {flag}, {
+            const res = await axios.patch(`${apiURL}/superadmin/disableAcc/${uid}`, {flag}, {
                 withCredentials: true
             })
             if(res.status == 200){
@@ -83,7 +84,7 @@ export const useSuperAdminHook = () => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.patch(`http://localhost:4000/superadmin/changePermission/${roleName}`, {newPermission}, {
+            const res = await axios.patch(`${apiURL}/superadmin/changePermission/${roleName}`, {newPermission}, {
                 withCredentials: true
             })
             if(res.status === 200){

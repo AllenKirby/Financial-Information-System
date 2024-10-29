@@ -518,7 +518,7 @@ const ViewDocument = () => {
             })()}
           </select>
           <div className="pl-5">
-            <p>{userRecord.replace(/,/g, ' ')}</p>
+            <p>{userRecord.replace(/[,|]/g, ' ')}</p>
           </div>
         </div>
       </div>

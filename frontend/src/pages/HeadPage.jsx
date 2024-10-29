@@ -19,6 +19,7 @@ const HeadPage = () => {
     const dispatch = useDispatch()
     const permission = useSelector((state) => state.permission)
     const [status, setStatus] = useState([])
+    const apiURL = import.meta.env.VITE_API_URL
 
     const navItems = [
         { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <CiViewList size={18} /> } 
@@ -27,7 +28,7 @@ const HeadPage = () => {
     useEffect(() => {
         const getPermission = async() => {
           try{
-            const res = await axios.get('http://localhost:4000/head/getPermission', {
+            const res = await axios.get(`${apiURL}/head/getPermission`, {
               withCredentials: true
             })
             if(res.status === 200){
@@ -73,7 +74,7 @@ const HeadPage = () => {
         const retrieveDV = async() => {
             if(!documents) { 
               try {
-                const res = await axios.get('http://localhost:4000/head/read_records', { flag: permission.data.permission },{
+                const res = await axios.get(`${apiURL}/head/read_records`, { flag: permission.data.permission },{
                   withCredentials: true
                 })
                 if(res.status === 200){

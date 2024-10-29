@@ -41,7 +41,7 @@ export const useAuthHook = () => {
           //remove !
           if (user.emailVerified) {
             console.log('hit')
-            const response = await axios.post('http://localhost:4000/user/login', {}, {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, {}, {
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}` 
@@ -72,7 +72,7 @@ export const useAuthHook = () => {
         const auth = getAuth();  
         try{
           await signOut(auth);
-          const response = await axios.post('http://localhost:4000/logout', {}, {
+          const response = await axios.post(`${import.meta.env.VITE_API_URL}/logout`, {}, {
             withCredentials: true
           });
           if(response.status === 200){
@@ -96,7 +96,7 @@ export const useAuthHook = () => {
             const token = await result.user.getIdToken()
             const user = result.user;
             if (user.emailVerified) {
-                const response = await axios.post('http://localhost:4000/user/login', {}, {
+                const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, {}, {
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}` 

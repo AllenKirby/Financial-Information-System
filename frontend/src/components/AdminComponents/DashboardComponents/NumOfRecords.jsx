@@ -22,7 +22,7 @@ const NumOfRecords = () => {
                     dispatch(setRecords(recordData))
                     
                 }else{
-                    const res = await axios.get('http://localhost:4000/admin/getNumberOfRecords', {
+                    const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getNumberOfRecords`, {
                     withCredentials: true
                     })
                     if(res.status === 200){
