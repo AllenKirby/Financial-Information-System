@@ -115,7 +115,7 @@ export const usePreparerHook = () => {
 
     const savePayeeData = async (data) => {
         try{
-           const key = `${data.payee}${data.tin}`
+           const key = `${data.payee}|${data.tin}`
            const sanitizedKey = key.replace(/[\/.*`,\\\0\s]/g, '')
            const payeeData = {
                 key: sanitizedKey,

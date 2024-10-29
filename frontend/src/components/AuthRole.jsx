@@ -12,11 +12,11 @@ export const AuthRole = () => {
       if (user.role === '1') {
         navigate('/admin/dashboard');
       }else if (user.role === '2') {
-        navigate('/head/disbursementrecords');
+        navigate('/head/dashboard');
       }else if (user.role === '3') {
-        navigate('/operator/disbursementrecords');
+        navigate('/operator/dashboard');
       } else if (user.role === '4') {
-        navigate('/editor/disbursementrecords');
+        navigate('/editor/dashboard');
       }else if (user.role === '0') {
         navigate('/superadmin/usermanagement');
       }else{

@@ -16,8 +16,6 @@ const DisbursementRecords = () => {
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
-  const [inReview, setInReview] = useState(0)
-  const [returned, setReturned] = useState(0)
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -39,25 +37,6 @@ const DisbursementRecords = () => {
       setFilteredDocuments({});
     }
   }, [filter, OpDocuments]);
-
-  useEffect(() => {
-    const countInReview = () => {
-      return Object.entries(OpDocuments.documents).filter(([, document]) => 
-        document.data.status === 'In Review'
-      )
-    }
-    const countReturned = () => {
-      return Object.entries(OpDocuments.documents).filter(([, document]) => 
-        document.data.status === 'Returned|3'
-      )
-    }
-    if (OpDocuments && Object.keys(OpDocuments).length > 0) {
-      const resultInReview = countInReview()
-      const resultReturned = countReturned()
-      setInReview(Object.entries(resultInReview).length)
-      setReturned(Object.entries(resultReturned).length)
-    }
-  }, [OpDocuments])
 
   return (
     <section className='w-full h-[100%]'>
@@ -98,63 +77,47 @@ const DisbursementRecords = () => {
           </div>
         </div>
       </div>
-      <div className='w-full h-full flex gap-2'>
-        <div className="w-5/6 h-screen rounded-t-lg border-[1px] bg-white">
-          {!id ? ( 
-            <>
-              <div className='w-full h-full p-2'>
-                <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-fundingBlueGreen text-white'>
-                  <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
-                  <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-                  <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                  <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
-                </section>
-              {Object.keys(filteredDocuments).length > 0 ? (
-                <div className="w-full h-[375px] overflow-auto">
-                  {Object.entries(filteredDocuments).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={'3'} />
-                  ))}
-                </div>
-              ) : (
-              <div className='w-full h-full flex items-center justify-center'>
-                  <div>No Documents Found</div>
-                </div>
-                // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                // </div>
-                )}
-              </div>
-            </>
-          ) : <Outlet/>}
-          {isModalOpen && (
-            <>
-              <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-              <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                <DisbursementVoucher modal={modal} flag={false}/>
+      <div className="w-full h-screen rounded-t-lg border-[1px] bg-white">
+        {!id ? ( 
+          <>
+            <div className='w-full h-full p-2'>
+              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-fundingBlueGreen text-white'>
+                <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
+                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
+                <h1 className='w-1/6 text-center font-bold'>Status</h1>
+                <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
               </section>
-            </>
-          )}
-        </div>
-        <div className='w-1/6 h-full flex flex-col gap-2'>
-          <div className='w-full h-1/3 text-white bg-blue-500 rounded-lg text-center p-3 flex items-center justify-center'>
-            <div>
-              <h1 className='text-7xl font-semibold'>{inReview}</h1>
-              <p className='text-xs '>Number of Disbursement Vouchers with In Review Status</p>
+            {Object.keys(filteredDocuments).length > 0 ? (
+              <div className="w-full h-[375px] overflow-auto">
+                {Object.entries(filteredDocuments).map(([key, document]) => (
+                  <DocumentDetails key={key} documents={document} type={'3'} />
+                ))}
+              </div>
+            ) : (
+            <div className='w-full h-full flex items-center justify-center'>
+                <div>No Documents Found</div>
+              </div>
+              // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+              // </div>
+              )}
             </div>
-          </div>
-          <div className='w-full h-1/3 bg-red-500 text-white rounded-lg text-center p-3 flex items-center justify-center'>
-          <div>
-              <h1 className='text-7xl font-semibold'>{returned}</h1>
-              <p className='text-xs '>Number of Disbursement Vouchers with Returned Status</p>
-            </div>
-          </div>
-        </div>
+          </>
+        ) : <Outlet/>}
+        {isModalOpen && (
+          <>
+            <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+            <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+              <DisbursementVoucher modal={modal} flag={false}/>
+            </section>
+          </>
+        )}
       </div>
     </section>
     

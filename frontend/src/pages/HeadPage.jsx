@@ -2,6 +2,7 @@ import Navbar from "../components/Navbar"
 import Header from "../components/Header"
 import { Outlet, useLocation } from "react-router-dom"
 import { CiViewList } from "react-icons/ci"
+import { LuLayoutDashboard } from "react-icons/lu";
 import { useEffect, useState } from "react"
 import { useAuthContext } from "../hooks/useAuthContext"
 import axios from "axios"
@@ -21,7 +22,8 @@ const HeadPage = () => {
     const [status, setStatus] = useState([])
 
     const navItems = [
-        { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <CiViewList size={18} /> } 
+      { label: 'Dashboard', path: '/head/dashboard', icon: <LuLayoutDashboard size={18} /> },
+      { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <CiViewList size={18} /> }, 
     ]
 
     useEffect(() => {
