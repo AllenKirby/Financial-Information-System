@@ -26,7 +26,7 @@ const DisbursementRecords = () => {
     if (documents && Object.keys(documents).length > 0) {
       const filteredResults = Object.fromEntries(
         Object.entries(documents).filter(([, document]) => 
-          document.fund.toLowerCase().includes(filter.toLowerCase())
+          document?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
       console.log(filteredResults)
@@ -42,7 +42,7 @@ const DisbursementRecords = () => {
       <div className='w-full h-auto p-1 flex'>
         <div className="w-1/2 flex flex-col">
           <div className='flex items-center justify-start gap-2'>
-            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-preparerPrimary text-white font-semibold border-2 hover:scale-125 transition-all duration-100">
+            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-preparerPrimary text-white font-semibold hover:scale-125 transition-all duration-100">
               <IoAdd size={20} className='font-bold'/>New
             </button>
             <div className='relative'>

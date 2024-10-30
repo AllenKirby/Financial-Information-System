@@ -11,13 +11,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     const countInReview = () => {
-      return Object.entries(OpDocuments.documents).filter(([, document]) => 
-        document.data.status === 'In Review'
+      return Object.entries(OpDocuments?.documents || {}).filter(([, document]) => 
+        document?.data?.status === 'In Review'
       )
     }
     const countReturned = () => {
-      return Object.entries(OpDocuments.documents).filter(([, document]) => 
-        document.data.status === 'Returned|3'
+      return Object.entries(OpDocuments?.documents || {}).filter(([, document]) => 
+        document?.data?.status === 'Returned|3'
       )
     }
     if (OpDocuments && Object.keys(OpDocuments).length > 0) {

@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
-import { RxDashboard } from "react-icons/rx";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { CiViewList } from "react-icons/ci";
 import { FaRegEdit } from "react-icons/fa";
 //import { TbLogs } from "react-icons/tb";
@@ -17,12 +18,15 @@ import { collection, query, where, onSnapshot } from "firebase/firestore"
 const AdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
+    const [navbarExpand, setNavbarExpand] = useState(true)
+    const [navbarSize, setNavbarSize] = useState('')
+    const [mainSize, setMainSize] = useState('')
     const { user } = useAuthContext()
     const {documents, dispatch } = useAdminDisbursementContext()
     const apiURL = import.meta.env.VITE_API_URL
 
     const navItems = [
-        { label: 'Dashboard', path: '/admin/dashboard', icon: <RxDashboard size={18} /> },
+        { label: 'Dashboard', path: '/admin/dashboard', icon: <LuLayoutDashboard size={18} /> },
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
         // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
         { label: 'Edit Form', path: '/admin/editform', icon: <FaRegEdit size={18}/>}
@@ -40,6 +44,16 @@ const AdminPage = () => {
         }
         
       }, [page.pathname])
+
+      useEffect(() => {
+        if(!navbarExpand) {
+          setNavbarSize('w-[70px]')
+          setMainSize('w-full')
+        }else {
+          setNavbarSize('w-1/6')
+          setMainSize('w-5/6')
+        }
+      }, [navbarExpand])
 
       useEffect(() => {
         const retrieveDV = async () => {
@@ -70,14 +84,18 @@ const AdminPage = () => {
         })
 
         return () => unsubscribe()
-      }, [documents, user, dispatch])
+      }, [documents, user, apiURL, dispatch])
 
     return(
         <main className="h-screen w-full flex bg-slate-100">
-            <aside className="h-full w-1/6">
-                <Navbar items={navItems}/>
+           <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
+                <MdOutlineKeyboardArrowLeft 
+                    size={25}
+                    className='absolute top-6 z-10 -right-3 bg-white cursor-pointer rounded-full border-[1px]'
+                    onClick={() => setNavbarExpand(!navbarExpand)}/>
+                <Navbar items={navItems} flag={navbarExpand}/>
             </aside>
-            <section className="h-full w-5/6 ml-3">
+            <section className={`h-full ${mainSize} ml-3`}>
                 <section className="h-[13%] w-full">
                     <Header currentPage={location}/>
                 </section>

@@ -33,8 +33,10 @@ const AccountDetails = ({account}) => {
     };
 
     useEffect(() => {
-        setRole(getAccCode(account.customClaims.role));
-    }, [account.customClaims.role]);
+        if(account & account.customClaims.role){
+            setRole(getAccCode(account.customClaims.role));
+        }
+    }, [account]);
 
     const disableUser = async(flag) => {
 
@@ -97,11 +99,11 @@ const AccountDetails = ({account}) => {
     return (
         <div className="w-full h-auto border-[1px] flex rounded-md py-2 hover:bg-slate-100 cursor-pointer my-1">
             <div className='w-[90%] h-auto flex'>
-                <p className="w-1/5 px-2 truncate font-semibold">{account.customClaims.dispName.replace(',', ' ')}</p>
-                <p className="w-1/5 px-2">{role}</p>
-                <p className="w-1/5 px-2 truncate text-blue-500 underline">{account.email}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.disabled ? 'text-superAdminMustard' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.emailVerified ? 'text-green-500' : 'text-superAdminMustard'}`}>{account.emailVerified ? 'True' : 'False'}</p>
+                <p className="w-1/5 px-2 truncate font-semibold">{account?.customClaims?.dispName?.replace(',', ' ') || ''}</p>
+                <p className="w-1/5 px-2">{role || ''}</p>
+                <p className="w-1/5 px-2 truncate text-blue-500 underline">{account?.email || ''}</p>
+                <p className={`w-1/5 px-2 text-center font-medium ${account?.disabled ? 'text-superAdminMustard' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</p>
+                <p className={`w-1/5 px-2 text-center font-medium ${account?.emailVerified ? 'text-green-500' : 'text-superAdminMustard'}`}>{account.emailVerified ? 'True' : 'False'}</p>
             </div>
             <div className='w-[10%] h-auto flex items-center justify-end px-2 gap-2'>
                 {!account.disabled ? 

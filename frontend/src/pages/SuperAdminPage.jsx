@@ -6,10 +6,14 @@ import { useEffect, useState } from "react";
 
 import { PiUsersThree } from "react-icons/pi";
 import { TbUserShield } from "react-icons/tb";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 const SuperAdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
+    const [navbarExpand, setNavbarExpand] = useState(true)
+    const [navbarSize, setNavbarSize] = useState('')
+    const [mainSize, setMainSize] = useState('')
 
     const navItems = [
       {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThree size={18} />},
@@ -21,12 +25,27 @@ const SuperAdminPage = () => {
           setLocation('User Management')
         }
       }, [page.pathname])
+
+    useEffect(() => {
+      if(!navbarExpand) {
+        setNavbarSize('w-[70px]')
+        setMainSize('w-full')
+      }else {
+        setNavbarSize('w-1/6')
+        setMainSize('w-5/6')
+      }
+    }, [navbarExpand])
+      
   return (
     <main className="w-full h-screen flex bg-slate-100">
-      <aside className="h-full w-1/6">
-        <Navbar items={navItems}/>
+      <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
+        <MdOutlineKeyboardArrowLeft 
+          size={25}
+          className='absolute top-6 z-10 -right-3 bg-white cursor-pointer rounded-full border-[1px]'
+          onClick={() => setNavbarExpand(!navbarExpand)}/>
+        <Navbar items={navItems} flag={navbarExpand}/>
       </aside>
-      <section className="h-full w-5/6 ml-3">
+      <section className={`h-full ${mainSize} ml-3`}>
           <section className="h-[13%] w-full">
               <Header currentPage={location}/>
           </section>
