@@ -28,7 +28,7 @@ const DisbursementRecords = () => {
     if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
       const filteredResults = Object.fromEntries(
         Object.entries(OpDocuments.documents).filter(([, document]) => 
-          document.data.fund.toLowerCase().includes(filter.toLowerCase())
+          document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
       console.log(filteredResults)

@@ -9,6 +9,7 @@ import Header from "../components/Header"
 import { CiViewList } from "react-icons/ci"
 import { useState, useEffect } from "react"
 import { LuLayoutDashboard } from "react-icons/lu";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios"
@@ -18,6 +19,9 @@ import { setPermission } from '../redux/PermissionRedux'
 const OperatorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
+  const [navbarExpand, setNavbarExpand] = useState(true)
+  const [navbarSize, setNavbarSize] = useState('')
+  const [mainSize, setMainSize] = useState('')
   const { user } = useAuthContext()
   const { dispatch: dispatchContext, documents } = useOpDisbursementContext()
   const [status, setStatus] = useState([])
@@ -37,6 +41,16 @@ const OperatorPage = () => {
       setLocation('Dashboard')
     }
   }, [page.pathname])
+
+  useEffect(() => {
+    if(!navbarExpand) {
+      setNavbarSize('w-[70px]')
+      setMainSize('w-full')
+    }else {
+      setNavbarSize('w-1/6')
+      setMainSize('w-5/6')
+    }
+  }, [navbarExpand])
 
   useEffect(() => {
     const getPermission = async() => {
@@ -69,7 +83,7 @@ const OperatorPage = () => {
     });
 
     return () => unsubscribe()   
-  }, [dispatch])
+  }, [dispatch, apiURL])
 
   useEffect(() => {
     if(permission?.data?.permission){
@@ -117,16 +131,20 @@ const OperatorPage = () => {
 
     return () => unsubscribe()
 
-  }, [user, dispatchContext, documents, permission?.data?.permission, status])
+  }, [user, dispatchContext, apiURL, documents, permission?.data?.permission, status])
   // permission.data.permission 
 
 
   return (
     <main className="w-full h-screen flex bg-slate-100">
-      <aside className="h-full w-1/6">
-        <Navbar items={navItems}/>
+      <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
+        <MdOutlineKeyboardArrowLeft 
+          size={25}
+          className='absolute top-6 z-10 -right-3 bg-white cursor-pointer rounded-full border-[1px]'
+          onClick={() => setNavbarExpand(!navbarExpand)}/>
+        <Navbar items={navItems} flag={navbarExpand}/>
       </aside>
-      <section className="h-screen w-5/6 ml-3">
+      <section className={`h-full ${mainSize} ml-3`}>
           <section className="h-[13%] w-full">
               <Header currentPage={location}/>
           </section>

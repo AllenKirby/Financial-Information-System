@@ -109,7 +109,7 @@ const DocumentDetails = ({ documents, type }) => {
     >
       {/* Payee column */}
       <h2 className="font-semibold text-left w-4/6 px-3 flex items-center justify-start gap-2">
-      <IoDocumentOutline size={25}/> {docu?.payee}.pdf
+      <IoDocumentOutline size={25}/> {docu?.payee}
       </h2>
       {/* DV No. column */}
       <h2 className="text-xs font-light text-center w-1/6">{docu?.DV}</h2>

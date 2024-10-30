@@ -100,7 +100,7 @@ const UserManagement = () => {
         </div>
         <div className="w-full h-full bg-white p-1">
           {filteredAccounts.length > 0 ? (
-            filteredAccounts.reverse().map((account, index) => (
+            [...filteredAccounts].reverse().map((account, index) => (
               <AccountDetails 
                 key={index} 
                 account={account} />

@@ -10,8 +10,8 @@ const Dashboard = () => {
 
   useEffect(() => {
     const countUnderReview = () => {
-      return Object.entries(HeadDocuments).filter(([, document]) => 
-        document.data.status === 'Under Review'
+      return Object.entries(HeadDocuments || {}).filter(([, document]) => 
+        document?.data?.status === 'Under Review'
       )
     }
     if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {

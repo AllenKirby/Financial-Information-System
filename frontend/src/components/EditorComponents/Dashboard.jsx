@@ -11,13 +11,13 @@ const Dashboard = () => {
 
   useEffect(() => {
     const countDrafting = () => {
-      return Object.entries(documents).filter(([, document]) => 
-        document.status === 'Drafting'
+      return Object.entries(documents || {}).filter(([, document]) => 
+        document?.status === 'Drafting'
       )
     }
     const countReturned = () => {
-      return Object.entries(documents).filter(([, document]) => 
-        document.status === 'Returned|4'
+      return Object.entries(documents || {}).filter(([, document]) => 
+        document?.status === 'Returned|4'
       )
     }
     if (documents && Object.keys(documents).length > 0) {
