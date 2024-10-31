@@ -21,7 +21,7 @@ const UserManagement = () => {
         console.log('Fetching all accounts');
         const res = await axios.get(`${import.meta.env.VITE_API_URL}/superadmin/getAllAccounts`, {
           withCredentials: true
-        });
+        }); 
         if (res.status === 200) {
           const accountsData = res.data;
           console.log('Accounts: ', accountsData);
@@ -37,17 +37,13 @@ const UserManagement = () => {
   }, []);
 
   useEffect(() => {
-    const results = accounts.filter(account =>
-      account.customClaims.dispName.toLowerCase().includes(search.toLowerCase())
-    );
-    setFilteredAccounts(results);
+    const result = accounts.filter(account => account.customClaims.dispName.toLowerCase().includes(search.toLowerCase()));
+    setFilteredAccounts(result);
   }, [accounts, search]);
 
   useEffect(() => {
-    const results = accounts.filter(account =>
-      account.customClaims.role.includes(roleSort)
-    );
-    setFilteredAccounts(results);
+    const result = accounts.filter(account => account.customClaims.role.includes(roleSort));
+    setFilteredAccounts(result);
   }, [accounts, roleSort]);
 
   const sortValue = (value) => {
@@ -80,12 +76,12 @@ const UserManagement = () => {
         </div>
       </div>
       <div className="w-full h-auto flex items-center justify-start border-b-2">
-        <button onClick={() => sortValue('')} className={`${roleSort === '' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>All</button>
-        <button onClick={() => sortValue('4')} className={`${roleSort === '4' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Preparer</button>
-        <button onClick={() => sortValue('3')} className={`${roleSort === '3' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Funding</button>
-        <button onClick={() => sortValue('2')} className={`${roleSort === '2' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Budget Officer</button>
-        <button onClick={() => sortValue('1')} className={`${roleSort === '1' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Approver</button>
-        <button onClick={() => sortValue('0')} className={`${roleSort === '0' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard`}>Super Admin</button>
+        <button onClick={() => sortValue('')} className={`${roleSort === '' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>All</button>
+        <button onClick={() => sortValue('4')} className={`${roleSort === '4' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Preparer</button>
+        <button onClick={() => sortValue('3')} className={`${roleSort === '3' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Funding</button>
+        <button onClick={() => sortValue('2')} className={`${roleSort === '2' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Budget Officer</button>
+        <button onClick={() => sortValue('1')} className={`${roleSort === '1' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Approver</button>
+        <button onClick={() => sortValue('0')} className={`${roleSort === '0' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Super Admin</button>
       </div>
       <div className="w-full h-full px-2 pt-5">
         <div className="w-full h-auto flex rounded-t-lg bg-superAdminBlue text-white px-1">
@@ -100,7 +96,7 @@ const UserManagement = () => {
         </div>
         <div className="w-full h-full bg-white p-1">
           {filteredAccounts.length > 0 ? (
-            [...filteredAccounts].reverse().map((account, index) => (
+            filteredAccounts.reverse().map((account, index) => (
               <AccountDetails 
                 key={index} 
                 account={account} />

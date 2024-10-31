@@ -237,30 +237,29 @@ const getAccountCodes = async (req, res) => {
 //     } 
 // }
 
-const retrieveDV = async(req, res) => {
-    try{
-        const documents = {}
+// const retrieveDV = async(req, res) => {
+//     try{
+//         const documents = {}
 
-        const recordsSnapshot = await db.collection('records')
-        .where('status', 'in', ['Drafting', 'Returned|4'])
-        .get()
-        recordsSnapshot.forEach((recordDoc) => {
-            if(recordDoc.exists){
-                const recordData = recordDoc.data();
-                documents[recordDoc.id] = recordData
+//         const recordsSnapshot = await db.collection('records')
+//         .where('status', 'in', ['Drafting', 'Returned|4'])
+//         .get()
+//         recordsSnapshot.forEach((recordDoc) => {
+//             if(recordDoc.exists){
+//                 const recordData = recordDoc.data();
+//                 documents[recordDoc.id] = recordData
                 
-            }else{
-                console.log('No such document for keys');
-            }
-        })
-        res.status(200).json(documents);
-    }
-    catch(error){
-        console.error("Error retrieving documents: ", error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-    
-}
+//             }else{
+//                 console.log('No such document for keys');
+//             }
+//         })
+//         res.status(200).json(documents);
+//     }
+//     catch(error){
+//         console.error("Error retrieving documents: ", error);
+//         res.status(500).json({ success: false, error: error.message });
+//     }
+// }
 
 const deleteDV = async(req, res) => {
     const { id } = req.params
@@ -503,7 +502,7 @@ const getPayeeData = async (req,res) => {
 
 module.exports = {
     createDV,
-    retrieveDV,
+    //retrieveDV,
     getAccountCodes,
     deleteDV, 
     passDocument,

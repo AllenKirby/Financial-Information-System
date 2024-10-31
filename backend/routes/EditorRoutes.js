@@ -6,7 +6,7 @@ const setRole = require('../middleware/Role');
 
 const {
     createDV, 
-    retrieveDV ,
+    //retrieveDV ,
     getAccountCodes, 
     deleteDV, 
     passDocument,
@@ -24,7 +24,7 @@ editorRouter.use(setRole([4]))
 editorRouter.post('/createDV', createDV)
 editorRouter.post('/passRecord', passDocument)
 editorRouter.get('/getAccountCode', getAccountCodes)
-editorRouter.get('/getDV', retrieveDV)
+//editorRouter.get('/getDV', retrieveDV)
 editorRouter.delete('/deleteDV/:id', deleteDV)
 editorRouter.patch('/updateDV/:id', updateDV)
 editorRouter.get('/getFormData', getFormData)

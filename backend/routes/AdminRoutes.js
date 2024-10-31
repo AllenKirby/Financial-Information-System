@@ -5,7 +5,7 @@ const adminRouter = express.Router()
 const setRole = require('../middleware/Role')
 
 const {getAllLogs, 
-       readAdmin_records, 
+       //readAdmin_records, 
        addFundCluster, 
        getFundCluster, 
        deleteFundCluster, 
@@ -25,7 +25,7 @@ const {getAllLogs,
 adminRouter.use(setRole([1]))
 
 adminRouter.get('/getAllDV', getAllLogs)
-adminRouter.get('/approvedDV', readAdmin_records)
+//adminRouter.get('/approvedDV', readAdmin_records)
 adminRouter.patch('/approveDocu/:id', approveDV)
 //FUND CLUSTER
 adminRouter.post('/addNewFundCluster', addFundCluster)

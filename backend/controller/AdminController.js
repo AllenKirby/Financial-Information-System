@@ -46,32 +46,32 @@ const getAllLogs = async(req, res) => {
 // }
 // }
 
-const readAdmin_records = async(req, res) => {
-  try {
-      const documents = {};
+// const readAdmin_records = async(req, res) => {
+//   try {
+//       const documents = {};
      
-      const recordsSnapshot = await db.collection('records')
-          .where('status', '==', 'For Approval')
-          .get();
+//       const recordsSnapshot = await db.collection('records')
+//           .where('status', '==', 'For Approval')
+//           .get();
       
-      recordsSnapshot.forEach((recordDoc) => {
-          if(recordDoc.exists){
-              const recordData = recordDoc.data();
-              documents[recordDoc.id] = {
-                  data: recordData,
-              }
+//       recordsSnapshot.forEach((recordDoc) => {
+//           if(recordDoc.exists){
+//               const recordData = recordDoc.data();
+//               documents[recordDoc.id] = {
+//                   data: recordData,
+//               }
               
-          }else{
-              console.log(`No such document for keys`);
-          }
-      })
-      res.status(200).json(documents);
-  } catch (error) {
-      console.log(`Error retrieving passed records: ${error}`);
-      res.status(404).json({ message: "Not Found" });
-  }
+//           }else{
+//               console.log(`No such document for keys`);
+//           }
+//       })
+//       res.status(200).json(documents);
+//   } catch (error) {
+//       console.log(`Error retrieving passed records: ${error}`);
+//       res.status(404).json({ message: "Not Found" });
+//   }
   
-}
+// }
 
 
 // FUND CLUSTER
@@ -367,7 +367,7 @@ const getNumberOfRecords = async (req, res) => {
 
 module.exports = {
   getAllLogs,
-  readAdmin_records,
+  //readAdmin_records,
   addFundCluster,
   getFundCluster,
   deleteFundCluster,

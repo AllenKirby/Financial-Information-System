@@ -6,7 +6,7 @@ import DocumentDetails from '../DocumentDetails'
 import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
 
 import { IoSearchSharp } from "react-icons/io5";
-import { FiFilter } from "react-icons/fi";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 
 const DisbursementRecords = () => {
@@ -15,8 +15,6 @@ const DisbursementRecords = () => {
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
-  const [forApproval, setForApproval] = useState(0)
-  const [approved, setApproved] = useState(0)
 
   const filterModal = (value) => {
     setFilter(value)
@@ -34,25 +32,6 @@ const DisbursementRecords = () => {
       setFilteredDocuments({});
     }
   }, [filter, AdminDocuments]);
-  
-  useEffect(() => {
-    const countForApproval = () => {
-      return Object.entries(AdminDocuments).filter(([, document]) => 
-        document.data.status === 'For Approval'
-      )
-    }
-    const countApproved= () => {
-      return Object.entries(AdminDocuments).filter(([, document]) => 
-        document.data.status === 'Approved'
-      )
-    }
-    if (AdminDocuments && Object.keys(AdminDocuments).length > 0) {
-      const resultForApproval = countForApproval()
-      const resultApproved = countApproved()
-      setForApproval(Object.entries(resultForApproval).length)
-      setApproved(Object.entries(resultApproved).length)
-    }
-  }, [AdminDocuments])
 
   return (
     <section className='w-full h-full'>
@@ -60,7 +39,7 @@ const DisbursementRecords = () => {
         <div className='w-1/2 flex flex-col'>
           <div className='flex items-center justify-start gap-2'>
             <div className='relative'>
-              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
               {filterFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
@@ -88,23 +67,21 @@ const DisbursementRecords = () => {
             </div>
           </div>
       </div>
-      <div className='w-full h-full flex gap-2'>
-        <div className="w-5/6 h-full rounded-lg bg-white border-[1px]">
-          {!id ? ( 
-            <>
-              <div className='w-full h-full p-2'>
-                <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
-                  <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
-                  <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-                  <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                  <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
-                </div>
+      <div className="w-full h-full rounded-lg">
+        {!id ? ( 
+          <>
+            <div className='w-full h-full p-2'>
+              <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+                <h1 className='w-3/6 text-left font-bold px-2'>Payee</h1>
+                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
+                <h1 className='w-1/6 text-center font-bold'>Status</h1>
+                <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
+              </div>
+              <div className="w-full h-[400px] overflow-auto bg-white border-[1px]">
                 {Object.keys(filteredDocuments).length > 0 ? (
-                  <div className="w-full h-[340px] overflow-auto">
-                    {Object.entries(filteredDocuments).map(([key, document]) => (
-                      <DocumentDetails key={key} documents={document} type={'1'}/>
-                    ))}
-                  </div>
+                  Object.entries(filteredDocuments).map(([key, document]) => (
+                    <DocumentDetails key={key} documents={document} type={'1'}/>
+                  ))
                 ) : (
                   <div className='w-full h-full flex items-center justify-center'>
                     <div>No Documents Found</div>
@@ -120,23 +97,9 @@ const DisbursementRecords = () => {
                   // </div>
                 )}
               </div>
-            </>
-          ) : <Outlet/>}
-        </div>
-        <div className='w-1/6 h-full flex flex-col gap-2'>
-          <div className='w-full h-1/3 text-white bg-green-500 rounded-lg text-center p-3 flex items-center justify-center'>
-            <div>
-              <h1 className='text-7xl font-semibold'>{approved}</h1>
-              <p className='text-xs '>Number of Disbursement Vouchers with In Approved Status</p>
             </div>
-          </div>
-          <div className='w-full h-1/3 bg-yellow-500 text-white rounded-lg text-center p-3 flex items-center justify-center'>
-          <div>
-              <h1 className='text-7xl font-semibold'>{forApproval}</h1>
-              <p className='text-xs '>Number of Disbursement Vouchers with For Approval Status</p>
-            </div>
-          </div>
-        </div>
+          </>
+        ) : <Outlet/>}
       </div>
     </section>
   )

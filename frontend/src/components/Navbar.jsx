@@ -73,7 +73,7 @@ const Navbar = ({ items, flag }) => {
               key={item.label}
               to={item.path}
               className={({ isActive }) =>
-                `w-full h-auto flex items-center font-semibold justify-start gap-2 px-4 py-3 mt-1 text-xs rounded-xl transition-all duration-150 ${isActive ? `${fontColor} text-white` : 'text-customFontColor'} text-customFontColor`
+                `w-full h-auto flex items-center justify-start gap-2 px-4 py-3 mt-1 text-xs rounded-xl transition-all duration-150 ${isActive ? `${fontColor} text-white` : 'text-customFontColor'} text-customFontColor`
               }
             >
               {item.icon}

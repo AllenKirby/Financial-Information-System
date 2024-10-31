@@ -6,9 +6,9 @@ import { collection, doc, query, where, onSnapshot } from "firebase/firestore"
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
 
-import { CiViewList } from "react-icons/ci"
+import { TiDocumentText } from "react-icons/ti";
+import { TbLayoutDashboard } from "react-icons/tb";
 import { useState, useEffect } from "react"
-import { LuLayoutDashboard } from "react-icons/lu";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -30,8 +30,8 @@ const OperatorPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
-    { label: 'Dashboard', path: '/operator/dashboard', icon: <LuLayoutDashboard size={18} /> },
-    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <CiViewList size={18} /> },
+    { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={18} /> },
+    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <TiDocumentText size={18} /> },
   ]
 
   useEffect(() => {
@@ -95,30 +95,7 @@ const OperatorPage = () => {
   }, [permission])
 
   useEffect(() => {
-    const retriveData = async() => {
-      if(documents){
-        console.log('Disbursement Records has been retrieved')
-        console.log(documents)
-      }else{
-        try{
-          console.log('fetching...')
-          const getDocu = await axios.get(`${apiURL}/operator/read_records`, {flag: permission?.data?.permission}, {
-            withCredentials: true
-          });
-          if(getDocu.status === 200){
-            const documents = getDocu.data
-            console.log(documents)
-            dispatchContext({type: 'SET_OPDOCUMENTS', payload: documents})
-          }
-        }catch(error){
-          console.log(`fetching docu in op: ${error}`)
-        }
-      }
-    };
-    retriveData();
-
     if (!status.length) return;  
-
     const q = query(collection(firestore, 'records'), where('status', 'in', status));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {

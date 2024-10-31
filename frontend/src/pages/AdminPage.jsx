@@ -4,14 +4,12 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
-import { LuLayoutDashboard } from "react-icons/lu";
+import { TiDocumentText } from "react-icons/ti";
+import { TbLayoutDashboard, TbEdit } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { CiViewList } from "react-icons/ci";
-import { FaRegEdit } from "react-icons/fa";
 //import { TbLogs } from "react-icons/tb";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
-import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, where, onSnapshot } from "firebase/firestore"
 
@@ -26,10 +24,10 @@ const AdminPage = () => {
     const apiURL = import.meta.env.VITE_API_URL
 
     const navItems = [
-        { label: 'Dashboard', path: '/admin/dashboard', icon: <LuLayoutDashboard size={18} /> },
-        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <CiViewList size={18} /> },
+        { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={18} /> },
+        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={18} /> },
         // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
-        { label: 'Edit Form', path: '/admin/editform', icon: <FaRegEdit size={18}/>}
+        { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={18}/>}
     ];
 
     useEffect(() => {
@@ -42,49 +40,30 @@ const AdminPage = () => {
         }else if(page.pathname === "/admin/editform"){
             setLocation('Edit Form')
         }
-        
-      }, [page.pathname])
+    }, [page.pathname])
 
-      useEffect(() => {
+    useEffect(() => {
         if(!navbarExpand) {
-          setNavbarSize('w-[70px]')
-          setMainSize('w-full')
+            setNavbarSize('w-[70px]')
+            setMainSize('w-full')
         }else {
-          setNavbarSize('w-1/6')
-          setMainSize('w-5/6')
+            setNavbarSize('w-1/6')
+            setMainSize('w-5/6')
         }
-      }, [navbarExpand])
+    }, [navbarExpand])
 
-      useEffect(() => {
-        const retrieveDV = async () => {
-            if(!documents){
-                try {
-                    const res = await axios.get(`${apiURL}/admin/approvedDV`, {
-                        withCredentials: true
-                    })  
-                    if(res.status === 200){
-                        const docu = res.data
-                        dispatch({ type: 'SET_ADMINDOCUMENTS', payload: docu });
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
-            }
-        }
-        if(user){
-            retrieveDV()
-        }
+    useEffect(() => {
         const q = query(collection(firestore, 'records'), where('status', 'in', ['Approved', 'For Approval']));
         const unsubscribe = onSnapshot(q, (snapshot) => {
         const newDocuments = snapshot.docs.reduce((acc, doc) => {
             acc[doc.id] = {data: {...doc.data()}};
             return acc;
         }, {});
-        dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
+            dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
         })
 
         return () => unsubscribe()
-      }, [documents, user, apiURL, dispatch])
+    }, [documents, user, apiURL, dispatch])
 
     return(
         <main className="h-screen w-full flex bg-slate-100">

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useHeadDisbursementContext } from "../../hooks/useHeadDisbursementContext"
 import DocumentDetails from '../DocumentDetails'
 import { IoSearchSharp } from "react-icons/io5";
-import { FiFilter } from "react-icons/fi";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 
 const DisbursementRecordsHead = () => {
@@ -37,7 +37,7 @@ const DisbursementRecordsHead = () => {
         <div className='w-1/2 flex flex-col'>
           <div className='flex items-center justify-start gap-2'>
             <div className='relative'>
-              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
               {filterFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
@@ -65,36 +65,36 @@ const DisbursementRecordsHead = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-full border-[1px] rounded-t-lg bg-white ">
+      <div className="w-full h-full rounded-t-lg ">
         {!id ? ( 
           <>
             <div className='w-full h-full p-2'>
               <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-BOGreen text-white'>
-                <h1 className='w-4/6 text-left font-bold'>Payee</h1>
+                <h1 className='w-3/6 text-left font-bold'>Payee</h1>
                 <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
                 <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
               </section>
-              {filteredDocuments ? (
-                <section className="w-full h-[340px] overflow-auto">
-                  {Object.entries(filteredDocuments).map(([key, document]) => (
+              <section className="w-full h-[400px] overflow-auto bg-white border-[1px]">
+                {filteredDocuments ? (
+                  Object.entries(filteredDocuments).map(([key, document]) => (
                     <DocumentDetails key={key} documents={document} type={'2'}/>
-                  ))}
-                </section>
-              ) : (
-                <div className='w-full h-full flex items-center justify-center'>
-                  <div>No Documents Found</div>
-                </div>
-                // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                // </div>
-              )}
+                  ))
+                  ) : (
+                    <div className='w-full h-full flex items-center justify-center'>
+                      <div>No Documents Found</div>
+                    </div>
+                  // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  // </div>
+                )}
+              </section>
             </div>
           </>
         ) : <Outlet/>}
