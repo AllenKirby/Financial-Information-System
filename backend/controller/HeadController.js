@@ -1,44 +1,44 @@
 const {admin, db, rtdb}  = require('../firebase')
 
-const readHead_records = async(req, res) => {
-    const {flag} = req.body
-    let status = []
+// const readHead_records = async(req, res) => {
+//     const {flag} = req.body
+//     let status = []
 
-    console.log('flag', flag)
+//     console.log('flag', flag)
 
-    if(flag){
-        status = ['Approved', 'Under Review']
-    }
-    else {
-        status = ['Under Review']
-    }
+//     if(flag){
+//         status = ['Approved', 'Under Review']
+//     }
+//     else {
+//         status = ['Under Review']
+//     }
 
-    try {
-        const documents = {};
+//     try {
+//         const documents = {};
        
-        const recordsSnapshot = await db.collection('records')
-            .where('status', 'in', status)
-            .get();
+//         const recordsSnapshot = await db.collection('records')
+//             .where('status', 'in', status)
+//             .get();
         
-        recordsSnapshot.forEach((recordDoc) => {
-            if(recordDoc.exists){
-                const recordData = recordDoc.data();
-                documents[recordDoc.id] = {
-                    data: recordData,
-                }
+//         recordsSnapshot.forEach((recordDoc) => {
+//             if(recordDoc.exists){
+//                 const recordData = recordDoc.data();
+//                 documents[recordDoc.id] = {
+//                     data: recordData,
+//                 }
                 
-            }else{
-                console.log(`No such document for keys`);
-            }
+//             }else{
+//                 console.log(`No such document for keys`);
+//             }
         
-        })
-        res.status(200).json(documents);
-    } catch (error) {
-        console.log(`Error retrieving passed records: ${error}`);
-        res.status(404).json({ message: "Not Found" });
-    }
+//         })
+//         res.status(200).json(documents);
+//     } catch (error) {
+//         console.log(`Error retrieving passed records: ${error}`);
+//         res.status(404).json({ message: "Not Found" });
+//     }
     
-}
+// }
 
 const returnRecordTo = async(req, res) => {
     const {DV, payee, returnTo} = req.body;
@@ -220,7 +220,7 @@ const getPermission = async(req, res) => {
 }
 
 module.exports = { 
-    readHead_records, 
+    //readHead_records, 
     returnRecordTo, 
     transferDocument,
     getPermission

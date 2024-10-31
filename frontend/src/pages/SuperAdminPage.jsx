@@ -4,7 +4,7 @@ import Header from "../components/Header"
 import { Outlet, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react";
 
-import { PiUsersThree } from "react-icons/pi";
+import { PiUsersThreeBold } from "react-icons/pi";
 import { TbUserShield } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
@@ -16,7 +16,7 @@ const SuperAdminPage = () => {
     const [mainSize, setMainSize] = useState('')
 
     const navItems = [
-      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThree size={18} />},
+      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={18} />},
       {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={18} />}
     ]
 

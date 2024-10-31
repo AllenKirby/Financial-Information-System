@@ -102,17 +102,27 @@ const DocumentDetails = ({ documents, type }) => {
     }
   }
 
+  const getTimeDateforReturned = () => {
+    if (docu?.returnedBy) {
+      const [, date, time] = docu.returnedBy.split('|'); 
+      return `${date} ${time}`;
+    }
+    return
+  }
+
   return (
     <div
       onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
       className="w-full h-12 rounded-md my-1 bg-white border-[1px] text-customFontGreen cursor-pointer flex items-center justify-center"
     >
       {/* Payee column */}
-      <h2 className="font-semibold text-left w-4/6 px-3 flex items-center justify-start gap-2">
-      <IoDocumentOutline size={25}/> {docu?.payee}
+      <h2 className={`font-semibold text-left ${type === '4' || type === '3' ? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2`}>
+        <IoDocumentOutline size={25}/> {docu?.payee}
       </h2>
       {/* DV No. column */}
-      <h2 className="text-xs font-light text-center w-1/6">{docu?.DV}</h2>
+      <h2 className="text-xs font-light text-center w-1/6">
+        {docu?.DV}
+      </h2>
       {/* Status column */}
       <h2 className="text-xs font-light flex items-center justify-center w-1/6">
         <div className={`${getStatusColor(Status)} w-auto h-auto rounded-md text-center px-2 py-1`}>
@@ -122,6 +132,9 @@ const DocumentDetails = ({ documents, type }) => {
       <h2 className="text-xs font-light text-center w-1/6">
         {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}
       </h2>
+      {(type === '4' || type === '3') && <h2 className="text-xs font-light text-center w-1/6">
+        {docu?.returnedBy ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'}
+      </h2>}
     </div>
   );
 };

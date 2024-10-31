@@ -2,44 +2,43 @@ const {admin, db, rtdb}  = require('../firebase')
 const { google } = require('googleapis');
 const sheets = google.sheets('v4');
 
-const readPassed_records = async (req, res) => {
-    const {flag} = req.body
-    let status = []
+// const readPassed_records = async (req, res) => {
+//     const {flag} = req.body
+//     let status = []
 
-    if(flag){
-        status = ['Drafting', 'In Review', 'Returned|4', 'Returned|3']
-    }
-    else {
-        status = ['In Review', 'Returned|3']
-    }
+//     if(flag){
+//         status = ['Drafting', 'In Review', 'Returned|4', 'Returned|3']
+//     }
+//     else {
+//         status = ['In Review', 'Returned|3']
+//     }
     
-    try {
-        const documents = {};
+//     try {
+//         const documents = {};
        
-        const recordsSnapshot = await db.collection('records')
-            .where('status', 'in', status)
-            .get();
+//         const recordsSnapshot = await db.collection('records')
+//             .where('status', 'in', status)
+//             .get();
         
-        recordsSnapshot.forEach((recordDoc) => {
-            if(recordDoc.exists){
-                const recordData = recordDoc.data();
-                documents[recordDoc.id] = {
-                    data: recordData,
-                }
+//         recordsSnapshot.forEach((recordDoc) => {
+//             if(recordDoc.exists){
+//                 const recordData = recordDoc.data();
+//                 documents[recordDoc.id] = {
+//                     data: recordData,
+//                 }
                 
-            }else{
-                console.log(`No such document for keys`);
-            }
+//             }else{
+//                 console.log(`No such document for keys`);
+//             }
         
-        })
-        console.log(documents)
-        return res.status(200).json({success: true, documents});
-    } catch (error) {
-        console.log(`Error retrieving passed records: ${error}`);
-        return res.status(404).json({ message: "Not Found" });
-    }
-    
-}
+//         })
+//         console.log(documents)
+//         return res.status(200).json({success: true, documents});
+//     } catch (error) {
+//         console.log(`Error retrieving passed records: ${error}`);
+//         return res.status(404).json({ message: "Not Found" });
+//     }
+// }
 
 const operatorInput = async(req, res) => {
     const { ors, asa } = req.body
@@ -311,7 +310,7 @@ const appendDataToSheet = async (req, res) => {
   };
 
 module.exports = {
-    readPassed_records, 
+    //readPassed_records, 
     operatorInput, 
     opReturnDocu, 
     transferDocument,

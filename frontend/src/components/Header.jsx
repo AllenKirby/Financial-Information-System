@@ -143,8 +143,8 @@ const Header = ({ currentPage}) => {
             <FaUserCircle size={40} className='text-customFontColor' />
           </div>
           <div>
-            <p className={`rounded-full gap-2 text-lg ${fontColor}`}>{user?.name ? user.name.replace(',', ' ') : 'User'}</p>
-            <p className={`rounded-full text-xs gap-2 ${fontColor}`}>{user?.uemail ? user.uemail : 'email@gmail.com'}</p>
+            <p className={`rounded-full gap-2 text-lg ${fontColor}`}>{user?.name ? user?.name.split(',').slice()[0] : 'User'}</p>
+            <p className={`rounded-full text-xs gap-2 ${fontColor}`}>{user?.uemail ? user?.uemail : 'email@gmail.com'}</p>
           </div>
         </div>
       </div>

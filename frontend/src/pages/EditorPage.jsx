@@ -1,7 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
 import { useEffect, useState } from "react";
-import { useAuthContext } from "../hooks/useAuthContext";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
@@ -13,8 +12,8 @@ import Navbar from "../components/Navbar"
 import Header from "../components/Header";
 
 //Icons
-import { CiViewList } from "react-icons/ci";
-import { LuLayoutDashboard } from "react-icons/lu";
+import { TiDocumentText } from "react-icons/ti";
+import { TbLayoutDashboard } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 
 
@@ -24,15 +23,13 @@ const EditorPage = () => {
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [navbarSize, setNavbarSize] = useState('')
   const [mainSize, setMainSize] = useState('')
-  const { user } = useAuthContext()
-  const { dispatch: dispatchContext, documents } = useDisbursementContext()
-  //const prevDocumentsRef = useRef();
+  const { dispatch: dispatchContext } = useDisbursementContext()
   const dispatch = useDispatch()
   const apiURL = import.meta.env.VITE_API_URL
   
   const navItems = [
-    { label: 'Dashboard', path: '/editor/dashboard', icon: <LuLayoutDashboard size={18} /> },
-    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <CiViewList size={18} /> } 
+    { label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={18} /> },
+    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <TiDocumentText size={18} /> } 
   ];
 
   useEffect(() => {
@@ -54,27 +51,6 @@ const EditorPage = () => {
   }, [navbarExpand])
 
   useEffect(() => {
-    const retrieveDV = async() => {
-        if(!documents){
-          try{
-            const getDocu = await axios.get(`${apiURL}/editor/getDV`, {
-              withCredentials: true
-            })
-            
-            if(getDocu.status === 200){
-              const documents = getDocu.data
-              dispatchContext({type: 'SET_DOCUMENTS', payload: documents})
-            }
-          }catch(error){
-            console.log(error)
-        }
-      }
-    }
-
-    if(user){
-      retrieveDV()
-    }
-
     const q = query(collection(firestore, 'records'), where('status', 'in', ['Drafting', 'Returned|4']));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
@@ -119,7 +95,7 @@ const EditorPage = () => {
   });
 
     return () => unsubscribe()   
-  }, [dispatch])
+  }, [dispatch, apiURL])
 
   return (
     <main className="h-screen w-full flex bg-slate-100">

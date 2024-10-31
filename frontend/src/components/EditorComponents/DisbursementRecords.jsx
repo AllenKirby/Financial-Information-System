@@ -4,7 +4,7 @@ import DocumentDetails from '../DocumentDetails'
 import { useEffect, useState } from 'react';
 import DisbursementVoucher from '../DisbursementVoucher';
 import { IoSearchSharp, IoAdd  } from "react-icons/io5";
-import { FiFilter } from "react-icons/fi";
+import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 
 const DisbursementRecords = () => {
@@ -46,7 +46,7 @@ const DisbursementRecords = () => {
               <IoAdd size={20} className='font-bold'/>New
             </button>
             <div className='relative'>
-              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-20 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><FiFilter size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-20 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
               {filterFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
@@ -74,36 +74,37 @@ const DisbursementRecords = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-full rounded-lg border-[1px] bg-white">
+      <div className="w-full h-full rounded-lg">
         {!id ? ( 
           <>
             <div className='w-full h-full p-2'>
               <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
-                <h1 className='w-4/6 text-left font-bold px-2'>Payee</h1>
-                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-                <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                <h1 className='w-1/6 text-center font-bold'>Time Created</h1>
+                <h1 className='w-2/6 text-left font-semibold px-2'>Payee</h1>
+                <h1 className='w-1/6 text-center font-semibold'>DV No.</h1>
+                <h1 className='w-1/6 text-center font-semibold'>Status</h1>
+                <h1 className='w-1/6 text-center font-semibold'>Created Time</h1>
+                <h1 className='w-1/6 text-center font-semibold'>Returned Time</h1>
               </section>
-              {Object.keys(filteredDocuments).length > 0 ? (
-                <section className="w-full h-[340px] overflow-auto">
-                  {Object.entries(filteredDocuments).map(([key, document]) => (
+              <section className="w-full h-[400px] border-[1px] overflow-auto bg-white px-1">
+                {Object.keys(filteredDocuments).length > 0 ? (
+                  Object.entries(filteredDocuments).map(([key, document]) => (
                     <DocumentDetails key={key} documents={document} type={'4'}/>
-                  ))}
-                </section>
-              ) : (
-                <div className='w-full h-full flex items-center justify-center'>
-                  <div>No Documents Found</div>
-                </div>
-                // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                // </div>
-              )}
+                  ))
+                ) : (
+                  <div className='w-full h-full flex items-center justify-center'>
+                    <div>No Documents Found</div>
+                  </div>
+                  // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
+                  // </div>
+                )}
+              </section>
             </div>
           </>
         ) : <Outlet/>}
