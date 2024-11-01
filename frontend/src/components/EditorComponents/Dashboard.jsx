@@ -31,36 +31,52 @@ const Dashboard = () => {
 
   const [lineOptions, ] = useState({
     series: [{
-      name: "Desktops",
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 148]
+      name: 'Sales',
+      data: [4, 3, 10, 9, 29, 19, 22, 9, 12, 7, 19, 5, 13, 9, 17, 2, 7, 5]
     }],
     options: {
       chart: {
+        height: 350,
         type: 'line',
-        zoom: {
-          enabled: false
-        }
       },
-      dataLabels: {
-        enabled: false
+      forecastDataPoints: {
+        count: 7
       },
       stroke: {
-        curve: 'straight'
-      },
-      title: {
-        text: 'Product Trends by Month',
-        align: 'left'
-      },
-      grid: {
-        row: {
-          colors: ['#f3f3f3', 'transparent'],
-          opacity: 0.5
-        },
+        width: 5,
+        curve: 'smooth'
       },
       xaxis: {
-        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'],
+        type: 'datetime',
+        categories: ['1/11/2000', '2/11/2000', '3/11/2000', '4/11/2000', '5/11/2000', '6/11/2000', '7/11/2000', '8/11/2000', '9/11/2000', '10/11/2000', '11/11/2000', '12/11/2000', '1/11/2001', '2/11/2001', '3/11/2001','4/11/2001' ,'5/11/2001' ,'6/11/2001'],
+        tickAmount: 10,
+        labels: {
+          formatter: function(value, timestamp, opts) {
+            return opts.dateFormatter(new Date(timestamp), 'dd MMM')
+          }
+        }
+      },
+      title: {
+        text: 'Forecast',
+        align: 'left',
+        style: {
+          fontSize: "16px",
+          color: '#666'
+        }
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shade: 'dark',
+          gradientToColors: [ '#FDD835'],
+          shadeIntensity: 1,
+          type: 'horizontal',
+          opacityFrom: 1,
+          opacityTo: 1,
+          stops: [0, 100, 100, 100]
+        },
       }
-    }
+    },
   });
 
   const [pieOptions] = useState({
@@ -111,7 +127,7 @@ const Dashboard = () => {
   return (
     <section className="w-full h-full flex p-2 gap-2">
       <div className="w-4/5 h-full flex flex-col gap-2">
-        <div className="w-full h-1/2 bg-white p-2 rounded-lg shadow-gray-300 shadow-lg">
+        <div className="w-full h-1/2 bg-white p-2 rounded-lg border-2">
           <ReactApexChart 
             options={lineOptions.options} 
             series={lineOptions.series} 
@@ -120,7 +136,7 @@ const Dashboard = () => {
             width={'100%'}  />
         </div>
         <div className="w-full h-1/2 flex gap-2">
-          <div className="w-2/3 h-full bg-white rounded-lg p-2 shadow-gray-300 shadow-lg">
+          <div className="w-2/3 h-full bg-white rounded-lg p-2 border-2">
             <ReactApexChart 
               options={barOptions.options} 
               series={barOptions.series} 
@@ -128,7 +144,7 @@ const Dashboard = () => {
               height={'100%'}
               width={'100%'}  />
           </div>
-          <div className="w-1/3 h-full bg-white rounded-lg flex items-center justify-center shadow-gray-300 shadow-lg">
+          <div className="w-1/3 h-full bg-white rounded-lg flex items-center justify-center border-2">
             <div className='w-auto h-auto flex flex-col'>
               <h1 className='text-center font-bold'>Percentage Distribution of Disbursment Voucher by Fund Cluster</h1>
               <ReactApexChart 
@@ -140,19 +156,19 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="w-1/5 h-full flex flex-col gap-2">
-        <div className="w-full h-1/3 bg-gray-200 flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
+        <div className="w-full h-1/3 bg-gray-200 flex items-center justify-center rounded-lg">
           <div className="text-center p-2">
             <h1 className='text-7xl font-semibold'>{drafting}</h1>
             <p className='text-xs '>Number of Disbursement Vouchers with Drafting Status</p>
           </div>
         </div>
-        <div className="w-full h-1/3 bg-red-500 text-white flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
+        <div className="w-full h-1/3 bg-red-500 text-white flex items-center justify-center rounded-lg">
           <div className="text-center p-2">
             <h1 className='text-7xl font-semibold'>{returned}</h1>
             <p className='text-xs '>Number of Disbursement Vouchers with Returned Status</p>
           </div>
         </div>
-        <div className="w-full h-1/3 bg-customFontColor text-white flex items-center justify-center rounded-lg shadow-gray-300 shadow-lg">
+        <div className="w-full h-1/3 bg-customFontColor text-white flex items-center justify-center rounded-lg">
           <div className="text-center p-2">
             <h1 className='text-7xl font-semibold'>{total}</h1>
             <p className='text-xs'>Total Number of Disbursement Vouchers</p>

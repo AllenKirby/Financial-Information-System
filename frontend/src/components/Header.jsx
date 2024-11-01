@@ -103,11 +103,11 @@ const Header = ({ currentPage}) => {
             <div className='flex gap-3'>
               <GoInbox 
                 size={35} 
-                className="p-2 rounded-xl bg-white shadow-gray-200 shadow-lg cursor-pointer hover:scale-125 duration-100 transition-all"
+                className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
               />
               <IoMdNotificationsOutline 
                 size={35} 
-                className="p-2 rounded-xl bg-white shadow-gray-200 shadow-lg cursor-pointer hover:scale-125 duration-100 transition-all"
+                className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
                 onClick={() => setShowNotifications(!showNotifications)}/>
             </div>
             <div className={`absolute -top-3 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
@@ -138,13 +138,13 @@ const Header = ({ currentPage}) => {
           </div>
         </div>
 
-        <div className="w-auto flex py-1 pl-1 pr-5 gap-1 rounded-full shadow-gray-200 shadow-lg bg-white border-customFontColor font-medium relative">
+        <div className="w-auto flex py-1 pl-1 pr-5 gap-1 rounded-full border-2 bg-white font-medium relative">
           <div className='flex items-center justify-center'>
             <FaUserCircle size={40} className='text-customFontColor' />
           </div>
           <div>
-            <p className={`rounded-full gap-2 text-lg ${fontColor}`}>{user?.name ? user?.name.split(',').slice()[0] : 'User'}</p>
-            <p className={`rounded-full text-xs gap-2 ${fontColor}`}>{user?.uemail ? user?.uemail : 'email@gmail.com'}</p>
+            <p className={`rounded-full gap-2 ${fontColor}`}>{user?.name ? user?.name.split(',').slice()[0] : 'User'}</p>
+            <p className={`rounded-full text-xs gap-2 font-normal ${fontColor}`}>{user?.uemail ? user?.uemail : 'email@gmail.com'}</p>
           </div>
         </div>
       </div>

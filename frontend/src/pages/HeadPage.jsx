@@ -102,7 +102,7 @@ const HeadPage = () => {
   }, [user, dispatchContext, apiURL, status, documents, permission?.data?.permission])
 
   return (
-    <main className="h-screen w-full flex bg-slate-100">
+    <main className="h-screen w-full flex bg-white">
       <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
         <MdOutlineKeyboardArrowLeft 
           size={25}

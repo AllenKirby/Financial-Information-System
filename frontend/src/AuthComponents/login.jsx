@@ -26,27 +26,34 @@ const Login = () => {
     }
 
   return (
-    <section className="w-full h-screen flex items-center justify-start bg-slate-100">
-        <div className="w-1/3 h-full flex items-center justify-center">
-            <form action="#" onSubmit={handleLogin} className="w-80 p-5 h-auto rounded-md shadow-lg shadow-gray-400 bg-white">
+    <section className="w-full h-screen flex flex-col sm:flex-col md:flex-col lg:flex-row xl:flex-row items-center justify-start bg-slate-100">
+        <div className="w-full sm:w-full md:w-full lg:1/2 xl:1/2 h-1/3 sm:1/3 md:h-1/3 lg:h-full xl:h-full rounded-b-3xl sm:rounded-rounded-b-3xl md:rounded-b-3xl lg:rounded-r-3xl xl:rounded-r-3xl relative py-5 flex flex-col items-center justify-center gap-2 px-5 bg-gradient-to-tr from-customgreen to-white overflow-hidden">
+            <div className="absolute inset-0 w-full h-full overflow-hidden">
+                <div className="absolute -top-16 -left-10 w-screen h-2/3 transform rotate-12 bg-gradient-to-tr from-customgreen to-white opacity-50"></div>
+            </div>
+            <img className="w-28 sm:w-36 md:w-48 lg:70 xl:w-82 z-10" src={NIAlogo} alt="" />
+            <h1 className="text-white text-center font-bold z-10 text-xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl">Financial Information System</h1>
+        </div>
+        <div className="w-5/6 sm:w-5/6 md:w-5/6 lg:w-1/2 xl:w-1/2 h-2/3 sm:h-2/3 md:h-2/3 lg:h-full xl:h-full flex items-center justify-center">
+            <form action="#" onSubmit={handleLogin} className="w-full sm:w-full md:w-2/3 lg:w-80 xl:w-80 2xl:w-96 h-[26rem] sm:h-[26rem] md:h-auto lg:h-auto xl:h-auto p-5 rounded-md shadow-lg shadow-gray-400 bg-white">
                 <div className="text-center mb-3">
-                    <h1 className="text-3xl text-customgreen font-medium">Login</h1>
-                    <h2 className="text-sm my-2 text-gray-400">Please login your details to continue</h2>
+                    <h1 className="text-2xl sm:text-2xl md:text-4xl lg:text-3xl xl:text-3xl text-customgreen font-medium">Login</h1>
+                    <h2 className="text-xs sm:text-xs md:text-base lg:text-sm xl:text-sm my-2 text-gray-400">Please login your details to continue</h2>
                 </div>
                 <div className="w-full py-2 px-2 gap-2">
-                    <label className="font-semibold ">Email</label>
+                    <label className="font-semibold text-base sm:text-base md:text-lg lg:text-base xl:text-base">Email</label>
                     <input 
-                        className="w-full px-4 py-2 rounded-full ring-customgreen border-2 border-customgreen focus:outline-none" 
+                        className="text-base sm:text-base md:text:lg lg:text-base xl:text-base w-full px-4 py-2 rounded-full ring-customgreen border-2 border-customgreen focus:outline-none" 
                         type="text" 
                         placeholder="email@gmail.com" 
                         required 
                         onChange={(e) => setEmail(e.target.value)}/>
                 </div>
                 <div className="w-full py-2 px-2 gap-2">
-                    <label className="font-semibold ">Password</label> 
+                    <label className="font-semibold text-base sm:text-base md:text-lg lg:text-base xl:text-base">Password</label> 
                     <div className="relative">
                         <input 
-                            className="w-full pl-4 pr-11 py-2 rounded-full ring-customgreen border-2 border-customgreen focus:outline-none" 
+                            className="text-base sm:text-base md:text:lg lg:text-base xl:text-base w-full pl-4 pr-11 py-2 rounded-full ring-customgreen border-2 border-customgreen focus:outline-none" 
                             type={!isChecked ? 'password' : 'text'} 
                             placeholder="••••••••" 
                             required 
@@ -66,7 +73,7 @@ const Login = () => {
                     <button 
                     type="submit" 
                     disabled={isLoading} 
-                    className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
+                    className="text-base sm:text-base md:text:lg lg:text-base xl:text-base py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
                     >{isLoading ? <Loader/> : 'Login'}</button>
                 </div>
                 {error && (<div className="w-full text-center">
@@ -83,13 +90,7 @@ const Login = () => {
                 </div>
             </form>
         </div>
-        <div className="relative w-2/3 h-full py-5 flex flex-col items-center justify-center gap-2 rounded-l-3xl px-5 bg-gradient-to-tr from-customgreen to-white overflow-hidden">
-            <div className="absolute inset-0 w-full h-full overflow-hidden">
-                <div className="absolute -top-16 -left-10 w-screen h-2/3 transform rotate-12 bg-gradient-to-tr from-customgreen to-white opacity-50"></div>
-            </div>
-            <img className="w-72 z-10" src={NIAlogo} alt="" />
-            <h1 className="text-white text-center text-4xl font-bold z-10">Financial Information System</h1>
-        </div>
+        
     </section>
   )
 }

@@ -4,7 +4,7 @@ import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
 import { firestore } from "../config/firebase-config"
-import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
+import { collection, onSnapshot } from "firebase/firestore"
 
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
@@ -141,7 +141,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     handleFieldChange(index, 'accTitle', value);  
 
     if (value) {
-      const filteredAccounts = Object.entries(accountOptions.account_codes).filter(([key, value]) => {
+      const filteredAccounts = Object.entries(accountOptions.account_codes).filter(([, value]) => {
         return typeof value === 'string' && value.toLowerCase().includes(inputAccTitle)
       });
       const objAcc = Object.fromEntries(filteredAccounts)
@@ -283,7 +283,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       // const costOnly = Object.values(form.TaxType).map(arr => arr[1]);
       // const uniqueCost = [...new Set(costOnly)]
       const result = {}
-      Object.entries(form.TaxType).forEach(([key, value]) => {
+      Object.entries(form.TaxType).forEach(([, value]) => {
         const taxCategpry = value[0];
         const type = value[1];
         if(!result[taxCategpry]){
@@ -450,7 +450,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         }
       }} action="" className="bg-white w-3/5 h-5/6 p-7 rounded-xl">
       <div className='w-full h-auto py-2 text-center '>
-        <h1 className='text-xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
+        <h1 className='text-2xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
       </div>
       <div className='w-full h-4/5 p-3 overflow-y-auto'>
         <h1 className="font-semibold text-lg mb-2">Personal/Payee Information</h1>
@@ -816,15 +816,15 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           />
         </div>
       </div>
-      <div className="w-full flex items-center justify-center py-3 gap-4">
+      <div className="w-full flex items-center justify-end py-3 gap-4">
         <button 
           type="submit" 
           disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
-          className="py-2 px-10 rounded-md bg-customgreen text-white hover:scale-125 transition-all duration-100"
+          className={`py-2 px-10 rounded-md ${user.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white hover:scale-125 transition-all duration-100`}
           >{isLoading ? <Loader /> : 'Save'}</button>
         <button 
           onClick={modal}
-          className="py-2 px-10 rounded-md border-2 border-customFontColor text-customFontColor hover:scale-125 transition-all duration-100"
+          className="py-2 px-10 rounded-md border-2 text-customFontColor hover:scale-125 transition-all duration-100"
           >Back</button>
       </div>
       {(error ||  errorForFunding) && (

@@ -66,7 +66,7 @@ const AdminPage = () => {
     }, [documents, user, apiURL, dispatch])
 
     return(
-        <main className="h-screen w-full flex bg-slate-100">
+        <main className="h-screen w-full flex">
            <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
                 <MdOutlineKeyboardArrowLeft 
                     size={25}
