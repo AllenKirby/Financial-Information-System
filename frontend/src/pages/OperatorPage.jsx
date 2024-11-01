@@ -113,7 +113,7 @@ const OperatorPage = () => {
 
 
   return (
-    <main className="w-full h-screen flex bg-slate-100">
+    <main className="w-full h-screen flex bg-white">
       <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
         <MdOutlineKeyboardArrowLeft 
           size={25}

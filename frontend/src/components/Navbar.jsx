@@ -58,7 +58,7 @@ const Navbar = ({ items, flag }) => {
   }, [fontColor])
 
   return (
-    <nav className="h-screen w-full flex flex-col justify-between bg-white border-r-[1px] shadow-gray-300 shadow-lg">
+    <nav className="h-screen w-full flex flex-col justify-between bg-white border-r-2 shadow-gray-300 shadow-lg">
       <div>
         <div className="h-auto relative w-full px-3 py-4 flex gap-2 items-center justify-start">
           <img src={bgImage} alt="" className="w-10" />

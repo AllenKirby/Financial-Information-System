@@ -39,51 +39,53 @@ const DisbursementRecords = () => {
 
   return (
     <section className='w-full h-full'>
-      <div className='w-full h-auto p-1 flex'>
-        <div className="w-1/2 flex flex-col">
-          <div className='flex items-center justify-start gap-2'>
-            <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-preparerPrimary text-white font-semibold hover:scale-125 transition-all duration-100">
-              <IoAdd size={20} className='font-bold'/>New
-            </button>
-            <div className='relative'>
-              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-20 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
-              {filterFlag && (
-                <>
-                  <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
-                  <div className='absolute w-full bg-white pt-5 top-5 z-0 p-1 border-[1px]'>
-                    <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 COB</div>
-                    <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 LFP</div>
-                    <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 CARP</div>
-                    <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>Contract Farming</div>
-                  </div>
-                </>
-              )}
+      {!id ? (
+        <>
+          <div className='w-full h-auto py-2 flex'>
+            <div className="w-1/2 flex flex-col">
+              <div className='pt-3'>
+                <p className='font-semibold text-preparerPrimary px-2'>All Disbursement Voucher</p>
+              </div>
+            </div>
+            <div className='w-1/2 flex items-end justify-end gap-2'>
+              <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-full bg-preparerPrimary text-white hover:scale-125 transition-all duration-100">
+                <IoAdd size={20} className='font-bold'/>New
+              </button>
+              <div className='relative'>
+                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-full text-sm'>
+                  <HiAdjustmentsHorizontal 
+                    size={15}/>
+                    {filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}
+                </button>
+                {filterFlag && (
+                  <>
+                    <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
+                    <div className='absolute w-full bg-white pt-5 top-5 z-0 p-1 border-[1px]'>
+                      <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 COB</div>
+                      <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 LFP</div>
+                      <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>501 CARP</div>
+                      <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-xs'>Contract Farming</div>
+                    </div>
+                  </>
+                )}
+                </div>
+                <div className='relative w-auto'>
+                  <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
+                  <input 
+                    type="search"
+                    placeholder='Search'
+                    className='py-2 pr-3 text-sm pl-10 rounded-full focus:outline-none border-2' />
+                </div>
             </div>
           </div>
-          <div className='pt-3'>
-            <p className='font-semibold text-preparerPrimary px-2'>All Disbursement Voucher</p>
-          </div>
-        </div>
-        <div className='w-1/2 flex items-end justify-end py-1'>
-          <div className='relative w-auto'>
-            <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
-            <input 
-              type="search"
-              placeholder='Search'
-              className='py-2 pr-3 text-sm pl-10 rounded-3xl focus:outline-none border-2' />
-          </div>
-        </div>
-      </div>
-      <div className="w-full h-full rounded-lg">
-        {!id ? ( 
-          <>
-            <div className='w-full h-full p-2'>
+          <div className="w-full h-full rounded-lg">
+            <div className='w-full h-full'>
               <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
-                <h1 className='w-2/6 text-left font-semibold px-2'>Payee</h1>
-                <h1 className='w-1/6 text-center font-semibold'>DV No.</h1>
-                <h1 className='w-1/6 text-center font-semibold'>Status</h1>
-                <h1 className='w-1/6 text-center font-semibold'>Created Time</h1>
-                <h1 className='w-1/6 text-center font-semibold'>Returned Time</h1>
+                <h1 className='w-2/6 text-left font-medium px-2'>Payee</h1>
+                <h1 className='w-1/6 text-center font-medium'>DV No.</h1>
+                <h1 className='w-1/6 text-center font-medium'>Status</h1>
+                <h1 className='w-1/6 text-center font-medium'>Created Time</h1>
+                <h1 className='w-1/6 text-center font-medium'>Returned Time</h1>
               </section>
               <section className="w-full h-[400px] border-[1px] overflow-auto bg-white px-1">
                 {Object.keys(filteredDocuments).length > 0 ? (
@@ -106,17 +108,17 @@ const DisbursementRecords = () => {
                 )}
               </section>
             </div>
-          </>
-        ) : <Outlet/>}
-        {isModalOpen && (
-          <>
-            <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-            <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-              <DisbursementVoucher modal={modal} flag={false}/>
-            </section>
-          </>
-        )}
-      </div>
+            {isModalOpen && (
+              <>
+                <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+                <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                  <DisbursementVoucher modal={modal} flag={false}/>
+                </section>
+              </>
+            )}
+          </div>
+        </>
+      ): <Outlet/>}
     </section>
   )
 }

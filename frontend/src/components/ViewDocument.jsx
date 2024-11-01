@@ -386,7 +386,7 @@ const ViewDocument = () => {
 
   return (
     <section className="w-full h-auto flex gap-2">
-      <div className="w-5/6 h-[440px] py-3 bg-white overflow-y-auto rounded-lg">
+      <div className="w-5/6 h-[500px] py-3 bg-white overflow-y-auto rounded-lg">
         <Document document={doc} />
       </div>
       <div className="w-1/6 h-auto p-3 bg-white rounded-lg">

@@ -40,16 +40,22 @@ const DisbursementRecords = () => {
 
   return (
     <section className='w-full h-[100%]'>
-      <div className='w-full h-auto p-1 flex'>
-        <div className="w-1/2 flex flex-col">
-          <div className='flex items-center justify-start gap-2'>
+      {!id ? (
+        <>
+          <div className='w-full h-auto py-2 flex'>
+            <div className="w-1/2 flex flex-col">
+              <div className='pt-3'>
+                <p className='font-semibold text-fundingBlueGreen px-2'>All Disbursement Voucher</p>
+              </div>
+            </div>
+          <div className='w-1/2 flex items-end justify-end gap-2'>
             {(permission && permission?.data?.permission) && (
-              <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-1 pr-4 rounded-lg bg-fundingBlueGreen text-white font-semibold hover:scale-125 transition-all duration-100">
+              <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-full bg-fundingBlueGreen text-white hover:scale-125 transition-all duration-100">
                 <IoAdd size={20} className='font-bold'/>New
               </button>
             )}
             <div className='relative'>
-              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 border-customFontColor rounded-lg text-xs'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-full text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
               {filterFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
@@ -62,40 +68,32 @@ const DisbursementRecords = () => {
                 </>
               )}
             </div>
-          </div>
-          <div className='pt-3'>
-            <p className='font-semibold text-fundingBlueGreen px-2'>All Disbursement Voucher</p>
-          </div>
-        </div>
-        <div className='w-1/2 flex items-end justify-end py-1'>
-          <div className='relative w-auto'>
-            <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
-            <input 
-              type="search"
-              placeholder='Search'
-              className='py-2 pr-3 text-sm pl-10 rounded-3xl focus:outline-none border-2' />
+            <div className='relative w-auto'>
+              <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
+              <input 
+                type="search"
+                placeholder='Search'
+                className='py-2 pr-3 text-sm pl-10 rounded-full focus:outline-none border-2' />
+            </div>
           </div>
         </div>
-      </div>
-      <div className="w-full h-screen rounded-t-lg">
-        {!id ? ( 
-          <>
-            <div className='w-full h-full p-2'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-fundingBlueGreen text-white'>
-                <h1 className='w-2/6 text-left font-bold px-2'>Payee</h1>
-                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-                <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
-                <h1 className='w-1/6 text-center font-bold'>Returned Time</h1>
-              </section>
+        <div className="w-full h-screen rounded-t-lg">
+          <div className='w-full h-full'>
+            <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-fundingBlueGreen text-white'>
+              <h1 className='w-2/6 text-left font-medium px-2'>Payee</h1>
+              <h1 className='w-1/6 text-center font-medium'>DV No.</h1>
+              <h1 className='w-1/6 text-center font-medium'>Status</h1>
+              <h1 className='w-1/6 text-center font-medium text-sm'>Time Transferred</h1>
+              <h1 className='w-1/6 text-center font-medium'>Returned Time</h1>
+            </section>
             <div className="w-full h-[400px] overflow-auto bg-white border-[1px] px-1">
               {Object.keys(filteredDocuments).length > 0 ? (
                 Object.entries(filteredDocuments).map(([key, document]) => (
                   <DocumentDetails key={key} documents={document} type={'3'} />
                 ))
               ) : (
-              <div className='w-full h-full flex items-center justify-center'>
-                  <div>No Documents Found</div>
+                <div className='w-full h-full flex items-center justify-center'>
+                    <div>No Documents Found</div>
                 </div>
                 // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
                 //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
@@ -106,11 +104,9 @@ const DisbursementRecords = () => {
                 //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
                 //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
                 // </div>
-                )}
-              </div>
+              )}
             </div>
-          </>
-        ) : <Outlet/>}
+          </div>
         {isModalOpen && (
           <>
             <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
@@ -118,8 +114,10 @@ const DisbursementRecords = () => {
               <DisbursementVoucher modal={modal} flag={false}/>
             </section>
           </>
-        )}
-      </div>
+            )}
+          </div>
+        </>
+      ) : <Outlet/>}
     </section>
     
   )
