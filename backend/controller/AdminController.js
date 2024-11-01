@@ -1,5 +1,7 @@
 
 const {admin, db}  = require('../firebase')
+require('dotenv').config();
+const axios = require('axios');
 const fs = require('fs');
 const FieldValue = admin.firestore.FieldValue;
 
@@ -365,6 +367,17 @@ const getNumberOfRecords = async (req, res) => {
   }
 }
 
+const getForecastedValues = async(req, res) => {
+  try{
+    const awsAPI_URL = process.env.AWS_API_URL
+    const response = await axios.get(`${awsAPI_URL}/forecast`);
+    res.status(200).json(response.data)
+  }catch(error){
+    console.log('error getting forecasted values', error)
+    res.status(500)
+  }
+}
+
 module.exports = {
   getAllLogs,
   //readAdmin_records,
@@ -381,5 +394,6 @@ module.exports = {
   getTaxType,
   deleteTax,
   approveDV,
-  getNumberOfRecords
+  getNumberOfRecords,
+  getForecastedValues
 };
