@@ -1,11 +1,11 @@
 import { Outlet, useParams } from 'react-router-dom'
 import { useDisbursementContext } from '../../hooks/useDisbursementContext'
-import DocumentDetails from '../DocumentDetails'
 import { useEffect, useState } from 'react';
 import DisbursementVoucher from '../DisbursementVoucher';
 import { IoSearchSharp, IoAdd  } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
+import PaginatedList from '../PaginatedList';
 
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
@@ -80,40 +80,23 @@ const DisbursementRecords = () => {
           </div>
           <div className="w-full h-full rounded-lg">
             <div className='w-full h-full'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
+              <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-preparerPrimary text-white'>
                 <h1 className='w-2/6 text-left font-medium px-2'>Payee</h1>
                 <h1 className='w-1/6 text-center font-medium'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-medium'>Status</h1>
                 <h1 className='w-1/6 text-center font-medium'>Created Time</h1>
                 <h1 className='w-1/6 text-center font-medium'>Returned Time</h1>
-              </section>
-              <section className="w-full h-[400px] border-[1px] overflow-auto bg-white px-1">
-                {Object.keys(filteredDocuments).length > 0 ? (
-                  Object.entries(filteredDocuments).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={'4'}/>
-                  ))
-                ) : (
-                  <div className='w-full h-full flex items-center justify-center'>
-                    <div>No Documents Found</div>
-                  </div>
-                  // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  // </div>
-                )}
-              </section>
+              </div>
+              <div className="w-full h-[430px] border-[1px] overflow-auto bg-white px-1">
+                <PaginatedList items={filteredDocuments} type={'4'}/>
+              </div>
             </div>
             {isModalOpen && (
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-                <section className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
                   <DisbursementVoucher modal={modal} flag={false}/>
-                </section>
+                </div>
               </>
             )}
           </div>

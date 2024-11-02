@@ -1,7 +1,7 @@
 import {useParams, Outlet} from 'react-router-dom'
 import { useState, useEffect } from 'react';
 
-import DocumentDetails from '../DocumentDetails'
+import PaginatedList from '../PaginatedList'
 
 import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
 
@@ -75,25 +75,8 @@ const DisbursementRecords = () => {
                 <h1 className='w-1/6 text-center font-medium'>Status</h1>
                 <h1 className='w-1/6 text-center font-medium text-sm'>Time Transferred</h1>
               </div>
-              <div className="w-full h-[400px] overflow-auto bg-white border-[1px] px-1">
-                {Object.keys(filteredDocuments).length > 0 ? (
-                  Object.entries(filteredDocuments).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={'1'}/>
-                  ))
-                ) : (
-                  <div className='w-full h-full flex items-center justify-center'>
-                    <div>No Documents Found</div>
-                  </div>
-                  // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  // </div>
-                )}
+              <div className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
+                <PaginatedList items={filteredDocuments} type={'1'}/>
               </div>
             </div>
           </div>
