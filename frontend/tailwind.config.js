@@ -15,7 +15,6 @@ export default {
         customFontColor: '#013237',
         superAdminBlue: '#00356b',
         superAdminMustard: '#F4BC1C',
-        adminBrown: '#993300',
         adminBlue: '#000080',
         BOGreen: '#2C5F2D',
         BOLightGreen: '#97BC62FF',

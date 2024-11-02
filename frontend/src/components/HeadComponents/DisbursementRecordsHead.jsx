@@ -1,7 +1,7 @@
 import { useParams, Outlet } from "react-router-dom"
 import { useState, useEffect } from "react";
 import { useHeadDisbursementContext } from "../../hooks/useHeadDisbursementContext"
-import DocumentDetails from '../DocumentDetails'
+import PaginatedList from '../PaginatedList'
 import { IoSearchSharp } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
@@ -73,25 +73,8 @@ const DisbursementRecordsHead = () => {
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
                 <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
               </section>
-              <section className="w-full h-[400px] overflow-auto bg-white border-[1px] px-1">
-                {filteredDocuments ? (
-                  Object.entries(filteredDocuments).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document} type={'2'}/>
-                  ))
-                  ) : (
-                    <div className='w-full h-full flex items-center justify-center'>
-                      <div>No Documents Found</div>
-                    </div>
-                  // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>
-                  // </div>
-                )}
+              <section className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
+                <PaginatedList items={filteredDocuments} type={'2'}/>
               </section>
             </div>
           </div>
