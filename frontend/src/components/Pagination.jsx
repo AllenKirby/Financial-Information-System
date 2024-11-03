@@ -34,7 +34,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
             <button 
                 onClick={() => onPageChange(currentPage - 1)} 
                 disabled={currentPage === 1} 
-                className='w-auto h-auto border-2 rounded-lg cursor-pointer'
+                className='w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer'
             >
                 <GrFormPrevious size={30} />
             </button>
@@ -52,7 +52,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
             <button 
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage >= totalPages}
-                className={`w-auto h-auto border-2 rounded-lg cursor-pointer ${currentPage >= totalPages ? 'text-gray-200' : 'text-customFontColor'}`}
+                className={`w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer ${currentPage >= totalPages ? 'text-gray-300' : 'text-customFontColor'}`}
             >
                 <GrFormNext size={30} />
             </button>

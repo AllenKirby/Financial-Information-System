@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import html2pdf from 'html2pdf.js'
-import Swal from 'sweetalert2';
 //components
 import DisbursementVoucher from './DisbursementVoucher';
 import Document from "./Document";
@@ -10,14 +10,16 @@ import { useDisbursementContext } from "../hooks/useDisbursementContext";
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 import { useOpDisbursementContext } from "../hooks/useOpDisbursementContext";
+
 //hooks
 import { usePreparerHook } from "../hooks/usePreparerHook";
-import { useFundingHook } from "../hooks/useFundingHook";
-import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useApproverHook } from "../hooks/useApproverHook";
+
 //redux
 import { useSelector } from "react-redux";
 import { useAuthContext } from "../hooks/useAuthContext";
+import AddComment from "./AddComment";
+import Comments from "./Comments";
 
 const ViewDocument = () => {
   //states
@@ -25,9 +27,12 @@ const ViewDocument = () => {
   const [doc, setDoc] = useState(null);
   const [idStatus, setIdStatus] = useState({id: '', status: '', type: ''})
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [modalComment, setModalComment] = useState(false)
   const [userRecord, setUserRecord] = useState('')
   const [primaryColor, setPrimaryColor] = useState('')
   const [secondaryColor, setSecondaryColor] = useState('')
+  const [type, setType] = useState('')
+  const [isCommentOpen, setIsCommentOpen] = useState(false)
   
   //contexts
   const { documents } = useDisbursementContext();
@@ -37,14 +42,22 @@ const ViewDocument = () => {
   const { user } = useAuthContext()
 
   //hooks
-  const {deleteDV, submitDoc, isLoading, error} = usePreparerHook()
-  const {returnDoc, transferToHead, isLoading: isLoadingForFunding, error: errorForFunding} = useFundingHook()
-  const {submitToAdmin, returnDocFromHeader, isLoading: isLoadingForBO, errorForBO} = useBudgetOfficerHook()
-  const {approveDV, isLoading: isLoadingForApprover, error: errorForApprover} = useApproverHook()
+  const { deleteDV, isLoading: isLoadingPreparer} = usePreparerHook();
+  const { approveDV, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook();
+
   //redux
   const permission = useSelector((state) => state.permission) 
+
   const modal = () => {
     setIsModalOpen(!isModalOpen)
+  } 
+
+  const openModal = (type) => {
+    setType(type)
+    setModalComment(true)
+  }
+  const closeCommentModal = () => {
+    setModalComment(false)
   } 
 
   useEffect(() => {
@@ -66,36 +79,10 @@ const ViewDocument = () => {
       setSecondaryColor('bg-customFontColor')
     }
   },[user])
-  
-  const delDV = async (e) => {
-    e.stopPropagation();
 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#009933",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await deleteDV(idStatus.id);
-        if (res) {
-          Swal.fire({
-            title: "Deleted!",
-            text: "Your document has been deleted.",
-            icon: "success",
-          });
-          window.history.back()
-        }
-      }
-    });
-  };
   useEffect(() => {
     if(id){
       const decoded = decodeURIComponent(id)
-      console.log(decoded)
       setIdStatus({id: `${decoded.split('|').slice()[0]}|${decoded.split('|').slice()[1]}`, status: decoded.split('|').slice()[2], type: decoded.split('|').slice()[3]})
     }
   }, [id])
@@ -166,191 +153,29 @@ const ViewDocument = () => {
     ).save();
   }
 
-  const handleSubmit = async() => {
-    console.log('Preparer Hit')
-    const data = {
-      DV: idStatus.id,
-      payee: doc.payee
-    }
-
+  const delDV = async () => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: "question",
+      icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#009933",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Submit it!",
+      confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await submitDoc(data)
+        const res = await deleteDV(idStatus.id);
         if (res) {
           Swal.fire({
-            title: "Submitted!",
-            text: "Your document has been submit.",
+            title: "Deleted!",
+            text: "Your document has been deleted.",
             icon: "success",
           });
           window.history.back()
         }
-        else{
-          Swal.fire({
-            title: "Error!",
-            text: {error},
-            icon: "error",
-          });
-        }
       }
     });
-  }
-
-  const returnDV = async() => {
-    const data = {
-      DV: idStatus.id,
-      payee: doc.payee
-    }
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#009933",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Return it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await returnDoc(data)
-        if (res) {
-          Swal.fire({
-            title: "Returned",
-            text: "Your document has been returned.",
-            icon: "success",
-          });
-          window.history.back()
-        }
-        else{
-          Swal.fire({
-            title: "Error!",
-            text: {errorForFunding},
-            icon: "error",
-          });
-        }
-      }
-    });
-  }
-
-  const handleSubmitForOp = async() => {
-    console.log('Funding Hit')
-    const data = {
-      DV: idStatus.id,
-      payee: doc.payee
-    }
-
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#009933",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Submit it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await transferToHead(data)
-        if (res) {
-          Swal.fire({
-            title: "Submitted!",
-            text: "Your document has been submitted.",
-            icon: "success",
-          });
-          window.history.back()
-        }
-        else{
-          Swal.fire({
-            title: "Error!",
-            text: {errorForFunding},
-            icon: "error",
-          });
-        }
-      }
-    });
-  }
-
-  const handleReturn = (backToRole) => {
-    const data = {
-      DV: idStatus.id,
-      payee: doc.payee,
-      returnTo: backToRole
-    }
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#009933",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Return it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        let res;
-        if(backToRole === '3'){
-          res = returnDocFromHeader(data)
-        }else if(backToRole === '4'){
-          res = returnDocFromHeader(data)
-        }
-        if (res) {
-          Swal.fire({
-            title: "Returned!",
-            text: "Your document has been returned.",
-            icon: "success",
-          });
-          window.history.back()
-        }
-        else{
-          Swal.fire({
-            title: "Error!",
-            text: {errorForBO},
-            icon: "error",
-          });
-        }
-      }
-    });
-  }
-
-  const handleSubmitForHead = async() => {
-    const data = {
-      DV: idStatus.id,
-      payee: doc.payee
-    }
-
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonColor: "#009933",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, Submit it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const res = await submitToAdmin(data)
-        if (res) {
-          Swal.fire({
-            title: "Submitted!",
-            text: "Your document has been submit.",
-            icon: "success",
-          });
-          window.history.back()
-        }
-        else{
-          Swal.fire({
-            title: "Error!",
-            text: {errorForBO},
-            icon: "error",
-          });
-        }
-      }
-    });
-  }
+  };
 
   const approve = async() => {
 
@@ -376,7 +201,7 @@ const ViewDocument = () => {
         else{
           Swal.fire({
             title: "Error!",
-            text: {errorForApprover},
+            text: {errorApprover},
             icon: "error",
           });
         }
@@ -386,17 +211,39 @@ const ViewDocument = () => {
 
   return (
     <section className="w-full h-auto flex gap-2">
-      <div className="w-5/6 h-[500px] py-3 bg-white overflow-y-auto rounded-lg">
-        <Document document={doc} />
+      <div className='relative w-5/6 h-[500px] py-3 bg-white rounded-lg'>
+        {isCommentOpen && (
+          <div className={`h-[inherit] absolute overflow-hidden p-2 top-0 left-0 z-10 rounded-lg transition-all duration-500 ease-in-out bg-white border-2 ${isCommentOpen ? 'w-full' : 'w-0'}`}>
+            <div className="px-2 my-2">
+              <h1 className="text-xl font-bold">Comments({doc.comments ? doc.comments.length : 0})</h1>
+            </div>
+            <div className="px-2">
+              <hr />
+            </div>
+            <div className="w-full p-2 h-[27rem] overflow-y-auto">
+              { doc.comments ? (
+                  doc.comments.map((comment, index) => (
+                    <Comments key={index} comment={comment}/>
+                  ))
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">No Comments Found</div>
+                )
+              }
+            </div>
+          </div>
+        )}
+        <div className="overflow-y-auto h-full w-full">
+          <Document document={doc} />
+        </div>
       </div>
       <div className="w-1/6 h-auto p-3 bg-white rounded-lg">
         <div className="flex flex-col gap-2">
 
           {idStatus.type === '4' && (
             <button
-              disabled={isLoading}
-              onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-              className={`w-full px-5 py-2 rounded-lg ${isLoading ? 'bg-gray-200 text-gray-500' : 'bg-preparerPrimary text-white hover:scale-125'} transition-all duration-150`}
+              //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
+              onClick={() => openModal('SubmitPreparer')}
+              className={`w-full px-5 py-2 rounded-lg bg-preparerPrimary text-white hover:scale-125 transition-all duration-150`}
               >
               Submit
             </button>
@@ -404,9 +251,8 @@ const ViewDocument = () => {
 
           {idStatus.type === '3' && (
             <button
-              disabled={isLoadingForFunding}
-              onClick={handleSubmitForOp}
-              className={`w-full px-5 py-2 rounded-lg ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'bg-fundingBlueGreen text-white hover:scale-125'} transition-all duration-150`}
+              onClick={() => openModal('SubmitFunding')}
+              className={`w-full px-5 py-2 rounded-lg bg-fundingBlueGreen text-white hover:scale-125 transition-all duration-150`}
               >
               Submit
             </button>
@@ -414,9 +260,8 @@ const ViewDocument = () => {
 
           {(idStatus.type === '2' && !permission.data.permission) && (
             <button
-              disabled={isLoadingForBO}
-              onClick={handleSubmitForHead}
-              className={`w-full px-5 py-2 rounded-lg ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `bg-fundingBlueGreen text-white hover:scale-125`} transition-all duration-150`}
+              onClick={() => openModal('SubmitBO')}
+              className={`w-full px-5 py-2 rounded-lg bg-fundingBlueGreen text-white hover:scale-125 transition-all duration-150`}
               >
               Submit
             </button>
@@ -424,9 +269,9 @@ const ViewDocument = () => {
 
           {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission.data.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
             <button
-              disabled={isLoadingForApprover}
               onClick={approve}
-              className={`w-full px-5 py-2 rounded-lg ${isLoadingForApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              disabled={isLoadingApprover}
+              className={`w-full px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
               >
               Approve
             </button>
@@ -450,9 +295,9 @@ const ViewDocument = () => {
 
           {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
             <button
-              disabled={isLoadingForFunding || isLoading}
-              onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : returnDV}
-              className={`w-full rounded-lg py-2 text-white ${secondaryColor} ${isLoadingForFunding ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:scale-125'} transition-all duration-100`}
+              onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : () => openModal('ReturnDV')}
+              disabled={isLoadingPreparer}
+              className={`w-full rounded-lg py-2 text-white ${secondaryColor} ${isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:scale-125'} transition-all duration-100`}
               >
               {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
             </button>
@@ -460,9 +305,8 @@ const ViewDocument = () => {
 
           {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
             <button
-              onClick={() => handleReturn('3')}
-              disabled={isLoadingForBO}
-              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white ${secondaryColor}  hover:scale-125`} transition-all duration-100`}
+              onClick={() => openModal('ReturnToFunding')}
+              className={`w-full rounded-lg text-sm py-2 text-white ${secondaryColor}  hover:scale-125 transition-all duration-100`}
               >
               Return to Funding
             </button>
@@ -470,9 +314,8 @@ const ViewDocument = () => {
 
           {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
             <button
-              onClick={() => handleReturn('4')}
-              disabled={isLoadingForBO}
-              className={`w-full rounded-lg text-sm py-2 ${isLoadingForBO ? 'bg-gray-200 text-gray-500' : `text-white ${secondaryColor}  hover:scale-125`} transition-all duration-100`}
+              onClick={() => openModal('ReturnToPreparer')}
+              className={`w-full rounded-lg text-sm py-2 text-white ${secondaryColor}  hover:scale-125tyg6 transition-all duration-100`}
               >
               Return to Preparer
             </button>
@@ -484,6 +327,8 @@ const ViewDocument = () => {
             >
             Back
           </button>
+          
+          <button onClick={() => setIsCommentOpen(!isCommentOpen)}>{isCommentOpen ? 'Hide Comments' : 'Show Comments'}</button>
 
           {isModalOpen && (
             <>
@@ -522,6 +367,14 @@ const ViewDocument = () => {
           </div>
         </div>
       </div>
+      {modalComment && (
+        <>
+          <div className="fixed inset-0 z-20 bg-black opacity-50" />
+          <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type}/>
+          </div>
+        </>
+      )}
     </section>
   );
 };

@@ -1,4 +1,6 @@
-const {admin, db, rtdb}  = require('../firebase')
+const e = require('express');
+const {admin, db, rtdb}  = require('../firebase');
+const { doc } = require('firebase/firestore')
 
 const formatDate = (rawDate) => {
     const dateObject = new Date(rawDate);
@@ -99,7 +101,7 @@ const updateStatus = async (DV, dTPassed) => {
 }
 
 const passDocument = async (req, res) => {
-    const {DV, payee} = req.body;
+    const {DV, payee, remarks} = req.body;
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -118,6 +120,7 @@ const passDocument = async (req, res) => {
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const submittedBy = `${dispName}|${dateTimePassed }`
     const logs = `${payee}|${DV}|Submitted By ${dispName}|${dateTimePassed}`
+    const comment = {dispName, remarks, dateTimePassed}
 
     try {
         // const docRef = db.collection('passed_records').doc('editor');
@@ -134,6 +137,7 @@ const passDocument = async (req, res) => {
         }
         const listOfOpAcc = await getListOfOperatorAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
@@ -141,6 +145,17 @@ const passDocument = async (req, res) => {
     }catch(error){
         console.log('error creating passed records: ', error)
         res.status(500).json({success: false, message: `error creating passed records: ${error}`});
+    }
+}
+
+const addComments = async(DV, comment) => {
+    try {
+        const docref = db.collection('records').doc(DV)
+        await docref.update({
+            comments: admin.firestore.FieldValue.arrayUnion(comment)
+        })
+    } catch (error) {
+       console.log('Error adding comment: ', error) 
     }
 }
 

@@ -69,7 +69,7 @@ const operatorInput = async(req, res) => {
 }
 
 const opReturnDocu = async (req, res) => {
-    const {DV, payee} = req.body;
+    const {DV, payee, remarks} = req.body;
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -87,6 +87,7 @@ const opReturnDocu = async (req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
+    const comment = {dispName, remarks, dateTimePassed}
     // const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
 
     try{
@@ -96,6 +97,7 @@ const opReturnDocu = async (req, res) => {
         }
         const listOfEditorAcc = await getListOfEditorAccounts();
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
+        await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
@@ -177,7 +179,7 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
  }
 
  const transferDocument = async (req, res) => {
-    const {DV, payee} = req.body;
+    const {DV, payee, remarks} = req.body;
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -195,6 +197,7 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const updatedBy = `${dispName}|${dateTimePassed}`
+    const comment = {dispName, remarks, dateTimePassed}
     // const logs = `${payee}|${DV}|Updated By ${dispName}|${dateTimePassed}`
 
     try {
@@ -204,6 +207,7 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
         }
         const listOfOpAcc = await getListOfHeadAccounts();
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
@@ -243,6 +247,17 @@ const getListOfHeadAccounts = async () => {
         console.log(`Error in getting list of op : ${error}`)
     }
     return [];
+}
+
+const addComments = async(DV, comment) => {
+    try {
+        const docref = db.collection('records').doc(DV)
+        await docref.update({
+            comments: admin.firestore.FieldValue.arrayUnion(comment)
+        })
+    } catch (error) {
+       console.log('Error adding comment: ', error) 
+    }
 }
 
 const setHistoryLogs = async(DT, logs) => {

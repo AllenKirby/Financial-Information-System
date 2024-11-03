@@ -41,7 +41,7 @@ const {admin, db, rtdb}  = require('../firebase')
 // }
 
 const returnRecordTo = async(req, res) => {
-    const {DV, payee, returnTo} = req.body;
+    const {DV, payee, returnTo, remarks} = req.body;
     const dispName = req.user.name;
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -58,6 +58,7 @@ const returnRecordTo = async(req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
+    const comment = {dispName, remarks, dateTimePassed}
     // const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
     
     try{
@@ -67,6 +68,7 @@ const returnRecordTo = async(req, res) => {
         }
         const listOfEditorAcc = await getListOfAccount(returnTo);
         await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
+        await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
@@ -153,7 +155,7 @@ const getListOfAccount = async (listNumber) => {
 }
 
 const transferDocument = async (req, res) => {
-    const {DV, payee} = req.body;
+    const {DV, payee, remarks} = req.body;
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -171,6 +173,7 @@ const transferDocument = async (req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const reviewedBy = `${dispName}|${dateTimePassed}`
+    const comment = {dispName, remarks, dateTimePassed}
     // const logs = `${payee}|${DV}|Reviewed By ${dispName}|${dateTimePassed}`
 
     try {
@@ -180,6 +183,7 @@ const transferDocument = async (req, res) => {
         }
         const listOfOpAcc = await getListOfAccount('1');
         await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
@@ -216,6 +220,17 @@ const getPermission = async(req, res) => {
     }catch(error){
         console.log(`Error retrieving Preparer Permision ${error}`)
         res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const addComments = async(DV, comment) => {
+    try {
+        const docref = db.collection('records').doc(DV)
+        await docref.update({
+            comments: admin.firestore.FieldValue.arrayUnion(comment)
+        })
+    } catch (error) {
+       console.log('Error adding comment: ', error) 
     }
 }
 

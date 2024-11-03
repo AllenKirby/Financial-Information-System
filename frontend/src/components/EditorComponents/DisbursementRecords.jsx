@@ -29,7 +29,6 @@ const DisbursementRecords = () => {
           document?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
-      console.log(filteredResults)
       setFilteredDocuments(filteredResults);
     } else {
       setFilteredDocuments({}); 
