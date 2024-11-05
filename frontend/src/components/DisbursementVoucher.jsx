@@ -651,7 +651,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <select 
                     className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                     disabled={isDisabled && !permission.data.permission}
-                    value={`${payeeData.TT_tax}-${payeeData.TT_cost}`}
+                    value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ""}
                     onChange={(e) => {
                       const [taxCategory, type] = e.target.value.split('-');
                       setPayeeData({
