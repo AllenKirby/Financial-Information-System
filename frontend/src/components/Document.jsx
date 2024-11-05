@@ -11,9 +11,13 @@ const Document = ({document}) => {
   const doc = document
   const val1 = eval(doc.amount + doc.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const val2 = eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  const total_val = eval(val1 + '+' + val2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
+  const total_val = tval.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
-  const amount_due = eval(doc.amount - floatTotal_val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  
+  const adue = doc.amount - tval
+  const amount_due = adue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  console.log(amount_due)
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
@@ -365,7 +369,7 @@ const Document = ({document}) => {
                 <div className="w-full h-3/6 flex items-center justify-end p-1">{total_val}</div>
                 <div className="w-full h-24 flex justify-between items-end font-bold">
                   <div>₱</div>
-                  <div>{total_val}</div>
+                  <div>{amount_due}</div>
                 </div>
               </div>
           </div>
