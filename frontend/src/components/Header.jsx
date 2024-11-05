@@ -44,9 +44,8 @@ const Header = ({ currentPage}) => {
         }));
 
         const sortedNotifications = parsedNotifications.sort((a, b) => {
-          return parseInputDate(b.input) - parseInputDate(a.input);
+          return parseInputDate(b.data) - parseInputDate(a.data);
         });
-
         setNotifications(sortedNotifications);
 
       } else {

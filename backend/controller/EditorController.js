@@ -116,31 +116,24 @@ const passDocument = async (req, res) => {
     second: "2-digit",
     hour12: true
     });
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
+    const notifMessage1 = "The Disbursement Voucher for"
+    const notifMessage2 = "has been passed by"
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const submittedBy = `${dispName}|${dateTimePassed }`
     const logs = `${payee}|${DV}|Submitted By ${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
 
     try {
-        // const docRef = db.collection('passed_records').doc('editor');
-        // const doc = await docRef.get();
-        // if(doc.exists){
-        //     await docRef.update(data);
-        // }else{
-        //     await docRef.set(data);
-        // }
-
         const updatedDocu = await updateStatus(DV, submittedBy)
         const returnData = {
             [DV] : updatedDocu
         }
         const listOfOpAcc = await getListOfOperatorAccounts();
-        await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        await setNotification(listOfOpAcc, dataCollection, notifMessage1, notifMessage2, DV)
         await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
-        //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});
     }catch(error){
         console.log('error creating passed records: ', error)
@@ -159,20 +152,21 @@ const addComments = async(DV, comment) => {
     }
 }
 
-const setNotification = async (destination_uids, dataCollection, dispName, DV) => {
+const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
     
    try{
     for (const destination_uid of destination_uids){
         const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
         await notificationRef.push({
-            input: `${dataCollection}|${dispName}|${DV}`,
+            message1: notifMessage1,
+            message2: notifMessage2,
+            data: `${dataCollection}|${DV}`,
             read: false,
         });
     }
    }catch(error){
     console.log('error in setNotif:', error)
    }
-
 }
 
 const getListOfOperatorAccounts = async () => {

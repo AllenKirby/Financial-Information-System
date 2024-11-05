@@ -55,7 +55,9 @@ const returnRecordTo = async(req, res) => {
     second: "2-digit",
     hour12: true
     });
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
+    const notifMessage1 = "The Disbursement Voucher for"
+    const notifMessage2 = "has been returned by"
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
@@ -66,8 +68,8 @@ const returnRecordTo = async(req, res) => {
         const returnData = {
             [DV] : updatedDocu
         }
-        const listOfEditorAcc = await getListOfAccount(returnTo);
-        await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
+        const listOfAcc = await getListOfAccount(returnTo);
+        await setNotification(listOfAcc, dataCollection, notifMessage1, notifMessage2, DV)
         await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
@@ -108,13 +110,15 @@ const updateStatusToApproved = async(DV, DTpass) => {
     }
 }
 
-const setNotification = async (destination_uids, dataCollection, dispName, DV) => {
+const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
     
     try{
      for (const destination_uid of destination_uids){
          const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
          await notificationRef.push({
-             input: `${dataCollection}|${dispName}|${DV}`,
+             message1: notifMessage1,
+             message2: notifMessage2,
+             data: `${dataCollection}|${DV}`,
              read: false,
          });
      }
@@ -170,7 +174,9 @@ const transferDocument = async (req, res) => {
         second: "2-digit",
         hour12: true
     });
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
+    const notifMessage1 = "The Disbursement Voucher for"
+    const notifMessage2 = "has been passed by"
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const reviewedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
@@ -181,8 +187,8 @@ const transferDocument = async (req, res) => {
         const returnData = {
             [DV] : updatedDocu
         }
-        const listOfOpAcc = await getListOfAccount('1');
-        await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        const listOfApproverAcc = await getListOfAccount('1');
+        await setNotification(listOfApproverAcc, dataCollection, notifMessage1, notifMessage2, DV)
         await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 

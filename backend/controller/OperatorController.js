@@ -84,7 +84,9 @@ const opReturnDocu = async (req, res) => {
     second: "2-digit",
     hour12: true
     });
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
+    const notifMessage1 = "The Disbursement Voucher for"
+    const notifMessage2 = "has been returned by"
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
@@ -96,7 +98,7 @@ const opReturnDocu = async (req, res) => {
             [DV] : updatedDocu
         }
         const listOfEditorAcc = await getListOfEditorAccounts();
-        await setNotification(listOfEditorAcc, dataCollection, dispName, DV)
+        await setNotification(listOfEditorAcc, dataCollection, notifMessage1, notifMessage2, DV)
         await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 
@@ -162,20 +164,21 @@ const getListOfEditorAccounts = async () => {
     return [];
 }
 
-const setNotification = async (destination_uids, dataCollection, dispName, DV) => {
+const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
     
     try{
      for (const destination_uid of destination_uids){
          const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
          await notificationRef.push({
-             input: `${dataCollection}|${dispName}|${DV}`,
+             message1: notifMessage1,
+             message2: notifMessage2,
+             data: `${dataCollection}|${DV}`,
              read: false,
          });
      }
     }catch(error){
      console.log('error in setNotif:', error)
     }
- 
  }
 
  const transferDocument = async (req, res) => {
@@ -194,7 +197,9 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
         second: "2-digit",
         hour12: true
     });
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}`
+    const notifMessage1 = "The Disbursement Voucher for"
+    const notifMessage2 = "has been passed by"
+    const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const updatedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
@@ -205,8 +210,8 @@ const setNotification = async (destination_uids, dataCollection, dispName, DV) =
         const returnData = {
             [DV] : updatedDocu
         }
-        const listOfOpAcc = await getListOfHeadAccounts();
-        await setNotification(listOfOpAcc, dataCollection, dispName, DV)
+        const listOfHeadAcc = await getListOfHeadAccounts();
+        await setNotification(listOfHeadAcc, dataCollection, notifMessage1, notifMessage2, DV)
         await addComments(DV, comment)
         // await setHistoryLogs(dateTimePassed, logs)
 

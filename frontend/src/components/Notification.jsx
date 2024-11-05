@@ -14,17 +14,19 @@ const Notification = ({ notification, markAsRead }) => {
   const navigate = useNavigate();
   const { user } = useAuthContext()
   const [notifData, setNotifData] = useState({date: '', time: '', docName: '', name: '', DV: ''})
+  const [notifMessage, setNotifMessage] = useState({message1: '', message2: '' })
   const { documents } = useDisbursementContext()
   const { HeadDocuments } = useHeadDisbursementContext()
   const {AdminDocuments} = useAdminDisbursementContext()
 
   
   useEffect(() => {
-    console.log(notification.input)
-    const [date, time, docName, name, DV, fund] = notification.input.split('|');
-    const DV_key = `${DV}|${fund}`
-    setNotifData({ date, time, docName, name, DV_key });
-  }, [notification.input]);
+      const [date, time, docName, name, DV, fund] = notification.data.split('|');
+      const DV_key = `${DV}|${fund}`
+      setNotifData({ date, time, docName, name, DV_key });
+      setNotifMessage({message1: notification.message1, message2: notification.message2})
+    
+  }, [notification]);
 
   const openNotif = (DV) =>{
     console.log(user.role)
@@ -57,9 +59,8 @@ const Notification = ({ notification, markAsRead }) => {
       const dvNo = notifData.DV_key
       openNotif(dvNo)
     }}>
-      <p ><strong>{notifData.name.replace(',', ' ')}</strong> has successfully transferred the document: <strong>{notifData.docName}</strong></p>
-      <p className='text-xs mt-2'>{formatDistanceToNow(formateDateTime(notifData.date, notifData.time), { addSuffix: true })}</p>
-      {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}
+      <p >{notifMessage.message1} <strong>{notifData.docName}</strong> {notifMessage.message2} <strong>{notifData.name.replace(',', ' ')}</strong></p>
+      <p className='text-xs mt-2 flex items-center justify-between'>{formatDistanceToNow(formateDateTime(notifData.date, notifData.time), { addSuffix: true })} {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}</p>
     </li>
   );
 };
