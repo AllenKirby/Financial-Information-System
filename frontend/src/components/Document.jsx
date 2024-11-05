@@ -23,7 +23,7 @@ const Document = ({document}) => {
 
   return (
     <main id="pdf" className="w-full h-auto flex flex-col items-center justify-center font-times">
-      <section className='w-a4-width h-a4-height text-black text-xs'>
+      <section className='w-a4-width h-auto text-black text-xs'>
         <header className='w-full h-auto flex'>
           <div className='w-3/4 h-28 relative'>
             <img src={TopDesign} alt="Top" className='h-[118px] w-96' />
@@ -79,7 +79,7 @@ const Document = ({document}) => {
             <div className='w-auto h-full flex items-center justify-center px-3 font-bold'>{doc.address}</div>
           </div>
           <div className='w-full h-60 flex border-l-2 border-r-2 border-b-2 border-black'>
-              <div className='w-72 border-r-2 border-black flex-col'>
+              <div className='w-72 border-r-2 border-black flex flex-col'>
                 <div className="w-full text-center border-b-2 border-black">Particulars</div>
                 <div className="w-full h-3/6 text-justify px-1 pb-2">{doc.particular}</div>
                 <div className="flex gap-3 px-3 py-1">
@@ -95,7 +95,7 @@ const Document = ({document}) => {
                   <div>{eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
                 <div className="px-2 py-1">ASA No.{doc.ASA}</div>
-                <div className="w-full flex items-center justify-center font-bold py-1">Amount Due</div>
+                <div className="w-full flex items-center justify-center font-bold pt-1">Amount Due</div>
               </div>
               <div className='w-36 border-r-2 border-black flex-col'>
                 <div className="w-full text-center border-b-2 border-black">Responsibilty Center</div>
@@ -107,8 +107,9 @@ const Document = ({document}) => {
               </div>
               <div className='w-60'>
                 <div className="w-full text-center border-b-2 border-black">Amount</div>
-                <div className="w-full h-3/6 flex items-center justify-end p-1">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                <div className="w-full h-24 flex justify-between items-end font-bold">
+                <div className="w-full h-2/6 flex items-center justify-end">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                <div className="w-full h-2/6 flex items-center justify-end">{total_val}</div>
+                <div className="w-full h-1/6 mt-3 flex justify-between items-end font-bold">
                   <div>₱</div>
                   <div>{amount_due}</div>
                 </div>
@@ -122,12 +123,12 @@ const Document = ({document}) => {
               <div className="w-full text-center font-bold underline">{doc.NF_name}</div>
               <div className="w-full text-center italic">{doc.NF_office}</div>
           </div>
-          <div className="h-32 w-full border-l-2 border-r-2 border-b-2 border-black">
+          <div className="h-auto w-full border-l-2 border-r-2 border-b-2 border-black">
               <div className="w-full border-b-2 border-black">
                   <div className="p-1 w-6 border-r-2 border-black font-bold">B.</div>
               </div>
               <div className="w-full h-full flex">
-                  <div className="w-2/5 h-[100px] border-r-2 border-black">
+                  <div className="w-2/5 h-auto border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Account Title</div>
                       {doc.accTitle.map((title, index) => (
                         <div key={index} className="w-full pt-1 pl-5">{title}</div>
@@ -136,7 +137,7 @@ const Document = ({document}) => {
                       <div className="w-full pt-1 pl-5">Due to BIR(2%)</div>
                       <div className="w-full pt-1 pl-5">Cash in Back</div>
                   </div>
-                  <div className="w-1/5 h-[100px] border-r-2 border-black">
+                  <div className="w-1/5 h-auto border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">UACS Code</div>
                       {doc.accCode.map((code, index) => (
                         <div key={index} className="w-full pt-1 text-center">{code}</div>
@@ -145,7 +146,7 @@ const Document = ({document}) => {
                       <div className="w-full pt-1 text-center">2 02 01 010</div>
                       <div className="w-full pt-1 text-center">1 01 02 020</div>
                   </div>
-                  <div className="w-1/5 h-[100px] border-r-2 border-black">
+                  <div className="w-1/5 h-auto border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Debit</div>
                       {doc.optionalAmount.length > 1 ? doc.optionalAmount.map((fixamount, index) => (
                         <div key={index} className="w-full pt-1 text-end px-2">{fixamount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>

@@ -267,7 +267,7 @@ const ViewDocument = () => {
             </button>
           )}
 
-          {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission.data.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
+          {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission?.data?.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
             <button
               onClick={approve}
               disabled={isLoadingApprover}
@@ -286,12 +286,13 @@ const ViewDocument = () => {
             </button>
           )}
 
-          <button
+          {(idStatus.type  === '1' && idStatus.status === 'Approved') && (
+            <button
             onClick={handleDownload}
             className={`w-full rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
             >
             Download
-          </button>
+          </button>)}
 
           {!(idStatus.type === '1' || idStatus.type === '2' || idStatus.status === 'Returned') && (
             <button
