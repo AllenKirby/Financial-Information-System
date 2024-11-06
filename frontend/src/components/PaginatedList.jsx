@@ -27,7 +27,7 @@ const PaginatedList = ({ items, type }) => {
         <div className='w-full h-[85%]'>
             {Object.keys(currentItems).length > 0 ? (
                 Object.entries(currentItems).map(([key, document]) => (
-                    <DocumentDetails key={key} documents={document[1]} type={type}/>
+                    <DocumentDetails key={key} index={key} documents={document[1]} type={type}/>
                 ))
                 ) : (
                 <div className='w-full h-full flex items-center justify-center'>
@@ -45,7 +45,7 @@ const PaginatedList = ({ items, type }) => {
             )}
         </div>
         <div className='w-full h-[15%] flex items-center justify-center'>
-            <div className='w-1/2'>
+            <div className='w-1/4'>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
             </div>
         </div>  

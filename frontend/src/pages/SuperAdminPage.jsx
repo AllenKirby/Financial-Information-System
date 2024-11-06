@@ -16,8 +16,8 @@ const SuperAdminPage = () => {
     const [mainSize, setMainSize] = useState('')
 
     const navItems = [
-      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={18} />},
-      {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={18} />}
+      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={22} />},
+      {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={22} />}
     ]
 
     useEffect(() => {

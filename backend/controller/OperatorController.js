@@ -2,43 +2,10 @@ const {admin, db, rtdb}  = require('../firebase')
 const { google } = require('googleapis');
 const sheets = google.sheets('v4');
 
-// const readPassed_records = async (req, res) => {
-//     const {flag} = req.body
-//     let status = []
-
-//     if(flag){
-//         status = ['Drafting', 'In Review', 'Returned|4', 'Returned|3']
-//     }
-//     else {
-//         status = ['In Review', 'Returned|3']
-//     }
-    
-//     try {
-//         const documents = {};
-       
-//         const recordsSnapshot = await db.collection('records')
-//             .where('status', 'in', status)
-//             .get();
-        
-//         recordsSnapshot.forEach((recordDoc) => {
-//             if(recordDoc.exists){
-//                 const recordData = recordDoc.data();
-//                 documents[recordDoc.id] = {
-//                     data: recordData,
-//                 }
-                
-//             }else{
-//                 console.log(`No such document for keys`);
-//             }
-        
-//         })
-//         console.log(documents)
-//         return res.status(200).json({success: true, documents});
-//     } catch (error) {
-//         console.log(`Error retrieving passed records: ${error}`);
-//         return res.status(404).json({ message: "Not Found" });
-//     }
-// }
+const { 
+    addComments,
+    setNotification,
+    setHistoryLogs } = require('./Functions')
 
 const operatorInput = async(req, res) => {
     const { ors, asa } = req.body
@@ -109,16 +76,6 @@ const opReturnDocu = async (req, res) => {
     }
 }
 
-// const updateStatus = async (DV, dTPassed, flag) => {
-//     const docref = db.collection('records').doc(DV)
-//     await docref.update({
-//         dateTimePassed: dTPassed,
-//         status: flag ? 'Returned' : 'Under Review'
-//     })
-//     const updatedDoc = await docref.get()
-//     return updatedDoc.data();
-// }
-
 const updateStatus = async (DV, dTPassed, flag) => {
     const docref = db.collection('records').doc(DV);
 
@@ -147,39 +104,14 @@ const getListOfEditorAccounts = async () => {
                 uids.push(data.uid)
             }
         })
+
         return uids;
 
-        // const doc = await db.collection('listOfUsers').doc('4').get();
-        // if(doc.exists){
-        //     const data = doc.data();
-        //     const keys = Object.keys(data)
-        //     console.log('successfully getting the list of editor', keys)
-        //     return keys
-        // }else{
-        //     console.log("No such document for editor!");
-        // }
     }catch(error){
         console.log(`Error in getting list of editor : ${error}`)
     }
     return [];
 }
-
-const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
-    
-    try{
-     for (const destination_uid of destination_uids){
-         const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
-         await notificationRef.push({
-             message1: notifMessage1,
-             message2: notifMessage2,
-             data: `${dataCollection}|${DV}`,
-             read: false,
-         });
-     }
-    }catch(error){
-     console.log('error in setNotif:', error)
-    }
- }
 
  const transferDocument = async (req, res) => {
     const {DV, payee, remarks} = req.body;
@@ -237,50 +169,14 @@ const getListOfHeadAccounts = async () => {
                 uids.push(data.uid)
             }
         })
+
         return uids;
 
-        // const doc = await db.collection('listOfUsers').doc('2').get();
-        // if(doc.exists){
-        //     const data = doc.data();
-        //     const keys = Object.keys(data)
-        //     console.log('successfully getting the list of op')
-        //     return keys
-        // }else{
-        //     console.log("No such document for op!");
-        // }
     }catch(error){
         console.log(`Error in getting list of op : ${error}`)
     }
     return [];
 }
-
-const addComments = async(DV, comment) => {
-    try {
-        const docref = db.collection('records').doc(DV)
-        await docref.update({
-            comments: admin.firestore.FieldValue.arrayUnion(comment)
-        })
-    } catch (error) {
-       console.log('Error adding comment: ', error) 
-    }
-}
-
-const setHistoryLogs = async(DT, logs) => {
-    try {
-        const docref = db.collection('passed_records').doc('History_Logs')
-        docref.set({
-            [DT]: logs
-        }, {merge: true})
-
-        const historyLogs = await docref.get()
-        return historyLogs.data();
-
-    }catch(error){
-        console.error("Error History Logs: ", error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-}
-
 
 const getPermission = async(req, res) => {
     try {
@@ -342,7 +238,6 @@ const appendDataToSheet = async (req, res) => {
   };
 
 module.exports = {
-    //readPassed_records, 
     operatorInput, 
     opReturnDocu, 
     transferDocument,

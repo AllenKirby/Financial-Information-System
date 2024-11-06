@@ -60,7 +60,7 @@ const Navbar = ({ items, flag }) => {
   return (
     <nav className="h-screen w-full flex flex-col justify-between bg-white border-r-2 shadow-gray-300 shadow-lg">
       <div>
-        <div className="h-auto relative w-full px-3 py-4 flex gap-2 items-center justify-start">
+        <div className="h-auto relative w-full px-4 py-4 flex gap-2 items-center justify-start">
           <img src={bgImage} alt="" className="w-10" />
           <h1 className={`font-bold text-2xl text-customgreen ${hideText}`}>NIA-FIS</h1>
         </div>
@@ -87,7 +87,7 @@ const Navbar = ({ items, flag }) => {
           onClick={handleLogout}
           className={`w-full flex items-center justify-start py-2 px-4 rounded-lg gap-2 text-sm transition-all duration-150`}
         >
-          <MdLogout size={20} />
+          <MdLogout size={22} />
           <span className={`${hideText}`}>Logout</span>
         </button>
       </div>

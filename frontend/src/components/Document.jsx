@@ -17,12 +17,11 @@ const Document = ({document}) => {
   
   const adue = doc.amount - tval
   const amount_due = adue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  console.log(amount_due)
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
   return (
-    <main id="pdf" className="w-full h-auto flex flex-col items-center justify-center font-times">
+    <main id="pdf" className="w-full h-auto text-black flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-auto text-black text-xs'>
         <header className='w-full h-auto flex'>
           <div className='w-3/4 h-28 relative'>

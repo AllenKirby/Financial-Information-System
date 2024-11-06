@@ -30,8 +30,8 @@ const OperatorPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
-    { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={18} /> },
-    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <TiDocumentText size={18} /> },
+    { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },
+    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <TiDocumentText size={22} /> },
   ]
 
   useEffect(() => {

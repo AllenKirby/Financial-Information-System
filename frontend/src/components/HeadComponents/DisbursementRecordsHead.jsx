@@ -5,6 +5,9 @@ import PaginatedList from '../PaginatedList'
 import { IoSearchSharp } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
+import { BsSortAlphaDown } from "react-icons/bs";
+//import { BsSortAlphaDownAlt } from "react-icons/bs";
+import { FaSort } from "react-icons/fa";
 
 const DisbursementRecordsHead = () => {
     const { id } = useParams()
@@ -38,7 +41,7 @@ const DisbursementRecordsHead = () => {
           <div className='w-full h-auto py-2 flex'>
             <div className='w-1/2 flex flex-col'>
               <div className='pt-3'>
-                <p className='font-semibold text-BOGreen px-2'>All Disbursement Voucher</p>
+                <p className='font-semibold text-BOGreen px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
               </div>
             </div>
             <div className='w-1/2 flex items-end justify-end gap-2'>
@@ -57,7 +60,7 @@ const DisbursementRecordsHead = () => {
                 )}
               </div>
               <div className='relative w-auto'>
-                <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400'/>
+                <IoSearchSharp size={20} className='absolute top-[10px] left-4 text-gray-400'/>
                 <input 
                   type="search"
                   placeholder='Search'
@@ -67,11 +70,17 @@ const DisbursementRecordsHead = () => {
           </div>
           <div className="w-full h-full rounded-t-lg ">
             <div className='w-full h-full'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-BOGreen text-white'>
-                <h1 className='w-3/6 text-left font-bold'>Payee</h1>
-                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
+              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
+                <div className='w-3/6 flex '>
+                  <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>Payee <BsSortAlphaDown size={20}/></h1>
+                </div>
+                <div className='w-1/6 flex items-end justify-center gap-2'>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>DV No. <FaSort/></h1>
+                </div>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
-                <h1 className='w-1/6 text-center font-bold text-sm'>Time Transferred</h1>
+                <div className='w-1/6 flex items-end justify-center gap-2'>
+                <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Created <FaSort/></h1>
+              </div>
               </section>
               <section className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
                 <PaginatedList items={filteredDocuments} type={'2'}/>

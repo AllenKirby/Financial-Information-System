@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { IoMdNotifications } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
 import { GoInbox } from "react-icons/go";
 
@@ -92,7 +93,7 @@ const Header = ({ currentPage}) => {
 
   return (
     <header className="w-full h-auto flex pt-2 gap-2">
-      <div className="w-4/6 p-5 flex items-center">
+      <div className="w-4/6 p-3 flex items-center">
         <h1 className={`text-2xl font-semibold ${fontColor}`}>{currentPage}</h1>
       </div>
       <div className="h-14 w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
@@ -101,13 +102,21 @@ const Header = ({ currentPage}) => {
           <div className="relative">
             <div className='flex gap-3'>
               <GoInbox 
-                size={35} 
+                size={40} 
                 className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
               />
-              <IoMdNotificationsOutline 
-                size={35} 
-                className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
-                onClick={() => setShowNotifications(!showNotifications)}/>
+              {showNotifications ? (
+                <IoMdNotifications 
+                  size={40} 
+                  className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
+                  onClick={() => setShowNotifications(!showNotifications)}/>
+                )
+              :(
+                <IoMdNotificationsOutline 
+                  size={40} 
+                  className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
+                  onClick={() => setShowNotifications(!showNotifications)}/>
+              )}
             </div>
             <div className={`absolute -top-3 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
               <p className="text-xs font-semibold">{unreadNotifs}</p>
@@ -117,8 +126,8 @@ const Header = ({ currentPage}) => {
             <>
               <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
 
-              <div className="absolute w-5 h-5 z-50 top-[39px] right-2 rounded-tl-lg border-l-[1px] border-t-[1px] bg-white rotate-45 "></div>
-              <div className="absolute top-12 z-40 -right-28 w-96 bg-white border-[1px] p-4 rounded-lg">
+              <div className="absolute w-5 h-5 z-50 top-[41px] right-3 rounded-tl-lg border-l-[1px] border-t-[1px] bg-white rotate-45 "></div>
+              <div className="absolute top-[51px] z-40 -right-28 w-96 bg-white border-[1px] p-4 rounded-lg">
                 <h3 className='font-semibold text-xl my-2'>Notifications</h3>
 
                   <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>

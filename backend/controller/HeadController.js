@@ -1,44 +1,9 @@
 const {admin, db, rtdb}  = require('../firebase')
 
-// const readHead_records = async(req, res) => {
-//     const {flag} = req.body
-//     let status = []
-
-//     console.log('flag', flag)
-
-//     if(flag){
-//         status = ['Approved', 'Under Review']
-//     }
-//     else {
-//         status = ['Under Review']
-//     }
-
-//     try {
-//         const documents = {};
-       
-//         const recordsSnapshot = await db.collection('records')
-//             .where('status', 'in', status)
-//             .get();
-        
-//         recordsSnapshot.forEach((recordDoc) => {
-//             if(recordDoc.exists){
-//                 const recordData = recordDoc.data();
-//                 documents[recordDoc.id] = {
-//                     data: recordData,
-//                 }
-                
-//             }else{
-//                 console.log(`No such document for keys`);
-//             }
-        
-//         })
-//         res.status(200).json(documents);
-//     } catch (error) {
-//         console.log(`Error retrieving passed records: ${error}`);
-//         res.status(404).json({ message: "Not Found" });
-//     }
-    
-// }
+const { 
+    addComments,
+    setNotification,
+    setHistoryLogs } = require('./Functions')
 
 const returnRecordTo = async(req, res) => {
     const {DV, payee, returnTo, remarks} = req.body;
@@ -110,23 +75,6 @@ const updateStatusToApproved = async(DV, DTpass) => {
     }
 }
 
-const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
-    
-    try{
-     for (const destination_uid of destination_uids){
-         const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
-         await notificationRef.push({
-             message1: notifMessage1,
-             message2: notifMessage2,
-             data: `${dataCollection}|${DV}`,
-             read: false,
-         });
-     }
-    }catch(error){
-     console.log('error in setNotif:', error)
-    }
- }
-
 const getListOfAccount = async (listNumber) => {
     try{
 
@@ -141,17 +89,9 @@ const getListOfAccount = async (listNumber) => {
                 uids.push(data.uid)
             }
         })
+    
         return uids;
 
-        // const doc = await db.collection('listOfUsers').doc(listNumber).get();
-        // if(doc.exists){
-        //     const data = doc.data();
-        //     const keys = Object.keys(data)
-        //     console.log('successfully getting the list of op')
-        //     return keys
-        // }else{
-        //     console.log("No such document for op!");
-        // }
     }catch(error){
         console.log(`Error in getting list of op : ${error}`)
     }
@@ -200,22 +140,6 @@ const transferDocument = async (req, res) => {
     }
 }
 
-const setHistoryLogs = async(DT, logs) => {
-    try {
-        const docref = db.collection('passed_records').doc('History_Logs')
-        docref.set({
-            [DT]: logs
-        }, {merge: true})
-
-        const historyLogs = await docref.get()
-        return historyLogs.data();
-
-    }catch(error){
-        console.error("Error History Logs: ", error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-}
-
 const getPermission = async(req, res) => {
     try {
         const docref = await db.collection('Roles').doc('Budget Officer').get()
@@ -229,19 +153,7 @@ const getPermission = async(req, res) => {
     }
 }
 
-const addComments = async(DV, comment) => {
-    try {
-        const docref = db.collection('records').doc(DV)
-        await docref.update({
-            comments: admin.firestore.FieldValue.arrayUnion(comment)
-        })
-    } catch (error) {
-       console.log('Error adding comment: ', error) 
-    }
-}
-
 module.exports = { 
-    //readHead_records, 
     returnRecordTo, 
     transferDocument,
     getPermission
