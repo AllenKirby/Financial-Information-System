@@ -8,7 +8,8 @@ export default {
     extend: {
       fontFamily: {
         'times': ['"Times New Roman"', 'serif'],
-        poppins: ['Poppins', 'sans-serif'], // Add Poppins to the font family list
+        poppins: ['Poppins', 'sans-serif'],
+        sans: ['Open Sans', 'sans-serif'],
       },
       colors: {
         customgreen: '#009933',

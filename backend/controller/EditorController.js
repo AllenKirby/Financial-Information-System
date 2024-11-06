@@ -1,6 +1,10 @@
-const e = require('express');
 const {admin, db, rtdb}  = require('../firebase');
 const { doc } = require('firebase/firestore')
+
+const { 
+    addComments,
+    setNotification,
+    setHistoryLogs } = require('./Functions')
 
 const formatDate = (rawDate) => {
     const dateObject = new Date(rawDate);
@@ -141,34 +145,6 @@ const passDocument = async (req, res) => {
     }
 }
 
-const addComments = async(DV, comment) => {
-    try {
-        const docref = db.collection('records').doc(DV)
-        await docref.update({
-            comments: admin.firestore.FieldValue.arrayUnion(comment)
-        })
-    } catch (error) {
-       console.log('Error adding comment: ', error) 
-    }
-}
-
-const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
-    
-   try{
-    for (const destination_uid of destination_uids){
-        const notificationRef = rtdb.ref(`users/${destination_uid}/notifications`);
-        await notificationRef.push({
-            message1: notifMessage1,
-            message2: notifMessage2,
-            data: `${dataCollection}|${DV}`,
-            read: false,
-        });
-    }
-   }catch(error){
-    console.log('error in setNotif:', error)
-   }
-}
-
 const getListOfOperatorAccounts = async () => {
     try{
 
@@ -183,17 +159,9 @@ const getListOfOperatorAccounts = async () => {
                 uids.push(data.uid)
             }
         })
+
         return uids;
 
-        // const doc = await db.collection('listOfUsers').doc('3').get();
-        // if(doc.exists){
-        //     const data = doc.data();
-        //     const keys = Object.keys(data)
-        //     console.log('successfully getting the list of op')
-        //     return keys
-        // }else{
-        //     console.log("No such document for op!");
-        // }
     }catch(error){
         console.log(`Error in getting list of op : ${error}`)
     }
@@ -225,50 +193,6 @@ const getAccountCodes = async (req, res) => {
         console.log('Error retrieving account fields:', error)
     }
 }
-
-// const retrieveDV = async(req, res) => {
-//     try{
-//         console.log('retrieveDv hit')
-//         const docRef = db.collection('records')
-//         const dv = await docRef.get();
-    
-//         const documents = {}
-    
-//         dv.forEach(doc => {
-//             const data = doc.data();
-//             documents[data.DV] = data;
-//           });
-//         res.status(200).json(documents);
-//     }
-//     catch(error){
-//         console.error("Error retrieving documents: ", error);
-//         res.status(500).json({ success: false, error: error.message });
-//     } 
-// }
-
-// const retrieveDV = async(req, res) => {
-//     try{
-//         const documents = {}
-
-//         const recordsSnapshot = await db.collection('records')
-//         .where('status', 'in', ['Drafting', 'Returned|4'])
-//         .get()
-//         recordsSnapshot.forEach((recordDoc) => {
-//             if(recordDoc.exists){
-//                 const recordData = recordDoc.data();
-//                 documents[recordDoc.id] = recordData
-                
-//             }else{
-//                 console.log('No such document for keys');
-//             }
-//         })
-//         res.status(200).json(documents);
-//     }
-//     catch(error){
-//         console.error("Error retrieving documents: ", error);
-//         res.status(500).json({ success: false, error: error.message });
-//     }
-// }
 
 const deleteDV = async(req, res) => {
     const { id } = req.params
@@ -351,22 +275,6 @@ const updateDV = async(req, res) => {
         res.status(200).json(document)
     } catch (error) {
         console.error("Error updating document: ", error);
-        res.status(500).json({ success: false, error: error.message });
-    }
-}
-
-const setHistoryLogs = async(DT, logs) => {
-    try {
-        const docref = db.collection('passed_records').doc('History_Logs')
-        docref.set({
-            [DT]: logs
-        }, {merge: true})
-
-        const historyLogs = await docref.get()
-        return historyLogs.data();
-
-    }catch(error){
-        console.error("Error History Logs: ", error);
         res.status(500).json({ success: false, error: error.message });
     }
 }
@@ -511,7 +419,6 @@ const getPayeeData = async (req,res) => {
 
 module.exports = {
     createDV,
-    //retrieveDV,
     getAccountCodes,
     deleteDV, 
     passDocument,

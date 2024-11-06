@@ -2,9 +2,9 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { parse, formatDistanceToNow } from 'date-fns';
-import { IoDocumentOutline } from "react-icons/io5";
+import { BsFiletypePdf } from "react-icons/bs";
 
-const DocumentDetails = ({ documents, type }) => {
+const DocumentDetails = ({ index, documents, type }) => {
   const navigate = useNavigate();
   const [docu, setDocu] = useState(null);
   const [Status, setStatus] = useState('');
@@ -113,11 +113,11 @@ const DocumentDetails = ({ documents, type }) => {
   return (
     <div
       onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
-      className="w-full h-12 rounded-md mb-1 bg-white border-[1px] text-customFontGreen cursor-pointer flex items-center justify-center"
+      className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 rounded-md mb-1 text-customFontGreen cursor-pointer flex items-center justify-center`}
     >
       {/* Payee column */}
-      <h2 className={`font-semibold text-left ${type === '4' || type === '3' ? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2`}>
-        <IoDocumentOutline size={25}/> {docu?.payee}
+      <h2 className={`font-semibold text-left text-sm ${type === '4' || type === '3' ? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
+        <BsFiletypePdf size={25}/> {docu?.payee}
       </h2>
       {/* DV No. column */}
       <h2 className="text-xs font-light text-center w-1/6">
@@ -142,6 +142,7 @@ const DocumentDetails = ({ documents, type }) => {
 DocumentDetails.propTypes = {
   documents: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export default DocumentDetails;

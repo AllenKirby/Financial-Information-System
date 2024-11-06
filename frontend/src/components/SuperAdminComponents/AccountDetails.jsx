@@ -8,7 +8,7 @@ import { FaUser } from "react-icons/fa6";
 
 import { useSuperAdminHook } from '../../hooks/useSuperAdminHook';
 
-const AccountDetails = ({account}) => {
+const AccountDetails = ({index, account}) => {
     //state
     const [role, setRole] = useState('');
 
@@ -95,7 +95,7 @@ const AccountDetails = ({account}) => {
     }
 
     return (
-        <div className="w-full h-auto border-[1px] flex rounded-md py-2 hover:bg-slate-100 cursor-pointer my-1">
+        <div className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto flex rounded-md py-2 cursor-pointer my-1`}>
             <div className='w-[90%] h-auto flex'>
                 <p className="w-1/5 px-2 truncate font-semibold">{account.customClaims.dispName.replace(',', ' ')}</p>
                 <p className="w-1/5 px-2">{role}</p>
@@ -128,6 +128,7 @@ const AccountDetails = ({account}) => {
 
 AccountDetails.propTypes = {
     account: PropTypes.object.isRequired,
+    index: PropTypes.number.isRequired,
 }
 
 export default AccountDetails;

@@ -27,8 +27,8 @@ const HeadPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
-    { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={18} /> },
-    { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <TiDocumentText size={18} /> }, 
+    { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={22} /> },
+    { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <TiDocumentText size={22} /> }, 
   ]
 
   useEffect(() => {

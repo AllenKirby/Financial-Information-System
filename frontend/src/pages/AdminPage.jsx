@@ -24,10 +24,10 @@ const AdminPage = () => {
     const apiURL = import.meta.env.VITE_API_URL
 
     const navItems = [
-        { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={18} /> },
-        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={18} /> },
-        // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={18} /> },
-        { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={18}/>}
+        { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
+        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={22} /> },
+        // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={22} /> },
+        { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>}
     ];
 
     useEffect(() => {
