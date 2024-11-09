@@ -102,12 +102,9 @@ const DocumentDetails = ({ index, documents, type }) => {
     }
   }
 
-  const getTimeDateforReturned = () => {
-    if (docu?.returnedBy) {
-      const [, date, time] = docu.returnedBy.split('|'); 
-      return `${date} ${time}`;
-    }
-    return
+  const getTimeDateforReturned = (dateTime) => {
+    const [, date, time] = dateTime.split('|'); 
+    return `${date} ${time}`;
   }
 
   return (
@@ -133,7 +130,9 @@ const DocumentDetails = ({ index, documents, type }) => {
         {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}
       </h2>
       {(type === '4' || type === '3') && <h2 className="text-xs font-light text-center w-1/6">
-        {docu?.returnedBy ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'}
+        {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
+        {type === '4' && docu?.returnedToPreparer ? formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) : '-'}
+        {type === '3' && docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) : '-'}
       </h2>}
     </div>
   );

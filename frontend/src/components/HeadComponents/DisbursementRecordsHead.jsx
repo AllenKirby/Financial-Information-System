@@ -6,33 +6,91 @@ import { IoSearchSharp } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 import { BsSortAlphaDown } from "react-icons/bs";
-//import { BsSortAlphaDownAlt } from "react-icons/bs";
+import { BsSortAlphaDownAlt } from "react-icons/bs";
 import { FaSort } from "react-icons/fa";
 
 const DisbursementRecordsHead = () => {
-    const { id } = useParams()
-    const { HeadDocuments } = useHeadDisbursementContext()
-    const [filterFlag, setFilterFlag] = useState(false)
-    const [filter, setFilter] = useState('')
-    const [filteredDocuments, setFilteredDocuments] = useState({})
+  const { id } = useParams()
+  const { HeadDocuments } = useHeadDisbursementContext()
+  const [filterFlag, setFilterFlag] = useState(false)
+  const [filter, setFilter] = useState('')
+  const [filteredDocuments, setFilteredDocuments] = useState({})
+  const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
+  const [timePassedFlag, setTimePassedFlag] = useState(false)
 
-    const filterModal = (value) => {
-      setFilter(value)
-      setFilterFlag(!filterFlag)
+  const filterModal = (value) => {
+    setFilter(value)
+    setFilterFlag(!filterFlag)
+  }
+
+  useEffect(() => {
+    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
+      const filteredResults = Object.fromEntries(
+        Object.entries(HeadDocuments).filter(([, document]) =>
+          document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
+        )
+      );
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({});
     }
-    console.log(HeadDocuments)
-    useEffect(() => {
-      if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
-        const filteredResults = Object.fromEntries(
-          Object.entries(HeadDocuments).filter(([, document]) =>
-            document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
-          )
+  }, [filter, HeadDocuments]);
+
+  const sortAphabetically = (flag) => {
+    setAlphabeticalFlag(!alphabeticalFlag)
+    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
+      if(flag) {
+        const sortedEntries = Object.entries(HeadDocuments).sort(([, a], [, b]) => 
+          a.data.payee.localeCompare(b.data.payee)
         );
+        const filteredResults = Object.fromEntries(sortedEntries);
         setFilteredDocuments(filteredResults);
-      } else {
-        setFilteredDocuments({});
       }
-    }, [filter, HeadDocuments]);
+      else {
+        const sortedEntries = Object.entries(HeadDocuments).sort(([, a], [, b]) => 
+          a.data.payee.localeCompare(b.data.payee)
+        );
+        const filteredResults = Object.fromEntries(sortedEntries.reverse());
+        setFilteredDocuments(filteredResults);
+      }
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimePassedAsc = () => {
+    setTimePassedFlag(!timePassedFlag)
+    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
+      const sortedEntries = Object.entries(HeadDocuments).sort(([, a], [, b]) => {
+        const [, dateA, timeA] = a.data.updatedBy ? a.data.updatedBy.split('|') : ["", "", ""];
+        const [, dateB, timeB] = b.data.updatedBy ? b.data.updatedBy.split('|') : ["", "", ""];
+        const aDate = `${dateA} ${timeA}` 
+        const bDate = `${dateB} ${timeB}` 
+        return new Date(aDate) - new Date(bDate)
+      });
+      const filteredResults = Object.fromEntries(sortedEntries);
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimePassedDesc = () => {
+    setTimePassedFlag(!timePassedFlag)
+    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
+      const sortedEntries = Object.entries(HeadDocuments).sort(([, a], [, b]) => {
+        const [, dateA, timeA] = a.data.updatedBy ? a.data.updatedBy.split('|') : ["", "", ""];
+        const [, dateB, timeB] = b.data.updatedBy ? b.data.updatedBy.split('|') : ["", "", ""];
+        const aDate = `${dateA} ${timeA}` 
+        const bDate = `${dateB} ${timeB}` 
+        return new Date(aDate) - new Date(bDate)
+      });
+      const filteredResults = Object.fromEntries(sortedEntries.reverse());
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
     
   return (
     <section className="w-full h-full">
@@ -72,15 +130,24 @@ const DisbursementRecordsHead = () => {
             <div className='w-full h-full'>
               <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
                 <div className='w-3/6 flex '>
-                  <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>Payee <BsSortAlphaDown size={20}/></h1>
+                  <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>
+                    Payee {alphabeticalFlag ? 
+                      <BsSortAlphaDownAlt 
+                        size={20} 
+                        onClick={() => sortAphabetically(true)}
+                        className='cursor-pointer'/> : 
+                      <BsSortAlphaDown 
+                        size={20} 
+                        onClick={() => sortAphabetically(false)}
+                        className='cursor-pointer'/>
+                    }
+                  </h1>
                 </div>
-                <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>DV No. <FaSort/></h1>
-                </div>
+                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Created <FaSort/></h1>
-              </div>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                </div>
               </section>
               <section className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
                 <PaginatedList items={filteredDocuments} type={'2'}/>

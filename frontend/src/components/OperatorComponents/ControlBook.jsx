@@ -1,0 +1,54 @@
+import { useEffect, useState } from "react"
+import { useSelector } from 'react-redux'
+import { Outlet, useParams } from "react-router-dom"
+
+import AddControlBook from "./AddControlBook"
+import Folder from "./Folder"
+
+const ControlBook = () => {
+  const [controlBookFlag, setControlBookFlag] = useState(false)
+  const controlBooks = useSelector((state) => state.controlBook)
+  const { id } = useParams()
+
+  const modal = () => setControlBookFlag(!controlBookFlag)
+  useEffect(() => {
+    console.log('redux', controlBooks)
+  }, [controlBooks])
+
+  return (
+    <section className="w-full h-full">
+      {!id ? (
+        <>
+          <div className="w-full h-[10%] flex items-center justify-end">
+            <button 
+              onClick={modal}
+              className="px-3 py-2 rounded-lg bg-fundingBlueGreen text-white"
+              >Add Control Book
+            </button>
+          </div>
+          <div className="p-2 w-full h-[90%] grid grid-cols-4 gap-2">
+            {controlBooks && Object.entries(controlBooks).length > 0 ? (
+              Object.entries(controlBooks).map(([key, controlBook]) => (
+                <Folder key={key} controlBook={controlBook}/>
+              ))
+            ) : (
+              <div className="w-full h-full flex items-center justify-center">
+                No Control Books Found
+              </div>
+            )}
+          </div>
+          {controlBookFlag && (
+            <>
+              <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+              <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                <AddControlBook modal={modal}/>
+              </div>
+            </>
+          )}
+        </>
+      ) : <Outlet/>}
+    </section>
+  )
+}
+
+export default ControlBook

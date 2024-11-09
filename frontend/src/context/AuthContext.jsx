@@ -25,7 +25,6 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
       const userCookie = cookies.get('user');
         if (userCookie) {
-            console.log('email', userCookie)
           dispatch({ type: 'LOGIN', payload: userCookie });
         }
 
@@ -35,7 +34,6 @@ export const AuthContextProvider = ({ children }) => {
                 if(user.emailVerified){
                     try{
                         const token = await user.getIdToken();
-                        console.log('REFRESHED')
                         const response = await axios.post('http://localhost:4000/user/refreshToken', {}, {
                             headers: {
                             'Content-Type': 'application/json',
@@ -45,8 +43,6 @@ export const AuthContextProvider = ({ children }) => {
                         });
     
                         if (response.status === 200) {
-                            console.log("success")
-                            console.log(response.data)
                             cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
                             dispatch({type: 'LOGIN', payload: response.data})
                         } 

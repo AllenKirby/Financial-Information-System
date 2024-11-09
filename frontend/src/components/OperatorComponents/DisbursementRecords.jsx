@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 import { BsSortAlphaDown } from "react-icons/bs";
-//import { BsSortAlphaDownAlt } from "react-icons/bs";
+import { BsSortAlphaDownAlt } from "react-icons/bs";
 import { FaSort } from "react-icons/fa";
 import PaginatedList from '../PaginatedList';
 
@@ -19,6 +19,9 @@ const DisbursementRecords = () => {
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
+  const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
+  const [timePassedFlag, setTimePassedFlag] = useState(false)
+  const [timeReturnedFlag, setTimeReturnedFlag] = useState(false)
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -40,6 +43,92 @@ const DisbursementRecords = () => {
       setFilteredDocuments({});
     }
   }, [filter, OpDocuments]);
+
+  const sortAphabetically = (flag) => {
+    setAlphabeticalFlag(!alphabeticalFlag)
+    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
+      if(flag) {
+        const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
+          a.data.payee.localeCompare(b.data.payee)
+        );
+        const filteredResults = Object.fromEntries(sortedEntries);
+        setFilteredDocuments(filteredResults);
+      }
+      else {
+        const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
+          a.data.payee.localeCompare(b.data.payee)
+        );
+        const filteredResults = Object.fromEntries(sortedEntries.reverse());
+        setFilteredDocuments(filteredResults);
+      }
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimePassedAsc = () => {
+    setTimePassedFlag(!timePassedFlag)
+    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
+      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
+        new Date(b.data.submittedBy) - new Date(a.data.submittedBy)
+      );
+      const filteredResults = Object.fromEntries(sortedEntries);
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimePassedDesc = () => {
+    setTimePassedFlag(!timePassedFlag)
+    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
+      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
+        new Date(b.data.submittedBy) - new Date(a.data.submittedBy)
+      );
+      const filteredResults = Object.fromEntries(sortedEntries.reverse());
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimeReturnedAsc = () => {
+    setTimeReturnedFlag(!timeReturnedFlag)
+    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
+      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => {
+        const [, dateA, timeA] = a.data.returnedToFunding ? a.data.returnedToFunding.split('|') : ["", "", ""];
+        const [, dateB, timeB] = b.data.returnedToFunding ? b.data.returnedToFunding.split('|') : ["", "", ""];
+        if (!a.data.returnedBy) return -1; 
+        if (!b.data.returnedBy) return 1;
+        const aDate = `${dateA} ${timeA}` 
+        const bDate = `${dateB} ${timeB}` 
+        return new Date(aDate) - new Date(bDate)
+      });
+      const filteredResults = Object.fromEntries(sortedEntries);
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimeReturnedDesc = () => {
+    setTimeReturnedFlag(!timeReturnedFlag)
+    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
+      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => {
+        const [, dateA, timeA] = a.data.returnedToFunding ? a.data.returnedToFunding.split('|') : ["", "", ""];
+        const [, dateB, timeB] = b.data.returnedToFunding ? b.data.returnedToFunding.split('|') : ["", "", ""];
+        if (!a.data.returnedBy) return -1; 
+        if (!b.data.returnedBy) return 1;
+        const aDate = `${dateA} ${timeA}` 
+        const bDate = `${dateB} ${timeB}` 
+        return new Date(aDate) - new Date(bDate)
+      });
+      const filteredResults = Object.fromEntries(sortedEntries.reverse());
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
 
   return (
     <section className='w-full h-[100%]'>
@@ -84,18 +173,27 @@ const DisbursementRecords = () => {
           <div className='w-full h-full'>
             <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
               <div className='w-2/6 flex '>
-                <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>Payee <BsSortAlphaDown size={20}/></h1>
+              <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>
+                    Payee {alphabeticalFlag ? 
+                      <BsSortAlphaDownAlt 
+                        size={20} 
+                        onClick={() => sortAphabetically(true)}
+                        className='cursor-pointer'/> : 
+                      <BsSortAlphaDown 
+                        size={20} 
+                        onClick={() => sortAphabetically(false)}
+                        className='cursor-pointer'/>
+                    }
+                  </h1>
               </div>
-              <div className='w-1/6 flex items-end justify-center gap-2'>
-                <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>DV No. <FaSort/></h1>
-              </div>
+              <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
               <h1 className='w-1/6 text-center font-bold'>Status</h1>
               <div className='w-1/6 flex items-end justify-center gap-2'>
-                <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Created <FaSort/></h1>
-              </div>
-              <div className='w-1/6 flex items-end justify-center gap-2'>
-                <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Returned <FaSort/></h1>
-              </div>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                </div>
+                <div className='w-1/6 flex items-end justify-center gap-2'>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
+                </div>
             </section>
             <div className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
               <PaginatedList items={filteredDocuments} type={'3'}/>

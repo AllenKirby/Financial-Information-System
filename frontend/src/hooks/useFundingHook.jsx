@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { firestore } from "../config/firebase-config"
+import { collection, query, onSnapshot } from "firebase/firestore"
+import { setControlBook } from '../redux/ControlBookRedux'
 
 export const useFundingHook = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -85,5 +88,79 @@ export const useFundingHook = () => {
         }
     }
 
-    return {returnDoc, inputOperator, transferToHead, appendDataToSheet, isLoading, error}
+    const AddControlBook = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post(`${apiURL}/operator/addControlBook`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const AddFieldOffice = async(data) => {
+        console.log(data.ASANo)
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post(`${apiURL}/operator/addFieldOffice/${data.ASANo}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const retrieveControlBooks = async (dispatch) => {
+        const q = query(collection(firestore, 'ControlBook'));
+        const unsubscribeControlBook = onSnapshot(q, (snapshot) => {
+          const controlBooks = {};
+      
+          snapshot.docs.forEach((doc) => {
+            controlBooks[doc.id] = { ...doc.data(), subcollection: {} };
+      
+            const subcollectionQuery = collection(firestore, 'ControlBook', doc.id, 'FieldOffices');
+            const unsubscribeSubcollection = onSnapshot(subcollectionQuery, (subSnapshot) => {
+              const subcollectionData = subSnapshot.docs.reduce((acc, subDoc) => {
+                acc[subDoc.id] = { ...subDoc.data() };
+                return acc;
+              }, {});
+              controlBooks[doc.id].subcollection = { ...subcollectionData };
+              const cleanedControlBooks = JSON.parse(JSON.stringify(controlBooks));
+              console.log(cleanedControlBooks)
+              dispatch(setControlBook(cleanedControlBooks));
+            });
+      
+            controlBooks[doc.id].unsubscribeSubcollection = unsubscribeSubcollection;
+          });
+        });
+      
+        return unsubscribeControlBook;
+      };
+      
+      
+    return {
+        returnDoc, 
+        inputOperator, 
+        transferToHead, 
+        appendDataToSheet, 
+        AddControlBook,
+        AddFieldOffice, 
+        retrieveControlBooks, isLoading, error}
 }

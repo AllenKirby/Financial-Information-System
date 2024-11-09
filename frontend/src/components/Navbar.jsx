@@ -53,10 +53,6 @@ const Navbar = ({ items, flag }) => {
     }
   }, [user]);
 
-  useEffect(() => {
-    console.log('navbar', fontColor)
-  }, [fontColor])
-
   return (
     <nav className="h-screen w-full flex flex-col justify-between bg-white border-r-2 shadow-gray-300 shadow-lg">
       <div>

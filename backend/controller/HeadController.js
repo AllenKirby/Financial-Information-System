@@ -50,10 +50,17 @@ const updateStatus = async (DV, dTPassed, returnToRole) => {
     try{
         const returnType = `Returned|${returnToRole}`
         const docref = db.collection('records').doc(DV)
-        await docref.update({
-            returnedBy: dTPassed,
-            status: returnType
-        })
+        if(returnToRole === '4') {
+            await docref.update({
+                returnedToPreparer: dTPassed,
+                status: returnType
+            })
+        } else {
+            await docref.update({
+                returnedToFunding: dTPassed,
+                status: returnType
+            })
+        }
         const updatedDoc = await docref.get()
         return updatedDoc.data();
     }catch(error){
