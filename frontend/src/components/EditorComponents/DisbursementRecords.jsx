@@ -18,10 +18,10 @@ const DisbursementRecords = () => {
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
   const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
+  const [timeCreatedFlag, setTimeCreatedFlag] = useState(false)
+  const [timeReturnedFlag, setTimeReturnedFlag] = useState(false)
 
   const modal = () => setIsModalOpen(!isModalOpen)
-
-  console.log(documents)
 
   const filterModal = (value) => {
     setFilter(value)
@@ -58,6 +58,70 @@ const DisbursementRecords = () => {
         const filteredResults = Object.fromEntries(sortedEntries.reverse());
         setFilteredDocuments(filteredResults);
       }
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimeCreatedAsc = () => {
+    setTimeCreatedFlag(!timeCreatedFlag)
+    if (documents && Object.keys(documents).length > 0) {
+      const sortedEntries = Object.entries(documents).sort(([, a], [, b]) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      const filteredResults = Object.fromEntries(sortedEntries);
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimeCreatedDesc = () => {
+    setTimeCreatedFlag(!timeCreatedFlag)
+    if (documents && Object.keys(documents).length > 0) {
+      const sortedEntries = Object.entries(documents).sort(([, a], [, b]) => 
+        new Date(b.createdAt) - new Date(a.createdAt)
+      );
+      const filteredResults = Object.fromEntries(sortedEntries.reverse());
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimeReturnedAsc = () => {
+    setTimeReturnedFlag(!timeReturnedFlag)
+    if (documents && Object.keys(documents).length > 0) {
+      const sortedEntries = Object.entries(documents).sort(([, a], [, b]) => {
+        const [, dateA, timeA] = a.returnedToPreparer ? a.returnedToPreparer.split('|') : ["", "", ""];
+        const [, dateB, timeB] = b.returnedToPreparer ? b.returnedToPreparer.split('|') : ["", "", ""];
+        if (!a.returnedBy) return -1; 
+        if (!b.returnedBy) return 1;
+        const aDate = `${dateA} ${timeA}` 
+        const bDate = `${dateB} ${timeB}` 
+        return new Date(aDate) - new Date(bDate)
+      });
+      const filteredResults = Object.fromEntries(sortedEntries);
+      setFilteredDocuments(filteredResults);
+    } else {
+      setFilteredDocuments({}); 
+    }
+  }
+
+  const sortTimeReturnedDesc = () => {
+    setTimeReturnedFlag(!timeReturnedFlag)
+    if (documents && Object.keys(documents).length > 0) {
+      const sortedEntries = Object.entries(documents).sort(([, a], [, b]) => {
+        const [, dateA, timeA] = a.returnedToPreparer ? a.returnedToPreparer.split('|') : ["", "", ""];
+        const [, dateB, timeB] = b.returnedToPreparer ? b.returnedToPreparer.split('|') : ["", "", ""];
+        if (!a.returnedBy) return -1; 
+        if (!b.returnedBy) return 1;
+        const aDate = `${dateA} ${timeA}` 
+        const bDate = `${dateB} ${timeB}` 
+        return new Date(aDate) - new Date(bDate)
+      });
+      const filteredResults = Object.fromEntries(sortedEntries.reverse());
+      setFilteredDocuments(filteredResults);
     } else {
       setFilteredDocuments({}); 
     }
@@ -121,15 +185,13 @@ const DisbursementRecords = () => {
                     }
                   </h1>
                 </div>
-                <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>DV No. <FaSort/></h1>
-                </div>
+                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Created <FaSort/></h1>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Created <FaSort className='cursor-pointer' onClick={timeCreatedFlag ? sortTimeCreatedDesc : sortTimeCreatedAsc}/></h1>
                 </div>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Returned <FaSort/></h1>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
                 </div>
               </div>
               <div className="w-full h-[430px] border-[1px] overflow-auto bg-white p-1">

@@ -23,6 +23,8 @@ import AccessControl from "../components/SuperAdminComponents/AccessControl";
 import DashboardFunding from "../components/OperatorComponents/Dashboard"
 import DashboardPreparer from "../components/EditorComponents/Dashboard"
 import DashboardBO from "../components/HeadComponents/Dashboard"
+import ControlBook from "../components/OperatorComponents/ControlBook";
+import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 
 
 const Mainpage = () => {
@@ -52,6 +54,9 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
           </Route>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['3']}><DashboardFunding/></PrivateRoute>}/>
+          <Route path="controlbook" element={<PrivateRoute allowedRoles={['3']}><ControlBook/></PrivateRoute>}>
+            <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewControlBook/></PrivateRoute>}/>
+          </Route>
         </Route>
         <Route path="/head" element={<HeadPage/>}>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['2']}><DashboardBO/></PrivateRoute>}/>

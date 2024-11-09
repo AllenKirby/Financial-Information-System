@@ -80,7 +80,7 @@ const updateStatus = async (DV, dTPassed, flag) => {
     const docref = db.collection('records').doc(DV);
 
     const updateData = flag ? 
-        { returnedBy: dTPassed, status: 'Returned|4' } : 
+        { returnedToPreparer: dTPassed, status: 'Returned|4' } : 
         { updatedBy: dTPassed, status: 'Under Review' };
 
     await docref.update(updateData);
@@ -237,10 +237,88 @@ const appendDataToSheet = async (req, res) => {
     }
   };
 
+  const addControlBook = async(req, res) => {
+    const { ASANo, date, SARONo, TotalASA, description } = req.body.data
+
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+
+    const data = {
+        ASANo: ASANo,
+        DateOfAsa: date,
+        SARONo: SARONo,
+        TotalASA: TotalASA,
+        description: description,
+        createdAt: dateTimeCollection
+    }
+
+    try {
+        await db.collection('ControlBook').doc(ASANo).set(data)
+        res.status(200).json({message: 'Control Book successfully added'})
+
+    } catch (error) {
+        console.log(`Error adding control book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  const addNewFieldOffice = async(req, res) => {
+    const { projectName, fieldOffice, ASA } = req.body.data
+    const { id } = req.params
+
+    console.log(projectName)
+
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+
+    const data = {
+        fieldOffice: fieldOffice,
+        projectName: projectName,
+        ASA: ASA,
+        createdAt: dateTimeCollection
+    }
+
+    try {
+        await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(fieldOffice).set(data)
+        res.status(200).json({message: 'Field Office Successfully Created'})
+    } catch (error) {
+        console.log(`Error adding control book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
 module.exports = {
     operatorInput, 
     opReturnDocu, 
     transferDocument,
     getPermission,
-    appendDataToSheet
+    appendDataToSheet,
+    addControlBook,
+    addNewFieldOffice
 }

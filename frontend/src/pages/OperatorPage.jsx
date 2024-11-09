@@ -10,9 +10,11 @@ import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { useState, useEffect } from "react"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { FiBook } from "react-icons/fi";
 
 import { useAuthContext } from "../hooks/useAuthContext";
-import axios from "axios"
+import { useFundingHook } from "../hooks/useFundingHook"
+
 import {useDispatch, useSelector} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
 
@@ -24,6 +26,7 @@ const OperatorPage = () => {
   const [mainSize, setMainSize] = useState('')
   const { user } = useAuthContext()
   const { dispatch: dispatchContext, documents } = useOpDisbursementContext()
+  const { retrieveControlBooks } = useFundingHook()
   const [status, setStatus] = useState([])
   const dispatch = useDispatch()
   const permission = useSelector((state) => state.permission)
@@ -32,6 +35,7 @@ const OperatorPage = () => {
   const navItems = [
     { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <TiDocumentText size={22} /> },
+    { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={22} /> }
   ]
 
   useEffect(() => {
@@ -39,6 +43,8 @@ const OperatorPage = () => {
       setLocation('Disbursement Records')
     }else if(page.pathname === "/operator/dashboard"){
       setLocation('Dashboard')
+    }else if(page.pathname === "/operator/controlbook"){
+      setLocation('Control Book')
     }
   }, [page.pathname])
 
@@ -53,28 +59,15 @@ const OperatorPage = () => {
   }, [navbarExpand])
 
   useEffect(() => {
-    const getPermission = async() => {
-      try {
-        const res = await axios.get(`${apiURL}/operator/getPermission`, {
-          withCredentials: true
-        })
-        if(res.status === 200){
-          const data = res.data
-          console.log(data)
-          dispatch(setPermission(data))
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
-    getPermission()
+    const unsubscribe = retrieveControlBooks(dispatch)
+    return () => unsubscribe;
+  }, []) 
 
+  useEffect(() => {
     const docRef = doc(firestore, 'Roles', 'Funding'); 
     const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
     if (docSnapshot.exists()) {
       const documentData = { data: { ...docSnapshot.data() } };
-
-      console.log('Document Data:', documentData);
 
       dispatch(setPermission(documentData));
     } else {
@@ -83,7 +76,7 @@ const OperatorPage = () => {
     });
 
     return () => unsubscribe()   
-  }, [dispatch, apiURL])
+  }, [dispatch])
 
   useEffect(() => {
     if(permission?.data?.permission){
