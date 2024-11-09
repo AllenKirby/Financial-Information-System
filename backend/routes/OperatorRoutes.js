@@ -12,7 +12,11 @@ const {
     getPermission,
     appendDataToSheet,
     addControlBook,
-    addNewFieldOffice
+    addNewFieldOffice,
+    updateControlBook,
+    deleteControlBook,
+    updateFieldOffice,
+    deleteFieldOffice
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -25,5 +29,9 @@ OperatorRouter.get('/getPermission', getPermission)
 OperatorRouter.post('/appendDataToSheet', appendDataToSheet)
 OperatorRouter.post('/addControlBook', addControlBook)
 OperatorRouter.post('/addFieldOffice/:id', addNewFieldOffice)
+OperatorRouter.patch('/updateControlBook/:id', updateControlBook)
+OperatorRouter.delete('/deleteControlBook/:id', deleteControlBook)
+OperatorRouter.patch('/updateFieldOffice/:id', updateFieldOffice)
+OperatorRouter.delete('/deleteFieldOffice/:id', deleteFieldOffice)
 
 module.exports = OperatorRouter

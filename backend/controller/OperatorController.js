@@ -237,6 +237,24 @@ const appendDataToSheet = async (req, res) => {
     }
   };
 
+  const createAcronym = (input) => {
+    const phraseStopWords = [
+        "a", "an", "and", "are", "as", "at", "by", "for", "from", "in",
+        "is", "it", "of", "on", "or", "that", "the", "to", "with", "about",
+        "above", "across", "after", "against", "along", "among", "around",
+        "before", "behind", "below", "beneath", "beside", "between", "beyond",
+        "but", "by", "despite", "during", "except", "following", "for",
+        "from", "in", "including", "into", "like", "near", "of", "off", 
+        "on", "onto", "out", "over", "past", "since", "through", "throughout", 
+        "till", "to", "toward", "under", "until", "up", "upon", "with", 
+        "within", "without"
+      ];
+    const words = input.split(' ');
+    const filteredWords = words.filter(word => !phraseStopWords.includes(word.toLowerCase())); 
+    const acronym = filteredWords.map(word => word[0].toUpperCase()).join('');
+    return acronym
+  }
+
   const addControlBook = async(req, res) => {
     const { ASANo, date, SARONo, TotalASA, description } = req.body.data
 
@@ -255,9 +273,10 @@ const appendDataToSheet = async (req, res) => {
     });
 
     const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+    const finalASANo = `${ASANo}|${createAcronym(description)}`
 
     const data = {
-        ASANo: ASANo,
+        ASANo: finalASANo,
         DateOfAsa: date,
         SARONo: SARONo,
         TotalASA: TotalASA,
@@ -266,7 +285,7 @@ const appendDataToSheet = async (req, res) => {
     }
 
     try {
-        await db.collection('ControlBook').doc(ASANo).set(data)
+        await db.collection('ControlBook').doc(finalASANo).set(data)
         res.status(200).json({message: 'Control Book successfully added'})
 
     } catch (error) {
@@ -278,8 +297,6 @@ const appendDataToSheet = async (req, res) => {
   const addNewFieldOffice = async(req, res) => {
     const { projectName, fieldOffice, ASA } = req.body.data
     const { id } = req.params
-
-    console.log(projectName)
 
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -308,10 +325,107 @@ const appendDataToSheet = async (req, res) => {
         await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(fieldOffice).set(data)
         res.status(200).json({message: 'Field Office Successfully Created'})
     } catch (error) {
-        console.log(`Error adding control book: ${error}`)
+        console.log(`Error adding field office: ${error}`)
         res.status(500).json({ success: false, error: error.message });
     }
   }
+
+  const updateControlBook = async(req, res) => {
+    const { id } = req.params
+    const controlBookData = req.body.data
+    
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+
+    const data = {
+        ...controlBookData,
+        updatedAt: dateTimeCollection
+    }
+
+    try {
+        const docRef = db.collection('ControlBook').doc(id)
+        await docRef.update(data)
+        res.status(200).json({message: 'Control Book Successfully Updated'})
+    } catch (error) {
+        console.log(`Error book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
+  const deleteControlBook = async(req, res) => {
+    const { id } = req.params
+
+    try{
+        await db.collection('ControlBook').doc(id).delete();
+        res.status(200).json({ message: 'Control Book successfully deleted' })
+    }
+    catch(error){
+        console.error("Error deleting control book: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const updateFieldOffice = async(req, res) => {
+    const { id } = req.params
+    const [ASANo, fieldOffice] = id.split(',')
+    const fieldOfficeData = req.body.data
+
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+
+    const data = {
+        ...fieldOfficeData,
+        updatedAt: dateTimeCollection
+    }
+
+    try {
+        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(fieldOffice)
+        await docRef.update(data)
+        res.status(200).json({message: 'Field Office Successfully Updated'})
+    } catch (error) {
+        console.log(`Error book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const deleteFieldOffice = async(req, res) => {
+    const { id } = req.params
+    const [ASANo, fieldOffice] = id.split(',')
+
+    try {
+        await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(fieldOffice).delete()
+        res.status(200).json({message: 'Field Office Successfully Deleted'})
+    } catch (error) {
+        console.log(`Error book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
 
 module.exports = {
     operatorInput, 
@@ -320,5 +434,9 @@ module.exports = {
     getPermission,
     appendDataToSheet,
     addControlBook,
-    addNewFieldOffice
+    addNewFieldOffice,
+    updateControlBook,
+    deleteControlBook,
+    updateFieldOffice,
+    deleteFieldOffice
 }
