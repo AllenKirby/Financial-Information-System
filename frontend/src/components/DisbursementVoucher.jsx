@@ -345,7 +345,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       payee_data: payeeData,
       bir_data: birData
     }
-    console.log(data)
     const res = await updateDV(data, document.DVKey)
     if(res){
       Swal.fire({

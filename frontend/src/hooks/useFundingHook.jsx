@@ -143,7 +143,6 @@ export const useFundingHook = () => {
               }, {});
               controlBooks[doc.id].subcollection = { ...subcollectionData };
               const cleanedControlBooks = JSON.parse(JSON.stringify(controlBooks));
-              console.log(cleanedControlBooks)
               dispatch(setControlBook(cleanedControlBooks));
             });
       
@@ -152,8 +151,87 @@ export const useFundingHook = () => {
         });
       
         return unsubscribeControlBook;
-      };
-      
+    };
+    
+    const updateControlBook = async(data, id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/operator/updateControlBook/${id}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const deleteControlBook = async(id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.delete(`${apiURL}/operator/deleteControlBook/${id}`, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const deleteFieldOffice = async(id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.delete(`${apiURL}/operator/deleteFieldOffice/${id}`, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const updateFieldOffice = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/operator/updateFieldOffice/${data.id}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
       
     return {
         returnDoc, 
@@ -162,5 +240,12 @@ export const useFundingHook = () => {
         appendDataToSheet, 
         AddControlBook,
         AddFieldOffice, 
-        retrieveControlBooks, isLoading, error}
+        retrieveControlBooks, 
+        updateControlBook, 
+        deleteControlBook,
+        deleteFieldOffice,
+        updateFieldOffice,
+        isLoading, 
+        error
+    }
 }

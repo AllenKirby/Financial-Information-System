@@ -1,11 +1,21 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { useFundingHook } from '../../hooks/useFundingHook'
 
-const AddNewFieldOffice = ({modal, ASANo}) => {
+const AddNewFieldOffice = ({modal, ASANo, fieldOffice = {}, flag}) => {
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
-    const { AddFieldOffice, isLoading, error } = useFundingHook()
+    const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
+
+    useEffect(() => {
+        if(flag && fieldOffice) {
+            setFieldOfficeData({
+                projectName: fieldOffice.projectName || '', 
+                fieldOffice: fieldOffice.fieldOffice || '',
+                ASA: fieldOffice.ASA || 0
+            })
+        }
+    }, [flag, fieldOffice]) 
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -25,14 +35,33 @@ const AddNewFieldOffice = ({modal, ASANo}) => {
         }
     }
 
+    const handleUpdate = async (e) => {
+        e.preventDefault()
+        const data = {
+            data: fieldOfficeData,
+            id: `${ASANo},${fieldOffice.fieldOffice}`
+        }
+        const res = await updateFieldOffice(data)
+        if(res) {
+            Swal.fire({
+                title: "Saved",
+                text: "Control Book is successfully updated!",
+                icon: "success",
+                confirmButtonColor: "#009933"
+                });
+            modal()
+        }
+    }
+
   return (
-    <form onSubmit={handleSubmit} className="w-1/4 h-auto bg-white p-3 rounded-lg">
+    <form onSubmit={flag ? handleUpdate : handleSubmit} className="w-1/4 h-auto bg-white p-3 rounded-lg">
         <h1 className="text-center text-2xl font-bold text-fundingBlueGreen">Add New Field Office</h1>
         <div className='w-full h-auto p-2'>
             <div className="w-full mt-2">
                 <label>Project Name</label>
                 <input 
                     type="text"
+                    value={fieldOfficeData.projectName}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, projectName: e.target.value})} 
                     className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
                     required />
@@ -41,6 +70,7 @@ const AddNewFieldOffice = ({modal, ASANo}) => {
                 <label>Field Office</label>
                 <select 
                     required
+                    value={fieldOfficeData.fieldOffice}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, fieldOffice: e.target.value})} 
                     className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
                     >
@@ -55,6 +85,7 @@ const AddNewFieldOffice = ({modal, ASANo}) => {
                 <label>ASA</label>
                 <input 
                     type="number" 
+                    value={fieldOfficeData.ASA}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
                     className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
                     required />
@@ -75,7 +106,9 @@ const AddNewFieldOffice = ({modal, ASANo}) => {
 
 AddNewFieldOffice.propTypes = {
     modal: PropTypes.func.isRequired,
-    ASANo: PropTypes.string.isRequired
+    ASANo: PropTypes.string.isRequired,
+    fieldOffice: PropTypes.object.isRequired,
+    flag: PropTypes.bool.isRequired,
 }
 
 export default AddNewFieldOffice
