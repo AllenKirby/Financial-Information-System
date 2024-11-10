@@ -11,6 +11,7 @@ const EditorRoutes = require('./routes/EditorRoutes')
 const OperatorRoutes = require('./routes/OperatorRoutes')
 const HeadRoutes = require('./routes/HeadRoutes')
 const SuperAdminRoutes = require('./routes/SuperAdminRoutes')
+const AdminAndHeadRoutes = require('./routes/Admin_Head_routes')
 
 const app = express()
 
@@ -37,6 +38,7 @@ app.use('/editor', EditorRoutes)
 app.use('/operator', OperatorRoutes)
 app.use('/head', HeadRoutes)
 app.use('/superadmin', SuperAdminRoutes)
+app.use('/adminhead', AdminAndHeadRoutes)
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {

@@ -19,8 +19,7 @@ const {getAllLogs,
        getTaxType,
        deleteTax,
        approveDV,
-       getNumberOfRecords,
-       getForecastedValues
+       getNumberOfRecords
         } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
@@ -46,7 +45,6 @@ adminRouter.get('/getTaxType', getTaxType)
 adminRouter.delete('/deleteTax/:field_key', deleteTax)
 //DASHBOARD (NUMBER OF RECORDS)
 adminRouter.get('/getNumberOfRecords', getNumberOfRecords)
-adminRouter.get('/getForecastedValues', getForecastedValues)
 
 
 module.exports = adminRouter;

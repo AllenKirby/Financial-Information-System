@@ -18,7 +18,7 @@ import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'', accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
+  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'',accCategory: [], accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
   //states
   const [birData, setBirData] = useState({ birParticular: ''})
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
@@ -70,6 +70,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         DV: document.DV || '',
         DVKey: document.DVKey || '',
         RC: document.RC || '',
+        // accCategory: document.accCategory || '',
         accTitle: document.accTitle || '',
         optionalAmount: document.optionalAmount || '',
         accCode: document.accCode || '',
@@ -186,10 +187,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       ...payeeData,
       TT_formula1: gross.value2,
       TT_formula2: gross.value3,
-      accTitle: formFields.map(arr => Object.values(arr)[0]),
-      accCode: formFields.map(arr => Object.values(arr)[1]),
-      optionalAmount: formFields.map(arr => Object.values(arr)[2])
-
+      accCategory: formFields.map(arr => Object.values(arr)[0]),
+      accTitle: formFields.map(arr => Object.values(arr)[1]),
+      accCode: formFields.map(arr => Object.values(arr)[2]),
+      optionalAmount: formFields.map(arr => Object.values(arr)[3])
+      
     };
     const data = {
       payee_data: updatedPayeeData,
@@ -341,8 +343,18 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleUpdate = async(e) => {
     e.preventDefault()
 
+    const updatedPayeeData = {
+      ...payeeData,
+      TT_formula1: gross.value2,
+      TT_formula2: gross.value3,
+      accCategory: formFields.map(arr => Object.values(arr)[0]),
+      accTitle: formFields.map(arr => Object.values(arr)[1]),
+      accCode: formFields.map(arr => Object.values(arr)[2]),
+      optionalAmount: formFields.map(arr => Object.values(arr)[3])
+      
+    };
     const data = {
-      payee_data: payeeData,
+      payee_data: updatedPayeeData,
       bir_data: birData
     }
     const res = await updateDV(data, document.DVKey)
@@ -372,10 +384,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }
 
-  const [formFields, setFormFields] = useState([{ accTitle: '', accCode: '', amount: '' }]);
+  const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '' }]);
 
   const addNewField = () => {
-    setFormFields([...formFields, { accTitle: '', accCode: '', amount: '' }]);
+    setFormFields([...formFields, { accCategory:'',accTitle: '', accCode: '', amount: '' }]);
   };
 
   const removeField = (index) => {
@@ -729,11 +741,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                             {Object.entries(filteredAcc[index]).length > 0 ? (
                               Object.entries(filteredAcc[index]).map(([key, value]) => {
                                 const parts = value.split(':');
+                                const categories = `${parts[0]}|${parts[1]}`
                                 const lastPart = parts[parts.length - 1];
                                 return (
                                 <li
                                   key={key}
                                   onClick={() => {
+                                    handleFieldChange(index, 'accCategory', categories)
                                     handleFieldChange(index, 'accTitle', lastPart);
                                     handleFieldChange(index, 'accCode', key);
                                     setShowDropdownAcc(false)

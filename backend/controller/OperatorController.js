@@ -1,4 +1,4 @@
-const {admin, db, rtdb}  = require('../firebase')
+const {admin, db, rtdb}  = require('../config/firebase')
 const { google } = require('googleapis');
 const sheets = google.sheets('v4');
 

@@ -1,4 +1,4 @@
-const {admin, db}  = require('../firebase')
+const {admin, db}  = require('../config/firebase')
 
 const requireAuth = async (req, res, next) => {
     let token = req.cookies.token

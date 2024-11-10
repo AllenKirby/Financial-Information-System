@@ -18,7 +18,6 @@ const ChartData = () => {
                 const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getForecastedValues`, { withCredentials: true });
                 if (res.status === 200) {
                     sessionStorage.setItem('forecasted', JSON.stringify(res.data));
-                    console.log(res.data)
                     setValues(res.data);
                 }
             } catch (error) {
