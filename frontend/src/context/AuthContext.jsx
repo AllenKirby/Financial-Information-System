@@ -34,7 +34,7 @@ export const AuthContextProvider = ({ children }) => {
                 if(user.emailVerified){
                     try{
                         const token = await user.getIdToken();
-                        const response = await axios.post('http://localhost:4000/user/refreshToken', {}, {
+                        const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/refreshToken`, {}, {
                             headers: {
                             'Content-Type': 'application/json',
                             'Authorization':` Bearer ${token} `
@@ -43,7 +43,7 @@ export const AuthContextProvider = ({ children }) => {
                         });
     
                         if (response.status === 200) {
-                            cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
+                            cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
                             dispatch({type: 'LOGIN', payload: response.data})
                         } 
                     }catch(error){

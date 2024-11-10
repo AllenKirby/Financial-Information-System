@@ -1,4 +1,4 @@
-const {admin, db, rtdb}  = require('../firebase');
+const {admin, db, rtdb}  = require('../config/firebase');
 const { doc } = require('firebase/firestore')
 
 const { 
@@ -22,7 +22,7 @@ const formatDate = (rawDate) => {
     return formattedDate;
   };
 const createDV = async (req, res) => {
-    const {payee, TIN, address, fund, date, DV, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
+    const {payee, TIN, address, fund, date, DV, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
     const {birParticular} = req.body.bir_data
     const createdBy = req.user.name
     
@@ -81,6 +81,10 @@ const createDV = async (req, res) => {
         document = {
             [DVKey]: dvData
         }
+
+        addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
+        addOnClusterAmount(amount, fund, date)
+
         return res.status(200).json(document);
 
     }catch(error){
@@ -414,6 +418,78 @@ const getPayeeData = async (req,res) => {
     }catch(error){
         console.log(`Error getting payee collection ${error}`)
         res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateString) => {
+    try{
+        const today = new Date(dateString);
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+
+        if (optionalAmount.length === 1 && optionalAmount[0] === ''){
+            const [category, subcategory] = accCategory[0].split('|');
+            const float_amount = parseFloat(amount)
+
+            const docRef = db.collection('CategoryPerMonth').doc(`${month}-${year}`).collection('collectedCategory').doc(category)
+
+            const docSnapshot = await docRef.get()
+            const existingAmount = docSnapshot.exists ? parseFloat(docSnapshot.data()[subcategory] || 0) : 0
+
+            const newAmount = existingAmount + float_amount
+            const data = { [subcategory]: newAmount };
+
+            await docRef.set(data, {merge: true})
+            
+        }else{
+            for (let i = 0; i< accCategory.length; i++){
+                const [category, subcategory] = accCategory[i].split('|')
+                const subAmount = parseFloat(optionalAmount[i]);
+
+                const docRef = db.collection('CategoryPerMonth').doc(`${month}-${year}`).collection('collectedCategory').doc(category)
+
+                const docSnapshot = await docRef.get()
+                const existingAmount = docSnapshot.exists ? parseFloat(docSnapshot.data()[subcategory] || 0) : 0
+
+                const newAmount = existingAmount + subAmount
+                const data = { [subcategory]: newAmount };
+
+                await docRef.set(data, {merge: true})
+            }
+        }
+    }catch(error){
+        console.log(`Error on addOnCategoryPerMonth(editor controller) ${error}`)
+    }
+}
+
+const addOnClusterAmount = async (amount, cluster, dateString) => {
+    try{
+        const float_amount = parseFloat(amount)
+
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+
+        const clusterMapping = {
+            "501 COB": "COB",
+            "501 LFP": "LFP",
+            "501 CARP": "CARP",
+            "Contract Farming": "CF"
+        };
+
+        const cluster_mapped = clusterMapping[cluster]
+
+        const docRef = db.collection('AmountRecord').doc(`${year}-${month}`)
+        const docSnapshot = await docRef.get()
+        const existing_amount = docSnapshot.exists ? parseFloat(docSnapshot.data()[cluster_mapped]) || 0 : 0
+
+        const newAmount = existing_amount + float_amount
+        const data = { [cluster_mapped]: newAmount };
+
+        await docRef.set(data, {merge: true})
+
+    }catch(error){
+        console.log(`Error on addOnClusterAmount (editor controller) ${error}`)
     }
 }
 

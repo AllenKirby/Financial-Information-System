@@ -51,7 +51,7 @@ export const useAuthHook = () => {
           
             console.log(response)
             if (response.status === 200) {
-              cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
+              cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
               dispatchAuth({type: 'LOGIN', payload: response.data})
               setIsLoading(false)
             }

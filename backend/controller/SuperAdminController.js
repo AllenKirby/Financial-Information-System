@@ -1,4 +1,4 @@
-const {admin, db}  = require('../firebase')
+const {admin, db}  = require('../config/firebase')
 
 const getAllAccounts = async (req, res) => {
     try{
