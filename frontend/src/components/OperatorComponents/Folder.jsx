@@ -1,5 +1,6 @@
 import EmptyFolder from '../../assets/icons/emptyfolder.png'
 import FolderWithItems from '../../assets/icons/folder.png'
+
 import { BsThreeDots } from "react-icons/bs";
 import { GrDocumentUpdate } from "react-icons/gr";
 import { MdDeleteOutline } from "react-icons/md";
@@ -8,13 +9,17 @@ import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+
 import { useFundingHook } from '../../hooks/useFundingHook';
+
 import AddControlBook from "./AddControlBook"
 
-const Folder = ({controlBook}) => {
+const Folder = ({ASANo, controlBook}) => {
     const [optionFlag, setOptionFlag] = useState(false)
     const [controlBookFlag, setControlBookFlag] = useState(false)
+
     const navigate = useNavigate()
+    
     const { deleteControlBook, isLoading, error } = useFundingHook()
 
     const subcollectionCounts = () => controlBook.subcollection ? Object.entries(controlBook.subcollection).length : 0
@@ -40,7 +45,7 @@ const Folder = ({controlBook}) => {
             confirmButtonText: "Yes, delete it!",
           }).then(async (result) => {
             if (result.isConfirmed) {
-                const res = await deleteControlBook(controlBook.ASANo)
+                const res = await deleteControlBook(ASANo)
               if (res) {
                 Swal.fire({
                   title: "Deleted!",
@@ -96,7 +101,7 @@ const Folder = ({controlBook}) => {
         <>
           <div className="fixed inset-0 z-40 bg-black opacity-50" />
           <div onClick={(e) => e.stopPropagation()} className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddControlBook modal={modal} flag={true} controlBook={controlBook}/>
+            <AddControlBook modal={modal} flag={true} controlBook={controlBook} ASANo={ASANo}/>
           </div>
         </>
       )}
@@ -105,7 +110,8 @@ const Folder = ({controlBook}) => {
 }
 
 Folder.propTypes = {
-    controlBook: PropTypes.object.isRequired
+    controlBook: PropTypes.object.isRequired,
+    ASANo: PropTypes.string.isRequired,
 }
 
 export default Folder

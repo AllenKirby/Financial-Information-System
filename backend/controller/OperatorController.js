@@ -322,7 +322,7 @@ const appendDataToSheet = async (req, res) => {
     }
 
     try {
-        await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(fieldOffice).set(data)
+        await db.collection('ControlBook').doc(id).collection('FieldOffices').doc().set(data)
         res.status(200).json({message: 'Field Office Successfully Created'})
     } catch (error) {
         console.log(`Error adding field office: ${error}`)
@@ -332,7 +332,7 @@ const appendDataToSheet = async (req, res) => {
 
   const updateControlBook = async(req, res) => {
     const { id } = req.params
-    const controlBookData = req.body.data
+    const { ASANo, date, SARONo, TotalASA, description } = req.body.data
     
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -349,9 +349,14 @@ const appendDataToSheet = async (req, res) => {
     });
 
     const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+    const finalASANo = `${ASANo}|${createAcronym(description)}`
 
     const data = {
-        ...controlBookData,
+        ASANo: finalASANo,
+        DateOfAsa: date,
+        SARONo: SARONo,
+        TotalASA: TotalASA,
+        description: description,
         updatedAt: dateTimeCollection
     }
 
@@ -380,7 +385,7 @@ const appendDataToSheet = async (req, res) => {
 
 const updateFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, fieldOffice] = id.split(',')
+    const [ASANo, docId] = id.split(',')
     const fieldOfficeData = req.body.data
 
     const today = new Date()
@@ -405,7 +410,7 @@ const updateFieldOffice = async(req, res) => {
     }
 
     try {
-        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(fieldOffice)
+        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId)
         await docRef.update(data)
         res.status(200).json({message: 'Field Office Successfully Updated'})
     } catch (error) {
@@ -416,10 +421,10 @@ const updateFieldOffice = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, fieldOffice] = id.split(',')
+    const [ASANo, docId] = id.split(',')
 
     try {
-        await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(fieldOffice).delete()
+        await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId).delete()
         res.status(200).json({message: 'Field Office Successfully Deleted'})
     } catch (error) {
         console.log(`Error book: ${error}`)

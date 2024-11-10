@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useSelector } from 'react-redux'
 import { Outlet, useParams } from "react-router-dom"
 
@@ -7,13 +7,12 @@ import Folder from "./Folder"
 
 const ControlBook = () => {
   const [controlBookFlag, setControlBookFlag] = useState(false)
+
   const controlBooks = useSelector((state) => state.controlBook)
+
   const { id } = useParams()
 
   const modal = () => setControlBookFlag(!controlBookFlag)
-  useEffect(() => {
-    console.log('redux', controlBooks)
-  }, [controlBooks])
 
   return (
     <section className="w-full h-full">
@@ -30,7 +29,7 @@ const ControlBook = () => {
           <div className="p-2 w-full h-[88%] grid grid-cols-4 gap-2 border-2 rounded-lg">
             {controlBooks && Object.entries(controlBooks).length > 0 ? (
               Object.entries(controlBooks).map(([key, controlBook]) => (
-                <Folder key={key} controlBook={controlBook}/>
+                <Folder key={key} ASANo={key} controlBook={controlBook}/>
               ))
             ) : (
               <div className="w-full h-full flex items-center justify-center">

@@ -9,7 +9,7 @@ export default {
       fontFamily: {
         'times': ['"Times New Roman"', 'serif'],
         poppins: ['Poppins', 'sans-serif'],
-        sans: ['Open Sans', 'sans-serif'],
+        sans: ['Montserrat', 'sans-serif'],
       },
       colors: {
         customgreen: '#009933',
