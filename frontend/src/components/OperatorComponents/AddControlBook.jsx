@@ -5,8 +5,11 @@ import Swal from 'sweetalert2'
 import Loader from '../Loader'
 import { useFundingHook } from '../../hooks/useFundingHook'
 
-const AddControlBook = ({modal, controlBook = {}, flag}) => {
+const AddControlBook = (props) => {
+    const { modal, controlBook = {}, flag, ASANo = '' } = props
+
     const { AddControlBook, updateControlBook, isLoading, error } = useFundingHook()
+    
     const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: ''})
 
     useEffect(() => {
@@ -20,6 +23,12 @@ const AddControlBook = ({modal, controlBook = {}, flag}) => {
             })
         }
     }, [controlBook, flag])
+
+    const handleFocus = () => {
+        if (controlBookData.TotalASA === 0) {
+            setControlBookData({...controlBookData, TotalASA: ''});
+        }
+    };
 
     const formatDateforUpdate = (rawDate) => {
         if (typeof rawDate === 'string') {
@@ -40,7 +49,7 @@ const AddControlBook = ({modal, controlBook = {}, flag}) => {
             data: controlBookData
         }
 
-        const res = await updateControlBook(data, controlBook.ASANo)
+        const res = await updateControlBook(data, ASANo)
         if(res) {
             Swal.fire({
                 title: "Saved",
@@ -111,6 +120,7 @@ const AddControlBook = ({modal, controlBook = {}, flag}) => {
                     <input 
                         type="number"
                         value={controlBookData.TotalASA}
+                        onFocus={handleFocus}
                         onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
                         required
                         className="w-full px-4 py-2 rounded-lg border-2 focus:outline-customgreen transition-all duration-500"  />
@@ -148,7 +158,8 @@ const AddControlBook = ({modal, controlBook = {}, flag}) => {
 AddControlBook.propTypes = {
     modal: PropTypes.func.isRequired,
     flag: PropTypes.bool.isRequired,
-    controlBook: PropTypes.object
+    controlBook: PropTypes.object,
+    ASANo: PropTypes.string
 }
 
 export default AddControlBook

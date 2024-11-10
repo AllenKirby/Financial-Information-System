@@ -1,10 +1,16 @@
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
+
+import Loader from '../Loader'
+
 import { useFundingHook } from '../../hooks/useFundingHook'
 
-const AddNewFieldOffice = ({modal, ASANo, fieldOffice = {}, flag}) => {
+const AddNewFieldOffice = (props) => {
+    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = ''} = props
+
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
+    
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
 
     useEffect(() => {
@@ -16,6 +22,12 @@ const AddNewFieldOffice = ({modal, ASANo, fieldOffice = {}, flag}) => {
             })
         }
     }, [flag, fieldOffice]) 
+
+    const handleFocus = () => {
+        if (fieldOfficeData.ASA === 0) {
+            setFieldOfficeData({...fieldOfficeData, ASA: ''});
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -39,7 +51,7 @@ const AddNewFieldOffice = ({modal, ASANo, fieldOffice = {}, flag}) => {
         e.preventDefault()
         const data = {
             data: fieldOfficeData,
-            id: `${ASANo},${fieldOffice.fieldOffice}`
+            id: `${ASANo},${fieldOfficeID}`
         }
         const res = await updateFieldOffice(data)
         if(res) {
@@ -86,13 +98,17 @@ const AddNewFieldOffice = ({modal, ASANo, fieldOffice = {}, flag}) => {
                 <input 
                     type="number" 
                     value={fieldOfficeData.ASA}
+                    onFocus={handleFocus}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
                     className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
                     required />
             </div>
         </div>
         <div className='w-full h-auto flex items-center justify-end gap-2 py-2'>
-            <button type='submit' disabled={isLoading} className='px-5 py-2 rounded-lg bg-fundingBlueGreen text-white font-semibold'>Save</button>
+            <button 
+                type='submit' 
+                disabled={isLoading} 
+                className='px-5 py-2 rounded-lg bg-fundingBlueGreen text-white font-semibold'>{isLoading ? <Loader /> : 'Save'}</button>
             <button onClick={modal} className='px-5 py-2 rounded-lg font-semibold'>Back</button>
         </div>
         {error && (
@@ -107,8 +123,9 @@ const AddNewFieldOffice = ({modal, ASANo, fieldOffice = {}, flag}) => {
 AddNewFieldOffice.propTypes = {
     modal: PropTypes.func.isRequired,
     ASANo: PropTypes.string.isRequired,
-    fieldOffice: PropTypes.object.isRequired,
+    fieldOffice: PropTypes.object,
     flag: PropTypes.bool.isRequired,
+    fieldOfficeID: PropTypes.string
 }
 
 export default AddNewFieldOffice

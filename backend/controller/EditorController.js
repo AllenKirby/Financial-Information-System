@@ -233,8 +233,6 @@ const updateDV = async(req, res) => {
         birParticular,
         updatedAt: dateTimeCollection
     }
-
-    console.log(dvData)
     // dvData = {
     //     //payee data
     //     payee: payee, 
