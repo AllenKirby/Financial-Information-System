@@ -16,6 +16,7 @@ const ViewControlBook = () => {
   const [ControlBook, setControlBook] = useState({key: '', data: {}})
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
+  const [remainingASA, setRemainingAsa] = useState(0)
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
 
@@ -33,6 +34,28 @@ const ViewControlBook = () => {
     }
 
   }, [controlBooks, id])
+
+  useEffect(() => {
+    const computeRemainingASA = () => {
+      if(ControlBook.data.subcollection) {
+        const ASA = Object.values(ControlBook.data.subcollection).map(fieldOffice => fieldOffice.ASA)
+        let totalASA = ControlBook.data.TotalASA
+        for(let i = 0; i < ASA.length; i++) {
+          totalASA -= ASA[i]
+        }
+  
+        return totalASA
+      }
+    }
+    if(remainingASA === 0) {
+      setRemainingAsa(ControlBook.data.TotalASA)
+    } else {
+      setRemainingAsa(computeRemainingASA())
+    }
+  }, [ControlBook, remainingASA])
+
+  
+
 
   const convertDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -77,7 +100,7 @@ const ViewControlBook = () => {
               <p className="font-semibold text-sm">Total ASA Budget</p>
             </div>
             <div className="w-full h-3/4 flex items-center justify-center">
-              <p className="font-semibold text-4xl text-fundingBlueGreen">₱{ControlBook.data.TotalASA}.00</p>
+              <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.TotalASA}.00</p>
             </div>
           </div>
           <div className="w-1/4 h-full rounded-lg p-3 border-2">
@@ -85,7 +108,7 @@ const ViewControlBook = () => {
               <p className="font-semibold text-sm">Remaining ASA Balance</p>
             </div>
             <div className="w-full h-3/4 flex items-center justify-center">
-              <p className="font-semibold text-4xl text-fundingBlueGreen">₱300000.00</p>
+              <p className="font-semibold text-3xl text-fundingBlueGreen">₱{remainingASA}.00</p>
             </div>
           </div>
           <div className="w-1/4 h-full rounded-lg border-2 p-3">
@@ -93,7 +116,7 @@ const ViewControlBook = () => {
               <p className="font-semibold text-sm">Total Spending per Field Office</p>
             </div>
             <div className="w-full h-3/4 flex items-center justify-center">
-              <p className="font-semibold text-4xl text-fundingBlueGreen">₱300000.00</p>
+              <p className="font-semibold text-3xl text-fundingBlueGreen">₱300000.00</p>
             </div>
           </div>
           <button onClick={modal} className="w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white bg-fundingBlueGreen">
@@ -101,16 +124,16 @@ const ViewControlBook = () => {
               <div className="w-full flex items-center justify-center">
                 <IoAddOutline size={40}/>
               </div>
-              <p className="font-semibold">Add New Field Office</p>
+              <p className="font-semibold">New Field Office</p>
            </div>
           </button>
         </div>
         <div className="w-full h-3/4">
-          <div className="w-full h-[10%] my-3 px-5">
+          <div className="w-full h-[10%] my-2 px-5">
             <p className="font-semibold my-1">Field Offices({ControlBook.data.subcollection ? Object.entries(ControlBook.data.subcollection).length : 0})</p>
             <hr />
           </div>
-          <div className="w-full h-[85%]">
+          <div className="w-full h-[300px] overflow-auto border-2 rounded-lg p-1">
               {ControlBook.data.subcollection && Object.entries(ControlBook.data.subcollection).length > 0 ? (
                 Object.entries(ControlBook.data.subcollection).map(([key,fieldOffice]) => (
                   <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>
@@ -125,7 +148,7 @@ const ViewControlBook = () => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false}/>
+            <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={remainingASA}/>
           </div>
         </>
       )}

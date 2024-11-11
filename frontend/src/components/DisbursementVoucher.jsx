@@ -459,17 +459,17 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         }else{
           flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
         }
-      }} action="" className="bg-white w-3/5 h-5/6 p-5 rounded-xl">
-      <div className='w-full h-auto text-center '>
-        <h1 className='text-2xl font-bold'>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
+      }} action="" className="bg-white w-3/5 h-5/6 p-3 rounded-lg">
+      <div className='w-full h-auto px-3'>
+        <h1 className={`${user.role === '4' ? 'text-preparerPrimary' : 'text-fundingBlueGreen'} text-2xl font-bold`}>{flag ? 'Update Disbursement Voucher' : 'New Disbursement Voucher'}</h1>
       </div>
       <div className='w-full h-4/5 p-3 overflow-y-auto'>
-        <h1 className="font-bold text-lg mb-2">Personal/Payee Information</h1>
-        <div className="w-full h-auto">
-          <div className='w-full py-2 relative'>
+        <h1 className="font-semibold text-lg">Personal/Payee Information</h1>
+        <div className="w-full h-auto mt-2">
+          <div className='w-full relative'>
             <label>Payee</label>
             <input
-              className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+              className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
               disabled={isDisabled && !permission.data.permission}
               type="text" 
               // value={payeeData.payee}
@@ -494,20 +494,20 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
           {/* ADDRESS */}
           <div className='w-full flex gap-2'>
-            <div className='w-1/2'>
+            <div className='w-1/2 mt-2'>
               <label>Address</label>
               <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 disabled={isDisabled && !permission.data.permission}
                 type="text" 
                 value={payeeData.address}
                 onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
                 required  />
             </div>
-            <div className='w-1/2'>
+            <div className='w-1/2 mt-2'>
               <label>TIN/Employee No.</label>
               <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 disabled={isDisabled && !permission.data.permission}
                 type="text" 
                 value={payeeData.TIN}
@@ -521,12 +521,12 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           </div>
 
         </div>
-        <h1 className="font-semibold text-lg mt-5 mb-2">Document/Transaction Information</h1>
-        <div className="w-full h-auto flex flex-col gap-3 py-2">
+        <h1 className="font-semibold text-lg mt-2">Document/Transaction Information</h1>
+        <div className="w-full h-auto flex flex-col py-2">
           <div className='w-full flex gap-2'>
             <div className="flex flex-col w-4/6">
               <label>Fund Cluster</label>
-              <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+              <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
                 value={payeeData.fund}
                 disabled={isDisabled && !permission.data.permission}
@@ -550,7 +550,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <div className="flex flex-col w-2/6">
               <label>Date</label>
               <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 type="date" 
                 disabled={isDisabled && !permission.data.permission}
                 value={payeeData.date}
@@ -560,18 +560,18 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             </div>
           </div>
           <div className='w-full flex gap-2'>
-            <div className='w-1/2'>
+            <div className='w-1/2 mt-2'>
               <label>DV No.</label>
               <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 type="text" 
                 disabled={true}
                 value={payeeData.DV}
                 required  />
             </div>
-            <div className="flex flex-col w-1/2">
+            <div className="flex flex-col w-1/2 mt-2">
               <label>Responsibility Center</label>
-              <select  className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+              <select  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
                 value={payeeData.RC}
                 disabled={isDisabled && !permission.data.permission}
@@ -597,7 +597,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <div className="flex flex-col w-3/5">
                 <label  className="font-semibold text-lg mt-3 mb-2">Certified by</label>
                 <label>Name</label>
-                <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500"
+                <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                   onChange={(e) => {
                     const selectedOption = e.target.options[e.target.selectedIndex];
                     setPayeeData({...payeeData, NF_name: e.target.value, NF_office: selectedOption.getAttribute('office')})
@@ -629,10 +629,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             </div>
           </div>
            {(user.role === '3' || permission.data.permission) && 
-            <div className='w-full'>
+            <div className='w-full mt-2'>
               <label>ORS/BURS no.</label>
               <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 type="text" 
                 value={operatorInput.ors}
                 onChange={(e) => {
@@ -644,8 +644,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             </div>
            }
         </div>
-        <h1 className="font-semibold text-lg mt-5 mb-2">Financial/Payment Details</h1>
-        <div className="w-auto h-auto flex flex-col py-2">
+        <h1 className="font-semibold text-lg mt-2">Financial/Payment Details</h1>
+        <div className="w-auto h-auto flex flex-col mt-2">
            {/* TIN AND VAT */}
            <div className='w-full flex gap-2'>
                 {/* <div className='w-1/3'>
@@ -664,7 +664,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <div className='w-1/2'>
                   <label>Cost Categories</label>
                   <select 
-                    className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                     disabled={isDisabled && !permission.data.permission}
                     value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ""}
                     onChange={(e) => {
@@ -699,7 +699,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <div className='w-1/2'>
                   <label>Amount</label>
                   <input 
-                    className="w-full flex px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                     type="number" 
                     step='0.01'
                     disabled={isDisabled && !permission.data.permission}
@@ -710,7 +710,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 </div>
             </div>
           
-          <div className='w-full mb-2 flex'>
+          <div className='w-full flex'>
               <div className='w-full flex justify-center items-center'>
                 <div className='w-1/2 flex justify-center'>
                   <label>gross{gross.value2}</label>
@@ -722,14 +722,14 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
           </div>
           {/* ACCOUNT TITLE */}
-          <div className='w-auto h-auto flex flex-col py-2'>
+          <div className='w-auto h-auto flex flex-col'>
               {
                 formFields.map((field, index) => (
-                  <div key={index} className='w-full flex gap-2 mb-4'>
-                    <div className='w-3/5 mb-2'>
+                  <div key={index} className='w-full flex gap-2'>
+                    <div className='w-3/5'>
                       <label>Account Title</label>
                       <input
-                        className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500"
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                         type="text" 
                         placeholder='search here...'
                         value={field.accTitle}
@@ -767,10 +767,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         )}
                     </div>
                     <div className='w-2/5 flex gap-2'>
-                      <div className='w-4/5 mb-2'>
+                      <div className='w-4/5'>
                         <label>Amount (Optional)</label>
                         <input
-                          className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500"
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                           type="number"
                           disabled={(isDisabled && !permission.data.permission) || optionalAmount}
                           onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
@@ -779,7 +779,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         />
                       </div>
                       <div className='flex justify-center items-center gap-2'>
-                        <div className='pt-4'>
+                        <div className='pt-7'>
                         <button
                           className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'} hover:text-white`}
                           onClick={() => handleButtonClick(index)}
@@ -796,23 +796,21 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               }
               
           </div>
-            
-          
-          
           {(user.role === '3' || permission.data.permission) && 
-            <div className='w-full'>
+            <div className='w-full mt-2'>
               <label>ASA No.</label>
               <input 
-                className="w-full px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500" 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
                 type="text" 
                 value={operatorInput.asa}
                 onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
                 required/>
             </div>
           }
-          <div className='w-full'>
+          <div className='w-full mt-2'>
             <label>Particulars</label>
-            <textarea className="w-full h-52 peer px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500"
+            <textarea 
+              className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
               onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
               value={payeeData.particular}
               disabled={isDisabled && !permission.data.permission}
@@ -821,10 +819,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             />
           </div>
         </div>
-        <h1 className="font-semibold text-lg mt-5 mb-2">BIR Information</h1>
-        <div className='w-full'>
+        <h1 className="font-semibold text-lg mt-2">BIR Information</h1>
+        <div className='w-full mt-2'>
           <label>Particulars</label>
-          <textarea className="w-full h-52 px-4 py-2 rounded-md border-2 focus:outline-customgreen transition-all duration-500"
+          <textarea 
+            className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
             onChange={(e) => {setBirData({...birData, birParticular: e.target.value})}}
             value={birData.birParticular}
             disabled={isDisabled && !permission.data.permission}
@@ -833,15 +832,15 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           />
         </div>
       </div>
-      <div className="w-full flex items-center justify-end py-3 gap-4">
+      <div className="w-full flex items-center justify-end my-2 gap-2">
         <button 
           type="submit" 
           disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
-          className={`py-2 px-10 rounded-md ${user.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white transition-all duration-100`}
+          className={`py-2 px-5 rounded-md ${user.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white transition-all duration-100`}
           >{isLoading ? <Loader /> : 'Save'}</button>
         <button 
           onClick={modal}
-          className="py-2 px-10 rounded-md border-2 text-customFontColor font-bold transition-all duration-100"
+          className="py-2 px-5 rounded-md text-customFontColor font-bold transition-all duration-100"
           >Back</button>
       </div>
       {(error ||  errorForFunding) && (

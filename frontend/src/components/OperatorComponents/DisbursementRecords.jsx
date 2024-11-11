@@ -195,7 +195,7 @@ const DisbursementRecords = () => {
                   <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
                 </div>
             </section>
-            <div className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
+            <div className="w-full h-[430px] overflow-auto bg-white border-[1px] p-1">
               <PaginatedList items={filteredDocuments} type={'3'}/>
             </div>
           </div>

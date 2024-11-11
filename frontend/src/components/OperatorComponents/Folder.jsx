@@ -64,8 +64,8 @@ const Folder = ({ASANo, controlBook}) => {
     }
 
   return (
-    <div onClick={() => navigate(`${controlBook.ASANo}`)} className="h-1/2 rounded-lg hover:bg-gray-200 p-2 transition-all duration-100 cursor-pointer">
-      <div className='w-full h-[80%] flex items-center justify-center'>
+    <div onClick={() => navigate(`${controlBook.ASANo}`)} className="h-1/2 rounded-lg p-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer">
+      <div className='w-full h-[70%] flex items-center justify-center'>
         <img 
             src={Object.entries(controlBook.subcollection).length > 0 ? FolderWithItems : EmptyFolder} 
             alt="folder" 
@@ -95,7 +95,7 @@ const Folder = ({ASANo, controlBook}) => {
         </div>
         </div>
       <div className='px-4'>
-          <p className='text-sm'>{subcollectionCounts > 1 ? `${subcollectionCounts()} items` : `${subcollectionCounts()} item`}</p>
+          <p className='text-sm'>{`${subcollectionCounts()} item(s)`}</p>
       </div>
       {controlBookFlag && (
         <>

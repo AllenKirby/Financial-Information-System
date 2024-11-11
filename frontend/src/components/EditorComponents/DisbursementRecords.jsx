@@ -138,7 +138,7 @@ const DisbursementRecords = () => {
               </div>
             </div>
             <div className='w-1/2 flex items-end justify-end gap-2'>
-              <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-full bg-preparerPrimary text-white hover:scale-125 transition-all duration-100">
+              <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-full bg-preparerPrimary text-white ">
                 <IoAdd size={20} className='font-bold'/>New
               </button>
               <div className='relative'>
