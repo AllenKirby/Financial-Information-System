@@ -79,7 +79,7 @@ const BarChart = ({ BarChartData }) => {
     }, [BarChartData, year]);
 
     return (
-        <div className="w-auto h-full my-10">
+        <div className="w-auto h-1/2 mt-10">
             <div className="flex items-center justify-end">
                 <select value={year} onChange={(e) => setYear(e.target.value)}>
                     {getYear().map((yearOption, index) => (
