@@ -138,7 +138,7 @@ const ChartData = () => {
     
 
     return (
-        <div className="w-full h-full overflow-y-auto">
+        <div className="w-full h-full flex flex-col">
            <LineGraph chartData={monthlyTotalData}/>
            <BarChart BarChartData={categorizedData}/>
         </div>

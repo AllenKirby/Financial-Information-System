@@ -62,7 +62,8 @@ const createDV = async (req, res) => {
         TT_tax: TT_tax,
         TT_formula1: TT_formula1,
         TT_formula2: TT_formula2,
-        TT_cost: TT_cost, 
+        TT_cost: TT_cost,
+        accCategory: accCategory, 
         accTitle: accTitle,
         accCode: accCode,
         optionalAmount: optionalAmount, 
@@ -202,8 +203,25 @@ const deleteDV = async(req, res) => {
     const { id } = req.params
 
     try{
-        await db.collection('records').doc(id).delete();
-        res.status(200).json({ message: 'Document successfully deleted' })
+
+        const docRef = db.collection('records').doc(id);
+        const docSnapshot = await docRef.get()
+
+        if(docSnapshot.exists){
+            const recordData = docSnapshot.data()
+            const optionalAmount = recordData['optionalAmount']
+            const amount = recordData['amount']
+            const date = recordData['date']
+            const accCategory = recordData['accCategory']
+            const fund = recordData['fund']
+            await addOnCategoryPerMonth(amount, optionalAmount, accCategory, date, 'subtract')
+            await addOnClusterAmount(amount, fund, date, 'subtract')
+
+            await db.collection('records').doc(id).delete();
+            res.status(200).json({ message: 'Document successfully deleted' })
+        }else{
+            res.status(404).json({ message: 'Document Not Fuund' })
+        }
     }
     catch(error){
         console.error("Error deleting documents: ", error);
@@ -419,7 +437,7 @@ const getPayeeData = async (req,res) => {
     }
 }
 
-const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateString) => {
+const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateString, operation = 'add') => {
     try{
         const today = new Date(dateString);
         const year = today.getFullYear();
@@ -434,8 +452,8 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
             const docSnapshot = await docRef.get()
             const existingAmount = docSnapshot.exists ? parseFloat(docSnapshot.data()[subcategory] || 0) : 0
 
-            const newAmount = existingAmount + float_amount
-            const data = { [subcategory]: newAmount };
+            const newAmount = operation === 'subtract' ? existingAmount - float_amount : existingAmount + float_amount
+            const data = { [subcategory]: newAmount < 0 ? 0 : newAmount };
 
             await docRef.set(data, {merge: true})
             
@@ -449,8 +467,8 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
                 const docSnapshot = await docRef.get()
                 const existingAmount = docSnapshot.exists ? parseFloat(docSnapshot.data()[subcategory] || 0) : 0
 
-                const newAmount = existingAmount + subAmount
-                const data = { [subcategory]: newAmount };
+                const newAmount = operation === 'subract' ? existingAmount - subAmount : existingAmount + subAmount
+                const data = { [subcategory]: newAmount < 0 ? 0 : newAmount};
 
                 await docRef.set(data, {merge: true})
             }
@@ -460,7 +478,7 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
     }
 }
 
-const addOnClusterAmount = async (amount, cluster, dateString) => {
+const addOnClusterAmount = async (amount, cluster, dateString, operation='add') => {
     try{
         const float_amount = parseFloat(amount)
 
@@ -481,8 +499,8 @@ const addOnClusterAmount = async (amount, cluster, dateString) => {
         const docSnapshot = await docRef.get()
         const existing_amount = docSnapshot.exists ? parseFloat(docSnapshot.data()[cluster_mapped]) || 0 : 0
 
-        const newAmount = existing_amount + float_amount
-        const data = { [cluster_mapped]: newAmount };
+        const newAmount = operation === 'subtract' ? existing_amount - float_amount : existing_amount + float_amount
+        const data = { [cluster_mapped]: newAmount < 0 ? 0 : newAmount };
 
         await docRef.set(data, {merge: true})
 

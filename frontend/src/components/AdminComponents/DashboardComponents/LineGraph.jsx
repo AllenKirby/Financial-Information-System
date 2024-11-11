@@ -53,7 +53,7 @@ const LineGraph = ({chartData}) => {
     }, [chartData, year]);
 
   return (
-    <div className="w-auto h-full my-10">
+    <div className="w-full h-1/2">
         <div className="flex items-center justify-end">
             <select value={year} onChange={(e) => setYear(e.target.value)}>
                 {getYear().map((year, index) => (
