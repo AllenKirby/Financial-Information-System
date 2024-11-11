@@ -7,11 +7,14 @@ import Loader from '../Loader'
 import { useFundingHook } from '../../hooks/useFundingHook'
 
 const AddNewFieldOffice = (props) => {
-    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = ''} = props
+    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0} = props
 
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
+    const [errorFlag, setErrorFlag] = useState(false)
     
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
+
+    console.log(remainingASA)
 
     useEffect(() => {
         if(flag && fieldOffice) {
@@ -22,6 +25,17 @@ const AddNewFieldOffice = (props) => {
             })
         }
     }, [flag, fieldOffice]) 
+
+    useEffect(() => {
+        if(remainingASA) {
+            const ASA = parseFloat(fieldOfficeData.ASA)
+            if(ASA > remainingASA) {
+                setErrorFlag(true)
+            } else {
+                setErrorFlag(false)
+            }
+        }
+    }, [fieldOfficeData.ASA, remainingASA])
 
     const handleFocus = () => {
         if (fieldOfficeData.ASA === 0) {
@@ -35,15 +49,24 @@ const AddNewFieldOffice = (props) => {
             data: fieldOfficeData,
             ASANo: ASANo
         }
-        const res = await AddFieldOffice(data)
-        if(res) {
+        if(errorFlag) {
             Swal.fire({
-                title: "Saved",
-                text: "Control Book is successfully created!",
-                icon: "success",
+                title: "Error",
+                text: "The input exceeds the remaining available ASA",
+                icon: "error",
                 confirmButtonColor: "#009933"
                 });
-            modal()
+        } else {
+            const res = await AddFieldOffice(data)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: "Field Office is successfully created!",
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            }
         }
     }
 
@@ -57,7 +80,7 @@ const AddNewFieldOffice = (props) => {
         if(res) {
             Swal.fire({
                 title: "Saved",
-                text: "Control Book is successfully updated!",
+                text: "Field Office is successfully updated!",
                 icon: "success",
                 confirmButtonColor: "#009933"
                 });
@@ -67,8 +90,8 @@ const AddNewFieldOffice = (props) => {
 
   return (
     <form onSubmit={flag ? handleUpdate : handleSubmit} className="w-1/4 h-auto bg-white p-3 rounded-lg">
-        <h1 className="text-center text-2xl font-bold text-fundingBlueGreen">Add New Field Office</h1>
-        <div className='w-full h-auto p-2'>
+        <h1 className="px-3 text-2xl font-semibold text-fundingBlueGreen">Add Field Office</h1>
+        <div className='w-full h-auto p-3'>
             <div className="w-full mt-2">
                 <label>Project Name</label>
                 <input 
@@ -90,7 +113,7 @@ const AddNewFieldOffice = (props) => {
                     <option value="Batangas">Batangas</option>
                     <option value="Cavite">Cavite</option>
                     <option value="Rizal">Rizal</option>
-                    <option value="Rizal">Laguna</option>
+                    <option value="Laguna">Laguna</option>
                 </select>
             </div>
             <div className="w-full mt-2">
@@ -100,11 +123,14 @@ const AddNewFieldOffice = (props) => {
                     value={fieldOfficeData.ASA}
                     onFocus={handleFocus}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
-                    className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
+                    className={`${errorFlag ? 'focus:outline-red-500' : ''} w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500`}
                     required />
             </div>
+            {errorFlag && ( 
+                <p className='text-red-500 text-sm my-2'>The input exceeds the remaining available ASA</p>
+            )}
         </div>
-        <div className='w-full h-auto flex items-center justify-end gap-2 py-2'>
+        <div className='w-full h-auto flex items-center justify-end gap-2 my-2'>
             <button 
                 type='submit' 
                 disabled={isLoading} 
@@ -125,7 +151,8 @@ AddNewFieldOffice.propTypes = {
     ASANo: PropTypes.string.isRequired,
     fieldOffice: PropTypes.object,
     flag: PropTypes.bool.isRequired,
-    fieldOfficeID: PropTypes.string
+    fieldOfficeID: PropTypes.string,
+    remainingASA: PropTypes.number,
 }
 
 export default AddNewFieldOffice

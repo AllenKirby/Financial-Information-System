@@ -141,7 +141,7 @@ const DocumentDetails = ({ index, documents, type }) => {
 DocumentDetails.propTypes = {
   documents: PropTypes.object.isRequired,
   type: PropTypes.string.isRequired,
-  index: PropTypes.number.isRequired,
+  index: PropTypes.string.isRequired,
 };
 
 export default DocumentDetails;
