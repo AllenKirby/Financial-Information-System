@@ -100,25 +100,25 @@ const Header = ({ currentPage}) => {
         {/* Notification Icon */}
         <div>
           <div className="relative">
-            <div className='flex gap-3'>
+            <div className='flex items-center justify-center gap-3 p-2'>
               <GoInbox 
-                size={40} 
-                className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
+                size={23} 
+                className="bg-white cursor-pointer"
               />
               {showNotifications ? (
                 <IoMdNotifications 
-                  size={40} 
-                  className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
+                  size={25} 
+                  className="bg-white cursor-pointer"
                   onClick={() => setShowNotifications(!showNotifications)}/>
                 )
               :(
                 <IoMdNotificationsOutline 
-                  size={40} 
-                  className="p-2 rounded-xl bg-white border-2 cursor-pointer hover:scale-125 duration-100 transition-all"
+                  size={25} 
+                  className="bg-white cursor-pointer"
                   onClick={() => setShowNotifications(!showNotifications)}/>
               )}
             </div>
-            <div className={`absolute -top-3 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
+            <div className={`absolute -top-1 right-1 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
               <p className="text-xs font-semibold">{unreadNotifs}</p>
             </div>
             {/* Notifications Dropdown */}

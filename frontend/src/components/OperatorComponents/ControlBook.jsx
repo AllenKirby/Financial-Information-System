@@ -23,17 +23,17 @@ const ControlBook = () => {
             <button 
               onClick={modal}
               className="px-3 py-2 rounded-lg bg-fundingBlueGreen text-white"
-              >Add Control Book
+              >New Control Book
             </button>
           </div>
-          <div className="p-2 w-full h-[88%] grid grid-cols-4 gap-2 border-2 rounded-lg">
+          <div className="relative p-2 w-full h-[88%] grid grid-cols-4 gap-2 border-2 rounded-lg">
             {controlBooks && Object.entries(controlBooks).length > 0 ? (
               Object.entries(controlBooks).map(([key, controlBook]) => (
                 <Folder key={key} ASANo={key} controlBook={controlBook}/>
               ))
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                No Control Books Found
+              <div className="absolute inset-0 flex items-center justify-center">
+                <p className="text-xl font-semibold">No Control Books Found</p>
               </div>
             )}
           </div>

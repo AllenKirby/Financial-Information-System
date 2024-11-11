@@ -22,9 +22,8 @@ const FieldOffices = (props) => {
     const id = `${ASANo},${fieldOfficeID}`
     await deleteFieldOffice(id)
   }
-  
   return (
-    <div className='w-full h-auto py-2 px-4 rounded-lg border-2'>
+    <div className='w-full h-auto py-2 px-4 rounded-lg border-2 my-2'>
         <div className='flex items-center justify-between'>
           <div className='flex items-center justify-center gap-3'>
             <FaAngleDown size={25}/>
