@@ -5,15 +5,29 @@ const sheets = google.sheets('v4');
 const { 
     addComments,
     setNotification,
-    setHistoryLogs } = require('./Functions')
+    setHistoryLogs } = require('./Functions');
 
 const operatorInput = async(req, res) => {
-    const { ors, asa } = req.body
+    const { ors, asa } = req.body.fundingData
+    const { date, DVNo, BUR, payee, particulars, amount } = req.body.fieldOfficeData
     const { id } = req.params
+
+    const [ASANo, projectName] = asa.split(',')
+    const [ , , , DVNoCount ] = DVNo.split('-')
+    const [ , , , BURCount ] = BUR.split('-')
 
     dvData = {
         ORSBURS: ors,
         ASA: asa
+    }
+
+    fieldOffice = {
+        date,
+        DVNoCount, 
+        BURCount, 
+        payee, 
+        particulars, 
+        amount
     }
     document = {} 
 
@@ -28,6 +42,17 @@ const operatorInput = async(req, res) => {
             }
         }
 
+        const querySnapshot = await db.collection('ControlBook').doc(ASANo).collection('FieldOffices')
+            .where('projectName', '==', projectName)
+            .get();
+        if (!querySnapshot.empty) {
+            const targetDoc = querySnapshot.docs[0];
+            await targetDoc.ref.update({
+                data: admin.firestore.FieldValue.arrayUnion(fieldOffice)
+            });
+        } else {
+            console.log("No matching documents found.");
+        }
         res.status(200).json(document)
     } catch (error) {
         console.error("Error updating document: operator: ", error);
@@ -286,7 +311,13 @@ const appendDataToSheet = async (req, res) => {
 
     try {
         await db.collection('ControlBook').doc(finalASANo).set(data)
+
+        await db.collection('formData').doc('ControlBook').set({
+            [finalASANo]: []
+        }, {merge: true})
+
         res.status(200).json({message: 'Control Book successfully added'})
+
 
     } catch (error) {
         console.log(`Error adding control book: ${error}`)
@@ -323,6 +354,9 @@ const appendDataToSheet = async (req, res) => {
 
     try {
         await db.collection('ControlBook').doc(id).collection('FieldOffices').doc().set(data)
+        await db.collection('formData').doc('ControlBook').update({
+            [id]: admin.firestore.FieldValue.arrayUnion(projectName)
+        })
         res.status(200).json({message: 'Field Office Successfully Created'})
     } catch (error) {
         console.log(`Error adding field office: ${error}`)
@@ -375,6 +409,9 @@ const appendDataToSheet = async (req, res) => {
 
     try{
         await db.collection('ControlBook').doc(id).delete();
+        await db.collection('formData').doc('ControlBook').update({
+            [id]: admin.firestore.FieldValue.delete()
+        })
         res.status(200).json({ message: 'Control Book successfully deleted' })
     }
     catch(error){
