@@ -43,6 +43,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [taxData, setTaxData] = useState({})
   const [gross, setGross] = useState({})
   const [nameOffice, setNameOffice] = useState({})
+  const [ASANo, setASANo] = useState({})
   
   //hooks
   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
@@ -116,8 +117,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       }else{
         setShowDropdown(true);
       }
-      console.log(filtered)
-      
     } else {
       setShowDropdown(false);
     }
@@ -211,9 +210,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     if(data.payee_data.accCode.length === 1){
       if(!deepEqual(pData, payeeOptions[payeeKey])){
         savePayeeData(pData)
-        console.log('saving payee data', pData)
       }
-      console.log('creating DV')
       const res = await createDisbursement(data)
       if(res){
         Swal.fire({
@@ -226,13 +223,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       modal()
     }else{
       const sum = eval(data.payee_data.optionalAmount.join('+'))
-      console.log(sum)
       if(Number(data.payee_data.amount) === sum){
         if(!deepEqual(pData, payeeOptions[payeeKey])){
           savePayeeData(pData)
-          console.log('saving payee data', pData)
         }
-        console.log('creating DV')
         const res = await createDisbursement(data)
         if(res){
           Swal.fire({
@@ -244,7 +238,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         }
         modal()
       }else{
-        console.log(Number(data.payee_data.amount) === sum)
         alert('Make sure the amount you input is equal to the total amount.')
         return;
       }
@@ -298,6 +291,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         result[key] = Array.from(result[key]);
       });
 
+      setASANo(form.ControlBook)
+
       setCost(result)
 
       setCost(result)
@@ -312,8 +307,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       
       const storedAccountOptions = localStorage.getItem('account_fields')
       if(storedAccountOptions){
-        console.log(`from local storage`)
-        console.log(JSON.parse(storedAccountOptions))
         setAccountOptions(JSON.parse(storedAccountOptions));
       }else{
         try{
@@ -323,10 +316,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
           if(response.status === 200){
             const options = response.data;
-            console.log(options)
             localStorage.setItem('account_fields', JSON.stringify(options));
             setAccountOptions(options);
-            console.log('success fetching')
           }else{
             console.log('fail to fetch')
           }
@@ -371,8 +362,21 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleOpInput = async(e) => {
     e.preventDefault()
+    const fieldOfficeData = {
+      date: payeeData.date,
+      DVNo: payeeData.DV,
+      BUR: operatorInput.ors,
+      payee: payeeData.payee,
+      particulars: payeeData.particular,
+      amount: payeeData.amount
+    }
 
-    const res = await inputOperator(operatorInput, payeeData.DVKey)
+    const data = {
+      fundingData: operatorInput,
+      fieldOfficeData: fieldOfficeData
+    }
+
+    const res = await inputOperator(data, payeeData.DVKey)
     if(res){
       Swal.fire({
         title: "Saved",
@@ -412,12 +416,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   };
 
-
   useEffect(() => {
-    console.log(payeeData.TT_tax, payeeData.TT_cost)
     if (payeeData.TT_tax && payeeData.TT_cost){
       const key = payeeData.TT_tax + payeeData.TT_cost
-      console.log(key)
       if (taxData[key] && taxData[key].length >= 3) {
         setGross({
           value2: taxData[key][2],
@@ -435,7 +436,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   useEffect(() => {
     const gettingNumber = async () => {
       const fundNoSpace = payeeData.fund.replace(/ /g, '')
-      console.log(`getting dv no for ${fundNoSpace}`)
       if(fundNoSpace !== ''){
         const {template, value, currentVal} = await getDVno(fundNoSpace)
         setPayeeData({...payeeData, DV: `${template}${value}`, origNumber: currentVal, template: template})
@@ -799,12 +799,30 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           {(user.role === '3' || permission.data.permission) && 
             <div className='w-full mt-2'>
               <label>ASA No.</label>
-              <input 
-                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
-                type="text" 
-                value={operatorInput.asa}
+              <select className={`focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2`}
                 onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
-                required/>
+                value={operatorInput.asa}
+                required
+                //value
+              >
+                <option value="" disabled>Select</option>
+                {Object.entries(ASANo).length > 0 ? (
+                    Object.entries(ASANo).map(([key, asano]) => {
+                      const finalASANO = key.replace('|', ' ')
+                      return(
+                        <optgroup key={key} label={finalASANO}>
+                          {asano.map((projectName, index) => (
+                            <option key={index} value={`${key},${projectName}`}>{projectName}</option>
+                          ))}
+                        </optgroup>
+                      )
+                    })
+                ) : (
+                    <option value="" disabled>
+                        No options available
+                    </option>
+                )}
+              </select>
             </div>
           }
           <div className='w-full mt-2'>

@@ -1,11 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
-import { useDisbursementContext } from './useDisbursementContext'
 
 export const usePreparerHook = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
-    const { dispatch } = useDisbursementContext()
     const apiURL = import.meta.env.VITE_API_URL
 
     const createDisbursement = async(data) => {
@@ -18,8 +16,6 @@ export const usePreparerHook = () => {
       
             if(res.status === 200){
               setIsLoading(false)
-              const docu = res.data
-              dispatch({type: 'CREATE_DOCUMENT', payload: docu})
               sessionStorage.removeItem('pendingDVNumbers')
               return true
             }
@@ -42,7 +38,6 @@ export const usePreparerHook = () => {
 
             if(res.status === 200){
                 setIsLoading(false)
-                dispatch({type: 'DELETE_DOCUMENT', payload: id})
                 return true
             }
         } catch (error) {
@@ -81,7 +76,6 @@ export const usePreparerHook = () => {
             });
             if(res.status === 200){
                 setIsLoading(false)
-                dispatch({type: 'UPDATE_DOCUMENT', payload: res.data.update})
                 return true
             }
           }catch(error){
@@ -101,8 +95,6 @@ export const usePreparerHook = () => {
             })
 
             if(res.status === 200){
-                const updateDoc = res.data
-                dispatch({type: 'UPDATE_DOCUMENT', payload: updateDoc})
                 return true
             }
         } catch (error) {
@@ -140,7 +132,6 @@ export const usePreparerHook = () => {
             })
             if(res.status === 200){
                 const response = res.data.document
-                console.log(response)
                 // sessionStorage.setItem('FormData', JSON.stringify(arr));
                 return response
             }

@@ -15,7 +15,7 @@ export const useInitialStateDV = () => {
                 sessionStorage.setItem('pendingDVNumbers', JSON.stringify(resData))
                 return resData
             }else{
-                console.log('error in setDvno (useinitialstatedv)', error)
+                console.log('error in setDvno (useinitialstatedv)')
             }
         }catch(error){
             console.log(`Error on SET initial state of DV no: ${error}`)
@@ -28,7 +28,6 @@ export const useInitialStateDV = () => {
             const resData = storedDVNumbers ? JSON.parse(storedDVNumbers) : await setDVno(fundCluster)
             const currentVal = resData[`DVno${fundCluster}`]
             const increamentedData = (parseInt(currentVal, 10) + 1).toString().padStart(4, '0');
-            console.log(increamentedData)
 
             const today = new Date();
             const yearMonth = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0');
