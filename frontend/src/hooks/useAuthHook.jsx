@@ -41,20 +41,20 @@ export const useAuthHook = () => {
           //remove !
           if (user.emailVerified) {
             console.log('hit')
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, {}, {
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}` 
-              },
-              withCredentials: true,
-            });
+            // const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/login`, {}, {
+            //   headers: {
+            //     'Content-Type': 'application/json',
+            //     'Authorization': `Bearer ${token}` 
+            //   },
+            //   withCredentials: true,
+            // });
           
-            console.log(response)
-            if (response.status === 200) {
-              cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
-              dispatchAuth({type: 'LOGIN', payload: response.data})
-              setIsLoading(false)
-            }
+            // console.log(response)
+            // if (response.status === 200) {
+            //   cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
+            //   dispatchAuth({type: 'LOGIN', payload: response.data})
+            //   setIsLoading(false)
+            // }
           }else{
             setIsLoading(false)
             setError('Please verify your email.')
