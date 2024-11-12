@@ -13,24 +13,6 @@ const ChartData = () => {
     const [categorizedData, setCategorizedData] = useState({});
 
     useEffect(() => {
-        const getForecast = async () => {
-            try {
-                const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getForecastedValues`, { withCredentials: true });
-                if (res.status === 200) {
-                    sessionStorage.setItem('forecasted', JSON.stringify(res.data));
-                    setValues(res.data);
-                }
-            } catch (error) {
-                console.log('Error on getting forecasted values', error);
-            }
-        };
-
-        const storedForecastedValues = sessionStorage.getItem('forecasted');
-        if (storedForecastedValues) {
-            setValues(JSON.parse(storedForecastedValues));
-        } else {
-            getForecast();
-        }
 
         const unsubscribe = onSnapshot(
             collection(firestore, "AmountRecord"),

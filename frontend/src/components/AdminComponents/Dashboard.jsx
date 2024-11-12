@@ -1,7 +1,11 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
+import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation"
+import { useState, useEffect } from "react"
+import axios from "axios"
 
 const Dashboard = () => {
+
   return (
     <section className="w-full h-full">
       <div className="w-full h-1/4">
@@ -19,9 +23,14 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-[60vh] bg-blue-700 border-2">
-        {/* Mount the Charts */}
-      </div>
+      <div className="w-full h-[60vh] flex">
+          <div className="w-2/3">
+            <ChartData/>
+          </div>
+          <div className="w-1/3">
+            <BudgetRecommendation/>
+          </div>
+        </div>
     </section>
   )
 }
