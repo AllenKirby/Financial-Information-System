@@ -20,9 +20,8 @@ const Dashboard = () => {
         </div>
       </div>
       <div className="w-full h-[60vh] bg-blue-700 border-2">
-          <div className="w-2/3"></div>
-          <div className="w-1/3"></div>
-        </div>
+        {/* Mount the Charts */}
+      </div>
     </section>
   )
 }
