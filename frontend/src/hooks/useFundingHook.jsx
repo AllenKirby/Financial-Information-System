@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
-import { collection, query, onSnapshot } from "firebase/firestore"
+import { collection, query, onSnapshot, doc } from "firebase/firestore"
 import { setControlBook } from '../redux/ControlBookRedux'
 
 export const useFundingHook = () => {
@@ -152,6 +152,22 @@ export const useFundingHook = () => {
       
         return unsubscribeControlBook;
     };
+
+    const retrieveProjectName = async () => {
+        const docRef = doc(firestore,'formData', 'ControlBook');
+        const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+            if (docSnapshot.exists()) {
+                // Document data is available
+                console.log(docSnapshot.data());
+                sessionStorage.setItem('ProjectName', JSON.stringify(docSnapshot.data()))
+            } else {
+                // Document does not exist
+                console.log("Document not found");
+            }
+
+            return unsubscribe
+        })
+    }
     
     const updateControlBook = async(data, id) => {
         setIsLoading(true)
@@ -245,6 +261,7 @@ export const useFundingHook = () => {
         deleteControlBook,
         deleteFieldOffice,
         updateFieldOffice,
+        retrieveProjectName,
         isLoading, 
         error
     }

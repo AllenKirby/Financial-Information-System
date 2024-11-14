@@ -1,46 +1,84 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useFundingHook } from "../hooks/useFundingHook";
 
 const FundingModal = ({modal}) => {
     const [isToggled, setIsToggled] = useState(false);
+    const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
+    const {retrieveProjectName} = useFundingHook()
+    const [ASANo, setASANo] = useState({})
+
+    useEffect(() => {
+        const unsubscribe = retrieveProjectName()
+        const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
+        setASANo(parsedPorjectName)
+        return () => unsubscribe
+    }, [])
+
+
 
     return(
-        <form className="bg-white w-1/4 h-5/6 p-3 rounded-lg">
-            <div className="flex flex-col">
-                <div className="flex items-center gap-2 mt-4">
-                    {/* Input Field */}
-                    <input
-                    disabled={!isToggled}
-                    type="text"
-                    placeholder="Enter value"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
-                    />
-                    
-                    {/* Toggle Button */}
-                    <button
-                    className="relative w-20 h-10 bg-gray-300 rounded-full focus:outline-none transition-colors duration-30 ease-in-out"
-                    type="button"
-                    onClick={() => setIsToggled(!isToggled)}
-                    >
-                        <span
-                            className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
-                            isToggled ? 'translate-x-8' : 'translate-x-0'
-                            }`}
-                        ></span>
-                    </button>
-                </div>
-                <select>
-                    <option>asd</option>
+        <form className="bg-white w-2/5 h-auto p-3 rounded-lg">
+            <h1 className="px-3 text-2xl font-bold text-fundingBlueGreen">ADD ASA No and ORS/BURS</h1>
+            <div className="flex items-center gap-2 mt-4">
+                {/* Input Field */}
+                <input
+                disabled={!isToggled}
+                type="text"
+                placeholder="Enter value"
+                className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
+                />
+                
+                {/* Toggle Button */}
+                <button
+                className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
+                type="button"
+                onClick={() => setIsToggled(!isToggled)}
+                >
+                    <span
+                        className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
+                        isToggled ? 'translate-x-8' : 'translate-x-1'
+                        }`}
+                    ></span>
+                </button>
+            </div>
+            <div className="my-2">
+                <label>ASA No.</label>
+                <select    
+                    className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
+                    onChange={(e) => {
+                        
+                        setOperatorInput({...operatorInput, asa: e.target.value})
+                    }}
+                    value={operatorInput.asa}
+                    required>
+                    <option value="" disabled>Select</option>
+                    {Object.entries(ASANo).length > 0 ? (
+                        Object.entries(ASANo).map(([key, asano]) => {
+                            const finalASANO = key.replace('|', ' ')
+                            return(
+                                <optgroup key={key} label={finalASANO}>
+                                    {asano.map((projectName, index) => (
+                                        <option key={index} value={`${key}/${projectName.projectID}`}>{projectName.projectName  }</option>
+                                    ))}
+                                </optgroup>
+                            )   
+                        })
+                    ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                    )}
                 </select>
+            </div>
 
-                <div className="flex items-center justify-end">
-                    <button className="font-bold">Save</button>
-                    <button 
-                        onClick={modal}
-                        className="py-2 px-5 rounded-md text-customFontColor font-bold transition-all duration-100"
-                        >Back
-                    </button>
-                </div>
+            <div className="flex items-center justify-end gap-3 my-2">
+                <button className="py-2 px-5 rounded-md bg-fundingBlueGreen text-white font-bold">Save</button>
+                <button 
+                    onClick={modal}
+                    className="py-2 px-5 rounded-md text-customFontColor font-bold"
+                    >Back
+                </button>
             </div>
         </form>
     )
