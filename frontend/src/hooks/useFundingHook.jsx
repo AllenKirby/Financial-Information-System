@@ -108,7 +108,7 @@ export const useFundingHook = () => {
     }
 
     const AddFieldOffice = async(data) => {
-        console.log(data.ASANo)
+        console.log(data.projectID)
         setIsLoading(true)
         setError(null)
         try {

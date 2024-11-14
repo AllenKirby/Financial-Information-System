@@ -302,7 +302,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       Object.keys(result).forEach(key => {
         result[key] = Array.from(result[key]);
       });
-
+      console.log('form',form.ControlBook)
       setASANo(form.ControlBook)
 
       setCost(result)
@@ -460,6 +460,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }, [payeeData.fund])
 
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    setToday(currentDate);
+}, []);
 
   const isDisabled = user.role === '3'
 
@@ -831,7 +835,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       return(
                         <optgroup key={key} label={finalASANO}>
                           {asano.map((projectName, index) => (
-                            <option key={index} value={`${key},${projectName.projectName}`}>{projectName.projectName}</option>
+                            <option key={index} value={`${key}/${projectName.projectID}`}>{projectName.projectName  }</option>
                           ))}
                         </optgroup>
                       )

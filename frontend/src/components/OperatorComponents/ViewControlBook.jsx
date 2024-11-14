@@ -17,7 +17,6 @@ const ViewControlBook = () => {
   const [ControlBook, setControlBook] = useState({key: '', data: {}})
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
-  const [remainingASA, setRemainingAsa] = useState(0)
   const [reportFlag, setReportFlag] = useState(false)
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
@@ -29,6 +28,7 @@ const ViewControlBook = () => {
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
       const selectedkey = Object.keys(controlBooks).find((key) => controlBooks[key].ASANo === id)
       if(selectedControlBook) {
+        console.log(selectedControlBook[1])
         setControlBook({key: selectedkey, data: selectedControlBook[1]})
       } else {
         console.log('No Control Book Found')
@@ -38,28 +38,6 @@ const ViewControlBook = () => {
     }
 
   }, [controlBooks, id])
-
-  useEffect(() => {
-    const computeRemainingASA = () => {
-      if(ControlBook.data.subcollection) {
-        const ASA = Object.values(ControlBook.data.subcollection).map(fieldOffice => fieldOffice.ASA)
-        let totalASA = ControlBook.data.TotalASA
-        for(let i = 0; i < ASA.length; i++) {
-          totalASA -= ASA[i]
-        }
-  
-        return totalASA
-      }
-    }
-    if(remainingASA === 0) {
-      setRemainingAsa(ControlBook.data.TotalASA)
-    } else {
-      setRemainingAsa(computeRemainingASA())
-    }
-  }, [ControlBook, remainingASA])
-
-  
-
 
   const convertDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -122,15 +100,15 @@ const ViewControlBook = () => {
                     <p className="font-semibold text-sm">Remaining ASA Balance</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{remainingASA}.00</p>
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.RO}.00</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg border-2 p-3">
                   <div className="w-full h-1/4">
-                    <p className="font-semibold text-sm">Total Spending per Field Office</p>
+                    <p className="font-semibold text-sm">Total Spending</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱300000.00</p>
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.FO}.00</p>
                   </div>
                 </div>
                 <button onClick={modal} className="w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white bg-fundingBlueGreen">
@@ -162,7 +140,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={remainingASA}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.RO}/>
                 </div>
               </>
             )}

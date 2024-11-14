@@ -14,8 +14,6 @@ const AddNewFieldOffice = (props) => {
     
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
 
-    console.log(remainingASA)
-
     useEffect(() => {
         if(flag && fieldOffice) {
             setFieldOfficeData({
@@ -47,7 +45,8 @@ const AddNewFieldOffice = (props) => {
         e.preventDefault()
         const data = {
             data: fieldOfficeData,
-            ASANo: ASANo
+            ASANo: ASANo,
+            projectID: `${ASANo},${fieldOfficeData.projectName}`
         }
         if(errorFlag) {
             Swal.fire({
@@ -110,10 +109,9 @@ const AddNewFieldOffice = (props) => {
                     className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
                     >
                     <option value="" disabled>Select</option>
-                    <option value="Batangas">Batangas</option>
-                    <option value="Cavite">Cavite</option>
-                    <option value="Rizal">Rizal</option>
-                    <option value="Laguna">Laguna</option>
+                    <option value="Cavite-Batangas">Cavite-Batangas IMO</option>
+                    <option value="Laguna-Rizal">Laguna-Rizal</option>
+                    <option value="Quezon">Quezon IMO</option>
                 </select>
             </div>
             <div className="w-full mt-2">
