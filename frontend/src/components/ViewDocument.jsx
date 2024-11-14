@@ -210,6 +210,7 @@ const ViewDocument = () => {
     });
   }
 
+
   return (
     <section className="w-full h-auto flex gap-2">
       <div className='relative w-5/6 h-[500px] py-3 bg-white rounded-lg'>
@@ -341,7 +342,7 @@ const ViewDocument = () => {
                 onClick={(e) => e.stopPropagation()}
                 className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
                 >
-                  {idStatus.type === '4' ? (<DisbursementVoucher modal={modal} document={doc} flag={true} />) : (<FundingModal modal={modal}/>)}
+                  {idStatus.type === '4' ? (<DisbursementVoucher modal={modal} document={doc} flag={true} />) : (<FundingModal modal={modal} data={doc}/>)}
                 
               </section>
             </>

@@ -10,6 +10,8 @@ const ControlBook = () => {
 
   const controlBooks = useSelector((state) => state.controlBook)
 
+  console.log('ControlBook', controlBooks)
+
   const { id } = useParams()
 
   const modal = () => setControlBookFlag(!controlBookFlag)

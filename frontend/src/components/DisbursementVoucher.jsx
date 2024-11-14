@@ -460,11 +460,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }, [payeeData.fund])
 
-  useEffect(() => {
-    const currentDate = new Date().toISOString().split("T")[0];
-    setToday(currentDate);
-}, []);
-
   const isDisabled = user.role === '3'
 
   return (

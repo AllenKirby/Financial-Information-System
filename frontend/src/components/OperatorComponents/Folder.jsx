@@ -19,10 +19,11 @@ const Folder = ({ASANo, controlBook}) => {
     const [controlBookFlag, setControlBookFlag] = useState(false)
 
     const navigate = useNavigate()
+    console.log(controlBook)
     
     const { deleteControlBook, isLoading, error } = useFundingHook()
 
-    const subcollectionCounts = () => controlBook.subcollection ? Object.entries(controlBook.subcollection).length : 0
+    const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
 
     const modal = () => {
       setOptionFlag(false)
@@ -67,7 +68,7 @@ const Folder = ({ASANo, controlBook}) => {
     <div onClick={() => navigate(`${controlBook.ASANo}`)} className="h-1/2 rounded-lg p-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer">
       <div className='w-full h-[70%] flex items-center justify-center'>
         <img 
-            src={Object.entries(controlBook.subcollection).length > 0 ? FolderWithItems : EmptyFolder} 
+            src={Object.entries(controlBook.fieldOffices).length > 0 ? FolderWithItems : EmptyFolder} 
             alt="folder" 
             className='w-auto h-full'/>
       </div>

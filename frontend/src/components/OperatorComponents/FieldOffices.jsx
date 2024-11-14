@@ -19,7 +19,8 @@ const FieldOffices = (props) => {
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
 
   const deleteFO = async() => {
-    const id = `${ASANo},${fieldOfficeID}`
+    const id = `${ASANo}/${fieldOfficeID}`
+    console.log(id)
     await deleteFieldOffice(id)
   }
   return (
@@ -27,7 +28,7 @@ const FieldOffices = (props) => {
         <div className='flex items-center justify-between'>
           <div className='flex items-center justify-center gap-3'>
             <FaAngleDown size={25}/>
-            <p className='text-xl'>{fieldOffice.fieldOffice}</p>
+            <p className='text-xl'>{fieldOffice.projectName}</p>
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>
