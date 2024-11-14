@@ -1,22 +1,36 @@
 
 import { useEffect, useState } from "react";
 import { useFundingHook } from "../hooks/useFundingHook";
+import { useInitialStateDV } from "../hooks/useInitialStateDV";
+
 
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 const FundingModal = ({modal, data}) => {
+    const {retrieveProjectName} = useFundingHook()
+    const {getBurNo} =useInitialStateDV()
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
     const {retrieveProjectName, inputOperator, isLoading, error} = useFundingHook()
     const [ASANo, setASANo] = useState({})
+    const [BUR, setBUR] = useState('')
     console.log(data)
 
+
     useEffect(() => {
-        const unsubscribe = retrieveProjectName()
-        const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
-        setASANo(parsedPorjectName)
-        return () => unsubscribe
+        const fetch = async () => {
+            const bur = await getBurNo()
+            setBUR(bur)
+            const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
+            if (parsedPorjectName){
+                setASANo(parsedPorjectName)
+            }else{
+                const unsubscribe = await retrieveProjectName(setASANo)
+                return () => unsubscribe()
+            }
+        }
+        fetch()
     }, [])
 
     useEffect(() => {
@@ -66,32 +80,31 @@ const FundingModal = ({modal, data}) => {
     return(
         <form onSubmit={handleSubmit} className="bg-white w-2/5 h-auto p-3 rounded-lg">
             <h1 className="px-3 text-2xl font-bold text-fundingBlueGreen">ADD ASA No and ORS/BURS</h1>
+            <div className="flex items-center gap-2 mt-4">
+                {/* Input Field */}
+                <input
+                disabled
+                type="text"
+                placeholder="Enter value"
+                className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
+                value={isToggled? BUR : 'ORS/BUR Not Required?'}
+                />
+                
+                {/* Toggle Button */}
+                <button
+                className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
+                type="button"
+                onClick={() => setIsToggled(!isToggled)}
+                >
+                    <span
+                        className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
+                        isToggled ? 'translate-x-8' : 'translate-x-1'
+                        }`}
+                    ></span>
+                </button>
+            </div>
+
             <div className="px-3">
-                <div className="my-2">
-                    <label className="font-semibold">ORS/BURS</label>
-                    <div className="flex items-center gap-2">
-                        {/* Input Field */}
-                        <input
-                        disabled={!isToggled}
-                        type="text"
-                        value={operatorInput.ors}
-                        className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                        />
-                        
-                        {/* Toggle Button */}
-                        <button
-                        className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
-                        type="button"
-                        onClick={() => setIsToggled(!isToggled)}
-                        >
-                            <span
-                                className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
-                                isToggled ? 'translate-x-8' : 'translate-x-1'
-                                }`}
-                            ></span>
-                        </button>
-                    </div>
-                </div>
                 <div className="my-2">
                     <label className="font-semibold">ASA No.</label>
                     <select    

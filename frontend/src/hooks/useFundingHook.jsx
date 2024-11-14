@@ -182,13 +182,15 @@ export const useFundingHook = () => {
       
       
 
-    const retrieveProjectName = async () => {
+    const retrieveProjectName = async (setASANo) => {
         const docRef = doc(firestore,'formData', 'ControlBook');
         const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
                 // Document data is available
-                console.log(docSnapshot.data());
-                sessionStorage.setItem('ProjectName', JSON.stringify(docSnapshot.data()))
+                const projectData = docSnapshot.data()
+                console.log(projectData);
+                sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
+                setASANo(projectData)
             } else {
                 // Document does not exist
                 console.log("Document not found");
