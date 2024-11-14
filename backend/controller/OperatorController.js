@@ -495,6 +495,34 @@ const deleteFieldOffice = async(req, res) => {
     }
 }
 
+const getOrigNumberOfCopiesBUR = async(givenNo) => {
+    try{
+        const today = new Date();
+        const year = today.getFullYear();
+        const docRef = db.collection('NumberOfRecords').doc(year.toString());
+        return await db.transaction.get(docRef)(async (transaction) => {
+            const doc = await transaction.get()
+            if(doc.exists){
+                throw new Error('Document does not exist!')
+            }
+            const data = doc.data()
+            const currentNoBUR = data['BURno'] || givenNo
+
+            let incrementedByOne;
+            if(currentNoBUR === givenNo){
+                incrementedByOne = (parseInt(givenNo, 10)+1).toString()
+            }else{
+                incrementedByOne = (parseInt(currentNoBUR, 10)+1).toString()
+            }
+
+            return incrementedByOne
+        })
+
+    }catch(error){
+        console.log(`Error on get_ORIG_NumberOfCopies for BUR (editor controller) ${error}`)
+    }
+}
+
 module.exports = {
     operatorInput, 
     opReturnDocu, 

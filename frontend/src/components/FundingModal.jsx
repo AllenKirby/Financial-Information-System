@@ -1,18 +1,30 @@
 
 import { useEffect, useState } from "react";
 import { useFundingHook } from "../hooks/useFundingHook";
+import { useInitialStateDV } from "../hooks/useInitialStateDV";
 
 const FundingModal = ({modal}) => {
+    const {retrieveProjectName} = useFundingHook()
+    const {getBurNo} =useInitialStateDV()
+
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
-    const {retrieveProjectName} = useFundingHook()
     const [ASANo, setASANo] = useState({})
+    const [BUR, setBUR] = useState('')
 
     useEffect(() => {
-        const unsubscribe = retrieveProjectName()
-        const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
-        setASANo(parsedPorjectName)
-        return () => unsubscribe
+        const fetch = async () => {
+            const bur = await getBurNo()
+            setBUR(bur)
+            const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
+            if (parsedPorjectName){
+                setASANo(parsedPorjectName)
+            }else{
+                const unsubscribe = await retrieveProjectName(setASANo)
+                return () => unsubscribe()
+            }
+        }
+        fetch()
     }, [])
 
 
@@ -23,10 +35,11 @@ const FundingModal = ({modal}) => {
             <div className="flex items-center gap-2 mt-4">
                 {/* Input Field */}
                 <input
-                disabled={!isToggled}
+                disabled
                 type="text"
                 placeholder="Enter value"
                 className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
+                value={isToggled? BUR : 'ORS/BUR Not Required?'}
                 />
                 
                 {/* Toggle Button */}

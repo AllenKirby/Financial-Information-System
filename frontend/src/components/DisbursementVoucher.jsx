@@ -451,6 +451,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       if(fundNoSpace !== ''){
         const {template, value, currentVal} = await getDVno(fundNoSpace)
         setPayeeData({...payeeData, DV: `${template}${value}`, origNumber: currentVal, template: template})
+        console.log(fundNoSpace, template, value, currentVal)
       }else{
         console.log('no fund selected yet (disbursement voucher)')
       }
@@ -460,10 +461,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }, [payeeData.fund])
 
-  useEffect(() => {
-    const currentDate = new Date().toISOString().split("T")[0];
-    setToday(currentDate);
-}, []);
 
   const isDisabled = user.role === '3'
 
@@ -530,10 +527,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 disabled={isDisabled && !permission.data.permission}
                 type="text" 
                 value={payeeData.TIN}
+                placeholder='123-456-789-000'
                 onChange={(e) => {
                   const value = e.target.value;
-                  const filteredValue = value.replace(/[^0-9\-]/g, '');
-                  setPayeeData({...payeeData, TIN: filteredValue})
+                  const numericValue = value.replace(/\D/g, "");
+                  const limitedValue = numericValue.slice(0, 12);
+                  const formattedValue = limitedValue.replace(/(\d{3})(?=\d)/g, "$1-");
+                  setPayeeData({...payeeData, TIN: formattedValue})
                 }} 
                 required  />
             </div>

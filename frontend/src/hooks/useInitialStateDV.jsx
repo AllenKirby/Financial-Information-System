@@ -2,10 +2,11 @@ import axios from "axios"
 
 export const useInitialStateDV = () => {
     const apiURL = import.meta.env.VITE_API_URL
-    const setDVno = async (fundCluster) => {
+    // async (fundCluster)
+    const setDVno = async () => {
         try{
             const res = await axios.get(`${apiURL}/editor/getNumberOfCopies`, {
-                params: {cluster: fundCluster},
+                // params: {cluster: fundCluster},
                 withCredentials: true
             })
 
@@ -25,7 +26,7 @@ export const useInitialStateDV = () => {
     const getDVno = async (fundCluster) => {
         try{
             const storedDVNumbers = sessionStorage.getItem('pendingDVNumbers')
-            const resData = storedDVNumbers ? JSON.parse(storedDVNumbers) : await setDVno(fundCluster)
+            const resData = storedDVNumbers ? JSON.parse(storedDVNumbers) : await setDVno()
             const currentVal = resData[`DVno${fundCluster}`]
             const increamentedData = (parseInt(currentVal, 10) + 1).toString().padStart(4, '0');
 
@@ -41,6 +42,22 @@ export const useInitialStateDV = () => {
         }
     }
 
-    return {getDVno}
+    const getBurNo = async () => {
+        try{
+            const storedNumbers = sessionStorage.getItem('pendingDVNumbers')
+            const resData = storedNumbers ? JSON.parse(storedNumbers) : await setDVno()
+            const burNumber = resData['BURno']
+            const increamentedData = (parseInt(burNumber, 10) + 1).toString()
+
+            const today = new Date()
+            const bur = `501-${today.getFullYear()}-${today.getMonth()+1}-${increamentedData}`
+            
+            return bur
+        }catch(error){
+            console.log('error on getting bur no. at useinitialdv')
+        }
+    }
+
+    return {getDVno, getBurNo}
 }
 
