@@ -8,6 +8,7 @@ import { GrCircleInformation } from "react-icons/gr";
 
 import AddNewFieldOffice from "./AddNewFieldOffice";
 import FieldOffices from "./FieldOffices";
+import ControlBookReport from "./ControlBookReport";
 
 const ViewControlBook = () => {
   const { id } = useParams()
@@ -17,8 +18,11 @@ const ViewControlBook = () => {
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [remainingASA, setRemainingAsa] = useState(0)
+  const [reportFlag, setReportFlag] = useState(false)
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
+
+  const showReport = () => setReportFlag(!reportFlag)
 
   useEffect(() => {
     if(controlBooks){
@@ -69,88 +73,102 @@ const ViewControlBook = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="w-full h-[10%] flex items-center gap-3">
-        <button 
-          onClick={() => window.history.back()}
-          className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={25}/></button>
-        <p className="font-bold text-3xl text-fundingBlueGreen">{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
-        <div className="relative w-auto h-auto">
-          <GrCircleInformation 
-            size={28} 
-            color="gray"
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}/>
-            {showTooltip && (
+      {!reportFlag ? (
+        <>
+          <div className="w-full h-[10%] flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <button 
+                onClick={() => window.history.back()}
+                className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={25}/></button>
+              <p className="font-bold text-3xl text-fundingBlueGreen">{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
+              <div className="relative w-auto h-auto">
+                <GrCircleInformation 
+                  size={28} 
+                  color="gray"
+                  onMouseEnter={() => setShowTooltip(true)}
+                  onMouseLeave={() => setShowTooltip(false)}/>
+                  {showTooltip && (
+                    <>
+                      <div className="absolute w-8 h-8 -top-[2px] -right-10 rotate-45 rounded bg-white shadow-lg shadow-gray border-[1px]"/>
+                      <div className="absolute -right-[300px] -top-11 rounded-lg bg-white p-3 w-72 shadow-gray shadow-lg border-[1px]">
+                        <h1 className="font-semibold text-lg">Full Information</h1>
+                        <p className="font-bold text-sm mt-1">SARO No: <span className="font-normal">{ControlBook.data.SARONo}</span></p>
+                        <p className="font-bold text-sm mt-1">Date of ASA: <span className="font-normal">{convertDate(ControlBook.data.DateOfAsa)}</span></p>
+                        <p className="font-bold text-sm mt-1">Description: <span className="font-normal">{ControlBook.data.description}</span></p>
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+              <div className="px-5">
+                <button 
+                  className="bg-fundingBlueGreen text-white px-5 py-2 rounded-lg"
+                  onClick={showReport}
+                  >Generate Report</button>
+              </div>
+            </div>
+            <div className="w-full h-[89%]">
+              <div className="w-full h-1/4 flex gap-2">
+                <div className="w-1/4 h-full rounded-lg p-3 border-2">
+                  <div className="w-full h-1/4">
+                    <p className="font-semibold text-sm">Total ASA Budget</p>
+                  </div>
+                  <div className="w-full h-3/4 flex items-center justify-center">
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.TotalASA}.00</p>
+                  </div>
+                </div>
+                <div className="w-1/4 h-full rounded-lg p-3 border-2">
+                  <div className="w-full h-1/4">
+                    <p className="font-semibold text-sm">Remaining ASA Balance</p>
+                  </div>
+                  <div className="w-full h-3/4 flex items-center justify-center">
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{remainingASA}.00</p>
+                  </div>
+                </div>
+                <div className="w-1/4 h-full rounded-lg border-2 p-3">
+                  <div className="w-full h-1/4">
+                    <p className="font-semibold text-sm">Total Spending per Field Office</p>
+                  </div>
+                  <div className="w-full h-3/4 flex items-center justify-center">
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱300000.00</p>
+                  </div>
+                </div>
+                <button onClick={modal} className="w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white bg-fundingBlueGreen">
+                <div className="flex flex-col">
+                    <div className="w-full flex items-center justify-center">
+                      <IoAddOutline size={40}/>
+                    </div>
+                    <p className="font-semibold">New Field Office</p>
+                </div>
+                </button>
+              </div>
+              <div className="w-full h-3/4">
+                <div className="w-full h-[10%] my-2 px-5">
+                  <p className="font-semibold my-1">Field Offices({ControlBook.data.subcollection ? Object.entries(ControlBook.data.subcollection).length : 0})</p>
+                  <hr />
+                </div>
+                <div className="w-full h-[300px] overflow-auto border-2 rounded-lg p-1">
+                    {ControlBook.data.subcollection && Object.entries(ControlBook.data.subcollection).length > 0 ? (
+                      Object.entries(ControlBook.data.subcollection).map(([key,fieldOffice]) => (
+                        <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>
+                      ))
+                    ) : (
+                      <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
+                    )}
+                </div>
+              </div>
+            </div>
+            {FieldOfficeModal && (
               <>
-                <div className="absolute w-8 h-8 -top-[2px] -right-10 rotate-45 rounded bg-white shadow-lg shadow-gray border-[1px]"/>
-                <div className="absolute -right-[300px] -top-11 rounded-lg bg-white p-3 w-72 shadow-gray shadow-lg border-[1px]">
-                  <h1 className="font-semibold text-lg">Full Information</h1>
-                  <p className="font-bold text-sm mt-1">SARO No: <span className="font-normal">{ControlBook.data.SARONo}</span></p>
-                  <p className="font-bold text-sm mt-1">Date of ASA: <span className="font-normal">{convertDate(ControlBook.data.DateOfAsa)}</span></p>
-                  <p className="font-bold text-sm mt-1">Description: <span className="font-normal">{ControlBook.data.description}</span></p>
+                <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+                <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={remainingASA}/>
                 </div>
               </>
             )}
-        </div>
-      </div>
-      <div className="w-full h-[89%]">
-        <div className="w-full h-1/4 flex gap-2">
-          <div className="w-1/4 h-full rounded-lg p-3 border-2">
-            <div className="w-full h-1/4">
-              <p className="font-semibold text-sm">Total ASA Budget</p>
-            </div>
-            <div className="w-full h-3/4 flex items-center justify-center">
-              <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.TotalASA}.00</p>
-            </div>
-          </div>
-          <div className="w-1/4 h-full rounded-lg p-3 border-2">
-            <div className="w-full h-1/4">
-              <p className="font-semibold text-sm">Remaining ASA Balance</p>
-            </div>
-            <div className="w-full h-3/4 flex items-center justify-center">
-              <p className="font-semibold text-3xl text-fundingBlueGreen">₱{remainingASA}.00</p>
-            </div>
-          </div>
-          <div className="w-1/4 h-full rounded-lg border-2 p-3">
-            <div className="w-full h-1/4">
-              <p className="font-semibold text-sm">Total Spending per Field Office</p>
-            </div>
-            <div className="w-full h-3/4 flex items-center justify-center">
-              <p className="font-semibold text-3xl text-fundingBlueGreen">₱300000.00</p>
-            </div>
-          </div>
-          <button onClick={modal} className="w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white bg-fundingBlueGreen">
-           <div className="flex flex-col">
-              <div className="w-full flex items-center justify-center">
-                <IoAddOutline size={40}/>
-              </div>
-              <p className="font-semibold">New Field Office</p>
-           </div>
-          </button>
-        </div>
-        <div className="w-full h-3/4">
-          <div className="w-full h-[10%] my-2 px-5">
-            <p className="font-semibold my-1">Field Offices({ControlBook.data.subcollection ? Object.entries(ControlBook.data.subcollection).length : 0})</p>
-            <hr />
-          </div>
-          <div className="w-full h-[300px] overflow-auto border-2 rounded-lg p-1">
-              {ControlBook.data.subcollection && Object.entries(ControlBook.data.subcollection).length > 0 ? (
-                Object.entries(ControlBook.data.subcollection).map(([key,fieldOffice]) => (
-                  <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>
-                ))
-              ) : (
-                <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
-              )}
-          </div>
-        </div>
-      </div>
-      {FieldOfficeModal && (
-        <>
-          <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-          <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={remainingASA}/>
-          </div>
         </>
+      ) : (
+        <ControlBookReport showReport={showReport} reportData={ControlBook.data}/>
       )}
     </div>
   )

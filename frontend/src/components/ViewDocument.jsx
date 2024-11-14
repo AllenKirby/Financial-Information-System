@@ -329,7 +329,9 @@ const ViewDocument = () => {
             Back
           </button>
           
-          <button onClick={() => setIsCommentOpen(!isCommentOpen)}>{isCommentOpen ? 'Hide Comments' : 'Show Comments'}</button>
+          {idStatus.status !== 'Drafting' && (
+            <button onClick={() => setIsCommentOpen(!isCommentOpen)}>{isCommentOpen ? 'Hide Comments' : 'Show Comments'}</button>
+          )}
 
           {isModalOpen && (
             <>

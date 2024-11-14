@@ -24,6 +24,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
+  const [today, setToday] = useState('')
 
   //payee
   const [payeeOptions, setPayeeOptions] = useState({});
@@ -446,6 +447,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     gettingNumber()
   }, [payeeData.fund])
 
+  useEffect(() => {
+    const currentDate = new Date().toISOString().split("T")[0];
+    setToday(currentDate);
+}, []);
+
   const isDisabled = user.role === '3'
 
   return (
@@ -554,6 +560,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 type="date" 
                 disabled={isDisabled && !permission.data.permission}
                 value={payeeData.date}
+                min={today}
                 placeholder="Date"
                 onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
                 required  />
