@@ -291,7 +291,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       Object.keys(result).forEach(key => {
         result[key] = Array.from(result[key]);
       });
-
+      console.log('form',form.ControlBook)
       setASANo(form.ControlBook)
 
       setCost(result)
@@ -446,6 +446,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
     gettingNumber()
   }, [payeeData.fund])
+
+  useEffect(() => {
+    console.log(operatorInput.asa)
+  }, [operatorInput.asa])
 
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
@@ -819,7 +823,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       return(
                         <optgroup key={key} label={finalASANO}>
                           {asano.map((projectName, index) => (
-                            <option key={index} value={`${key},${projectName}`}>{projectName}</option>
+                            <option key={index} value={`${key}/${projectName.projectID}`}>{projectName.projectName  }</option>
                           ))}
                         </optgroup>
                       )

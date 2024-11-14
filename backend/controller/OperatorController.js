@@ -12,7 +12,9 @@ const operatorInput = async(req, res) => {
     const { date, DVNo, BUR, payee, particulars, amount } = req.body.fieldOfficeData
     const { id } = req.params
 
-    const [ASANo, projectName] = asa.split(',')
+    console.log(DVNo, BUR)
+
+    const [ASANo, projectID] = asa.split('/')
     const [ , , , DVNoCount ] = DVNo.split('-')
     const [ , , , BURCount ] = BUR.split('-')
 
@@ -28,32 +30,25 @@ const operatorInput = async(req, res) => {
         payee, 
         particulars, 
         amount
-    }
-    document = {} 
+    } 
 
     try {
+        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
+        const project = await docRef.get()
+
+        if(project.exists) {
+            console.log(project.data())
+        } else {
+            console.log("No such document!");
+        }
+        await db.collection('ControlBook').doc(ASANo)
+                .collection('FieldOffices').doc(projectID)
+                .collection('DV').doc().set(fieldOffice)
+
         const docref = db.collection('records').doc(id)
         await docref.update(dvData)
-        const updatedDoc = await docref.get()
-        if(updatedDoc.exists){
-            const doc = updatedDoc.data()
-            document[doc.DVKey] = {
-                data : doc
-            }
-        }
 
-        const querySnapshot = await db.collection('ControlBook').doc(ASANo).collection('FieldOffices')
-            .where('projectName', '==', projectName)
-            .get();
-        if (!querySnapshot.empty) {
-            const targetDoc = querySnapshot.docs[0];
-            await targetDoc.ref.update({
-                data: admin.firestore.FieldValue.arrayUnion(fieldOffice)
-            });
-        } else {
-            console.log("No matching documents found.");
-        }
-        res.status(200).json(document)
+        res.status(200).json('Successfully Updated')
     } catch (error) {
         console.error("Error updating document: operator: ", error);
         res.status(500).json({ success: false, error: error.message });
@@ -310,7 +305,9 @@ const appendDataToSheet = async (req, res) => {
         SARONo: SARONo,
         TotalASA: TotalASA,
         description: description,
-        createdAt: dateTimeCollection
+        createdAt: dateTimeCollection,
+        RO: TotalASA,
+        FO: 0
     }
 
     try {
@@ -331,6 +328,7 @@ const appendDataToSheet = async (req, res) => {
 
   const addNewFieldOffice = async(req, res) => {
     const { projectName, fieldOffice, ASA } = req.body.data
+    const  projectID  = req.body.projectID
     const { id } = req.params
 
     const today = new Date()
@@ -353,13 +351,37 @@ const appendDataToSheet = async (req, res) => {
         fieldOffice: fieldOffice,
         projectName: projectName,
         ASA: ASA,
-        createdAt: dateTimeCollection
+        createdAt: dateTimeCollection,
+        RO: ASA,
+        FO: 0
+    }
+
+    const formData = {
+        projectID: projectID,
+        projectName: projectName
     }
 
     try {
-        await db.collection('ControlBook').doc(id).collection('FieldOffices').doc().set(data)
+        const controlBookRef = db.collection('ControlBook').doc(id);
+        const controlBook = await controlBookRef.get();
+
+        if (controlBook.exists) {
+            const parseASA = parseFloat(ASA)
+            const totalRO = parseFloat(controlBook.data().RO);
+            const totalFO = parseFloat(controlBook.data().FO);
+            const updatedRO = totalRO - parseASA;
+            const updateFO = totalFO + parseASA
+
+            await controlBookRef.update({
+                FO: updateFO,
+                RO: updatedRO
+            });
+        } else {
+            console.log("No such document!");
+        }
+        await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(projectID).set(data)
         await db.collection('formData').doc('ControlBook').update({
-            [id]: admin.firestore.FieldValue.arrayUnion(projectName)
+            [id]: admin.firestore.FieldValue.arrayUnion(formData)
         })
         res.status(200).json({message: 'Field Office Successfully Created'})
     } catch (error) {
