@@ -10,7 +10,7 @@ const AddControlBook = (props) => {
 
     const { AddControlBook, updateControlBook, isLoading, error } = useFundingHook()
     
-    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: ''})
+    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: '', RO: 0, FO: 0})
 
     useEffect(() => {
         if(flag && controlBook) {

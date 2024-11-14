@@ -12,11 +12,14 @@ const operatorInput = async(req, res) => {
     const { date, DVNo, BUR, payee, particulars, amount } = req.body.fieldOfficeData
     const { id } = req.params
 
-    console.log(DVNo, BUR)
+    let orsData = ''
 
     const [ASANo, projectID] = asa.split('/')
     const [ , , , DVNoCount ] = DVNo.split('-')
-    const [ , , , BURCount ] = BUR.split('-')
+    if(ors) {
+        const [ , , , BURCount ] = BUR.split('-')
+        orsData = BURCount
+    } 
 
     dvData = {
         ORSBURS: ors,
@@ -26,7 +29,7 @@ const operatorInput = async(req, res) => {
     fieldOffice = {
         date,
         DVNoCount, 
-        BURCount, 
+        orsData, 
         payee, 
         particulars, 
         amount
@@ -37,7 +40,16 @@ const operatorInput = async(req, res) => {
         const project = await docRef.get()
 
         if(project.exists) {
-            console.log(project.data())
+            const parseAmount = parseFloat(amount)
+            const totalRO = parseFloat(project.data().RO);
+            const totalFO = parseFloat(project.data().FO);
+            const updatedRO = totalRO - parseAmount;
+            const updateFO = totalFO + parseAmount
+
+            await docRef.update({
+                FO: updateFO,
+                RO: updatedRO
+            });
         } else {
             console.log("No such document!");
         }
@@ -484,7 +496,8 @@ const updateFieldOffice = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, docId] = id.split(',')
+    const [ASANo, docId] = id.split('/')
+    console.log(ASANo, docId)
 
     try {
         await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId).delete()

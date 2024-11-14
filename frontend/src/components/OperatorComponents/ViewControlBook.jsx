@@ -122,12 +122,12 @@ const ViewControlBook = () => {
               </div>
               <div className="w-full h-3/4">
                 <div className="w-full h-[10%] my-2 px-5">
-                  <p className="font-semibold my-1">Field Offices({ControlBook.data.subcollection ? Object.entries(ControlBook.data.subcollection).length : 0})</p>
+                  <p className="font-semibold my-1">Field Offices({ControlBook.data.fieldOffices ? Object.entries(ControlBook.data.fieldOffices).length : 0})</p>
                   <hr />
                 </div>
                 <div className="w-full h-[300px] overflow-auto border-2 rounded-lg p-1">
-                    {ControlBook.data.subcollection && Object.entries(ControlBook.data.subcollection).length > 0 ? (
-                      Object.entries(ControlBook.data.subcollection).map(([key,fieldOffice]) => (
+                    {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
+                      Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
                         <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>
                       ))
                     ) : (

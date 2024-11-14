@@ -1,12 +1,45 @@
 import PropTypes from 'prop-types'
+import { useEffect, useState } from 'react';
 
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { IoIosGitCompare } from "react-icons/io";
 
 const ControlBookReport = (props) => {
     const { showReport, reportData } = props
+    const [data, setData] = useState({
+        previousRO: 0,
+        previousFO: 0,
+        previousTotal: 0
+    })
 
-    console.log(reportData)
+    console.log('report data' ,reportData)
+
+    useEffect(()=> {
+
+        const computePreviousRO = () => {
+            let TotalASA = parseFloat(reportData.TotalASA)
+            const TotalFieldOfficeExpense = Object.values(reportData.fieldOffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
+            for(let i = 0; i < TotalFieldOfficeExpense.length; i++) {
+                TotalASA -= TotalFieldOfficeExpense[i]
+            }
+            return TotalASA
+        }
+
+        const computePreviousFO = () => {
+            const TotalFieldOfficeExpense = Object.values(reportData.fieldOffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
+            let sum = 0
+            for(let i = 0; i < TotalFieldOfficeExpense.length; i++) {
+                sum += TotalFieldOfficeExpense[i]
+            }
+            return sum
+        }
+
+        setData({
+            previousRO: computePreviousRO(),
+            previousFO: computePreviousFO(),
+            previousTotal: computePreviousFO() + computePreviousRO()
+        })
+    }, [])
   return (
     <div className='w-full h-full'>
         <div className='w-full h-[8%] flex items-center justify-between'>
@@ -28,6 +61,9 @@ const ControlBookReport = (props) => {
         </div>
         <div className='w-full h-[92%] p-3'>
             <div className='w-[1105px] h-full overflow-x-auto'>
+                <select>
+                    <option value="January">January</option>
+                </select>
                 <table className='border-2 w-full border-black'>
                     <thead className='border-2 border-black text-xs'>
                         <tr className='border-2 border-black'>
@@ -84,9 +120,9 @@ const ControlBookReport = (props) => {
                         <td className='border-2 border-black'> </td>
                         <td className='border-2 border-black font-bold'>{reportData.description}</td>
                         <td className='border-2 border-black text-right font-bold'>{reportData.TotalASA}</td>
-                        <td className='border-2 border-black text-right font-bold'>{reportData.TotalASA}</td>
-                        <td className='border-2 border-black text-right font-bold'>{reportData.TotalASA}</td>
-                        <td className='border-2 border-black text-right font-bold'>{reportData.TotalASA}</td>
+                        <td className='border-2 border-black text-right font-bold'>{data.previousRO}</td>
+                        <td className='border-2 border-black text-right font-bold'>{data.previousFO}</td>
+                        <td className='border-2 border-black text-right font-bold'>{data.previousTotal}</td>
                     </tr>
                 </tbody>
                 </table>
