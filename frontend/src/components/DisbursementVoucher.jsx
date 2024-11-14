@@ -24,7 +24,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
-  const [today, setToday] = useState('')
+  
 
   //payee
   const [payeeOptions, setPayeeOptions] = useState({});
@@ -57,6 +57,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   useEffect(() => {
     if (flag && document) {
+      console.log(document)
       setPayeeData({
         payee: document.payee || '',
         TIN: document.TIN || '',
@@ -73,9 +74,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         DVKey: document.DVKey || '',
         RC: document.RC || '',
         // accCategory: document.accCategory || '',
-        accTitle: document.accTitle || '',
-        optionalAmount: document.optionalAmount || '',
-        accCode: document.accCode || '',
+        // accTitle: document.accTitle[0] || '',
+        // optionalAmount: document.optionalAmount || '',
+        // accCode: document.accCode || '',
         amount: document.amount || 0,
         particular: document.particular || '',
       });
@@ -86,6 +87,16 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         ors: document.ORSBURS || '',
         asa: document.ASA || ''
       })
+
+      const initialFormFields = (document.accTitle || []).map((title, index) => ({
+        accCategory: document.accCategory && document.accCategory[index] ? document.accCategory[index] : '',
+        accTitle: title || '',
+        accCode: document.accCode && document.accCode[index] ? document.accCode[index] : '',
+        amount: document.optionalAmount && document.optionalAmount[index] ? document.optionalAmount[index] : '',
+      }));
+
+      setFormFields(initialFormFields);
+
     }
   }, [document, flag]);
 
@@ -444,12 +455,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         console.log('no fund selected yet (disbursement voucher)')
       }
     }
-    gettingNumber()
+    if(!flag){
+      gettingNumber()
+    }
   }, [payeeData.fund])
-
-  useEffect(() => {
-    console.log(operatorInput.asa)
-  }, [operatorInput.asa])
 
   useEffect(() => {
     const currentDate = new Date().toISOString().split("T")[0];
@@ -564,7 +573,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 type="date" 
                 disabled={isDisabled && !permission.data.permission}
                 value={payeeData.date}
-                min={today}
                 placeholder="Date"
                 onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
                 required  />
@@ -791,13 +799,17 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       </div>
                       <div className='flex justify-center items-center gap-2'>
                         <div className='pt-7'>
-                        <button
-                          className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'} hover:text-white`}
-                          onClick={() => handleButtonClick(index)}
-                          type = "button">
-                          
-                          {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
-                        </button>
+                        { !flag && (
+                              <button
+                                className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'} hover:text-white`}
+                                onClick={() => handleButtonClick(index)}
+                                type = "button">
+                        
+                                {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
+                              </button>
+                            )
+
+                        }
                         </div>
                         
                       </div>
