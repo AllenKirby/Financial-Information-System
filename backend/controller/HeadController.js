@@ -35,7 +35,9 @@ const returnRecordTo = async(req, res) => {
         }
         const listOfAcc = await getListOfAccount(returnTo);
         await setNotification(listOfAcc, dataCollection, notifMessage1, notifMessage2, DV)
-        await addComments(DV, comment)
+        if(remarks) {
+            await addComments(DV, comment)
+        }
         // await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
@@ -136,7 +138,9 @@ const transferDocument = async (req, res) => {
         }
         const listOfApproverAcc = await getListOfAccount('1');
         await setNotification(listOfApproverAcc, dataCollection, notifMessage1, notifMessage2, DV)
-        await addComments(DV, comment)
+        if(remarks) {
+            await addComments(DV, comment)
+        }
         // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});

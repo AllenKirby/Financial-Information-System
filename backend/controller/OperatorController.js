@@ -91,7 +91,9 @@ const opReturnDocu = async (req, res) => {
         }
         const listOfEditorAcc = await getListOfEditorAccounts();
         await setNotification(listOfEditorAcc, dataCollection, notifMessage1, notifMessage2, DV)
-        await addComments(DV, comment)
+        if(remarks) {
+            await addComments(DV, comment)
+        }
         // await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
@@ -169,7 +171,9 @@ const getListOfEditorAccounts = async () => {
         }
         const listOfHeadAcc = await getListOfHeadAccounts();
         await setNotification(listOfHeadAcc, dataCollection, notifMessage1, notifMessage2, DV)
-        await addComments(DV, comment)
+        if(remarks) {
+            await addComments(DV, comment)
+        }
         // await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});

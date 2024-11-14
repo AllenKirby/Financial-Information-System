@@ -3,7 +3,6 @@ import { FaUserCircle } from "react-icons/fa";
 import PropTypes from 'prop-types'
 
 const Comments = ({comment}) => {
-    console.log(comment)
   return (
     <div className="w-full h-auto p-3 ">
         <div className="flex items-center justify-between">
