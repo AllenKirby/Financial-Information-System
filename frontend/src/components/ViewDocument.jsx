@@ -5,6 +5,7 @@ import html2pdf from 'html2pdf.js'
 //components
 import DisbursementVoucher from './DisbursementVoucher';
 import Document from "./Document";
+import FundingModal from "./FundingModal";
 //contexts
 import { useDisbursementContext } from "../hooks/useDisbursementContext";
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
@@ -340,7 +341,8 @@ const ViewDocument = () => {
                 onClick={(e) => e.stopPropagation()}
                 className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
                 >
-                <DisbursementVoucher modal={modal} document={doc} flag={true} />
+                  {idStatus.type === '4' ? (<DisbursementVoucher modal={modal} document={doc} flag={true} />) : (<FundingModal modal={modal}/>)}
+                
               </section>
             </>
           )}
