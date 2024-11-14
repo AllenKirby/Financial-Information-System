@@ -46,6 +46,7 @@ const BudgetRecommendation = () => {
 
     const fetchForecastedValues = async () => {
         const storedForecasted = sessionStorage.getItem("forecasted");
+        console.log('fetching')
         if (storedForecasted) {
             const parsedForecast = JSON.parse(storedForecasted);
             return parsedForecast;
@@ -126,8 +127,12 @@ const BudgetRecommendation = () => {
     };
 
     useEffect(() => {
-        fetchData();
-        generateRemainingMonths();
+        const getData = async () => {
+            generateRemainingMonths();
+            await fetchData();
+        }
+        getData()
+
     }, []);
 
     const generateRemainingMonths = () => {

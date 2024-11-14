@@ -122,7 +122,7 @@ const ChartData = () => {
     return (
         <div className="w-full h-full flex flex-col">
            <LineGraph chartData={monthlyTotalData}/>
-           <BarChart BarChartData={categorizedData}/>
+           {/* <BarChart BarChartData={categorizedData}/> */}
         </div>
     );
 };
