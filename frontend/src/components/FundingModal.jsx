@@ -8,7 +8,6 @@ import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 const FundingModal = ({modal, data}) => {
-    const {retrieveProjectName} = useFundingHook()
     const {getBurNo} =useInitialStateDV()
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
