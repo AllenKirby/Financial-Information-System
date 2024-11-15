@@ -1,9 +1,15 @@
 import ReactApexChart from 'react-apexcharts';
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 
-const LineGraph = ({chartData}) => {
+const LineGraph = ({ chartData }) => {
+
     const [year, setYear] = useState('2024');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    const testData = useSelector((state) => state.testforecast)
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -50,17 +56,41 @@ const LineGraph = ({chartData}) => {
         }
     });
 
+
+
     useEffect(() => {
+        console.log(testData)
         const getXAxis = () => (chartData[year] ? Object.keys(chartData[year]) : []);
         const getvalues = () => (chartData[year] ? Object.values(chartData[year]) : []);
         const values = getvalues();
-        const xAxis = getXAxis();
-        const forecastedData = JSON.parse(sessionStorage.getItem('forecasted')) || {};
-        const forecastXAxis = forecastedData.monthly ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
-        const forecastValues = forecastedData.monthly ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
+        let xAxis = getXAxis();
+        
+        // if(testData.sample > 0){
+        //     xAxis = xAxis.push(testData.sample)
+        // }
 
-        const combinedXAxis = Array.from(new Set([...xAxis, ...forecastXAxis]));
-        console.log(combinedXAxis)
+
+        let forecastXAxis;
+        let forecastValues;
+        let UpperBounds;
+        let LowerBounds;
+        if(Object.keys(testData.sampleoutcome).length === 0){
+            //default
+            const forecastedData = JSON.parse(sessionStorage.getItem('forecasted')) || {};
+            forecastXAxis = forecastedData.monthly && year == '2024' ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
+            forecastValues = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
+            UpperBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
+            LowerBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.lower) : [];
+        }else{
+            //test
+            forecastXAxis = testData.sampleoutcome && year == '2024' ? Object.keys(testData.sampleoutcome).map(date => date.slice(0,7)) : [];
+            forecastValues = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
+            UpperBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
+            LowerBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.lower) : [];
+        }
+
+
+        const combinedXAxis = Array.from(new Set([...xAxis, ...forecastXAxis])).sort();
 
         const actualData = combinedXAxis.map(date => {
             const index = xAxis.indexOf(date);
@@ -72,18 +102,58 @@ const LineGraph = ({chartData}) => {
             return index !== -1 ? forecastValues[index] : null;
         });
 
+        const upperBoundData = combinedXAxis.map(date => {
+            const index = forecastXAxis.indexOf(date);
+            return index !== -1 ? UpperBounds[index] : null;
+        });
+    
+        const lowerBoundData = combinedXAxis.map(date => {
+            const index = forecastXAxis.indexOf(date);
+            return index !== -1 ? LowerBounds[index] : null;
+        });
+
+        // Filter data by date range
+        const filteredXAxis = combinedXAxis.filter(date => 
+            (!startDate || date >= startDate) && (!endDate || date <= endDate)
+        );
+        const filteredActualData = actualData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
+        const filteredForecastData = forecastData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
+        const filteredUpperBoundData = upperBoundData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
+        const filteredLowerBoundData = lowerBoundData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
+
         setLineOptions((prevOptions) => ({
             ...prevOptions,
             series: [
-                { ...prevOptions.series[0], data: actualData },
-                { ...prevOptions.series[1], data: forecastData}    
+                { ...prevOptions.series[0], data: filteredActualData, type: 'line' },
+                { ...prevOptions.series[1], data: filteredForecastData, type: 'line' },
+                { 
+                    name: 'Upper Bound', 
+                    data: filteredUpperBoundData, 
+                    type: 'area', 
+                    color: '#acf296',
+                },
+                { 
+                    name: 'Lower Bound', 
+                    data: filteredLowerBoundData, 
+                    type: 'area' ,
+                    color: '#f29f96',
+                }  
             ],
             options: { 
                 ...prevOptions.options, 
-                xaxis: { ...prevOptions.options.xaxis, categories: combinedXAxis }
+                xaxis: { ...prevOptions.options.xaxis, categories: filteredXAxis },
+                fill : {
+                    type: 'gradient',
+                    gradient: {
+                        shade: 'light',
+                        type: 'vertical'
+                        
+                    }
+                },
+                stroke: { curve: 'smooth', width: [2, 2, 0] } 
             }
         }));
-    }, [chartData, year]);
+    }, [chartData, year, startDate, endDate, testData]);
 
   return (
     <div className="w-full h-full">
@@ -93,6 +163,20 @@ const LineGraph = ({chartData}) => {
                     <option key={index} value={year}>{year}</option>
                 ))}
             </select>
+            <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                placeholder="Start Date"
+                className="ml-2"
+            />
+            <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                placeholder="End Date"
+                className="ml-2"
+            />
         </div>
         <ReactApexChart
             options={lineOptions.options}
@@ -109,4 +193,4 @@ LineGraph.propTypes = {
     chartData: PropTypes.object.isRequired,
 };
 
-export default LineGraph
+export default LineGraph;

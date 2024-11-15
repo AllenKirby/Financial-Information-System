@@ -3,8 +3,12 @@ import { useState, useEffect } from "react";
 import Dropdown from "./Dropdown";
 import { IoMdSend } from "react-icons/io";
 import { IoMdBackspace } from "react-icons/io";
+import { useDispatch } from "react-redux";
+import { setTestForecast, setSample, resetTestForecast } from "../../../redux/TestForecastedRedux";
 
 const BudgetRecommendation = () => {
+    const dispatch = useDispatch()
+
     const currentMonth = new Date().getMonth() + 1;
     const [forecastedValues, setForecastedValues] = useState({});
     const [remainingMonths, setRemainingMonths] = useState([]);
@@ -161,6 +165,9 @@ const BudgetRecommendation = () => {
             const proportions = await fetchPercentages();
             if(res.status === 200){
                 const forecast = res.data
+                // console.log(forecast)
+                dispatch(setTestForecast(forecast))
+                dispatch(setSample(parseFloat(expense)))
                 if (proportions && forecast) {
                     const monthDifference = selectedMonth >= currentMonth ? selectedMonth - currentMonth : (selectedMonth+12) - currentMonth
                     console.log(monthDifference)
@@ -168,7 +175,7 @@ const BudgetRecommendation = () => {
                 }
             }
         }catch(error){
-
+            console.log(error)
         }
     }
 
@@ -180,9 +187,10 @@ const BudgetRecommendation = () => {
                 calculateRecommendation(proportions, forecast);
                 setExpense(0)
                 setSelectedMonth(currentMonth)
+                dispatch(resetTestForecast())
             }
         }catch(error){
-
+            console.log(error)
         }
     }
 
