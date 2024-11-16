@@ -20,6 +20,18 @@ const Document = ({document}) => {
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
+  const cutFormula = (formula) => {
+    let remainingString = "";
+
+    for (let i = 0; i < formula.length; i++) {
+      if (formula[i] === "*") {
+        remainingString = formula.slice(i + 1); 
+        break; 
+      }
+    }
+    return parseFloat(remainingString) * 100 + '%'
+  }
+
   return (
     <main id="pdf" className="w-full h-auto text-black flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-auto text-black text-xs'>
@@ -42,20 +54,20 @@ const Document = ({document}) => {
             <div className='w-20 border-r-2 border-black flex items-center justify-center font-bold'>Mode of <br/> Payment</div>
             <div className='w-5/6 py-2 flex gap-10 px-7'>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.modeOfPayment === 'MDS CHECK'} className='w-5 h-5'/>
                 <label>MDS Check</label>
               </div>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.modeOfPayment === 'Commercial CHECK'} className='w-5 h-5'/>
                 <label>Commercial Check</label>
               </div>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.modeOfPayment === 'ADA'} className='w-5 h-5'/>
                 <label>ADA</label>
               </div>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" className='w-5 h-5'/>
-                <label>Others (Please Specify)</label>
+                <input type="checkbox" disabled checked={doc.modeOfPayment === 'Others'} className='w-5 h-5'/>
+                <label>Others (Please Specify) {doc.specifiedMOP}</label>
               </div>
             </div>
           </div>
@@ -93,7 +105,7 @@ const Document = ({document}) => {
                   <div>=</div>
                   <div>{eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 </div>
-                <div className="px-2 py-1">ASA No.{doc.ASA}</div>
+                <div className="px-2 py-1">ASA No. {doc.ASA ? doc.ASA.split('/').slice()[0].replace('|', ' ') : ''}</div>
                 <div className="w-full flex items-center justify-center font-bold pt-1">Amount Due</div>
               </div>
               <div className='w-36 border-r-2 border-black flex-col'>
@@ -132,8 +144,8 @@ const Document = ({document}) => {
                       {doc.accTitle.map((title, index) => (
                         <div key={index} className="w-full pt-1 pl-5">{title}</div>
                       ))}
-                      <div className="w-full pt-1 pl-5">Due to BIR(3%)</div>
-                      <div className="w-full pt-1 pl-5">Due to BIR(2%)</div>
+                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
                       <div className="w-full pt-1 pl-5">Cash in Back</div>
                   </div>
                   <div className="w-1/5 h-auto border-r-2 border-black">
@@ -388,8 +400,8 @@ const Document = ({document}) => {
               <div className="w-full h-full flex">
                   <div className="w-2/5 h-[100px] border-r-2 border-black">
                       <div className="w-full text-center border-b-2 border-black">Account Title</div>
-                      <div className="w-full pt-1 pl-5">Due to BIR(3%)</div>
-                      <div className="w-full pt-1 pl-5">Due to BIR(2%)</div>
+                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
                       <div className="w-full pt-1 pl-5">Cash in Back</div>
                   </div>
                   <div className="w-1/5 h-[100px] border-r-2 border-black">

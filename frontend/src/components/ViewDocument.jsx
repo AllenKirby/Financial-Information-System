@@ -210,7 +210,6 @@ const ViewDocument = () => {
     });
   }
 
-
   return (
     <section className="w-full h-auto flex gap-2">
       <div className='relative w-5/6 h-[500px] py-3 bg-white rounded-lg'>
@@ -377,7 +376,7 @@ const ViewDocument = () => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50" />
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type}/>
+            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type} ASA={doc.ASA}/>
           </div>
         </>
       )}
