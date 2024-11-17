@@ -113,7 +113,7 @@ const DocumentDetails = ({ index, documents, type }) => {
       className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 rounded-md mb-1 text-customFontGreen cursor-pointer flex items-center justify-center`}
     >
       {/* Payee column */}
-      <h2 className={`font-semibold text-left text-sm ${type === '4' || type === '3' ? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
+      <h2 className={`font-semibold text-left text-sm ${type === '4' || type === '3' || type === '1'? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
         <BsFiletypePdf size={25}/> {docu?.payee}
       </h2>
       {/* DV No. column */}
@@ -133,6 +133,9 @@ const DocumentDetails = ({ index, documents, type }) => {
         {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
         {type === '4' && docu?.returnedToPreparer ? formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) : '-'}
         {type === '3' && docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) : '-'}
+      </h2>}
+      {type === '1' && <h2 className="text-xs font-light text-center w-1/6">
+        {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
       </h2>}
     </div>
   );

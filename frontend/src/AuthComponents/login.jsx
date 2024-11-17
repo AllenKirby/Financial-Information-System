@@ -3,7 +3,7 @@ import { useState } from "react";
 import Loader from "../components/Loader";
 import { useAuthHook } from "../hooks/useAuthHook";
 
-import { FcGoogle } from "react-icons/fc";
+//import { FcGoogle } from "react-icons/fc";
 import { FiEye } from "react-icons/fi";
 import { FiEyeOff } from "react-icons/fi";
 import NIAlogo from '../assets/images/NIAimg.png' 
@@ -13,17 +13,17 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     //hooks
-    const {login, googleLogin, isLoading, error} = useAuthHook()
+    const {login, isLoading, error} = useAuthHook()
 
     const handleLogin = async(e) => {
         e.preventDefault()
         await login(email, password)
     }
 
-    const handleGoogleLogin = async(e) => {
-        e.preventDefault()
-        await googleLogin()
-    }
+    // const handleGoogleLogin = async(e) => {
+    //     e.preventDefault()
+    //     await googleLogin()
+    // }
 
   return (
     <section className="w-full h-screen flex flex-col sm:flex-col md:flex-col lg:flex-row xl:flex-row items-center justify-start bg-slate-100">
@@ -43,7 +43,7 @@ const Login = () => {
                 <div className="w-full py-2 px-2 gap-2">
                     <label className="font-semibold text-base sm:text-base md:text-lg lg:text-base xl:text-base">Email</label>
                     <input 
-                        className="text-base sm:text-base md:text:lg lg:text-base xl:text-base w-full px-4 py-2 rounded-full border-2 focus:outline-customgreen transition-all duration-500" 
+                        className="text-base sm:text-base md:text:lg lg:text-base xl:text-base w-full px-4 py-2 rounded-full border-2 focus:outline-customgreen transition-all duration-100" 
                         type="text" 
                         placeholder="email@gmail.com" 
                         required 
@@ -79,7 +79,7 @@ const Login = () => {
                 {error && (<div className="w-full text-center">
                     <h4 className="text-sm text-red-600">{error}</h4>
                 </div>)}
-                <div className="w-full h-auto px-2 pt-2">
+                {/* <div className="w-full h-auto px-2 pt-2">
                     <div className="w-full h-auto px-2 pt-2 border-t-2 relative">
                         <p className="text-center text-sm bg-slate-100 rounded-lg px-3 absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">Or</p>
                         <button 
@@ -87,7 +87,7 @@ const Login = () => {
                         disabled={isLoading}
                         className="w-full my-3 flex items-center justify-center py-2 rounded-lg border-2"><FcGoogle size={20} className="mx-2" />Login with Google</button>
                     </div>
-                </div>
+                </div> */}
             </form>
         </div>
         

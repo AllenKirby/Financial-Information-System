@@ -8,6 +8,7 @@ import { collection, onSnapshot } from "firebase/firestore"
 
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
+import addressJSON from '../assets/json/region_4a_provinces_municipalities_array.json'
 
 import { useAuthContext } from '../hooks/useAuthContext'
 import { usePreparerHook } from '../hooks/usePreparerHook'
@@ -18,7 +19,7 @@ import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'',accCategory: [], accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
+  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', MOP: '', specifiedMOP: '',  origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'',accCategory: [], accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
   //states
   const [birData, setBirData] = useState({ birParticular: ''})
   const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
@@ -57,7 +58,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   useEffect(() => {
     if (flag && document) {
-      console.log(document)
       setPayeeData({
         payee: document.payee || '',
         TIN: document.TIN || '',
@@ -116,7 +116,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   };
 
   const handleChangePayee = (e) => {
-    const target = e.target.value.toUpperCase();
+    const target = e.target.value.toUpperCase().trim();
     setPayeeData({...payeeData, payee: target})
 
     if (target) {
@@ -302,7 +302,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       Object.keys(result).forEach(key => {
         result[key] = Array.from(result[key]);
       });
-      console.log('form',form.ControlBook)
       setASANo(form.ControlBook)
 
       setCost(result)
@@ -451,7 +450,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       if(fundNoSpace !== ''){
         const {template, value, currentVal} = await getDVno(fundNoSpace)
         setPayeeData({...payeeData, DV: `${template}${value}`, origNumber: currentVal, template: template})
-        console.log(fundNoSpace, template, value, currentVal)
       }else{
         console.log('no fund selected yet (disbursement voucher)')
       }
@@ -488,8 +486,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
               disabled={isDisabled && !permission.data.permission}
               type="text" 
-              // value={payeeData.payee}
+              pattern="^[a-zA-Z\s'-]+$"
               value={payeeData.payee}
+              minLength="2" 
+              maxLength="50"
               onChange={handleChangePayee}
               // onChange={(e) => setPayeeData({...payeeData, payee: e.target.value.toUpperCase()})} 
               required  />
@@ -512,13 +512,23 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className='w-full flex gap-2'>
             <div className='w-1/2 mt-2'>
               <label>Address</label>
-              <input 
-                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
-                disabled={isDisabled && !permission.data.permission}
-                type="text" 
-                value={payeeData.address}
-                onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
-                required  />
+                <select 
+                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 rounded-md border-2`}
+                  disabled={isDisabled && !permission.data.permission}
+                  type="text" 
+                  value={payeeData.address}
+                  onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
+                  required>
+                    <option disabled value={''}>Select Address</option>
+                    {Object.entries(addressJSON['4A'].province_list).map(([key, province]) => (
+                      <optgroup key={key} label={key}>
+                        {province.municipality_list.map((municipal, index) => (
+                          <option key={index} value={`${municipal}, ${key}`}>{municipal}</option>
+                        ))}
+                      </optgroup>
+                    ))}
+
+                  </select>
             </div>
             <div className='w-1/2 mt-2'>
               <label>TIN/Employee No.</label>
@@ -610,6 +620,58 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 }
               </select>
             </div>
+          </div>
+          <div className='w-full mt-2'>
+              <label>Mode of Payment</label>
+              <div className='flex items-center justify-between px-5 py-2'>
+                <div className='flex gap-2'>
+                  <input 
+                    type="radio" 
+                    name="MOP"
+                    value='MDS Check'
+                    checked={payeeData.MOP === 'MDS Check'}
+                    onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
+                  <label>MDS Check</label>
+                </div>
+                <div className='flex gap-2'>
+                  <input 
+                    type="radio" 
+                    name="MOP"
+                    value='Commercial Check'
+                    checked={payeeData.MOP === 'Commercial Check'}
+                    onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
+                  <label>Commercial Check</label>
+                </div>
+                <div className='flex gap-2'>
+                  <input 
+                    type="radio" 
+                    name="MOP"
+                    value='ADA'
+                    checked={payeeData.MOP === 'ADA'}
+                    onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
+                  <label>ADA</label>
+                </div>
+                <div className='flex items-center justify-center gap-2'>
+                  <div className='flex gap-2'>
+                    <input 
+                      type="radio" 
+                      name="MOP"
+                      value='Others'
+                      checked={payeeData.MOP === 'Others'}
+                      onChange={(e) => setPayeeData({ ...payeeData, MOP: e.target.value })}/>
+                    <label>Others</label>
+                  </div>
+                  <div className='flex items-center justify-center gap-2'>
+                    <label>(Please Specify)</label>
+                    <input 
+                      type="text" 
+                      disabled={payeeData.MOP === 'Others' ? false : true}
+                      value={payeeData.MOP === 'Others' ? payeeData.specifiedMOP  || '': ''}
+                      onChange={(e) => setPayeeData({...payeeData, specifiedMOP: e.target.value})}
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-16 text-sm p-1 rounded-md border-2`}/>
+                  </div>
+                </div>
+              </div>
           </div>
           <div className='w-full'>
             <div className='w-full flex gap-2'>
@@ -857,6 +919,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               disabled={isDisabled && !permission.data.permission}
               placeholder='Write details here...'
               required
+              maxLength="500"
             />
           </div>
         </div>
@@ -870,6 +933,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             disabled={isDisabled && !permission.data.permission}
             placeholder='Write details here...'
             required
+            maxLength="500"
           />
         </div>
       </div>

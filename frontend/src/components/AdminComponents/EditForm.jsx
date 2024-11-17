@@ -6,7 +6,7 @@ import { ResCenter } from "./editFormComponents/ResCenter";
 const Editform = () => {
 
     return (
-        <div className="w-full h-full bg-white rounded-t-lg p-4 mt-14">
+        <div className="w-full h-full bg-white rounded-t-lg p-4">
             <div className="h-[550px] overflow-y-auto">
                 <div className="w-full flex gap-2 ">
                     <div className="w-4/5 h-72">

@@ -116,16 +116,15 @@ const ViewControlBook = () => {
                     <div className="w-full flex items-center justify-center">
                       <IoAddOutline size={40}/>
                     </div>
-                    <p className="font-semibold">New Field Office</p>
+                    <p className="font-semibold">New Project</p>
                 </div>
                 </button>
               </div>
               <div className="w-full h-3/4">
-                <div className="w-full h-[10%] my-2 px-5">
+                <div className="w-full h-auto my-2 px-5">
                   <p className="font-semibold my-1">Field Offices({ControlBook.data.fieldOffices ? Object.entries(ControlBook.data.fieldOffices).length : 0})</p>
-                  <hr />
                 </div>
-                <div className="w-full h-[300px] overflow-auto border-2 rounded-lg p-1">
+                <div className="w-full h-[310px] overflow-auto border-2 rounded-lg p-1">
                     {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                       Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
                         <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>

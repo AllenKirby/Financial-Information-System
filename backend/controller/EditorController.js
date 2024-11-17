@@ -22,7 +22,7 @@ const formatDate = (rawDate) => {
     return formattedDate;
   };
 const createDV = async (req, res) => {
-    const {payee, TIN, address, fund, date, DV, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
+    const {payee, TIN, address, fund, date, DV, MOP, specifiedMOP, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
     const {birParticular} = req.body.bir_data
     const createdBy = req.user.name
     
@@ -49,13 +49,15 @@ const createDV = async (req, res) => {
 
     dvData = {
         //payee data
-        payee: payee, 
+        payee: payee.trim(), 
         TIN: TIN, 
         address: address,
         fund: fund,
         date: formatDate(date), 
         DV: finalizeDVNo,
         DVKey: DVKey, 
+        modeOfPayment: MOP,
+        specifiedMOP: specifiedMOP,
         RC: RC,
         NF_name: NF_name,
         NF_office: NF_office,
@@ -68,9 +70,9 @@ const createDV = async (req, res) => {
         accCode: accCode,
         optionalAmount: optionalAmount, 
         amount: amount, 
-        particular: particular,
+        particular: particular.trim(),
         //BIR data
-        birParticular: birParticular,
+        birParticular: birParticular.trim(),
         //other data
         createdAt: dateTimeCollection,
         createdBy: createdByDetails,

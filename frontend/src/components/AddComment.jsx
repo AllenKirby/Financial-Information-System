@@ -8,7 +8,7 @@ import { useFundingHook } from "../hooks/useFundingHook";
 import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useAuthContext } from '../hooks/useAuthContext';
 
-const AddComment = ({idStatus, doc, modal, type}) => {
+const AddComment = ({idStatus, doc, modal, type, ASA}) => {
     const [comment, setComment] = useState('')
     const [color, setColor] = useState({bg: '', border: '', font: ''})
 
@@ -19,6 +19,8 @@ const AddComment = ({idStatus, doc, modal, type}) => {
     const { user } = useAuthContext()
 
     const isLoading = isLoadingPreparer || isLoadingFunding || isLoadingBO;
+
+    console.log(ASA)
 
     useEffect(() => {
       if(user && user.role){
@@ -123,6 +125,7 @@ const AddComment = ({idStatus, doc, modal, type}) => {
     }
 
     const handleSubmitForOp = async() => {
+      if(ASA) {
         const data = {
           DV: idStatus.id,
           payee: doc.payee,
@@ -157,6 +160,13 @@ const AddComment = ({idStatus, doc, modal, type}) => {
             }
           }
         });
+      } else {
+        Swal.fire({
+          title: "Error!",
+          text: 'ASA No. cannot be empty.',
+          icon: "error",
+        });
+      }
     }
 
     const handleReturn = (backToRole) => {
@@ -289,10 +299,6 @@ const AddComment = ({idStatus, doc, modal, type}) => {
               className={`px-4 py-1 rounded-md text-lg text-white ${color.bg}`}>Save</button>
             <button 
               disabled={isLoading} 
-              type="submit"
-              className={`px-4 py-1 rounded-md text-lg border-[1px] ${color.border} ${color.font}`}>Cancel</button>
-            <button 
-              disabled={isLoading} 
               onClick={modal}
               className={`px-4 py-1 rounded-md text-lg ${color.font}`}>Back</button>
         </div>
@@ -305,6 +311,7 @@ AddComment.propTypes = {
     doc: PropTypes.object.isRequired,
     modal: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
+    ASA: PropTypes.string
   }
 
 export default AddComment

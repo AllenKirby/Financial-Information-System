@@ -1,8 +1,6 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
 import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation"
-import { useState, useEffect } from "react"
-import axios from "axios"
 
 const Dashboard = () => {
 
@@ -23,8 +21,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-      <div className="w-full h-[60vh] flex">
-          <div className="w-2/3">
+      <div className="w-full h-3/4 flex gap-3 py-3">
+          <div className="w-2/3 border-2 rounded-lg p-2">
             <ChartData/>
           </div>
           <div className="w-1/3">

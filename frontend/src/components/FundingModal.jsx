@@ -1,8 +1,7 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useFundingHook } from "../hooks/useFundingHook";
 import { useInitialStateDV } from "../hooks/useInitialStateDV";
-
 
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
@@ -14,8 +13,7 @@ const FundingModal = ({modal, data}) => {
     const {retrieveProjectName, inputOperator, isLoading, error} = useFundingHook()
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
-    console.log(data)
-
+    const prevASARef = useRef();
 
     useEffect(() => {
         const fetch = async () => {
@@ -39,6 +37,15 @@ const FundingModal = ({modal, data}) => {
         })
     }, [])
 
+    useEffect(() => {
+        if(data.ASA) {
+            prevASARef.current = data.ASA;
+        }
+    }, [data])
+
+    console.log(data)
+    console.log('previous ASA', prevASARef.current)
+
     const handleSubmit = async(e) => {
         e.preventDefault()
 
@@ -55,7 +62,8 @@ const FundingModal = ({modal, data}) => {
     
         const fundingData = {
             fundingData: operatorInput,
-            fieldOfficeData: fieldOfficeData
+            fieldOfficeData: fieldOfficeData,
+            previousASA: prevASARef.current
         }
         const res = await inputOperator(fundingData, DVNo)
         if(res){
