@@ -25,7 +25,7 @@ const FieldOffices = (props) => {
 
   const deleteFO = async(e) => {
     e.stopPropagation()
-    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}`
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}`
     // const encodedID = encodeURIComponent(id)
     console.log(id)
 

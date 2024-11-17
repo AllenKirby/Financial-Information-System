@@ -629,10 +629,11 @@ const updateFieldOffice = async(req, res) => {
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
     console.log(id)
-    const [ASANo, docId, projectName] = id.split('!')
+    const [ASANo, docId, projectName, RO] = id.split('!')
     console.log(ASANo, docId, projectName)
 
     const data = {
+        RO: RO,
         projectID: docId,
         projectName: projectName
     }
@@ -640,8 +641,7 @@ const deleteFieldOffice = async(req, res) => {
     try {
         await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId).delete()
         const docRef = db.collection('formData').doc('ControlBook')
-        const controlBook = await docRef.get()
-        controlBook.update({
+        await docRef.update({
             [ASANo]: admin.firestore.FieldValue.arrayRemove(data)
         })
         res.status(200).json({message: 'Field Office Successfully Deleted'})
