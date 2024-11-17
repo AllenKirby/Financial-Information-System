@@ -8,19 +8,67 @@ const {
     setHistoryLogs } = require('./Functions');
 
 const updateASA_ORS = async (req, res) => {
+    const { ors, asa } = req.body.data
+    const { date, DVNo, BUR, payee, particulars, amount } = req.body.DV
+    const previousASA = req.body.previousASA
+    const {id} = req.params
+
+    console.log(ors)
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1
-    const { ors, asa } = req.body
-    const {id} = req.params
     const lastORS = ors.split('-').pop()
     const ORS = await getOrigNumberOfCopiesBUR(lastORS)
     const finalORS = `501-${year}-${month}-${ORS}`
+
+    let orsData = ''
+
+    const [ASANo, projectID] = asa.split('/')
+    const [ , , , DVNoCount ] = DVNo.split('-')
+    if(ors) {
+        const [ , , , BURCount ] = ors.split('-')
+        orsData = BURCount
+    } 
+
     const dvData = {
         ORSBURS: finalORS,
         ASA: asa
     }
 
+    fieldOffice = {
+        date,
+        DVNoCount, 
+        orsData, 
+        payee, 
+        particulars, 
+        amount
+    } 
+
     try{
+        if(previousASA) {
+            const [prevASA, prevFO] = previousASA.split('/')
+            console.log('may laman', prevASA, prevFO)
+            const docRef = db.collection('ControlBook').doc(prevASA)
+                            .collection('FieldOffices').doc(prevFO)
+                            .collection('DV').doc(`${DVNoCount}|${amount}`);
+
+            const findDoc = await docRef.get();
+
+            if (findDoc.exists) {
+                console.log('may nahanap', findDoc.data());
+                await docRef.delete();
+                await db.collection('ControlBook').doc(ASANo)
+                    .collection('FieldOffices').doc(projectID)
+                    .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
+            } else {
+                console.log('walang nahanap')
+            }
+        } else {
+            console.log('walang laman')
+            await db.collection('ControlBook').doc(ASANo)
+                .collection('FieldOffices').doc(projectID)
+                .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
+        }
+
         const docref = db.collection('records').doc(id)
         await docref.update(dvData)
     }catch(error){
@@ -268,7 +316,6 @@ const updateFormData_RO = async (ASANo, projectID, ROamount) => {
         });
   
         await docRef.update({ [ASANo]: updatedArray });
-        console.log("RO updated successfully!");
       } else {
         console.log("Document does not exist");
       }
@@ -380,9 +427,6 @@ const appendDataToSheet = async (req, res) => {
     const  values  = req.body
     const spreadsheetId = process.env.SPREADSHEETID
     const client = await auth.getClient();
-
-    console.log(values)
-    console.log(spreadsheetId)
     
     // Append values to the next available row
     const request = {
@@ -397,7 +441,6 @@ const appendDataToSheet = async (req, res) => {
     };
   
     try {
-        console.log('hit')
         const response = await sheets.spreadsheets.values.append(request);
         res.status(200).send({message: 'Data appended successfully', data: response.data.updates});
     } catch (err) {
@@ -499,7 +542,8 @@ const appendDataToSheet = async (req, res) => {
         ASA: ASA,
         createdAt: dateTimeCollection,
         RO: ASA,
-        FO: 0
+        FO: 0,
+        leftBudget: ASA
     }
 
     const formData = {
@@ -592,8 +636,9 @@ const appendDataToSheet = async (req, res) => {
 
 const updateFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, docId] = id.split(',')
+    const [ASANo, docId] = id.split('!')
     const fieldOfficeData = req.body.data
+    const {RO, projectID, projectName} = req.body.prevData
 
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -616,9 +661,22 @@ const updateFieldOffice = async(req, res) => {
         updatedAt: dateTimeCollection
     }
 
+    formData = {
+        RO: RO,
+        projectID: projectID,
+        projectName: projectName
+    }
+
     try {
         const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId)
         await docRef.update(data)
+        const docref = db.collection('formData').doc('ControlBook')
+        await docref.update({
+            [ASANo]: admin.firestore.FieldValue.arrayRemove(formData)
+        })
+        await docref.update({
+            [ASANo]: admin.firestore.FieldValue.arrayUnion(fieldOfficeData)
+        })
         res.status(200).json({message: 'Field Office Successfully Updated'})
     } catch (error) {
         console.log(`Error book: ${error}`)
@@ -628,9 +686,7 @@ const updateFieldOffice = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    console.log(id)
-    const [ASANo, docId, projectName, RO] = id.split('!')
-    console.log(ASANo, docId, projectName)
+    const [ASANo, docId, projectName, RO, totalASA] = id.split('!')
 
     const data = {
         RO: RO,
@@ -639,7 +695,30 @@ const deleteFieldOffice = async(req, res) => {
     }
 
     try {
-        await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId).delete()
+        const controlBookRef = db.collection('ControlBook').doc(ASANo);
+        const controlBook = await controlBookRef.get();
+
+        if (controlBook.exists) {
+            const parseASA = parseFloat(totalASA)
+            const leftBudget = parseFloat(controlBook.data().leftBudget);
+            const updatedBudget = leftBudget + parseASA;
+
+            await controlBookRef.update({
+                leftBudget: updatedBudget
+            });
+        } else {
+            console.log("No such document!");
+        }
+
+        const project = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId)
+        const subcollectionRef = project.collection('DV');
+        const subDocs = await subcollectionRef.get();
+        
+        subDocs.forEach(async (subDoc) => {
+            await subDoc.ref.delete();
+        });
+        await project.delete()
+
         const docRef = db.collection('formData').doc('ControlBook')
         await docRef.update({
             [ASANo]: admin.firestore.FieldValue.arrayRemove(data)
@@ -659,7 +738,6 @@ const getOrigNumberOfCopiesBUR = async(givenNo) => {
         
         return await db.runTransaction(async (transaction) => {
             const doc = await transaction.get(docRef)
-            console.log(doc.exists)
             if(!doc.exists){
                 throw new Error('Document does not exist!')
             }

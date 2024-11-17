@@ -1,9 +1,7 @@
 import EmptyFolder from '../../assets/icons/emptyfolder.png'
 import FolderWithItems from '../../assets/icons/folder.png'
 
-import { BsThreeDots } from "react-icons/bs";
-import { GrDocumentUpdate } from "react-icons/gr";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
 
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
@@ -15,7 +13,6 @@ import { useFundingHook } from '../../hooks/useFundingHook';
 import AddControlBook from "./AddControlBook"
 
 const Folder = ({ASANo, controlBook}) => {
-    const [optionFlag, setOptionFlag] = useState(false)
     const [controlBookFlag, setControlBookFlag] = useState(false)
 
     const navigate = useNavigate()
@@ -25,17 +22,13 @@ const Folder = ({ASANo, controlBook}) => {
 
     const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
 
-    const modal = () => {
-      setOptionFlag(false)
+    const modal = (e) => {
+      e.stopPropagation()
       setControlBookFlag(!controlBookFlag)
     }
 
-    const openOption = (e) => {
-        e.stopPropagation()
-        setOptionFlag(!optionFlag)
-    }
-
-    const deleteCB = async () => {
+    const deleteCB = async (e) => {
+      e.stopPropagation()
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
@@ -74,25 +67,13 @@ const Folder = ({ASANo, controlBook}) => {
       </div>
       <div className='px-4 flex items-center justify-between'>
         <p className='font-bold'>{controlBook ? controlBook.ASANo.replace("|", " ") : ''}</p>
-        <div className='relative'>
-          <button 
-              className='cursor-pointer'
-              onClick={openOption}>
-              <BsThreeDots size={20}/>
+        <div className="flex items-center justify-center gap-2">
+          <button onClick={modal}>
+            <MdOutlineModeEdit size={18}/>
           </button>
-          {optionFlag && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={openOption} />
-              <div onClick={(e) => e.stopPropagation()}  className="absolute shadow-sm shadow-gray-200 bg-white rounded-lg z-20 right-0 top-5 w-auto h-auto flex flex-col gap-1">
-                <button onClick={modal} className='w-full h-auto flex items-center justify-center gap-3 py-1 pr-3 pl-5 font-semibold hover:bg-gray-200 rounded-lg'>
-                  <GrDocumentUpdate size={18} color='gray'/> Update
-                </button>
-                <button disabled={isLoading} onClick={deleteCB} className='w-full h-auto flex items-center justify-center gap-3 py-1 px-3 font-semibold hover:bg-gray-200 rounded-lg'>
-                  <MdDeleteOutline size={20} color='gray'/> Delete
-                </button>
-              </div>
-            </>
-          )}
+          <button disabled={isLoading} onClick={deleteCB}>
+            <MdDeleteOutline size={20} color='red'/>
+          </button>
         </div>
         </div>
       <div className='px-4'>
