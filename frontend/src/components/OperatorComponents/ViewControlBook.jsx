@@ -23,6 +23,14 @@ const ViewControlBook = () => {
 
   const showReport = () => setReportFlag(!reportFlag)
 
+  const formatToPeso = (value) => {
+      return new Intl.NumberFormat('en-PH', {
+          style: 'currency',
+          currency: 'PHP',
+      }).format(value);
+  };
+
+
   useEffect(() => {
     if(controlBooks){
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
@@ -70,6 +78,7 @@ const ViewControlBook = () => {
                       <div className="absolute w-8 h-8 -top-[2px] -right-10 rotate-45 rounded bg-white shadow-lg shadow-gray border-[1px]"/>
                       <div className="absolute -right-[300px] -top-11 rounded-lg bg-white p-3 w-72 shadow-gray shadow-lg border-[1px]">
                         <h1 className="font-semibold text-lg">Full Information</h1>
+                        <p className="font-bold text-sm mt-1">Amount: <span className="font-normal">{formatToPeso(ControlBook.data.TotalASA)}</span></p>
                         <p className="font-bold text-sm mt-1">SARO No: <span className="font-normal">{ControlBook.data.SARONo}</span></p>
                         <p className="font-bold text-sm mt-1">Date of ASA: <span className="font-normal">{convertDate(ControlBook.data.DateOfAsa)}</span></p>
                         <p className="font-bold text-sm mt-1">Description: <span className="font-normal">{ControlBook.data.description}</span></p>
@@ -89,10 +98,10 @@ const ViewControlBook = () => {
               <div className="w-full h-1/4 flex gap-2">
                 <div className="w-1/4 h-full rounded-lg p-3 border-2">
                   <div className="w-full h-1/4">
-                    <p className="font-semibold text-sm">Total ASA Budget</p>
+                    <p className="font-semibold text-sm">Available ASA Budget</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.TotalASA}.00</p>
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">{formatToPeso(ControlBook.data.leftBudget)}</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg p-3 border-2">
@@ -100,7 +109,7 @@ const ViewControlBook = () => {
                     <p className="font-semibold text-sm">Remaining ASA Balance</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.RO}.00</p>
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">{formatToPeso(ControlBook.data.RO)}</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg border-2 p-3">
@@ -108,7 +117,7 @@ const ViewControlBook = () => {
                     <p className="font-semibold text-sm">Total Spending</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className="font-semibold text-3xl text-fundingBlueGreen">₱{ControlBook.data.FO}.00</p>
+                    <p className="font-semibold text-3xl text-fundingBlueGreen">{formatToPeso(ControlBook.data.FO)}</p>
                   </div>
                 </div>
                 <button onClick={modal} className="w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white bg-fundingBlueGreen">
@@ -139,7 +148,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.RO}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget}/>
                 </div>
               </>
             )}

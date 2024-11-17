@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {sample: -1, sampleoutcome: {}}
+const initialState = {sample: {}, sampleoutcome: {}}
 
 export const TestForecastedRedux = createSlice({
     name: 'testforecast',

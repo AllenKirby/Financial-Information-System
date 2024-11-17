@@ -47,6 +47,25 @@ export const useFundingHook = () => {
         }
     }
 
+    const updateASA_ORS = async(data, DV) => {
+        setIsLoading(true)
+        setError(null)
+        try{
+            const res = await axios.patch(`${apiURL}/operator/updateASA_ORS/${DV}`, data, {
+                withCredentials: true
+            })
+            if (res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        }catch(error){
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error updating the document: operator";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
     const transferToHead = async(data) => {
         setError(null)
         setIsLoading(true)
@@ -184,13 +203,14 @@ export const useFundingHook = () => {
 
     const retrieveProjectName = async (setASANo) => {
         const docRef = doc(firestore,'formData', 'ControlBook');
-        const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+        const unsubscribe = onSnapshot(docRef, async (docSnapshot) => {
             if (docSnapshot.exists()) {
                 // Document data is available
                 const projectData = docSnapshot.data()
                 console.log(projectData);
                 sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
                 setASANo(projectData)
+
             } else {
                 // Document does not exist
                 console.log("Document not found");
@@ -294,6 +314,7 @@ export const useFundingHook = () => {
         deleteFieldOffice,
         updateFieldOffice,
         retrieveProjectName,
+        updateASA_ORS,
         isLoading, 
         error
     }
