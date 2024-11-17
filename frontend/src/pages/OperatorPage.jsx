@@ -59,8 +59,12 @@ const OperatorPage = () => {
   }, [navbarExpand])
 
   useEffect(() => {
-    const unsubscribe = retrieveControlBooks(dispatch)
-    return () => unsubscribe;
+    const fetch = async() => {
+      console.log('start getting control books')
+      const unsubscribe = retrieveControlBooks(dispatch)
+      return () => unsubscribe;
+    }
+    fetch()
   }, []) 
 
   useEffect(() => {

@@ -5,7 +5,8 @@ import { collection, onSnapshot } from "firebase/firestore";
 import LineGraph from "./LineGraph";
 import BarChart from "./BarChart";
 
-const ChartData = () => {
+
+const ChartData = ({customYear}) => {
     const [, setValues] = useState({});
     const [records, setRecords] = useState({});
     const [monthlyTotalData, setMonthlyTotalData] = useState({});
@@ -29,6 +30,7 @@ const ChartData = () => {
 
     useEffect(() => {
         getValues();
+        
     }, [records]);
 
     const getValues = async () => {
@@ -121,7 +123,7 @@ const ChartData = () => {
 
     return (
         <div className="w-full h-full flex flex-col">
-           <LineGraph chartData={monthlyTotalData}/>
+           <LineGraph chartData={monthlyTotalData} customYear={customYear}/>
            {/* <BarChart BarChartData={categorizedData}/> */}
         </div>
     );

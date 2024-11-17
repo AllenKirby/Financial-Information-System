@@ -152,7 +152,7 @@ export const useFundingHook = () => {
         // Main listener for ControlBook collection
         const unsubscribeControlBook = onSnapshot(q, (snapshot) => {
           const controlBooks = {};
-      
+            
           // For each document in ControlBook collection
           snapshot.docs.forEach((doc) => {
             controlBooks[doc.id] = { ...doc.data(), fieldOffices: {} };
@@ -161,11 +161,12 @@ export const useFundingHook = () => {
             const subcollectionQuery = collection(firestore, 'ControlBook', doc.id, 'FieldOffices');
             const unsubscribeSubcollection = onSnapshot(subcollectionQuery, (subSnapshot) => {
               const fieldOfficesData = {};
-      
+              const updatedControlBooks = JSON.parse(JSON.stringify(controlBooks));
+              dispatch(setControlBook(updatedControlBooks));
               // For each FieldOffices document
               subSnapshot.docs.forEach((subDoc) => {
                 const fieldOfficeData = { ...subDoc.data(), dvCollection: {} };
-      
+                
                 // Listener for each DV sub-collection within FieldOffices
                 const dvQuery = collection(firestore, 'ControlBook', doc.id, 'FieldOffices', subDoc.id, 'DV');
                 const unsubscribeDV = onSnapshot(dvQuery, (dvSnapshot) => {
@@ -181,6 +182,7 @@ export const useFundingHook = () => {
                   // Deep copy of controlBooks to trigger React state update
                   const updatedControlBooks = JSON.parse(JSON.stringify(controlBooks));
                   dispatch(setControlBook(updatedControlBooks));
+                  
                 });
       
                 // Add unsubscribe function for DV collection

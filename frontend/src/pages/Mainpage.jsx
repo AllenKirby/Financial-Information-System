@@ -25,6 +25,7 @@ import DashboardPreparer from "../components/EditorComponents/Dashboard"
 import DashboardBO from "../components/HeadComponents/Dashboard"
 import ControlBook from "../components/OperatorComponents/ControlBook";
 import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
+import ComparisonView from "../components/AdminComponents/ComparisonView"
 
 
 const Mainpage = () => {
@@ -41,6 +42,7 @@ const Mainpage = () => {
           </Route>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="editform" element={<PrivateRoute allowedRoles={['1']}><Editform/></PrivateRoute>}/>
+          <Route path="comparison" element={<PrivateRoute allowedRoles={['1']}><ComparisonView/></PrivateRoute>}/>
         </Route>
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}>       
           <Route index element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>} />
