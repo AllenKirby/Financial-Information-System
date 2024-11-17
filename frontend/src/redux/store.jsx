@@ -3,12 +3,14 @@ import permissionReducer from "./PermissionRedux"
 import RecordsReducer from "./RecordsRedux"
 import ControlBookReducer from "./ControlBookRedux"
 import TestForecastedReducer from "./TestForecastedRedux"
+import TotalExpenseReducer from "./TotalExpenseRedux"
 
 export const store = configureStore({
     reducer : {
         permission: permissionReducer,
         records: RecordsReducer,
         controlBook: ControlBookReducer,
-        testforecast: TestForecastedReducer
+        testforecast: TestForecastedReducer,
+        totalexpense: TotalExpenseReducer
     }
 })

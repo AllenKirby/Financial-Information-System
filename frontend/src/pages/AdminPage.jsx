@@ -27,7 +27,8 @@ const AdminPage = () => {
         { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={22} /> },
         // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={22} /> },
-        { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>}
+        { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>},
+        {label: 'More', path:'/admin/comparison',icon: <TbEdit size={22}/>}
     ];
 
     useEffect(() => {
@@ -39,6 +40,8 @@ const AdminPage = () => {
             setLocation('History Logs')
         }else if(page.pathname === "/admin/editform"){
             setLocation('Edit Form')
+        }else if(page.pathname === "/admin/comparison"){
+            setLocation('More Details')
         }
     }, [page.pathname])
 

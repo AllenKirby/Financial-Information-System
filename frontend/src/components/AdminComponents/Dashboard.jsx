@@ -23,7 +23,7 @@ const Dashboard = () => {
       </div>
       <div className="w-full h-3/4 flex gap-3 py-3">
           <div className="w-2/3 border-2 rounded-lg p-2">
-            <ChartData/>
+            <ChartData customYear={'2024'}/>
           </div>
           <div className="w-1/3">
             <BudgetRecommendation/>

@@ -3,15 +3,20 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import { useAuthContext } from '../../../hooks/useAuthContext'
+import { useDispatch } from "react-redux";
+import { setExpense } from "../../../redux/TotalExpenseRedux";
 
-const LineGraph = ({ chartData }) => {
+const LineGraph = ({ chartData, customYear }) => {
 
-    const [year, setYear] = useState('2024');
+    const [year, setYear] = useState(customYear);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const { user } = useAuthContext()
+    const dispatch = useDispatch()
 
     const testData = useSelector((state) => state.testforecast)
+
+    console.log(chartData)
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -59,15 +64,16 @@ const LineGraph = ({ chartData }) => {
 
 
     useEffect(() => {
-        console.log(testData)
+        dispatch(setExpense(chartData))
         const getXAxis = () => (chartData[year] ? Object.keys(chartData[year]) : []);
         const getvalues = () => (chartData[year] ? Object.values(chartData[year]) : []);
         const values = getvalues();
         let xAxis = getXAxis();
         
         if(Object.keys(testData.sample).length > 0){
-            values.push(Object.values(testData.sample))
-            xAxis.push(Object.keys(testData.sample))
+            values.pop()
+            console.log(xAxis)
+            values.push(parseFloat(Object.values(testData.sample)[0]))
         }
 
 
@@ -81,13 +87,13 @@ const LineGraph = ({ chartData }) => {
             forecastXAxis = forecastedData.monthly && year == '2024' ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
             forecastValues = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
             UpperBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
-            LowerBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.lower) : [];
+            LowerBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.lower < 0 ? 0 : data.lower) : [];
         }else{
             //test
             forecastXAxis = testData.sampleoutcome && year == '2024' ? Object.keys(testData.sampleoutcome).map(date => date.slice(0,7)) : [];
             forecastValues = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
             UpperBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
-            LowerBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.lower) : [];
+            LowerBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.lower < 0 ? 0 : data.lower) : [];
         }
 
 
