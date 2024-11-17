@@ -3,8 +3,7 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 import { FaAngleDown, FaAngleUp  } from "react-icons/fa";
-import { GrDocumentUpdate } from "react-icons/gr";
-import { MdDeleteOutline } from "react-icons/md";
+import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
 
 import { useFundingHook } from '../../hooks/useFundingHook';
 
@@ -23,9 +22,11 @@ const FieldOffices = (props) => {
     setFieldOfficeModal(!FieldOfficeModal)
   }
 
+  console.log(fieldOffice)
+
   const deleteFO = async(e) => {
     e.stopPropagation()
-    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}`
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}`
     // const encodedID = encodeURIComponent(id)
     console.log(id)
 
@@ -66,14 +67,16 @@ const FieldOffices = (props) => {
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>
-              <GrDocumentUpdate size={20}/>
+              <MdOutlineModeEdit size={23}/>
             </button>
-            <button disabled={isLoading} onClick={deleteFO}>
-              <MdDeleteOutline size={25}/>
-            </button>
+            {!Object.entries(fieldOffice.dvCollection).length > 0 && (
+              <button disabled={isLoading} onClick={deleteFO}>
+                <MdDeleteOutline size={25} color='red'/>
+              </button>
+            )}
           </div>
         </div>
-        <div className={`${dropDown ? 'h-96' : 'h-0'} w-full h-full rounded-lg overflow-hidden`}>
+        <div className={`${dropDown ? ' max-h-96' : 'h-0'} w-full rounded-lg overflow-hidden`}>
           <table className='w-full border-2'>
             <thead className='bg-gray-200'>
               <tr>

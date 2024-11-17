@@ -5,14 +5,12 @@ import { useInitialStateDV } from "../hooks/useInitialStateDV";
 
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
-import { firestore } from "../config/firebase-config";
-import { collection, onSnapshot } from "firebase/firestore";
 
 const FundingModal = ({modal, data}) => {
     const {getBurNo} =useInitialStateDV()
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
-    const {retrieveProjectName, inputOperator, updateASA_ORS, isLoading, error} = useFundingHook()
+    const {retrieveProjectName, updateASA_ORS, isLoading, error} = useFundingHook()
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
     const prevASARef = useRef();
@@ -61,22 +59,24 @@ const FundingModal = ({modal, data}) => {
     const handleSubmit = async(e) => {
         e.preventDefault()
 
-        console.log(operatorInput)
-
         const DVNo = `${data.DV}|${data.fund.replace(' ', '')}`
 
-        // const fieldOfficeData = {
-        //     date: data.date,
-        //     DVNo: data.DV,
-        //     BUR: data.ors,
-        //     payee: data.payee,
-        //     particulars: data.particular,
-        //     amount: data.amount
-        // }
-   
-    
+        const fieldOfficeData = {
+            date: data.date,
+            DVNo: data.DV,
+            BUR: data.ors,
+            payee: data.payee,
+            particulars: data.particular,
+            amount: data.amount
+        }
+
+        const fundingData = {
+            data: operatorInput,
+            DV: fieldOfficeData,
+            previousASA: prevASARef.current
+        }
         
-        const res = await updateASA_ORS(operatorInput, DVNo)
+        const res = await updateASA_ORS(fundingData, DVNo)
 
         if(res){
             Swal.fire({
@@ -141,8 +141,8 @@ const FundingModal = ({modal, data}) => {
                                 const finalASANO = key.replace('|', ' ')
                                 return(
                                     <optgroup key={key} label={finalASANO}>
-                                        {asano.map((projectName, index) => (
-                                            <option key={index} value={`${key}/${projectName.projectID}`}>{projectName.projectName} : {projectName.RO ? formatToPeso(projectName.RO) : null}</option>
+                                        {asano.map((project, index) => (
+                                            <option disabled={data.amount > project.RO} key={index} value={`${key}/${project.projectID}`}>{project.projectName} : {project.RO ? formatToPeso(project.RO) : null}</option>
                                         ))}
                                     </optgroup>
                                 )   
@@ -155,7 +155,7 @@ const FundingModal = ({modal, data}) => {
                     </select>
                 </div>
             </div>
-            <div className="px-3">
+            {/* <div className="px-3">
                 <div className="my-2">
                     <label className="font-semibold">Add ASA</label>
                     <select    
@@ -185,7 +185,7 @@ const FundingModal = ({modal, data}) => {
                         )}
                     </select>
                 </div>
-            </div>
+            </div> */}
             <div className="flex items-center justify-end gap-3 my-2">
                 <button
                     type="submit"

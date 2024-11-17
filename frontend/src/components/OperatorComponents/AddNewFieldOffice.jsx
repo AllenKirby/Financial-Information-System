@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Swal from 'sweetalert2'
 
 import Loader from '../Loader'
@@ -11,6 +11,7 @@ const AddNewFieldOffice = (props) => {
 
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
     const [errorFlag, setErrorFlag] = useState(false)
+    const prevData = useRef(null)
     
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
 
@@ -23,6 +24,19 @@ const AddNewFieldOffice = (props) => {
             })
         }
     }, [flag, fieldOffice]) 
+
+    useEffect(() => {
+        if(flag && !prevData.current) {
+            prevData.current = {
+                RO: fieldOffice.ASA,
+                projectID: `${ASANo},${fieldOffice.projectName}`,
+                projectName: fieldOffice.projectName
+            }
+            console.log('ref', prevData.current)
+        } else {
+            prevData.current = null
+        }
+    }, [fieldOffice])
 
     useEffect(() => {
         if(remainingASA) {
@@ -73,7 +87,8 @@ const AddNewFieldOffice = (props) => {
         e.preventDefault()
         const data = {
             data: fieldOfficeData,
-            id: `${ASANo},${fieldOfficeID}`
+            id: `${ASANo}!${fieldOfficeID}`,
+            prevData: prevData.current
         }
         const res = await updateFieldOffice(data)
         if(res) {
@@ -89,7 +104,7 @@ const AddNewFieldOffice = (props) => {
 
   return (
     <form onSubmit={flag ? handleUpdate : handleSubmit} className="w-1/4 h-auto bg-white p-3 rounded-lg">
-        <h1 className="px-3 text-2xl font-semibold text-fundingBlueGreen">Add Field Office</h1>
+        <h1 className="px-3 text-2xl font-semibold text-fundingBlueGreen">{flag ? 'Edit Field Office' : 'Add Field Office'}</h1>
         <div className='w-full h-auto p-3'>
             <div className="w-full mt-2">
                 <label>Project Name</label>
