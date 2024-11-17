@@ -5,6 +5,7 @@ import { IoMdSend } from "react-icons/io";
 import { IoMdBackspace } from "react-icons/io";
 import { useDispatch } from "react-redux";
 import { setTestForecast, setSample, resetTestForecast } from "../../../redux/TestForecastedRedux";
+import { useAuthContext } from "../../../hooks/useAuthContext";
 
 const BudgetRecommendation = () => {
     const dispatch = useDispatch()
@@ -15,6 +16,7 @@ const BudgetRecommendation = () => {
     const [remainingMonths, setRemainingMonths] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [expense, setExpense] = useState(0)
+    const {user} = useAuthContext()
 
     const fetchData = async () => {
         try {
@@ -199,7 +201,8 @@ const BudgetRecommendation = () => {
     }
 
     return (
-        <div className="w-full h-full border-2 rounded-md p-4 shadow-md bg-gray-50 overflow-y-auto">
+        <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto">
+            <h1 className={`${user.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Budget Recommendation</h1>
             <div className="flex items-center space-x-4 mb-4">
                 <input
                     type="number"

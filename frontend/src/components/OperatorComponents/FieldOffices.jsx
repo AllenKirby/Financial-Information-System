@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaAngleUp  } from "react-icons/fa";
 import { GrDocumentUpdate } from "react-icons/gr";
 import { MdDeleteOutline } from "react-icons/md";
 
@@ -12,23 +13,56 @@ import AddNewFieldOffice from "./AddNewFieldOffice";
 const FieldOffices = (props) => {
   const {fieldOffice, ASANo, fieldOfficeID} = props
 
-  const { deleteFieldOffice, isLoading } = useFundingHook()
+  const { deleteFieldOffice, isLoading, error } = useFundingHook()
   
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
+  const [dropDown, setDropDown] = useState(false)
 
-  const modal = () => setFieldOfficeModal(!FieldOfficeModal)
-
-  const deleteFO = async() => {
-    const id = `${ASANo}/${fieldOfficeID}`
-    console.log(id)
-    await deleteFieldOffice(id)
+  const modal = (e) => {
+    e.stopPropagation()
+    setFieldOfficeModal(!FieldOfficeModal)
   }
+
+  const deleteFO = async(e) => {
+    e.stopPropagation()
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}`
+    // const encodedID = encodeURIComponent(id)
+    console.log(id)
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+          const res = await deleteFieldOffice(id)
+        if (res) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "Project has been deleted.",
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+              title: "Error",
+              text: {error},
+              icon: "error",
+          });
+        }
+      }
+    });
+  }
+
   return (
-    <div className='w-full h-auto py-2 px-4 rounded-lg border-2 my-2'>
-        <div className='flex items-center justify-between'>
+    <div onClick={() => setDropDown(!dropDown)} className={`w-full h-auto overflow-y-auto py-2 px-4 rounded-lg border-2 my-1 transition-all duration-300`}>
+        <div className='flex items-center justify-between my-2'>
           <div className='flex items-center justify-center gap-3'>
-            <FaAngleDown size={25}/>
-            <p className='text-xl'>{fieldOffice.projectName}</p>
+            {dropDown? <FaAngleUp size={25}/> : <FaAngleDown size={25}/>}
+            <p className='text-xl font-bold'>{fieldOffice.projectName}</p>
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>
@@ -38,6 +72,38 @@ const FieldOffices = (props) => {
               <MdDeleteOutline size={25}/>
             </button>
           </div>
+        </div>
+        <div className={`${dropDown ? 'h-96' : 'h-0'} w-full h-full rounded-lg overflow-hidden`}>
+          <table className='w-full border-2'>
+            <thead className='bg-gray-200'>
+              <tr>
+                <th className='border-2'>Date</th>
+                <th className='border-2'>DV No.</th>
+                <th className='border-2'>BUR No.</th>
+                <th className='border-2'>Payee</th>
+                <th className='border-2'>Particulars</th>
+                <th className='border-2'>ASA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {fieldOffice.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0 ? (
+                Object.entries(fieldOffice.dvCollection).map(([key, DV]) => (
+                  <tr key={key}>
+                    <td className='text-center border-2'>{DV.date}</td>
+                    <td className='text-center border-2'>{DV.DVNoCount}</td>
+                    <td className='text-center border-2'>{DV.orsData}</td>
+                    <td className='truncate px-5 border-2'>{DV.payee}</td>
+                    <td className='truncate px-5 border-2'>{DV.particulars}</td>
+                    <td className='text-center border-2'>{DV.amount}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="text-xl font-semibold text-center py-5">No Voucher Found</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
         {FieldOfficeModal && (
         <>

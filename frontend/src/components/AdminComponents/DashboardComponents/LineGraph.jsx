@@ -2,12 +2,14 @@ import ReactApexChart from 'react-apexcharts';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+import { useAuthContext } from '../../../hooks/useAuthContext'
 
 const LineGraph = ({ chartData }) => {
 
     const [year, setYear] = useState('2024');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const { user } = useAuthContext()
 
     const testData = useSelector((state) => state.testforecast)
 
@@ -33,13 +35,11 @@ const LineGraph = ({ chartData }) => {
                 height: 350,
                 type: 'line',
                 toolbar: {
-                    show: true,
-                    tools: { zoom: false, selection: false, pan: false, reset: false }
+                    show: false
                 }
             },
             stroke: { width: [3, 3], curve: 'smooth', colors: ['#546E7A', '#FF5733'] },
             xaxis: { categories: [], tickAmount: 10 },
-            title: { text: 'Time-Based Expense Overview', align: 'center', style: { fontSize: "16px", color: '#666' } },
             grid : {
                 row: {
                     color: ["#f3f3f3", "transparent"],
@@ -158,34 +158,43 @@ const LineGraph = ({ chartData }) => {
 
   return (
     <div className="w-full h-full">
-        <div className="flex items-center justify-end">
-            <select value={year} onChange={(e) => setYear(e.target.value)}>
+        <div className="h-[10%] flex items-center justify-between pl-5">
+            <div className={`border-l-2 px-1 font-bold ${user.role === '4' ? 'border-customgreen text-customgreen' : 'border-BOGreen text-BOGreen'}`}>
+                <p>Expense Trends and Forecast</p>
+            </div>
+            <select 
+                value={year} onChange={(e) => setYear(e.target.value)}
+                className={`py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}>
                 {getYear().map((year, index) => (
                     <option key={index} value={year}>{year}</option>
                 ))}
             </select>
-            <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                placeholder="Start Date"
-                className="ml-2"
-            />
-            <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                placeholder="End Date"
-                className="ml-2"
+            <div className='flex gap-2'>
+                <input
+                    type="date"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    placeholder="Start Date"
+                    className={`text-xs py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
+                />
+                <input
+                    type="date"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    placeholder="End Date"
+                    className={`text-xs py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
+                />
+            </div>
+        </div>
+        <div className='w-full h-[90%]'>
+            <ReactApexChart
+                options={lineOptions.options}
+                series={lineOptions.series}
+                type="line"
+                height={'100%'}
+                width={'100%'}
             />
         </div>
-        <ReactApexChart
-            options={lineOptions.options}
-            series={lineOptions.series}
-            type="line"
-            height={'100%'}
-            width={'100%'}
-        />
     </div>
   )
 }

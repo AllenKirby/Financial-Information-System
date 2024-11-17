@@ -32,16 +32,18 @@ const updateASA_ORS = async (req, res) => {
 const operatorInput = async(req, res) => {
     const { ors, asa } = req.body.fundingData
     const { date, DVNo, BUR, payee, particulars, amount } = req.body.fieldOfficeData
+    const previousASA = req.body.previousASA
     const { id } = req.params
 
-    // let orsData = ''
+    let orsData = ''
 
-    // const [ASANo, projectID] = asa.split('/')
-    // const [ , , , DVNoCount ] = DVNo.split('-')
-    // if(ors) {
-    //     const [ , , , BURCount ] = BUR.split('-')
-    //     orsData = BURCount
-    // } 
+    const [ASANo, projectID] = asa.split('/')
+    const [ , , , DVNoCount ] = DVNo.split('-')
+    if(ors) {
+        const [ , , , BURCount ] = ors.split('-')
+        orsData = BURCount
+    } 
+
 
     dvData = {
         ORSBURS: ors ? ors : '',
@@ -57,55 +59,41 @@ const operatorInput = async(req, res) => {
         amount
     } 
 
-    // try {
-    //     const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
-    //     const project = await docRef.get()
+    try {
+        if(previousASA) {
+            const [prevASA, prevFO] = previousASA.split('/')
+            console.log('may laman', prevASA, prevFO)
+            const docRef = db.collection('ControlBook').doc(prevASA)
+                            .collection('FieldOffices').doc(prevFO)
+                            .collection('DV').doc(`${DVNoCount}|${amount}`);
 
-    //     if(project.exists) {
-    //         const parseAmount = parseFloat(amount)
-    //         const totalRO = parseFloat(project.data().RO);
-    //         const totalFO = parseFloat(project.data().FO);
-    //         const updatedRO = totalRO - parseAmount;
-    //         const updateFO = totalFO + parseAmount
+            const findDoc = await docRef.get();
 
-    //         await docRef.update({
-    //             FO: updateFO,
-    //             RO: updatedRO
-    //         });
-    //     } else {
-    //         console.log("No such document!");
-    //     }
+            if (findDoc.exists) {
+                console.log('may nahanap', findDoc.data());
+                await docRef.delete();
+                await db.collection('ControlBook').doc(ASANo)
+                    .collection('FieldOffices').doc(projectID)
+                    .collection('DV').doc().set(fieldOffice)
+            } else {
+                console.log('walang nahanap')
+            }
+        } else {
+            console.log('walang laman')
+            await db.collection('ControlBook').doc(ASANo)
+                .collection('FieldOffices').doc(projectID)
+                .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
+        }
 
-    //     const controlBookRef = db.collection('ControlBook').doc(ASANo);
-    //     const controlBook = await controlBookRef.get();
+        const docref = db.collection('records').doc(id)
+        await docref.update(dvData)
 
-    //     if (controlBook.exists) {
-    //         const parseAmount = parseFloat(amount)
-    //         const totalRO = parseFloat(controlBook.data().RO);
-    //         const totalFO = parseFloat(project.data().FO);
-    //         const updatedRO = totalRO - parseAmount;
-    //         const updateFO = totalFO + parseAmount
+        res.status(200).json('Successfully Updated')
+    } catch (error) {
+        console.error("Error updating document: operator: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
 
-    //         await controlBookRef.update({
-    //             RO: updatedRO,
-    //             FO: updateFO
-    //         });
-    //     } else {
-    //         console.log("No such document!");
-    //     }
-
-    //     await db.collection('ControlBook').doc(ASANo)
-    //             .collection('FieldOffices').doc(projectID)
-    //             .collection('DV').doc().set(fieldOffice)
-
-    //     // const docref = db.collection('records').doc(id)
-    //     // await docref.update(dvData)
-
-    //     res.status(200).json('Successfully Updated')
-    // } catch (error) {
-    //     console.error("Error updating document: operator: ", error);
-    //     res.status(500).json({ success: false, error: error.message });
-    // }
 }
 
 const opReturnDocu = async (req, res) => {
@@ -640,11 +628,22 @@ const updateFieldOffice = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, docId] = id.split('/')
-    console.log(ASANo, docId)
+    console.log(id)
+    const [ASANo, docId, projectName] = id.split('!')
+    console.log(ASANo, docId, projectName)
+
+    const data = {
+        projectID: docId,
+        projectName: projectName
+    }
 
     try {
         await db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId).delete()
+        const docRef = db.collection('formData').doc('ControlBook')
+        const controlBook = await docRef.get()
+        controlBook.update({
+            [ASANo]: admin.firestore.FieldValue.arrayRemove(data)
+        })
         res.status(200).json({message: 'Field Office Successfully Deleted'})
     } catch (error) {
         console.log(`Error book: ${error}`)

@@ -1,8 +1,7 @@
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useFundingHook } from "../hooks/useFundingHook";
 import { useInitialStateDV } from "../hooks/useInitialStateDV";
-
 
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
@@ -16,8 +15,7 @@ const FundingModal = ({modal, data}) => {
     const {retrieveProjectName, inputOperator, updateASA_ORS, isLoading, error} = useFundingHook()
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
-    console.log(data)
-
+    const prevASARef = useRef();
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -51,6 +49,15 @@ const FundingModal = ({modal, data}) => {
         })
     }, [])
 
+    useEffect(() => {
+        if(data.ASA) {
+            prevASARef.current = data.ASA;
+        }
+    }, [data])
+
+    console.log(data)
+    console.log('previous ASA', prevASARef.current)
+
     const handleSubmit = async(e) => {
         e.preventDefault()
 
@@ -66,10 +73,11 @@ const FundingModal = ({modal, data}) => {
         //     particulars: data.particular,
         //     amount: data.amount
         // }
-    
+   
     
         
         const res = await updateASA_ORS(operatorInput, DVNo)
+
         if(res){
             Swal.fire({
                 title: "Saved",

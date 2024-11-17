@@ -330,6 +330,22 @@ const deleteTax = async (req, res) => {
 const approveDV = async(req, res) => {
   const DV = req.params.id
 
+  const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+    });
+
+    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+
   try{
     const docRef = db.collection('records').doc(DV);
     
@@ -339,6 +355,7 @@ const approveDV = async(req, res) => {
     }
 
     await docRef.update({
+      approvedBy: dateTimeCollection,
       status: 'Approved',
     });
     

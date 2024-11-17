@@ -131,7 +131,7 @@ const DisbursementRecords = () => {
           <div className="w-full h-full rounded-lg">
             <div className='w-full h-full'>
               <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
-                <div className='w-3/6 flex '>
+                <div className='w-2/6 flex '>
                   <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>
                     Payee {alphabeticalFlag ? 
                       <BsSortAlphaDownAlt 
@@ -149,6 +149,9 @@ const DisbursementRecords = () => {
                 <h1 className='w-1/6 text-center font-bold'>Status</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
                   <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                </div>
+                <div className='w-1/6 flex items-end justify-center gap-2'>
+                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Approved <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
                 </div>
               </div>
               <div className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
