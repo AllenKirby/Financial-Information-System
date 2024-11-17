@@ -10,6 +10,7 @@ const BudgetRecommendation = () => {
     const dispatch = useDispatch()
 
     const currentMonth = new Date().getMonth() + 1;
+    const currentYear = new Date().getFullYear()
     const [forecastedValues, setForecastedValues] = useState({});
     const [remainingMonths, setRemainingMonths] = useState([]);
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
@@ -165,9 +166,12 @@ const BudgetRecommendation = () => {
             const proportions = await fetchPercentages();
             if(res.status === 200){
                 const forecast = res.data
-                // console.log(forecast)
+                const sampleData = {
+                    [`${currentYear}-${selectedMonth}`]: expense
+                }
                 dispatch(setTestForecast(forecast))
-                dispatch(setSample(parseFloat(expense)))
+                dispatch(setSample(sampleData))
+                
                 if (proportions && forecast) {
                     const monthDifference = selectedMonth >= currentMonth ? selectedMonth - currentMonth : (selectedMonth+12) - currentMonth
                     console.log(monthDifference)

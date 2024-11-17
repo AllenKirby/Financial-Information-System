@@ -20,6 +20,8 @@ const AddComment = ({idStatus, doc, modal, type}) => {
 
     const isLoading = isLoadingPreparer || isLoadingFunding || isLoadingBO;
 
+    console.log(doc)
+
     useEffect(() => {
       if(user && user.role){
           switch (user.role) {
@@ -128,6 +130,20 @@ const AddComment = ({idStatus, doc, modal, type}) => {
           payee: doc.payee,
           remarks: comment
         }
+
+        const fieldOfficeData = {
+          date: doc.date,
+          DVNo: doc.DV,
+          BUR: doc.ORSBURS,
+          particulars: doc.particular,
+          amount: doc.amount,
+          asa: doc.ASA,
+        }
+
+        const combinedData = {
+          data: data,
+          fieldOfficeData: fieldOfficeData
+        }
     
         Swal.fire({
           title: "Are you sure?",
@@ -139,7 +155,7 @@ const AddComment = ({idStatus, doc, modal, type}) => {
           confirmButtonText: "Yes, Submit it!",
         }).then(async (result) => {
           if (result.isConfirmed) {
-            const res = await transferToHead(data)
+            const res = await transferToHead(combinedData)
             if (res) {
               Swal.fire({
                 title: "Submitted!",

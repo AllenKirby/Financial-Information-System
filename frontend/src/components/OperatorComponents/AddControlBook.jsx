@@ -10,7 +10,7 @@ const AddControlBook = (props) => {
 
     const { AddControlBook, updateControlBook, isLoading, error } = useFundingHook()
     
-    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: '', RO: 0, FO: 0})
+    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: ''})
 
     useEffect(() => {
         if(flag && controlBook) {
@@ -83,23 +83,34 @@ const AddControlBook = (props) => {
     <form onSubmit={flag ? handleUpdate : handleSumit} className="w-2/5 h-auto p-3 bg-white rounded-lg">
         <h1 className="px-3 text-2xl font-semibold text-fundingBlueGreen">Add Control Book</h1>
         <div className="w-full h-auto p-3">
-            <div className="flex w-full h-auto gap-2 mt-2">
-                <div className="w-1/2 flex flex-col">
-                    <label className="font-semibold">ASA No.</label>
+            <div className=''>
+                <label className="font-semibold">ASA No.</label>
                     <input 
                         type="text"
                         value={controlBookData.ASANo}
                         onChange={(e) => setControlBookData({...controlBookData, ASANo: e.target.value})}
                         required
                         className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"  />
-                </div>
+
+            </div>
+            <div className="flex w-full h-auto gap-2 mt-2">
                 <div className="w-1/2 flex flex-col">
                     <label className="font-semibold">Date of ASA</label>
+                        <input 
+                            type="date"
+                            value={controlBookData.date}
+                            onChange={(e) => setControlBookData({...controlBookData, date: e.target.value})}
+                            required
+                            className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500" />
+                </div>
+                <div className="w-1/2 flex flex-col">
+                    <label className="font-semibold">End of ASA</label>
                     <input 
                         type="date"
-                        value={controlBookData.date}
-                        onChange={(e) => setControlBookData({...controlBookData, date: e.target.value})}
+                        value={controlBookData.endDate}
+                        onChange={(e) => setControlBookData({...controlBookData, endDate: e.target.value})}
                         required
+                        min={new Date().toISOString().split("T")[0]}
                         className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500" />
                 </div>
             </div>

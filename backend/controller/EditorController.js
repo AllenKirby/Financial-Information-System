@@ -351,7 +351,7 @@ const getNumberOfCopies = async (req, res) => {
                 DVno501COB: '0000',
                 DVno501LFP: '0000',
                 DVnoContractFarming: '0000',
-                BURno: '0'
+                BURno: '0000'
             }
             await docRef.set(data);
             return res.status(200).json({data: data})

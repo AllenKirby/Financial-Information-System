@@ -65,9 +65,10 @@ const LineGraph = ({ chartData }) => {
         const values = getvalues();
         let xAxis = getXAxis();
         
-        // if(testData.sample > 0){
-        //     xAxis = xAxis.push(testData.sample)
-        // }
+        if(Object.keys(testData.sample).length > 0){
+            values.push(Object.values(testData.sample))
+            xAxis.push(Object.keys(testData.sample))
+        }
 
 
         let forecastXAxis;

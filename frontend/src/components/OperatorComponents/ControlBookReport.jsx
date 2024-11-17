@@ -1,45 +1,13 @@
 import PropTypes from 'prop-types'
-import { useEffect, useState } from 'react';
+import ReportRows from './ReportRows';
 
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { IoIosGitCompare } from "react-icons/io";
 
 const ControlBookReport = (props) => {
     const { showReport, reportData } = props
-    const [data, setData] = useState({
-        previousRO: 0,
-        previousFO: 0,
-        previousTotal: 0
-    })
 
-    console.log('report data' ,reportData)
-
-    useEffect(()=> {
-
-        const computePreviousRO = () => {
-            let TotalASA = parseFloat(reportData.TotalASA)
-            const TotalFieldOfficeExpense = Object.values(reportData.fieldOffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
-            for(let i = 0; i < TotalFieldOfficeExpense.length; i++) {
-                TotalASA -= TotalFieldOfficeExpense[i]
-            }
-            return TotalASA
-        }
-
-        const computePreviousFO = () => {
-            const TotalFieldOfficeExpense = Object.values(reportData.fieldOffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
-            let sum = 0
-            for(let i = 0; i < TotalFieldOfficeExpense.length; i++) {
-                sum += TotalFieldOfficeExpense[i]
-            }
-            return sum
-        }
-
-        setData({
-            previousRO: computePreviousRO(),
-            previousFO: computePreviousFO(),
-            previousTotal: computePreviousFO() + computePreviousRO()
-        })
-    }, [])
+    
   return (
     <div className='w-full h-full'>
         <div className='w-full h-[8%] flex items-center justify-between'>
@@ -115,19 +83,7 @@ const ControlBookReport = (props) => {
                             <th className='border-2 border-black'>RO</th>
                         </tr>
                     </thead>
-                    <tbody >
-                        <tr>
-                            <td className='border-2 border-black'> </td>
-                            <td className='border-2 border-black font-bold'>{reportData.description}</td>
-                            <td className='border-2 border-black text-right font-bold'>{reportData.TotalASA}</td>
-                            <td className='border-2 border-black text-right font-bold'>{data.previousRO}</td>
-                            <td className='border-2 border-black text-right font-bold'>{data.previousFO}</td>
-                            <td className='border-2 border-black text-right font-bold'>{data.previousTotal}</td>
-                        </tr>
-                        <tr>
-
-                        </tr>
-                </tbody>
+                    <ReportRows reportData={reportData}/>
                 </table>
             </div>
         </div>

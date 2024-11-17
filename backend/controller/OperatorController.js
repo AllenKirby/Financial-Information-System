@@ -7,22 +7,44 @@ const {
     setNotification,
     setHistoryLogs } = require('./Functions');
 
+const updateASA_ORS = async (req, res) => {
+    const year = new Date().getFullYear();
+    const month = new Date().getMonth() + 1
+    const { ors, asa } = req.body
+    const {id} = req.params
+    const lastORS = ors.split('-').pop()
+    const ORS = await getOrigNumberOfCopiesBUR(lastORS)
+    const finalORS = `501-${year}-${month}-${ORS}`
+    const dvData = {
+        ORSBURS: finalORS,
+        ASA: asa
+    }
+
+    try{
+        const docref = db.collection('records').doc(id)
+        await docref.update(dvData)
+    }catch(error){
+        console.log('error on updatingASA_ORS: (OPERATORCONTROLLER)', error)
+    }
+
+} 
+
 const operatorInput = async(req, res) => {
     const { ors, asa } = req.body.fundingData
     const { date, DVNo, BUR, payee, particulars, amount } = req.body.fieldOfficeData
     const { id } = req.params
 
-    let orsData = ''
+    // let orsData = ''
 
-    const [ASANo, projectID] = asa.split('/')
-    const [ , , , DVNoCount ] = DVNo.split('-')
-    if(ors) {
-        const [ , , , BURCount ] = BUR.split('-')
-        orsData = BURCount
-    } 
+    // const [ASANo, projectID] = asa.split('/')
+    // const [ , , , DVNoCount ] = DVNo.split('-')
+    // if(ors) {
+    //     const [ , , , BURCount ] = BUR.split('-')
+    //     orsData = BURCount
+    // } 
 
     dvData = {
-        ORSBURS: ors,
+        ORSBURS: ors ? ors : '',
         ASA: asa
     }
 
@@ -35,36 +57,55 @@ const operatorInput = async(req, res) => {
         amount
     } 
 
-    try {
-        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
-        const project = await docRef.get()
+    // try {
+    //     const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
+    //     const project = await docRef.get()
 
-        if(project.exists) {
-            const parseAmount = parseFloat(amount)
-            const totalRO = parseFloat(project.data().RO);
-            const totalFO = parseFloat(project.data().FO);
-            const updatedRO = totalRO - parseAmount;
-            const updateFO = totalFO + parseAmount
+    //     if(project.exists) {
+    //         const parseAmount = parseFloat(amount)
+    //         const totalRO = parseFloat(project.data().RO);
+    //         const totalFO = parseFloat(project.data().FO);
+    //         const updatedRO = totalRO - parseAmount;
+    //         const updateFO = totalFO + parseAmount
 
-            await docRef.update({
-                FO: updateFO,
-                RO: updatedRO
-            });
-        } else {
-            console.log("No such document!");
-        }
-        await db.collection('ControlBook').doc(ASANo)
-                .collection('FieldOffices').doc(projectID)
-                .collection('DV').doc().set(fieldOffice)
+    //         await docRef.update({
+    //             FO: updateFO,
+    //             RO: updatedRO
+    //         });
+    //     } else {
+    //         console.log("No such document!");
+    //     }
 
-        const docref = db.collection('records').doc(id)
-        await docref.update(dvData)
+    //     const controlBookRef = db.collection('ControlBook').doc(ASANo);
+    //     const controlBook = await controlBookRef.get();
 
-        res.status(200).json('Successfully Updated')
-    } catch (error) {
-        console.error("Error updating document: operator: ", error);
-        res.status(500).json({ success: false, error: error.message });
-    }
+    //     if (controlBook.exists) {
+    //         const parseAmount = parseFloat(amount)
+    //         const totalRO = parseFloat(controlBook.data().RO);
+    //         const totalFO = parseFloat(project.data().FO);
+    //         const updatedRO = totalRO - parseAmount;
+    //         const updateFO = totalFO + parseAmount
+
+    //         await controlBookRef.update({
+    //             RO: updatedRO,
+    //             FO: updateFO
+    //         });
+    //     } else {
+    //         console.log("No such document!");
+    //     }
+
+    //     await db.collection('ControlBook').doc(ASANo)
+    //             .collection('FieldOffices').doc(projectID)
+    //             .collection('DV').doc().set(fieldOffice)
+
+    //     // const docref = db.collection('records').doc(id)
+    //     // await docref.update(dvData)
+
+    //     res.status(200).json('Successfully Updated')
+    // } catch (error) {
+    //     console.error("Error updating document: operator: ", error);
+    //     res.status(500).json({ success: false, error: error.message });
+    // }
 }
 
 const opReturnDocu = async (req, res) => {
@@ -147,8 +188,110 @@ const getListOfEditorAccounts = async () => {
     return [];
 }
 
- const transferDocument = async (req, res) => {
-    const {DV, payee, remarks} = req.body;
+const handleBudget = async (body) => {
+    const {date, DVNo, BUR, payee, particulars, amount,asa} = body 
+
+    let orsData = ''
+
+    const [ASANo, projectID] = asa.split('/')
+    const [ , , , DVNoCount ] = DVNo.split('-')
+    if(BUR) {
+        const [ , , , BURCount ] = BUR.split('-')
+        orsData = BURCount
+    } 
+
+    fieldOffice = {
+        date,
+        DVNoCount, 
+        orsData, 
+        payee, 
+        particulars, 
+        amount
+    }
+
+    try {
+        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
+        const project = await docRef.get()
+
+        if(project.exists) {
+            const parseAmount = parseFloat(amount)
+            const totalRO = parseFloat(project.data().RO);
+            const totalFO = parseFloat(project.data().FO);
+            const updatedRO = totalRO - parseAmount;
+            const updateFO = totalFO + parseAmount
+            await updateFormData_RO(ASANo, projectID, updatedRO)
+            await docRef.update({
+                FO: updateFO,
+                RO: updatedRO
+            });
+        } else {
+            console.log("No such document!");
+        }
+
+        const controlBookRef = db.collection('ControlBook').doc(ASANo);
+        const controlBook = await controlBookRef.get();
+
+        if (controlBook.exists) {
+            const parseAmount = parseFloat(amount)
+            const totalRO = parseFloat(controlBook.data().RO);
+            const totalFO = parseFloat(project.data().FO);
+            const updatedRO = totalRO - parseAmount;
+            const updateFO = totalFO + parseAmount
+
+            await controlBookRef.update({
+                RO: updatedRO,
+                FO: updateFO
+            });
+        } else {
+            console.log("No such document!");
+        }
+
+        await db.collection('ControlBook').doc(ASANo)
+                .collection('FieldOffices').doc(projectID)
+                .collection('DV').doc().set(fieldOffice)
+
+        // res.status(200).json('Successfully Updated')
+    } catch (error) {
+        console.error("Error handleBudget: operator: ", error);
+        // res.status(500).json({ success: false, error: error.message });
+    }
+
+}
+
+const updateFormData_RO = async (ASANo, projectID, ROamount) => {
+    try {
+      // Get a reference to the document
+      const docRef = db.collection("formData").doc("ControlBook")
+      const projects = await docRef.get()
+  
+      // Fetch the document data
+      if (projects.exists) {
+        const data = projects.data();
+  
+        // Retrieve the arrayField for the specific projectID
+        const arrayField = data[ASANo] || [];
+  
+        // Update the `RO` field for the matching item
+        const updatedArray = arrayField.map((item) => {
+          if (item.projectID === projectID) {
+            return { ...item, RO: ROamount }; // Update the RO field
+          }
+          return item; // Leave other items unchanged
+        });
+  
+        await docRef.update({ [ASANo]: updatedArray });
+        console.log("RO updated successfully!");
+      } else {
+        console.log("Document does not exist");
+      }
+    } catch (error) {
+      console.error("Error updating RO of formData:", error);
+    }
+  };
+
+const transferDocument = async (req, res) => {
+    const {DV, payee, remarks} = req.body.data;
+    const { date, DVNo, BUR, particulars, amount, asa } = req.body.fieldOfficeData
     const dispName = req.user.name;
     const uid = req.user.uid;
     const today = new Date()
@@ -172,6 +315,7 @@ const getListOfEditorAccounts = async () => {
     // const logs = `${payee}|${DV}|Updated By ${dispName}|${dateTimePassed}`
 
     try {
+        await handleBudget({date, DVNo, BUR, payee, particulars, amount,asa})
         const updatedDocu = await updateStatus(DV, updatedBy, false)
         const returnData = {
             [DV] : updatedDocu
@@ -292,7 +436,7 @@ const appendDataToSheet = async (req, res) => {
   }
 
   const addControlBook = async(req, res) => {
-    const { ASANo, date, SARONo, TotalASA, description } = req.body.data
+    const { ASANo, date, SARONo, TotalASA, description, endDate } = req.body.data
 
     const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -319,7 +463,9 @@ const appendDataToSheet = async (req, res) => {
         description: description,
         createdAt: dateTimeCollection,
         RO: TotalASA,
-        FO: 0
+        FO: 0,
+        endDate: endDate,
+        leftBudget: TotalASA
     }
 
     try {
@@ -370,7 +516,8 @@ const appendDataToSheet = async (req, res) => {
 
     const formData = {
         projectID: projectID,
-        projectName: projectName
+        projectName: projectName,
+        RO: ASA
     }
 
     try {
@@ -379,14 +526,11 @@ const appendDataToSheet = async (req, res) => {
 
         if (controlBook.exists) {
             const parseASA = parseFloat(ASA)
-            const totalRO = parseFloat(controlBook.data().RO);
-            const totalFO = parseFloat(controlBook.data().FO);
-            const updatedRO = totalRO - parseASA;
-            const updateFO = totalFO + parseASA
+            const leftBudget = parseFloat(controlBook.data().leftBudget);
+            const updatedBudget = leftBudget - parseASA;
 
             await controlBookRef.update({
-                FO: updateFO,
-                RO: updatedRO
+                leftBudget: updatedBudget
             });
         } else {
             console.log("No such document!");
@@ -513,9 +657,11 @@ const getOrigNumberOfCopiesBUR = async(givenNo) => {
         const today = new Date();
         const year = today.getFullYear();
         const docRef = db.collection('NumberOfRecords').doc(year.toString());
-        return await db.transaction.get(docRef)(async (transaction) => {
-            const doc = await transaction.get()
-            if(doc.exists){
+        
+        return await db.runTransaction(async (transaction) => {
+            const doc = await transaction.get(docRef)
+            console.log(doc.exists)
+            if(!doc.exists){
                 throw new Error('Document does not exist!')
             }
             const data = doc.data()
@@ -523,16 +669,20 @@ const getOrigNumberOfCopiesBUR = async(givenNo) => {
 
             let incrementedByOne;
             if(currentNoBUR === givenNo){
-                incrementedByOne = (parseInt(givenNo, 10)+1).toString()
+                incrementedByOne = (parseInt(givenNo, 10)+1).toString().padStart(4, '0');
             }else{
-                incrementedByOne = (parseInt(currentNoBUR, 10)+1).toString()
+                incrementedByOne = (parseInt(currentNoBUR, 10)+1).toString().padStart(4, '0');
             }
+
+            transaction.update(docRef, {
+                ['BURno'] : incrementedByOne
+            });
 
             return incrementedByOne
         })
 
     }catch(error){
-        console.log(`Error on get_ORIG_NumberOfCopies for BUR (editor controller) ${error}`)
+        console.log(`Error on get_ORIG_NumberOfCopies for BUR (operator controller) ${error}`)
     }
 }
 
@@ -547,5 +697,6 @@ module.exports = {
     updateControlBook,
     deleteControlBook,
     updateFieldOffice,
-    deleteFieldOffice
+    deleteFieldOffice,
+    updateASA_ORS
 }
