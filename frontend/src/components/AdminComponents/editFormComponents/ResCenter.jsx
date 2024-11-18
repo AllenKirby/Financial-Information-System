@@ -4,9 +4,10 @@ import { FaCheck } from "react-icons/fa";
 
 import { useState, useEffect } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
+import { useAuthContext } from '../../../hooks/useAuthContext'
 
 export const ResCenter = () => {
-
+    const { user } = useAuthContext()
     const [showInput_RC, setShowInput_RC] = useState(false);
     const [inputValue_RC, setInputValue_RC] = useState("");
     const {addNewRC, getRC, deleteRC} = useApproverHook()
@@ -71,11 +72,11 @@ export const ResCenter = () => {
     return (
         <div className="w-1/5 h-72">
             <div className="w-full rounded-lg">
-                <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+                <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
                     <h1 className='w-4/5 flex items-center text-xs font-bold px-2'>Responsibility Center</h1>
                     <div className="w-1/5 flex justify-center items-center">
                         <button 
-                            className='bg-customgreen text-white text-2xl rounded-full hover:bg-white hover:text-customgreen'
+                            className='text-white text-2xl rounded-full'
                             onClick={handleAddString_RC}><IoAdd/></button>
                     </div>
                 </div>

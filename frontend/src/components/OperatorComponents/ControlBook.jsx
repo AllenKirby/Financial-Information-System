@@ -4,13 +4,14 @@ import { Outlet, useParams } from "react-router-dom"
 
 import AddControlBook from "./AddControlBook"
 import Folder from "./Folder"
+import {useAuthContext} from '../../hooks/useAuthContext'
 
 const ControlBook = () => {
   const [controlBookFlag, setControlBookFlag] = useState(false)
 
   const controlBooks = useSelector((state) => state.controlBook)
+  const { user } = useAuthContext()
 
-  console.log('ControlBook', controlBooks)
 
   const { id } = useParams()
 
@@ -24,7 +25,7 @@ const ControlBook = () => {
             <p className="font-semibold">Control Books({controlBooks ? Object.entries(controlBooks).length : 0})</p>
             <button 
               onClick={modal}
-              className="px-3 py-2 rounded-lg bg-fundingBlueGreen text-white"
+              className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} px-3 py-2 rounded-lg text-white`}
               >New Control Book
             </button>
           </div>

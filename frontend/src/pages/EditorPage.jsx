@@ -1,11 +1,11 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import {setPermission} from '../redux/PermissionRedux' 
+import { useFundingHook } from "../hooks/useFundingHook";
 
 //Components
 import Navbar from "../components/Navbar"
@@ -15,6 +15,7 @@ import Header from "../components/Header";
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { FiBook } from "react-icons/fi";
 
 
 const EditorPage = () => {
@@ -26,17 +27,24 @@ const EditorPage = () => {
   const { dispatch: dispatchContext } = useDisbursementContext()
   const dispatch = useDispatch()
   const apiURL = import.meta.env.VITE_API_URL
-  
+  const permission = useSelector((state) => state.permission)
+  const { retrieveControlBooks } = useFundingHook()
+
   const navItems = [
     //{ label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={22} /> },
-    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <TiDocumentText size={22} /> } 
+    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <TiDocumentText size={22} /> } ,
+    ...(permission?.data?.permission 
+      ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
+      : [])
   ];
 
   useEffect(() => {
     if(page.pathname === "/editor/disbursementrecords"){
       setLocation('Disbursement Records')
-    }else if(page.pathname === "/editor/dashboard"){
+    } else if(page.pathname === "/editor/dashboard"){
       setLocation('Dashboard')
+    } else if(page.pathname === "/editor/controlbook"){
+      setLocation('Control Book')
     }
   }, [page.pathname])
 
@@ -51,7 +59,22 @@ const EditorPage = () => {
   }, [navbarExpand])
 
   useEffect(() => {
-    const q = query(collection(firestore, 'records'), where('status', 'in', ['Drafting', 'Returned|4']));
+    const fetch = async() => {
+      console.log('start getting control books')
+      const unsubscribe = retrieveControlBooks(dispatch)
+      return () => unsubscribe;
+    }
+    if(permission?.data?.permission) {
+      fetch()
+    }
+  }, [permission]) 
+
+  useEffect(() => {
+    const statuses = permission?.data?.permission 
+    ? ['Drafting', 'Returned|4', 'In Review', 'Returned|3'] 
+    : ['Drafting', 'Returned|4'];
+
+    const q = query(collection(firestore, 'records'),where('status', 'in', statuses));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = {...doc.data()}
@@ -62,25 +85,9 @@ const EditorPage = () => {
     })
 
     return () => unsubscribe()   
-  }, [dispatchContext])
+  }, [dispatchContext, permission])
 
   useEffect(() => {
-    const getPermission = async() => {
-      try{
-        const res = await axios.get(`${apiURL}/editor/getPermission`, {
-          withCredentials: true
-        })
-        if(res.status === 200){
-          const data = res.data
-          console.log(data)
-          dispatch(setPermission(data))
-        }
-      }catch(error){
-        console.log(error)
-      }
-    }
-    getPermission()
-
     const docRef = doc(firestore, 'Roles', 'Preparer'); 
     const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
     if (docSnapshot.exists()) {

@@ -202,7 +202,7 @@ const BudgetRecommendation = () => {
 
     return (
         <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto">
-            <h1 className={`${user.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Budget Recommendation</h1>
+            <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Budget Recommendation</h1>
             <div className="flex items-center space-x-4 mb-4">
                 <input
                     type="number"

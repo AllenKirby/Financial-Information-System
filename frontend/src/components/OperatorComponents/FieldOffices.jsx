@@ -4,7 +4,6 @@ import Swal from 'sweetalert2';
 
 import { FaAngleDown, FaAngleUp  } from "react-icons/fa";
 import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
-import { GrCircleInformation } from "react-icons/gr";
 
 import { useFundingHook } from '../../hooks/useFundingHook';
 
@@ -22,6 +21,13 @@ const FieldOffices = (props) => {
     e.stopPropagation()
     setFieldOfficeModal(!FieldOfficeModal)
   }
+
+  const formatToPeso = (value) => {
+    return new Intl.NumberFormat('en-PH', {
+        style: 'currency',
+        currency: 'PHP',
+    }).format(value);
+  };
 
   console.log(fieldOffice)
 
@@ -65,7 +71,6 @@ const FieldOffices = (props) => {
           <div className='flex items-center justify-center gap-3'>
             {dropDown? <FaAngleUp size={25}/> : <FaAngleDown size={25}/>}
             <p className='text-xl font-bold'>{fieldOffice.projectName}</p>
-            <GrCircleInformation size={25}/>
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>
@@ -79,6 +84,13 @@ const FieldOffices = (props) => {
           </div>
         </div>
         <div className={`${dropDown ? ' max-h-96' : 'h-0'} w-full rounded-lg overflow-hidden`}>
+          <div className=" w-full h-auto px-5 mb-5">
+            <p className="font-bold text-sm mt-1">Field Office: <span className="font-normal">{fieldOffice.fieldOffice}</span></p>
+            <p className="font-bold text-sm mt-1">ASA: <span className="font-normal">{formatToPeso(fieldOffice.ASA)}</span></p>
+            <p className="font-bold text-sm mt-1">Available ASA Budget: <span className="font-normal">{formatToPeso(fieldOffice.leftBudget)}</span></p>
+            <p className="font-bold text-sm mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(fieldOffice.RO)}</span></p>
+            <p className="font-bold text-sm mt-1">Total Spending: <span className="font-normal">{formatToPeso(fieldOffice.FO)}</span></p>
+          </div>
           <table className='w-full border-2'>
             <thead className='bg-gray-200'>
               <tr>

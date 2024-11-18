@@ -34,6 +34,7 @@ const ViewDocument = () => {
   const [secondaryColor, setSecondaryColor] = useState('')
   const [type, setType] = useState('')
   const [isCommentOpen, setIsCommentOpen] = useState(false)
+  const [fundingModal, setFundingModal] = useState(false)
   
   //contexts
   const { documents } = useDisbursementContext();
@@ -60,6 +61,9 @@ const ViewDocument = () => {
   const closeCommentModal = () => {
     setModalComment(false)
   } 
+  const isFundingModalOpen = () => {
+    setFundingModal(!fundingModal)
+  }
 
   useEffect(() => {
     if(user && user.role === '1'){
@@ -243,7 +247,7 @@ const ViewDocument = () => {
           {idStatus.type === '4' && (
             <button
               //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-              onClick={() => openModal('SubmitPreparer')}
+              onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
               className={`w-full px-5 py-2 rounded-lg bg-preparerPrimary text-white hover:scale-125 transition-all duration-150`}
               >
               Submit
@@ -272,13 +276,13 @@ const ViewDocument = () => {
             <button
               onClick={approve}
               disabled={isLoadingApprover}
-              className={`w-full px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : 'bg-customgreen text-white hover:scale-125'} transition-all duration-150`}
+              className={` w-full px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white hover:scale-125 transition-all duration-150`}
               >
               Approve
             </button>
           )}
 
-          {idStatus.type !== '2' && idStatus.type !== '1' && (
+          {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
             <button
               onClick={modal}
               className={`w-full rounded-lg py-2 bg-${primaryColor} text-white hover:scale-125 transition-all duration-100`}
@@ -286,8 +290,16 @@ const ViewDocument = () => {
               Update
             </button>
           )}
+          {(idStatus.type === '3' || idStatus.type === '4' && permission?.data?.permission) && (
+            <button
+              onClick={isFundingModalOpen}
+              className={`w-full rounded-lg py-2 bg-${primaryColor} text-white hover:scale-125 transition-all duration-100`}
+              >
+              Add Data
+            </button>
+          )}
 
-          {(idStatus.type  === '1' && idStatus.status === 'Approved') && (
+          {idStatus.status === 'Approved' && (
             <button
             onClick={handleDownload}
             className={`w-full rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
@@ -341,8 +353,19 @@ const ViewDocument = () => {
                 onClick={(e) => e.stopPropagation()}
                 className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
                 >
-                  {idStatus.type === '4' ? (<DisbursementVoucher modal={modal} document={doc} flag={true} />) : (<FundingModal modal={modal} data={doc}/>)}
+                 <DisbursementVoucher modal={modal} document={doc} flag={true} />
                 
+              </section>
+            </>
+          )}
+          {fundingModal && (
+            <>
+              <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={isFundingModalOpen} />
+              <section
+                onClick={(e) => e.stopPropagation()}
+                className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+                >
+                  <FundingModal modal={isFundingModalOpen} data={doc}/>
               </section>
             </>
           )}
@@ -376,7 +399,7 @@ const ViewDocument = () => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50" />
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type} ASA={doc.ASA}/>
+            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type} ASA={doc.ASA} permission={permission.data.permission}/>
           </div>
         </>
       )}

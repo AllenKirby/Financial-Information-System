@@ -3,9 +3,9 @@ import { MdRemove } from "react-icons/md";
 
 import { useEffect, useState } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
-
+import { useAuthContext } from '../../../hooks/useAuthContext'
 export const NameAndOffice = () => {
-
+    const { user } = useAuthContext()
     const [showInpuTBoxA, setShowInputBoxA] = useState(false);
     const [name, setName] = useState('');
     const [office, setOffice] = useState('');
@@ -91,12 +91,12 @@ export const NameAndOffice = () => {
     return (
         <div className="w-4/5 h-72">
             <div className="w-full h-full rounded-lg bg-white border-[1px]">
-                <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+                <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
                     <h1 className='w-2/5 text-center font-bold px-2'>Name</h1>
                     <h1 className='w-2/5 text-center font-bold'>Office</h1>
                     <div className="w-1/5 flex justify-center items-center">
                         <button 
-                            className='bg-customgreen text-white text-2xl rounded-full hover:bg-white hover:text-customgreen'
+                            className='text-white text-2xl rounded-full'
                             onClick={handleAddNameOffice}><IoAdd/></button>
                     </div>
                 </div>

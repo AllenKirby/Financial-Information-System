@@ -1,17 +1,22 @@
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
+
 import { Outlet, useLocation } from "react-router-dom"
-import { TiDocumentText } from "react-icons/ti";
-import { TbLayoutDashboard } from "react-icons/tb";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { useEffect, useState } from "react"
-import { useAuthContext } from "../hooks/useAuthContext"
 import axios from "axios"
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext"
 import { firestore } from "../config/firebase-config"
 import { collection, query, doc, where, onSnapshot } from "firebase/firestore"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPermission } from "../redux/PermissionRedux" 
+import { useEffect, useState } from "react"
+
+import { TiDocumentText } from "react-icons/ti";
+import { TbLayoutDashboard } from "react-icons/tb";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { TbLogs, TbEdit } from "react-icons/tb";
+
+import { useAuthContext } from "../hooks/useAuthContext"
+
 
 const HeadPage = () => {
   const page = useLocation()
@@ -29,7 +34,10 @@ const HeadPage = () => {
   const navItems = [
     { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <TiDocumentText size={22} /> }, 
-  ]
+    ...(permission?.data?.permission 
+      ? [{label: 'History Logs', path: '/head/historylogs', icon: <TbLogs size={22} /> } , {label: 'Edit Form', path: '/head/editform', icon: <TbEdit size={22}/>}] 
+      : [])
+    ];
 
   useEffect(() => {
       const getPermission = async() => {
@@ -78,9 +86,8 @@ const HeadPage = () => {
   }, [navbarExpand])
 
   useEffect(() => {
-      console.log('Permission:', permission)
       if(permission?.data?.permission) {
-        setStatus(['Approved', 'Under Review'])
+        setStatus(['Approved', 'Under Review', 'For Approval'])
       } else {
         setStatus(['Under Review'])
       }
@@ -99,7 +106,7 @@ const HeadPage = () => {
     })
 
     return () => unsubscribe()
-  }, [user, dispatchContext, apiURL, status, documents, permission?.data?.permission])
+  }, [user, dispatchContext, apiURL, status, documents, permission])
 
   return (
     <main className="h-screen w-full flex bg-white">

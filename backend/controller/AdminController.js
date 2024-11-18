@@ -385,7 +385,7 @@ const getNumberOfRecords = async (req, res) => {
     } 
   }catch(error){
     console.log('error on getting number of records', error)
-    res.status(500)
+    res.status(500).json({ success: false, error: error.message });
   }
 }
 

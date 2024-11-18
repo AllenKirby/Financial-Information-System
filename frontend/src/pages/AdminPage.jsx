@@ -5,9 +5,10 @@ import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
 import { TiDocumentText } from "react-icons/ti";
-import { TbLayoutDashboard, TbEdit } from "react-icons/tb";
+import { TbLayoutDashboard, TbEdit, TbLogs } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { TbLogs } from "react-icons/tb";
+import { BiGitCompare } from "react-icons/bi";
+
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 import { firestore } from "../config/firebase-config"
@@ -28,7 +29,7 @@ const AdminPage = () => {
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={22} /> },
         { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={22} /> },
         { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>},
-        {label: 'More', path:'/admin/comparison',icon: <TbEdit size={22}/>}
+        { label: 'Comparison', path:'/admin/comparison', icon: <BiGitCompare size={22}/>}
     ];
 
     useEffect(() => {
@@ -41,7 +42,7 @@ const AdminPage = () => {
         }else if(page.pathname === "/admin/editform"){
             setLocation('Edit Form')
         }else if(page.pathname === "/admin/comparison"){
-            setLocation('More Details')
+            setLocation('Comparison')
         }
     }, [page.pathname])
 

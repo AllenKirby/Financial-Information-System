@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 import Loader from '../Loader'
 
 import { useFundingHook } from '../../hooks/useFundingHook'
+import { useAuthContext } from '../../hooks/useAuthContext'
 
 const AddNewFieldOffice = (props) => {
     const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0} = props
@@ -12,6 +13,7 @@ const AddNewFieldOffice = (props) => {
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
     const [errorFlag, setErrorFlag] = useState(false)
     const prevData = useRef(null)
+    const { user } = useAuthContext()
     
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
 
@@ -104,15 +106,15 @@ const AddNewFieldOffice = (props) => {
 
   return (
     <form onSubmit={flag ? handleUpdate : handleSubmit} className="w-1/4 h-auto bg-white p-3 rounded-lg">
-        <h1 className="px-3 text-2xl font-semibold text-fundingBlueGreen">{flag ? 'Edit Field Office' : 'Add Field Office'}</h1>
+        <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>{flag ? 'Edit Field Office' : 'Add Field Office'}</h1>
         <div className='w-full h-auto p-3'>
             <div className="w-full mt-2">
                 <label>Project Name</label>
                 <input 
                     type="text"
                     value={fieldOfficeData.projectName}
-                    onChange={(e) => setFieldOfficeData({...fieldOfficeData, projectName: e.target.value})} 
-                    className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
+                    onChange={(e) => setFieldOfficeData({...fieldOfficeData, projectName: e.target.value.trimStart()})} 
+                    className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     required />
             </div>
             <div className="w-full mt-2">
@@ -121,7 +123,7 @@ const AddNewFieldOffice = (props) => {
                     required
                     value={fieldOfficeData.fieldOffice}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, fieldOffice: e.target.value})} 
-                    className="w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500"
+                    className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     >
                     <option value="" disabled>Select</option>
                     <option value="Cavite-Batangas">Cavite-Batangas IMO</option>
@@ -136,7 +138,7 @@ const AddNewFieldOffice = (props) => {
                     value={fieldOfficeData.ASA}
                     onFocus={handleFocus}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
-                    className={`${errorFlag ? 'focus:outline-red-500' : ''} w-full px-4 py-2 rounded-lg border-2 focus:outline-fundingBlueGreen transition-all duration-500`}
+                    className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     required />
             </div>
             {errorFlag && ( 
@@ -147,7 +149,7 @@ const AddNewFieldOffice = (props) => {
             <button 
                 type='submit' 
                 disabled={isLoading} 
-                className='px-5 py-2 rounded-lg bg-fundingBlueGreen text-white font-semibold'>{isLoading ? <Loader /> : 'Save'}</button>
+                className={`${user.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} px-5 py-2 rounded-lg text-white font-semibold`}>{isLoading ? <Loader /> : 'Save'}</button>
             <button onClick={modal} className='px-5 py-2 rounded-lg font-semibold'>Back</button>
         </div>
         {error && (

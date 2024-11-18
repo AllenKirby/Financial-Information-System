@@ -6,8 +6,10 @@ import { useInitialStateDV } from "../hooks/useInitialStateDV";
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
+import Loader from './Loader'
+
 const FundingModal = ({modal, data}) => {
-    const {getBurNo} =useInitialStateDV()
+    const {getBurNo} = useInitialStateDV()
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
     const {retrieveProjectName, updateASA_ORS, isLoading, error} = useFundingHook()
@@ -41,11 +43,14 @@ const FundingModal = ({modal, data}) => {
     }, [])
 
     useEffect(() => {
-        setOperatorInput({
-            ors: data.ORSBURS,
-            asa: data.ASA
-        })
-    }, [])
+        const getData = async() => {
+            setOperatorInput({
+                asa: await data.ASA,
+                ors: data.ORSBURS,
+            });
+        }
+        getData()
+    }, [data])
 
     useEffect(() => {
         if(data.ASA) {
@@ -53,7 +58,7 @@ const FundingModal = ({modal, data}) => {
         }
     }, [data])
 
-    console.log(data)
+    console.log('ano na', operatorInput.asa)
     console.log('previous ASA', prevASARef.current)
 
     const handleSubmit = async(e) => {
@@ -106,7 +111,7 @@ const FundingModal = ({modal, data}) => {
                 type="text"
                 placeholder={!isToggled ? 'ORS/BUR Not Required?' : ''}
                 className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                value={isToggled ? BUR : ''}
+                value={isToggled ? BUR : operatorInput.ors}
                 />
                 
                 {/* Toggle Button */}
@@ -128,10 +133,7 @@ const FundingModal = ({modal, data}) => {
                     <label className="font-semibold">ASA No.</label>
                     <select    
                         className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                        onChange={(e) => {
-                            
-                            setOperatorInput({...operatorInput, asa: e.target.value})
-                        }}
+                        onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
                         value={operatorInput.asa}
                         required>
                         <option value="" disabled>Select</option>
@@ -190,7 +192,7 @@ const FundingModal = ({modal, data}) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="py-2 px-5 rounded-md bg-fundingBlueGreen text-white font-bold">Save</button>
+                    className="py-2 px-5 rounded-md bg-fundingBlueGreen text-white font-bold">{isLoading ? <Loader/>: 'Save'}</button>
                 <button 
                     onClick={modal}
                     className="py-2 px-5 rounded-md text-customFontColor font-bold"

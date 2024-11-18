@@ -46,7 +46,6 @@ const updateASA_ORS = async (req, res) => {
     try{
         if(previousASA) {
             const [prevASA, prevFO] = previousASA.split('/')
-            console.log('may laman', prevASA, prevFO)
             const docRef = db.collection('ControlBook').doc(prevASA)
                             .collection('FieldOffices').doc(prevFO)
                             .collection('DV').doc(`${DVNoCount}|${amount}`);
@@ -54,7 +53,6 @@ const updateASA_ORS = async (req, res) => {
             const findDoc = await docRef.get();
 
             if (findDoc.exists) {
-                console.log('may nahanap', findDoc.data());
                 await docRef.delete();
                 await db.collection('ControlBook').doc(ASANo)
                     .collection('FieldOffices').doc(projectID)
@@ -63,7 +61,6 @@ const updateASA_ORS = async (req, res) => {
                 console.log('walang nahanap')
             }
         } else {
-            console.log('walang laman')
             await db.collection('ControlBook').doc(ASANo)
                 .collection('FieldOffices').doc(projectID)
                 .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
@@ -71,6 +68,7 @@ const updateASA_ORS = async (req, res) => {
 
         const docref = db.collection('records').doc(id)
         await docref.update(dvData)
+        res.status(200).json('Successfully Updated')
     }catch(error){
         console.log('error on updatingASA_ORS: (OPERATORCONTROLLER)', error)
     }
