@@ -165,7 +165,7 @@ const LineGraph = ({ chartData, customYear }) => {
   return (
     <div className="w-full h-full">
         <div className="h-[10%] flex items-center justify-between pl-5">
-            <div className={`border-l-2 px-1 font-bold ${user.role === '4' ? 'border-customgreen text-customgreen' : 'border-BOGreen text-BOGreen'}`}>
+            <div className={`border-l-2 px-1 font-bold ${user?.role === '4' ? 'border-customgreen text-customgreen' : 'border-BOGreen text-BOGreen'}`}>
                 <p>Expense Trends and Forecast</p>
             </div>
             <select 

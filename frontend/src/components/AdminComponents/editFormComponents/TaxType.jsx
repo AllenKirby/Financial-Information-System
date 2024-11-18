@@ -3,9 +3,10 @@ import { MdRemove } from "react-icons/md";
 import { useEffect, useState } from "react";
 
 import { useApproverHook } from "../../../hooks/useApproverHook";
+import { useAuthContext } from '../../../hooks/useAuthContext'
 
- export const TaxType = () => {
-    
+export const TaxType = () => {
+    const { user } = useAuthContext()
     const [showInput, setShowInput] = useState(false)
     const {addTax, getTaxType, deleteTax} = useApproverHook()
 
@@ -103,12 +104,12 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
 
     return (
         <div className="w-full h-full rounded-lg bg-white border-[1px]">
-            <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+            <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
                 <h1 className='w-1/3 text-center font-bold px-2'>Tax Type</h1>
                 <h1 className='w-1/3 text-center font-bold'>Cost Category</h1>
                 <h1 className='w-1/3 text-center font-bold'>Computation</h1>
                 <button 
-                className='bg-customgreen text-white text-2xl rounded-full hover:bg-white hover:text-customgreen'
+                className='text-white text-2xl rounded-full'
                 onClick={handleShowInput}
                 ><IoAdd/></button>
             </div>

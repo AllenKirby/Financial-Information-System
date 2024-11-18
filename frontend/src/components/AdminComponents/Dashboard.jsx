@@ -1,8 +1,10 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
 import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation"
+import { useAuthContext } from "../../hooks/useAuthContext"
 
 const Dashboard = () => {
+  const { user } = useAuthContext()
 
   return (
     <section className="w-full h-full">
@@ -11,7 +13,7 @@ const Dashboard = () => {
           <div className="w-full h-full rounded-lg">
             <div className="w-full h-2/6 flex items-center justify-start px-3">
               <div className="border-l-2 border-customFontColor px-2">
-                <h1 className="font-bold text-customgreen">Total Number of Records</h1>
+                <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen' } font-bold`}>Total Number of Records</h1>
                 <p className="text-sm">The overview shows total disbursement vouchers by fund cluster.</p>
               </div>
             </div>

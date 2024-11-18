@@ -1,8 +1,7 @@
-import axios from "axios";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 import { useSelector } from "react-redux";
-import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
+import { collection, query, onSnapshot } from "firebase/firestore"
 import { firestore } from "../../../config/firebase-config";
 import { HiArrowSmDown, HiArrowSmUp } from "react-icons/hi";
 
@@ -37,21 +36,19 @@ const BudgetRecommendation = () => {
     const {user} = useAuthContext()
 
     useEffect(() => {
-        const collectionRef = collection(firestore, "forecasted")
+        const collectionRef = query(collection(firestore, "forecasted"))
         const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
             const data = snapshot.docs.reduce((acc, doc) => {
                 acc[doc.id] = doc.data().forecasted
                 return acc
             }, {})
             setForecasted_data(data)
-
         }, 
         (error) => {
             console.error("Error listening to collection: ", error);
         })
         
         return () => unsubscribe()
-
     }, [])
 
     useEffect(() => {
@@ -74,9 +71,11 @@ const BudgetRecommendation = () => {
         }).format(value);
     };
 
+    console.log(forecasted_data)
+
     return (
         <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto space-y-4">
-            <h1 className={`${user.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Summary report</h1>
+            <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Summary report</h1>
             <div className="border rounded-lg p-4">
                 <div
                 className="flex justify-between items-center cursor-pointer"

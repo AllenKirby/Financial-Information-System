@@ -216,26 +216,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       tax: payeeData.TT_tax,
       cost: payeeData.TT_cost
     }
-
-    
-
-    if(data.payee_data.accCode.length === 1){
-      if(!deepEqual(pData, payeeOptions[payeeKey])){
-        savePayeeData(pData)
-      }
-      const res = await createDisbursement(data)
-      if(res){
-        Swal.fire({
-          title: "Saved",
-          text: "Dibursement Voucher is successfully created!",
-          icon: "success",
-          confirmButtonColor: "#009933"
-        });
-      }
-      modal()
-    }else{
-      const sum = eval(data.payee_data.optionalAmount.join('+'))
-      if(Number(data.payee_data.amount) === sum){
+      if(data.payee_data.accCode.length === 1){
         if(!deepEqual(pData, payeeOptions[payeeKey])){
           savePayeeData(pData)
         }
@@ -250,13 +231,31 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         }
         modal()
       }else{
-        alert('Make sure the amount you input is equal to the total amount.')
-        return;
+        const sum = eval(data.payee_data.optionalAmount.join('+'))
+        if(Number(data.payee_data.amount) === sum){
+          if(!deepEqual(pData, payeeOptions[payeeKey])){
+            savePayeeData(pData)
+          }
+          const res = await createDisbursement(data)
+          if(res){
+            Swal.fire({
+              title: "Saved",
+              text: "Dibursement Voucher is successfully created!",
+              icon: "success",
+              confirmButtonColor: "#009933"
+            });
+          }
+          modal()
+        }else{
+          Swal.fire({
+            title: "Error",
+            text: "Make sure the amount you input is equal to the total amount.",
+            icon: "Error",
+            confirmButtonColor: "#009933"
+          });
+          return;
+        }
       }
-    }
-    
-
-    
   }
 
   //FORM DATA LISTNER
@@ -630,6 +629,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     name="MOP"
                     value='MDS Check'
                     checked={payeeData.MOP === 'MDS Check'}
+                    required
                     onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
                   <label>MDS Check</label>
                 </div>
@@ -639,6 +639,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     name="MOP"
                     value='Commercial Check'
                     checked={payeeData.MOP === 'Commercial Check'}
+                    required
                     onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
                   <label>Commercial Check</label>
                 </div>
@@ -648,6 +649,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     name="MOP"
                     value='ADA'
                     checked={payeeData.MOP === 'ADA'}
+                    required
                     onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
                   <label>ADA</label>
                 </div>
@@ -658,6 +660,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       name="MOP"
                       value='Others'
                       checked={payeeData.MOP === 'Others'}
+                      required
                       onChange={(e) => setPayeeData({ ...payeeData, MOP: e.target.value })}/>
                     <label>Others</label>
                   </div>
@@ -709,7 +712,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               </div>
             </div>
           </div>
-           {(user.role === '3' || permission.data.permission) && 
+           {/* {(user.role === '3' || permission.data.permission) && 
             <div className='w-full mt-2'>
               <label>ORS/BURS no.</label>
               <input 
@@ -723,7 +726,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 }}
                 required  />
             </div>
-           }
+           } */}
         </div>
         <h1 className="font-semibold text-lg mt-2">Financial/Payment Details</h1>
         <div className="w-auto h-auto flex flex-col mt-2">
@@ -881,7 +884,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               }
               
           </div>
-          {(user.role === '3' || permission.data.permission) && 
+          {/* {(user.role === '3' || permission.data.permission) && 
             <div className='w-full mt-2'>
               <label>ASA No.</label>
               <select className={`focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2`}
@@ -909,12 +912,12 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 )}
               </select>
             </div>
-          }
+          } */}
           <div className='w-full mt-2'>
             <label>Particulars</label>
             <textarea 
               className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
-              onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value})}}
+              onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value.trimStart()})}}
               value={payeeData.particular}
               disabled={isDisabled && !permission.data.permission}
               placeholder='Write details here...'
@@ -928,7 +931,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <label>Particulars</label>
           <textarea 
             className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
-            onChange={(e) => {setBirData({...birData, birParticular: e.target.value})}}
+            onChange={(e) => {setBirData({...birData, birParticular: e.target.value.trimStart()})}}
             value={birData.birParticular}
             disabled={isDisabled && !permission.data.permission}
             placeholder='Write details here...'

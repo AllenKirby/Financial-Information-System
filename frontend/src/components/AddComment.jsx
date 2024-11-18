@@ -8,7 +8,7 @@ import { useFundingHook } from "../hooks/useFundingHook";
 import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useAuthContext } from '../hooks/useAuthContext';
 
-const AddComment = ({idStatus, doc, modal, type, ASA}) => {
+const AddComment = ({idStatus, doc, modal, type, ASA, permission}) => {
     const [comment, setComment] = useState('')
     const [color, setColor] = useState({bg: '', border: '', font: ''})
 
@@ -325,7 +325,8 @@ AddComment.propTypes = {
     doc: PropTypes.object.isRequired,
     modal: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
-    ASA: PropTypes.string
+    ASA: PropTypes.string,
+    permission: PropTypes.bool.isRequired
   }
 
 export default AddComment

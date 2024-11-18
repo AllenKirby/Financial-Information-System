@@ -2,11 +2,12 @@ import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
  
- import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
+import { useAuthContext } from '../../../hooks/useAuthContext'
  
  export const FundCluster = () => {
-    
+    const { user } = useAuthContext()
     // Fund Cluster
     const [showInput, setShowInput] = useState(false); // State to toggle input visibility
     const [inputValue, setInputValue] = useState("");
@@ -68,11 +69,11 @@ import { useApproverHook } from "../../../hooks/useApproverHook";
 
     return (
         <div className="w-full h-72 rounded-lg">
-            <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-customgreen text-white'>
+            <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
                 <h1 className='w-4/5 text-left font-bold px-2'>Fund Cluster</h1>
                 <div className="w-1/5 flex justify-center items-center">
                     <button 
-                        className='bg-customgreen text-white text-2xl rounded-full hover:bg-white hover:text-customgreen'
+                        className='text-white text-2xl rounded-full'
                         onClick={handleAddString}><IoAdd/></button>
                 </div>
             </div>

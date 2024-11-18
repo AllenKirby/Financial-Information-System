@@ -4,10 +4,11 @@ import { firestore } from "../../../config/firebase-config";
 import { doc, onSnapshot } from "firebase/firestore"
 import { useSelector, useDispatch } from "react-redux";
 import { setRecords } from "../../../redux/RecordsRedux";
+import { useAuthContext } from "../../../hooks/useAuthContext";
 
 
 const NumOfRecords = () => {
-
+    const { user } = useAuthContext()
     const dispatch = useDispatch()
     const recordx = useSelector((state) => state.records)
 
@@ -58,20 +59,20 @@ const NumOfRecords = () => {
     return (
         <div className="w-full h-full flex gap-3">
             <div className="w-3/12 rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className=" w-full h-1/3 text-sm text-customgreen">501 COB</div>
-              <div className=" h-2/3 text-customgreen text-4xl font-bold">{recordx.DVno501COB ? recordx.DVno501COB.replace(/^0+/, '') : '0'}</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 COB</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501COB ? recordx.DVno501COB.replace(/^0+/, '') : '0'}</div>
             </div>
             <div className="w-3/12 rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className=" w-full h-1/3 text-sm text-customgreen">501 LFP</div>
-              <div className=" h-2/3 text-customgreen text-4xl font-bold">{recordx.DVno501LFP ? recordx.DVno501LFP.replace(/^0+/, '') : '0'}</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 LFP</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501LFP ? recordx.DVno501LFP.replace(/^0+/, '') : '0'}</div>
             </div>
             <div className="w-3/12 rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className=" w-full h-1/3 text-sm text-customgreen">501 CARP</div>
-              <div className=" h-2/3 text-customgreen text-4xl font-bold">{recordx.DVno501CARP ? recordx.DVno501CARP.replace(/^0+/, '') : '0'}</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 CARP</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501CARP ? recordx.DVno501CARP.replace(/^0+/, '') : '0'}</div>
             </div>
             <div className="w-3/12 rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className=" w-full h-1/3 text-sm text-customgreen">Contract Farming</div>
-              <div className=" h-2/3 text-customgreen text-4xl font-bold">{recordx.DVnoContractFarming ? recordx.DVnoContractFarming.replace(/^0+/, '') : '0'}</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>Contract Farming</div>
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVnoContractFarming ? recordx.DVnoContractFarming.replace(/^0+/, '') : '0'}</div>
             </div>
           </div>
     )
