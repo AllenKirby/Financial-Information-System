@@ -26,7 +26,7 @@ const returnRecordTo = async(req, res) => {
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
-    // const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
+    const logs = `${payee}!${DV}!Returned By ${dispName}!${dateTimePassed}`
     
     try{
         const updatedDocu = await updateStatus(DV, returnedBy, returnTo)
@@ -38,7 +38,7 @@ const returnRecordTo = async(req, res) => {
         if(remarks) {
             await addComments(DV, comment)
         }
-        // await setHistoryLogs(dateTimePassed, logs)
+        await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
 
@@ -129,7 +129,7 @@ const transferDocument = async (req, res) => {
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const reviewedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
-    // const logs = `${payee}|${DV}|Reviewed By ${dispName}|${dateTimePassed}`
+    const logs = `${payee}!${DV}!Reviewed By ${dispName}!${dateTimePassed}`
 
     try {
         const updatedDocu = await updateStatusToApproved(DV, reviewedBy)
@@ -141,7 +141,7 @@ const transferDocument = async (req, res) => {
         if(remarks) {
             await addComments(DV, comment)
         }
-        // await setHistoryLogs(dateTimePassed, logs)
+        await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});

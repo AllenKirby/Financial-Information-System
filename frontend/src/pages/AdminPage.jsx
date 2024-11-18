@@ -7,7 +7,7 @@ import Navbar from "../components/Navbar";
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard, TbEdit } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-//import { TbLogs } from "react-icons/tb";
+import { TbLogs } from "react-icons/tb";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 import { firestore } from "../config/firebase-config"
@@ -26,7 +26,7 @@ const AdminPage = () => {
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
         { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={22} /> },
-        // { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={22} /> },
+        { label: 'History Logs', path: '/admin/historylogs', icon: <TbLogs size={22} /> },
         { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>},
         {label: 'More', path:'/admin/comparison',icon: <TbEdit size={22}/>}
     ];

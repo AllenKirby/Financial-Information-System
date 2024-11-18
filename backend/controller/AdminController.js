@@ -4,6 +4,8 @@ require('dotenv').config();
 const fs = require('fs');
 const FieldValue = admin.firestore.FieldValue;
 
+const {setHistoryLogs} = require('./Functions')
+
 const getAllLogs = async(req, res) => {
   try{
     const docRef = db.collection('passed_records').doc('History_Logs')
@@ -329,6 +331,8 @@ const deleteTax = async (req, res) => {
 
 const approveDV = async(req, res) => {
   const DV = req.params.id
+  const dispName = req.user.name;
+  const payee = req.body.data
 
   const today = new Date()
     const dateCollection = today.toLocaleDateString("en-US", {
@@ -345,6 +349,7 @@ const approveDV = async(req, res) => {
     });
 
     const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+    const logs = `${payee}!${DV}!Approved By ${dispName}!${dateTimeCollection}`
 
   try{
     const docRef = db.collection('records').doc(DV);
@@ -358,6 +363,7 @@ const approveDV = async(req, res) => {
       approvedBy: dateTimeCollection,
       status: 'Approved',
     });
+    await setHistoryLogs(dateTimeCollection, logs)
     
     res.status(200).json({message: 'Document Approved Successfully'})
   }catch(error){

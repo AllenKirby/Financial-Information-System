@@ -6,11 +6,11 @@ export const useApproverHook = () => {
     const [error, setError] = useState(null)
     const apiURL = import.meta.env.VITE_API_URL
 
-    const approveDV = async(DV) => {
+    const approveDV = async(DV, data) => {
         setIsLoading(true)
         setError(null)
         try {
-            const res = await axios.patch(`${apiURL}/admin/approveDocu/${DV}`, {}, {
+            const res = await axios.patch(`${apiURL}/admin/approveDocu/${DV}`,{data}, {
                 withCredentials: true
             })
             if(res.status == 200){
