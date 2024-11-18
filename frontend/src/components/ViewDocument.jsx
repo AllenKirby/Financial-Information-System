@@ -190,7 +190,7 @@ const ViewDocument = () => {
       confirmButtonText: "Yes, Approve it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await approveDV(idStatus.id)
+        const res = await approveDV(idStatus.id, doc.payee)
         if (res) {
           Swal.fire({
             title: "Approved!",

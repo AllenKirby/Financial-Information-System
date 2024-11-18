@@ -166,7 +166,7 @@ const opReturnDocu = async (req, res) => {
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const returnedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
-    // const logs = `${payee}|${DV}|Returned By ${dispName}|${dateTimePassed}`
+    const logs = `${payee}!${DV}!Returned By ${dispName}!${dateTimePassed}`
 
     try{
         const updatedDocu = await updateStatus(DV, returnedBy, true)
@@ -178,7 +178,7 @@ const opReturnDocu = async (req, res) => {
         if(remarks) {
             await addComments(DV, comment)
         }
-        // await setHistoryLogs(dateTimePassed, logs)
+        await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
     }catch(error){
@@ -347,7 +347,7 @@ const transferDocument = async (req, res) => {
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const updatedBy = `${dispName}|${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
-    // const logs = `${payee}|${DV}|Updated By ${dispName}|${dateTimePassed}`
+    const logs = `${payee}!${DV}!Updated By ${dispName}!${dateTimePassed}`
 
     try {
         await handleBudget({date, DVNo, BUR, payee, particulars, amount,asa})
@@ -360,7 +360,7 @@ const transferDocument = async (req, res) => {
         if(remarks) {
             await addComments(DV, comment)
         }
-        // await setHistoryLogs(dateTimePassed, logs)
+        await setHistoryLogs(dateTimePassed, logs)
 
         //res.status(200).json({success: true, record: data, update: returnData});
         res.status(200).json({success: true, update: returnData});

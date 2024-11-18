@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import ReportRows from './ReportRows';
 
 import { IoMdArrowRoundBack } from "react-icons/io";
-import { IoIosGitCompare } from "react-icons/io";
 
 const ControlBookReport = (props) => {
     const { showReport, reportData } = props
@@ -19,9 +18,6 @@ const ControlBookReport = (props) => {
                 <p className="font-bold text-2xl text-fundingBlueGreen">Control Book Report</p>
             </div>
             <div className='flex items-center justify-center gap-3'>
-                <button 
-                  className="border-2 text-fundingBlueGreen font-semibold px-5 py-2 rounded-lg flex items-center justify-center gap-2"
-                  ><IoIosGitCompare />Compare</button>
                 <button 
                   className="bg-fundingBlueGreen text-white px-5 py-2 rounded-lg"
                   >Download</button>

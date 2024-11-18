@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 
 import { FaAngleDown, FaAngleUp  } from "react-icons/fa";
 import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
+import { GrCircleInformation } from "react-icons/gr";
 
 import { useFundingHook } from '../../hooks/useFundingHook';
 
@@ -64,6 +65,7 @@ const FieldOffices = (props) => {
           <div className='flex items-center justify-center gap-3'>
             {dropDown? <FaAngleUp size={25}/> : <FaAngleDown size={25}/>}
             <p className='text-xl font-bold'>{fieldOffice.projectName}</p>
+            <GrCircleInformation size={25}/>
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>

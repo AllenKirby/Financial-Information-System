@@ -132,7 +132,7 @@ const passDocument = async (req, res) => {
     const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
     const dateTimePassed = `${dateCollection}|${timeCollection}`;
     const submittedBy = `${dispName}|${dateTimePassed }`
-    const logs = `${payee}|${DV}|Submitted By ${dispName}|${dateTimePassed}`
+    const logs = `${payee}!${DV}!Submitted By ${dispName}!${dateTimePassed}`
     const comment = {dispName, remarks, dateTimePassed}
 
     try {
@@ -145,7 +145,7 @@ const passDocument = async (req, res) => {
         if(remarks) {
             await addComments(DV, comment)
         }
-        // await setHistoryLogs(dateTimePassed, logs)
+        await setHistoryLogs(dateTimePassed, logs)
 
         res.status(200).json({success: true, update: returnData});
     }catch(error){
