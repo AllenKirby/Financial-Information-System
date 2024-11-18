@@ -2,6 +2,9 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useAuthContext } from "../../../hooks/useAuthContext";
 import { useSelector } from "react-redux";
+import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
+import { firestore } from "../../../config/firebase-config";
+import { HiArrowSmDown, HiArrowSmUp } from "react-icons/hi";
 
 const BudgetRecommendation = () => {
 
@@ -13,8 +16,9 @@ const BudgetRecommendation = () => {
         top: false
       });
     const [years, setYears] = useState({})
-
     const [yearlyExpense, setYearlyExpense] = useState({})
+
+    const [forecasted_data, setForecasted_data] = useState({})
 
       const toggleSection = (section) => {
         setOpenSections((prev) => ({
@@ -33,13 +37,35 @@ const BudgetRecommendation = () => {
     const {user} = useAuthContext()
 
     useEffect(() => {
+        const collectionRef = collection(firestore, "forecasted")
+        const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+            const data = snapshot.docs.reduce((acc, doc) => {
+                acc[doc.id] = doc.data().forecasted
+                return acc
+            }, {})
+            setForecasted_data(data)
+
+        }, 
+        (error) => {
+            console.error("Error listening to collection: ", error);
+        })
+        
+        return () => unsubscribe()
+
+    }, [])
+
+    useEffect(() => {
         const yearlySums = Object.keys(monthlyData.monthly).reduce((acc, year) => {
             const totalForYear = Object.values(monthlyData.monthly[year]).reduce((sum, value) => sum + value, 0)
             acc[year] = totalForYear
             return acc
         }, {})
         setYearlyExpense(yearlySums)
-    }, [openSections.TotalExpenses])
+    }, [openSections.TotalExpenses, monthlyData])
+
+    const calculatePercentage = (actual, forecast) => {
+        return (((actual - forecast)/forecast) * 100).toFixed(2)
+    }
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -56,7 +82,7 @@ const BudgetRecommendation = () => {
                 className="flex justify-between items-center cursor-pointer"
                 onClick={() => toggleSection("TotalExpenses")}
                 >
-                <h2 className="font-bold text-lg">Total Expenses</h2>
+                    <h2 className="font-bold text-lg">Total Expenses</h2>
                     <span>{openSections.TotalExpenses ? "▲" : "▼"}</span>
                 </div>
                 {openSections.TotalExpenses && (
@@ -103,9 +129,32 @@ const BudgetRecommendation = () => {
                 </div>
                 {openSections.monitoring && (
                 <div className="mt-4">
-                    <p className="text-sm text-gray-600">
-                    Sample text
-                    </p>
+                    <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
+                        {
+                            Object.keys(forecasted_data || {}).map((key) => {
+                                const percentage = calculatePercentage(monthlyData.monthly['2024'][key], forecasted_data[key])
+                            return(
+                                <li key={key} className="flex flex-col p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
+                                    <div className="flex justify-between cursor-pointer">
+                                        <span className="font-semibold text-lg">{key}</span>
+                                        <span
+                                            className={`font-medium flex items-center space-x-1 ${
+                                                percentage > 0 ? 'text-green-500' : 'text-red-500'
+                                            }`}
+                                        >
+                                            {percentage}%
+                                            {percentage >= 0 ? (
+                                                <HiArrowSmUp className="w-6 h-6" />
+                                            ) : (
+                                                <HiArrowSmDown className="w-6 h-6" />
+                                            )}
+                                        </span>
+                                    </div>
+                                </li>
+                            )
+                        })
+                        }
+                    </ul>
                 </div>
                 )}
             </div>
