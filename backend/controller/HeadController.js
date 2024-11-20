@@ -3,7 +3,7 @@ const {admin, db, rtdb}  = require('../config/firebase')
 const { 
     addComments,
     setNotification,
-    setHistoryLogs } = require('./Functions')
+    setHistoryLogs } = require('./MultiAccess/Functions')
 
 const returnRecordTo = async(req, res) => {
     const {DV, payee, returnTo, remarks} = req.body;

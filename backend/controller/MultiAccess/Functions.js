@@ -1,4 +1,4 @@
-const {admin, db, rtdb}  = require('../config/firebase');
+const {admin, db, rtdb}  = require('../../config/firebase');
 
 const addComments = async(DV, comment) => {
     try {
@@ -44,8 +44,21 @@ const setNotification = async (destination_uids, dataCollection, notifMessage1, 
     }
 }
 
+const updateUserAcc = async(uid, role, dispName) => {
+    try {
+        console.log('update', uid, role, dispName)
+        await admin.auth().setCustomUserClaims(uid, { role, dispName });
+        await db.collection('listOfUsers').doc(uid).update({name: dispName})
+        const user = await admin.auth().getUser(uid);
+        return user.toJSON()
+    } catch (error) {
+        console.log('Error updating account', error)
+    }
+}
+
 module.exports = {
     addComments,
     setNotification,
-    setHistoryLogs
+    setHistoryLogs,
+    updateUserAcc
 }

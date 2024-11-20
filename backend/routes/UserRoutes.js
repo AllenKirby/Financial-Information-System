@@ -8,8 +8,5 @@ const {login, refreshToken} = require('../controller/UserController');
 
 router.post('/login',requireAuth, login)
 router.post('/refreshToken', refreshAuth, refreshToken)
-//login
-//return fname, lname, role
-//httponly(token)
 
 module.exports = router

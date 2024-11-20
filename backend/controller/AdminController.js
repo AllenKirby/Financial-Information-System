@@ -4,7 +4,7 @@ require('dotenv').config();
 const fs = require('fs');
 const FieldValue = admin.firestore.FieldValue;
 
-const {setHistoryLogs} = require('./Functions')
+const {setHistoryLogs} = require('./MultiAccess/Functions')
 
 const getAllLogs = async(req, res) => {
   try{

@@ -8,7 +8,7 @@ import { useFundingHook } from "../hooks/useFundingHook";
 import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useAuthContext } from '../hooks/useAuthContext';
 
-const AddComment = ({idStatus, doc, modal, type, ASA, permission}) => {
+const AddComment = ({idStatus, doc, modal, type, ASA}) => {
     const [comment, setComment] = useState('')
     const [color, setColor] = useState({bg: '', border: '', font: ''})
 
