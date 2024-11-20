@@ -15,8 +15,7 @@ import Header from "../components/Header";
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
-import { FiBook } from "react-icons/fi";
-
+import { FiBook, FiUser } from "react-icons/fi";
 
 const EditorPage = () => {
   const page = useLocation()
@@ -35,7 +34,8 @@ const EditorPage = () => {
     { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <TiDocumentText size={22} /> } ,
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
-      : [])
+      : []),
+    { label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
   ];
 
   useEffect(() => {
@@ -45,6 +45,8 @@ const EditorPage = () => {
       setLocation('Dashboard')
     } else if(page.pathname === "/editor/controlbook"){
       setLocation('Control Book')
+    } else if(page.pathname === "/editor/profile"){
+      setLocation('Profile')
     }
   }, [page.pathname])
 

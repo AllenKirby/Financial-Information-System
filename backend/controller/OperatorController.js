@@ -5,7 +5,7 @@ const sheets = google.sheets('v4');
 const { 
     addComments,
     setNotification,
-    setHistoryLogs } = require('./Functions');
+    setHistoryLogs } = require('./MultiAccess/Functions');
 
 const updateASA_ORS = async (req, res) => {
     const { ors, asa } = req.body.data
