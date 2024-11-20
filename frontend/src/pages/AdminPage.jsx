@@ -13,6 +13,8 @@ import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 import { firestore } from "../config/firebase-config"
 import { collection, query, where, onSnapshot } from "firebase/firestore"
+import { useApproverHook } from "../hooks/useApproverHook";
+import { useDispatch } from "react-redux";
 
 const AdminPage = () => {
     const page = useLocation()
@@ -23,6 +25,8 @@ const AdminPage = () => {
     const { user } = useAuthContext()
     const {documents, dispatch } = useAdminDisbursementContext()
     const apiURL = import.meta.env.VITE_API_URL
+    const { getRecords } = useApproverHook()
+    const dispatchVouchers = useDispatch() 
 
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
@@ -31,6 +35,11 @@ const AdminPage = () => {
         { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>},
         { label: 'Comparison', path:'/admin/comparison', icon: <BiGitCompare size={22}/>}
     ];
+
+    useEffect(() => {
+        const unsubscribe = getRecords(dispatchVouchers)
+        return () => unsubscribe
+    })
 
     useEffect(() => {
         if(page.pathname === "/admin/dashboard"){

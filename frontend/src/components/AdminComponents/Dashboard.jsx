@@ -1,10 +1,21 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
-import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation"
+import Summary from '../AdminComponents/ComparisonViewComponent/Summary' 
+
 import { useAuthContext } from "../../hooks/useAuthContext"
+import { useState } from "react"
+import FundClusterModal from "./DashboardComponents/FundClusterModal"
+import { useSelector } from "react-redux"
 
 const Dashboard = () => {
   const { user } = useAuthContext()
+  const [fundCluster, setFundCluster] = useState('')
+  const vouchers = useSelector(state => state.vouchers)
+
+  const modal = (FC) => {
+    console.log(FC)
+    setFundCluster(FC)
+  }
 
   return (
     <section className="w-full h-full">
@@ -18,7 +29,7 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="w-full h-4/6 py-2">
-              <NumOfRecords/>
+              <NumOfRecords modal={modal}/>
             </div>
           </div>
         </div>
@@ -28,9 +39,17 @@ const Dashboard = () => {
             <ChartData customYear={'2024'}/>
           </div>
           <div className="w-1/3">
-            <BudgetRecommendation/>
+            <Summary/>
           </div>
         </div>
+        {fundCluster && (
+          <>
+                <div className="fixed inset-0 z-20 bg-black opacity-50" />
+                <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                  <FundClusterModal modal={modal} fundCluster={fundCluster} vouchers={vouchers}/>
+                </div>
+          </>
+        )}
     </section>
   )
 }

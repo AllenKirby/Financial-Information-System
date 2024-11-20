@@ -53,7 +53,6 @@ const BudgetRecommendation = () => {
 
     const fetchForecastedValues = async () => {
         const storedForecasted = sessionStorage.getItem("forecasted");
-        console.log('fetching')
         if (storedForecasted) {
             const parsedForecast = JSON.parse(storedForecasted);
             return parsedForecast;
@@ -101,12 +100,10 @@ const BudgetRecommendation = () => {
             if (!forecast?.monthly) return;
 
             const dateString = Object.keys(forecast.monthly)[thismonth];
-            console.log(dateString)
             forecastValue = parseFloat(forecast.monthly[dateString]?.forecast);
         }else{
             if (!forecast) return;
             const dateString = Object.keys(forecast)[thismonth];
-            console.log(dateString)
             forecastValue = parseFloat(forecast[dateString]?.forecast);
         }
 
@@ -126,7 +123,6 @@ const BudgetRecommendation = () => {
                 });
             });
 
-            console.log(forecastDistribution)
             setForecastedValues(forecastDistribution);
         } else {
             console.warn("Invalid forecast value encountered.");
@@ -176,7 +172,6 @@ const BudgetRecommendation = () => {
                 
                 if (proportions && forecast) {
                     const monthDifference = selectedMonth >= currentMonth ? selectedMonth - currentMonth : (selectedMonth+12) - currentMonth
-                    console.log(monthDifference)
                     calculateRecommendation(proportions, forecast, monthDifference, false);
                 }
             }

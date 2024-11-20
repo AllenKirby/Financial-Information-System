@@ -112,11 +112,11 @@ const ChartData = ({customYear}) => {
         setMonthlyTotalData(monthlyTotal);
         setQuarterlyTotalData(quarterlyTotal)
         setCategorizedData(categorized)
-        console.log('bar chart per month', categorized) //bar chart to per month ng LFP, COB, CARP, CONTRACT FARMING
-        console.log('bar chart by quarter',quarterlyCluster) //bar chart by quarter LFP, COB, CARP, CONTRACT FARMING
-        console.log(yearlyCluster)
-        console.log('line graph', monthlyTotal) // line graph x = date (e.g. 2024-01) y = 60000, monthly, categorized per year
-        console.log('line graph 1', quarterlyTotal) // quarterly, line graph, categorized per year
+        // console.log('bar chart per month', categorized) //bar chart to per month ng LFP, COB, CARP, CONTRACT FARMING
+        // console.log('bar chart by quarter',quarterlyCluster) //bar chart by quarter LFP, COB, CARP, CONTRACT FARMING
+        // console.log(yearlyCluster)
+        // console.log('line graph', monthlyTotal) // line graph x = date (e.g. 2024-01) y = 60000, monthly, categorized per year
+        // console.log('line graph 1', quarterlyTotal) // quarterly, line graph, categorized per year
     };
 
     

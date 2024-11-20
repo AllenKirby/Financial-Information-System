@@ -1,5 +1,8 @@
 import axios from "axios"
 import { useState } from "react"
+import { firestore } from "../config/firebase-config"
+import { collection, query, onSnapshot } from "firebase/firestore"
+import { setVouchers } from '../redux/AllVouchersRedux'
 
 export const useApproverHook = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -227,6 +230,19 @@ export const useApproverHook = () => {
         }
     }
 
+    const getRecords = async(dispatch) => {
+        const q = query(collection(firestore, 'records'));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+        const records = snapshot.docs.reduce((acc, doc) => {
+            acc[doc.id] = {...doc.data()}
+            return acc;
+            }, {});
+            dispatch(setVouchers(records))
+        })
+
+        return unsubscribe 
+    }
+
   return {
     approveDV, 
     addNewFundCluster, 
@@ -241,6 +257,7 @@ export const useApproverHook = () => {
     addTax,
     getTaxType,
     deleteTax,
+    getRecords,
     isLoading, 
     error
     }

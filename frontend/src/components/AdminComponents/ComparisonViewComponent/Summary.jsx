@@ -71,8 +71,6 @@ const BudgetRecommendation = () => {
         }).format(value);
     };
 
-    console.log(forecasted_data)
-
     return (
         <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto space-y-4">
             <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Summary report</h1>

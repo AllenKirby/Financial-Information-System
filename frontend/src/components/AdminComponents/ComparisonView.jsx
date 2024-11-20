@@ -1,15 +1,14 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
 import Summary from "./ComparisonViewComponent/Summary"
+import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation"
 
 const Dashboard = () => {
-
   return (
 
-    <section className="w-full h-full">
+    <section className="w-full h-full p-2">
         <div className="w-full h-full flex gap-3 py-3 overflow-y-auto">
-           
-            <div className="flex flex-col w-2/3 gap-3">
+            <div className="flex flex-col w-2/3 h-[700px] gap-3">
                 <div className="border-2 h-full rounded-lg p-2">
                     <ChartData customYear={'2024'} />
                 </div>
@@ -18,8 +17,9 @@ const Dashboard = () => {
                 </div>
             </div>
             <div className="w-1/3">
-                <div className="border-1 rounded-lg">
+                <div className="border-1 rounded-lg flex flex-col gap-3">
                     <Summary />
+                    <BudgetRecommendation/>
                 </div>
             </div>
         </div>

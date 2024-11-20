@@ -4,6 +4,7 @@ import RecordsReducer from "./RecordsRedux"
 import ControlBookReducer from "./ControlBookRedux"
 import TestForecastedReducer from "./TestForecastedRedux"
 import TotalExpenseReducer from "./TotalExpenseRedux"
+import AllVouchersReducer from './AllVouchersRedux'
 
 export const store = configureStore({
     reducer : {
@@ -11,6 +12,7 @@ export const store = configureStore({
         records: RecordsReducer,
         controlBook: ControlBookReducer,
         testforecast: TestForecastedReducer,
-        totalexpense: TotalExpenseReducer
+        totalexpense: TotalExpenseReducer,
+        vouchers: AllVouchersReducer
     }
 })
