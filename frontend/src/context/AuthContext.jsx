@@ -23,43 +23,76 @@ export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, { user: null });
 
     useEffect(() => {
-      const userCookie = cookies.get('user');
-        if (userCookie) {
-          dispatch({ type: 'LOGIN', payload: userCookie });
-        }
-
-        const unsubscribe = onIdTokenChanged(auth, async (user) => {
-            
-            if(user){
-                if(user.emailVerified){
-                    try{
-                        const token = await user.getIdToken();
-                        const response = await axios.post(`${import.meta.env.VITE_API_URL}/user/refreshToken`, {}, {
-                            headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization':` Bearer ${token} `
-                            },
-                            withCredentials: true,
-                        });
-    
-                        if (response.status === 200) {
-                            cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
-                            dispatch({type: 'LOGIN', payload: response.data})
-                        } 
-                    }catch(error){
-                        console.log("Error at authcontext: ", error)
-                        console.error('Token verification failed:', error);
-                        dispatch({ type: 'LOGOUT' }); 
-                        cookies.remove('user', { path: '/' });
+        console.log('authcontext running...')
+        const unsubscribe = onIdTokenChanged(auth, async (userAuth) => {
+            if(userAuth){
+                console.log('onauthStateChanged is running...', userAuth)
+                try{
+                    const token = await userAuth.getIdToken()
+                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/refreshToken`, {
+                        headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization':` Bearer ${token} `
+                        },
+                        withCredentials: true,
+                    });
+                    if (response.status === 200) {
+                        cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'Strict' });
+                        dispatch({type: 'LOGIN', payload: response.data})
                     }
+                    console.log('refreshed')
+                }catch(error){
+                    console.log('logging out')
+                    cookies.remove('token')
+                    cookies.remove('user')
+                    dispatch({type: 'LOGOUT'})
+                    console.log(error)
                 }
-            }else {
-                console.log('else authcontetx')
-                dispatch({ type: 'LOGOUT' }); 
-                cookies.remove('user', { path: '/' }); 
+            }else{
+                console.log("User is logged out.");
+                cookies.remove("token");
+                cookies.remove("user");
+                dispatch({ type: "LOGOUT" });
             }
         })
-        return () => unsubscribe();
+        return () => unsubscribe()
+    //   const userCookie = cookies.get('user');
+    //     if (userCookie) {
+    //       dispatch({ type: 'LOGIN', payload: userCookie });
+    //     }
+
+    //     const unsubscribe = onIdTokenChanged(auth, async (user) => {
+            
+    //         if(user){
+    //             if(user.emailVerified){
+    //                 try{
+    //                     const token = await user.getIdToken();
+    //                     const response = await axios.post(${import.meta.env.VITE_API_URL}/user/refreshToken, {}, {
+    //                         headers: {
+    //                         'Content-Type': 'application/json',
+    //                         'Authorization':` Bearer ${token} `
+    //                         },
+    //                         withCredentials: true,
+    //                     });
+    
+    //                     if (response.status === 200) {
+    //                         cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
+    //                         dispatch({type: 'LOGIN', payload: response.data})
+    //                     } 
+    //                 }catch(error){
+    //                     console.log("Error at authcontext: ", error)
+    //                     console.error('Token verification failed:', error);
+    //                     dispatch({ type: 'LOGOUT' }); 
+    //                     cookies.remove('user', { path: '/' });
+    //                 }
+    //             }
+    //         }else {
+    //             console.log('else authcontetx')
+    //             dispatch({ type: 'LOGOUT' }); 
+    //             cookies.remove('user', { path: '/' }); 
+    //         }
+    //     })
+    //     return () => unsubscribe();
     }, []);
 
     console.log('AuthContext state:', state);

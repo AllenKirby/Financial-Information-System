@@ -64,6 +64,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         address: document.address || '',
         fund: document.fund || '',
         NF_name: document.NF_name || '',
+        MOP: document.MOP || '',
+        specifiedMOP: document.specifiedMOP || '',
         NF_office: document.NF_office || '',
         TT_tax: document.TT_tax || '',
         TT_formula1: document.TT_formula1 || '',
@@ -797,10 +799,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className='w-full flex'>
               <div className='w-full flex justify-center items-center'>
                 <div className='w-1/2 flex justify-center'>
-                  <label>gross{gross.value2}</label>
+                  <label>{gross.value2 ? `gross ${gross.value2}` : ''}</label>
                 </div>
                 <div className='w-1/2 flex justify-center'>
-                  <label>gross{gross.value3}</label>
+                  <label>{gross.value3 ? `gross ${gross.value3}`: ''}</label>
                 </div>
               </div>
 
