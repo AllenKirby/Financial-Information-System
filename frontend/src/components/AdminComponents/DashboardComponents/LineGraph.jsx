@@ -16,8 +16,6 @@ const LineGraph = ({ chartData, customYear }) => {
 
     const testData = useSelector((state) => state.testforecast)
 
-    console.log(chartData)
-
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
             style: 'currency',
@@ -72,7 +70,6 @@ const LineGraph = ({ chartData, customYear }) => {
         
         if(Object.keys(testData.sample).length > 0){
             values.pop()
-            console.log(xAxis)
             values.push(parseFloat(Object.values(testData.sample)[0]))
         }
 
