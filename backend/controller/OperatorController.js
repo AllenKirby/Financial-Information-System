@@ -10,16 +10,23 @@ const {
 
 const updateASA_ORS = async (req, res) => {
     const { ors, asa } = req.body.data
-    const { date, DVNo, BUR, payee, particulars, amount } = req.body.DV
+
+    const { date, DVNo, payee, particulars, amount } = req.body.DV
     const previousASA = req.body.previousASA
     const {id} = req.params
+    
+    console.log(req.body)
 
-    console.log(ors)
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1
-    const lastORS = ors.split('-').pop()
-    const ORS = await getOrigNumberOfCopiesBUR(lastORS)
-    const finalORS = `501-${year}-${month}-${ORS}`
+    let finalORS = '';
+    if(ors){
+        const lastORS = ors.split('-').pop()
+        const ORS = await getOrigNumberOfCopiesBUR(lastORS)
+        finalORS = `501-${year}-${month}-${ORS}`
+    }
+    console.log(finalORS ? finalORS: 'asd')
+    console.log(asa ? asa : 'asa')
 
     let orsData = ''
 
@@ -75,6 +82,32 @@ const updateASA_ORS = async (req, res) => {
     }
 
 } 
+
+const getBUR = async(req, res) => {
+    try{
+        const year = new Date().getFullYear()
+        const docRef = db.collection('NumberOfRecords').doc(year.toString())
+        const doc = await docRef.get()
+        if(doc.exists){
+            const data = doc.data()
+            const value = data['BURno']
+            res.status(200).json({currentBUR: value})
+        }else{
+            const data = {
+                DVno501CARP: '0000',
+                DVno501COB: '0000',
+                DVno501LFP: '0000',
+                DVnoContractFarming: '0000',
+                BURno: '0000'
+            }
+            await docRef.set(data);
+            return res.status(200).json({currentBUR: '0000'})
+        }
+    }catch(error){
+        console.log('error on getBUR (OPERATOR CONTROLLER)', error)
+        res.status(500)
+    }
+}
 
 const operatorInput = async(req, res) => {
     const { ors, asa } = req.body.fundingData
@@ -794,5 +827,6 @@ module.exports = {
     updateFieldOffice,
     deleteFieldOffice,
     updateASA_ORS,
-    updateAccount
+    updateAccount,
+    getBUR
 }

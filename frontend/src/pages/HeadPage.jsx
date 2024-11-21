@@ -96,7 +96,7 @@ const HeadPage = () => {
   useEffect(() => {
     if (!status.length) return;  
 
-    const q = query(collection(firestore, 'records'), where('status', 'in', status));
+    const q = query(collection(firestore, 'records'), where('status', 'in', status ? ['Under Review'] : status));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newDocuments = snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = { data: { ...doc.data() } };

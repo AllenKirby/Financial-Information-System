@@ -15,6 +15,7 @@ const FundingModal = ({modal, data}) => {
     const {retrieveProjectName, updateASA_ORS, isLoading, error} = useFundingHook()
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
+    const [origBUR, setOrigBUR] = useState('')
     const prevASARef = useRef();
 
     const formatToPeso = (value) => {
@@ -26,9 +27,10 @@ const FundingModal = ({modal, data}) => {
 
     useEffect(() => {
         const fetch = async () => {
-            const bur = await getBurNo()
+            const {bur, origBur} = await getBurNo()
             setOperatorInput({...operatorInput, ors: bur})
             setBUR(bur)
+            setOrigBUR(origBur)
             // const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
             // if (parsedPorjectName){
             //     setASANo(parsedPorjectName)
@@ -46,8 +48,9 @@ const FundingModal = ({modal, data}) => {
         const getData = async() => {
             setOperatorInput({
                 asa: await data.ASA,
-                ors: data.ORSBURS,
+                ors: await data.ORSBURS,
             });
+            console.log(data)
         }
         getData()
     }, [data])
@@ -57,9 +60,6 @@ const FundingModal = ({modal, data}) => {
             prevASARef.current = data.ASA;
         }
     }, [data])
-
-    console.log('ano na', operatorInput.asa)
-    console.log('previous ASA', prevASARef.current)
 
     const handleSubmit = async(e) => {
         e.preventDefault()
@@ -78,9 +78,10 @@ const FundingModal = ({modal, data}) => {
         const fundingData = {
             data: operatorInput,
             DV: fieldOfficeData,
-            previousASA: prevASARef.current
+            previousASA: prevASARef.current,
+            origBUR: origBUR
         }
-        
+        console.log(fundingData)
         const res = await updateASA_ORS(fundingData, DVNo)
 
         if(res){
@@ -103,7 +104,7 @@ const FundingModal = ({modal, data}) => {
 
     return(
         <form onSubmit={handleSubmit} className="bg-white w-2/5 h-auto p-3 rounded-lg">
-            <h1 className="px-3 text-2xl font-bold text-fundingBlueGreen">ADD ASA No and ORS/BURS</h1>
+            <h1 className="px-3 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
             <div className="flex items-center gap-2 mt-4">
                 {/* Input Field */}
                 <input
@@ -111,14 +112,19 @@ const FundingModal = ({modal, data}) => {
                 type="text"
                 placeholder={!isToggled ? 'ORS/BUR Not Required?' : ''}
                 className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                value={isToggled ? BUR : operatorInput.ors}
+                value={data.ORSBURS ? data.ORSBURS: isToggled ? BUR : ''}
                 />
                 
                 {/* Toggle Button */}
                 <button
+                disabled={data.ORSBURS ? true : false}
                 className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
                 type="button"
-                onClick={() => setIsToggled(!isToggled)}
+                onClick={() => {
+                    const value = !isToggled ? BUR : ''
+                    setOperatorInput({...operatorInput, ors: value})
+                    setIsToggled(!isToggled)
+                }}
                 >
                     <span
                         className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
@@ -139,7 +145,7 @@ const FundingModal = ({modal, data}) => {
                         <option value="" disabled>Select</option>
                         {Object.entries(ASANo).length > 0 ? (
                             Object.entries(ASANo).map(([key, asano]) => {
-                                console.log(ASANo)
+                                // console.log(ASANo)
                                 const finalASANO = key.replace('|', ' ')
                                 return(
                                     <optgroup key={key} label={finalASANO}>

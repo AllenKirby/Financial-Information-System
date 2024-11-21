@@ -44,13 +44,17 @@ export const useInitialStateDV = () => {
 
     const getBurNo = async () => {
         try{
-            const storedNumbers = sessionStorage.getItem('pendingDVNumbers')
-            const resData = storedNumbers ? JSON.parse(storedNumbers) : await setDVno()
-            const burNumber = resData['BURno']
-            const increamentedData = (parseInt(burNumber, 10) + 1).toString()
-
-            const today = new Date()
-            const bur = `501-${today.getFullYear()}-${today.getMonth()+1}-${increamentedData}`
+            const res = await axios.get(`${apiURL}/operator/getBUR`, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                const burnumber = res.data.currentBUR
+                console.log(burnumber)
+                const increamentedData = (parseInt(burnumber, 10) + 1).toString().padStart(4, 0)
+                const today = new Date()
+                const bur = `501-${today.getFullYear()}-${today.getMonth()+1}-${increamentedData}`
+                return {bur, burnumber}
+            }
             
             return bur
         }catch(error){
