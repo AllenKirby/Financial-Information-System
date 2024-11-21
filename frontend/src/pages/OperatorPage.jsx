@@ -27,7 +27,7 @@ const OperatorPage = () => {
   const { user } = useAuthContext()
   const { dispatch: dispatchContext, documents } = useOpDisbursementContext()
   const { retrieveControlBooks } = useFundingHook()
-  const [status, setStatus] = useState([])
+  // const [status, setStatus] = useState([])
   const dispatch = useDispatch()
   const permission = useSelector((state) => state.permission)
   const apiURL = import.meta.env.VITE_API_URL
@@ -85,18 +85,19 @@ const OperatorPage = () => {
     return () => unsubscribe()   
   }, [dispatch])
 
-  useEffect(() => {
-    if(permission?.data?.permission){
-      setStatus(['Drafting', 'In Review', 'Returned|3', 'Returned|4'])
-    }
-    else{
-      setStatus(['In Review', 'Returned|3'])
-    }
-  }, [permission])
+  // useEffect(() => {
+  //   if(permission?.data?.permission){
+  //     setStatus(['Drafting', 'In Review', 'Returned|3', 'Returned|4'])
+  //   }
+  //   else{
+  //     setStatus(['In Review', 'Returned|3'])
+  //   }
+  // }, [permission])
 
   useEffect(() => {
-    if (!status.length) return;  
-    const q = query(collection(firestore, 'records'), where('status', 'in', status ? ['In Review', 'Returned|3'] : status));
+    // if (!status.length) return;  
+    const status = permission?.data?.permission ? ['Drafting', 'In Review', 'Returned|3', 'Returned|4'] : ['In Review', 'Returned|3']
+    const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['In Review', 'Returned|3']));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = {data: {...doc.data()}};
@@ -108,7 +109,7 @@ const OperatorPage = () => {
 
     return () => unsubscribe()
 
-  }, [user, dispatchContext, apiURL, documents, permission?.data?.permission, status])
+  }, [user, dispatchContext, apiURL, documents, permission?.data?.permission])
   // permission.data.permission 
 
 

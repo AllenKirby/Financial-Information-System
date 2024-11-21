@@ -72,11 +72,11 @@ const EditorPage = () => {
   }, [permission]) 
 
   useEffect(() => {
-    const statuses = permission?.data?.permission 
+    const status = permission?.data?.permission 
     ? ['Drafting', 'Returned|4', 'In Review', 'Returned|3'] 
     : ['Drafting', 'Returned|4'];
 
-    const q = query(collection(firestore, 'records'),where('status', 'in', statuses ? statuses : ['Drafting', 'Returned|4'] ));
+    const q = query(collection(firestore, 'records'),where('status', 'in', status ? status : ['Drafting', 'Returned|4'] ));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = {...doc.data()}
