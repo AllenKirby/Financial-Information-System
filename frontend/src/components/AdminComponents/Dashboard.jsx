@@ -13,7 +13,6 @@ const Dashboard = () => {
   const vouchers = useSelector(state => state.vouchers)
 
   const modal = (FC) => {
-    console.log(FC)
     setFundCluster(FC)
   }
 

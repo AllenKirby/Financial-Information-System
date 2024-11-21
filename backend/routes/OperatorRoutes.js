@@ -17,7 +17,8 @@ const {
     deleteControlBook,
     updateFieldOffice,
     deleteFieldOffice,
-    updateASA_ORS
+    updateASA_ORS,
+    updateAccount
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -35,5 +36,6 @@ OperatorRouter.delete('/deleteControlBook/:id', deleteControlBook)
 OperatorRouter.patch('/updateFieldOffice/:id', updateFieldOffice)
 OperatorRouter.delete('/deleteFieldOffice/:id', deleteFieldOffice)
 OperatorRouter.patch('/updateASA_ORS/:id', updateASA_ORS)
+OperatorRouter.patch('/updateAcc', updateAccount)
 
 module.exports = OperatorRouter

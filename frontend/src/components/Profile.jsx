@@ -5,11 +5,13 @@ import { MdOutlineMailOutline, MdVerified, MdCameraAlt } from "react-icons/md";
 import { FiUser } from "react-icons/fi";
 import { useState } from 'react';
 
-import DP from '../assets/images/dp.jpg'
+import DP from '../assets/images/user.png'
+import { useFundingHook } from '../hooks/useFundingHook';
 
 const Profile = () => {
     const {user} = useAuthContext()
-    const { updateAccount, isLoading} = usePreparerHook()
+    const { updateAccount: updatePreparerAcc, isLoading: isLoadingPreparer} = usePreparerHook()
+    const { updateAccount: updateFundingAcc, isLoading: isLoadingFunding} = useFundingHook()
 
     const [editProfile, setEditProfile] = useState(false)
     const [userData, setUserData] = useState({name: ''})
@@ -74,7 +76,14 @@ const Profile = () => {
             name: userData.name
         }
         if(userData.name) {
-            await updateAccount(data)
+           switch(user.role) {
+            case '4':
+                return await updatePreparerAcc(data)
+            case '3':
+                return await updateFundingAcc(data)
+            case '2':
+                return null
+           }
         } else(
             setError('Please fill out the name before saving.')
         )
@@ -86,7 +95,7 @@ const Profile = () => {
             <div className='relative w-full h-1/2 bg-preparerPrimary rounded-t-lg flex items-center justify-end p-5'>
                 {editProfile ? (
                     <div className='flex gap-3'>
-                        <button disabled={isLoading} onClick={updateAcc} className='px-5 py-2 text-white font-semibold rounded-lg bg-preparerSecondary'>Save</button>
+                        <button disabled={isLoadingPreparer || isLoadingFunding} onClick={updateAcc} className='px-5 py-2 text-white font-semibold rounded-lg bg-preparerSecondary'>Save</button>
                         <button onClick={edit} className='px-5 py-2 text-white font-semibold rounded-lg bg-preparerSecondary'>Cancel</button>
                     </div>
                 ) : (
@@ -95,7 +104,7 @@ const Profile = () => {
                         onClick={edit}>Edit Profile</button>
                 )}
                 <div className="absolute -bottom-28 left-10 w-52 h-52 rounded-full border-4 border-white">
-                    <div className='w-full h-full relative'>
+                    <div className='w-full h-full relative bg-white rounded-full'>
                         <img className='w-full h-full object-cover rounded-full' src={imagePreview} alt="profile picture" />
                         {editProfile && (
                             <button onClick={uploadImage} className='absolute right-0 bottom-[22px] p-3 w-auto h-auto rounded-full bg-gray-200'>
