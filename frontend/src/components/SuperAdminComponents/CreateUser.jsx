@@ -5,7 +5,7 @@ import Loader from "../Loader"
 import PropTypes from 'prop-types'
 import { useSuperAdminHook } from "../../hooks/useSuperAdminHook"
 
-const UserManagement = ({modal, account = {}, flag}) => {
+const UserManagement = ({modal, account = {}, flag, users}) => {
   //state
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
   const [passwordError, setPasswordError] = useState('')
@@ -46,7 +46,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
   }
   return (
     <form onSubmit={handleSubmit} className="bg-white w-2/5 rounded-lg border-[1px] mr-3 p-5">
-      <h1 className="text-center text-3xl mb-3 font-bold text-superAdminBlue">Create User</h1>
+      <h1 className="text-center text-3xl mb-3 font-bold text-superAdminBlue">Create Account</h1>
       <h1 className="mb-3 font-semibold text-lg">Personal Information</h1>
       <div className="h-auto w-full flex gap-3">
         <div className="flex flex-col w-1/2">
@@ -137,7 +137,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
       </div>
       {error && (
         <div className="h-auto w-full py-3 text-center">
-          <h5 className="text-superAdminMustard font-semibold">{error}</h5>
+          <h5 className="text-superAdminMustard font-semibold">{error === 'Firebase: Error (auth/email-already-in-use).' ? 'Email is already in use' : error}</h5>
         </div>
       )}
     </form>

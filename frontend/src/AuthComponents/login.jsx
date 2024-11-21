@@ -107,7 +107,7 @@ const Login = () => {
                         <p onClick={openForgotPass} className="cursor-pointer">Forgot Password?</p>
                     </div>
                     {error && (<div className="w-full text-center">
-                        <h4 className="text-sm text-red-600">{error}</h4>
+                        <h4 className="text-lg text-red-600">{error === 'Firebase: Error (auth/invalid-credential).' ? 'Invalid Credentials' : error}</h4>
                     </div>)}
                     {/* <div className="w-full h-auto px-2 pt-2">
                         <div className="w-full h-auto px-2 pt-2 border-t-2 relative">

@@ -83,7 +83,7 @@ const FieldOffices = (props) => {
             )}
           </div>
         </div>
-        <div className={`${dropDown ? ' max-h-96' : 'h-0'} w-full rounded-lg overflow-hidden`}>
+        <div className={`${dropDown ? ' max-h-96' : 'h-0'} w-full rounded-lg overflow-auto`}>
           <div className=" w-full h-auto px-5 mb-5">
             <p className="font-bold text-sm mt-1">Field Office: <span className="font-normal">{fieldOffice.fieldOffice}</span></p>
             <p className="font-bold text-sm mt-1">ASA: <span className="font-normal">{formatToPeso(fieldOffice.ASA)}</span></p>
@@ -91,7 +91,7 @@ const FieldOffices = (props) => {
             <p className="font-bold text-sm mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(fieldOffice.RO)}</span></p>
             <p className="font-bold text-sm mt-1">Total Spending: <span className="font-normal">{formatToPeso(fieldOffice.FO)}</span></p>
           </div>
-          <table className='w-full border-2'>
+          <table className='w-full border-2 table-auto'>
             <thead className='bg-gray-200'>
               <tr>
                 <th className='border-2'>Date</th>
@@ -106,12 +106,12 @@ const FieldOffices = (props) => {
               {fieldOffice.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0 ? (
                 Object.entries(fieldOffice.dvCollection).map(([key, DV]) => (
                   <tr key={key}>
-                    <td className='text-center border-2'>{DV.date}</td>
-                    <td className='text-center border-2'>{DV.DVNoCount}</td>
-                    <td className='text-center border-2'>{DV.orsData}</td>
+                    <td className='text-center border-2 px-16'>{DV.date}</td>
+                    <td className='text-center border-2 px-12'>{DV.DVNoCount}</td>
+                    <td className='text-center border-2 px-12'>{DV.orsData}</td>
                     <td className='truncate px-5 border-2'>{DV.payee}</td>
                     <td className='truncate px-5 border-2'>{DV.particulars}</td>
-                    <td className='text-center border-2'>{DV.amount}</td>
+                    <td className='text-center border-2 px-16'>{DV.amount}</td>
                   </tr>
                 ))
               ) : (

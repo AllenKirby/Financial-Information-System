@@ -44,8 +44,8 @@ const Dropdown = ({ title, categoryForecast, percentages }) => {
             {isOpen && (
                 <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
                     {Object.entries(subcategoryForecast).map(([key, value]) => (
-                        <li key={key} className="text-gray-700">
-                            {key}:{" "}
+                        <li key={key} className="list-none flex items-center justify-between text-gray-700">
+                            <p className="text-sm">{key}</p>:{" "}
                             <span
                                 className={`${
                                     user?.role === "1"
