@@ -91,6 +91,24 @@ export const useAuthHook = () => {
         }
       }
 
+      const resetPassword = async(email) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+          const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgotpassword`, {email}, {
+            withCredentials: true
+          })
+          if(res.status === 200)
+            setIsLoading(false)
+            return true
+        } catch (error) {
+          setIsLoading(false)
+          const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+          setError(errorMessage);
+          console.log(error)
+        }
+      } 
+
       const googleLogin = async () => {
         const auth = getAuth();  
         try{
@@ -126,5 +144,5 @@ export const useAuthHook = () => {
         }
     }
 
-    return {login, logout, googleLogin,isLoading, error}
+    return {login, logout, googleLogin,resetPassword, isLoading, error}
 }

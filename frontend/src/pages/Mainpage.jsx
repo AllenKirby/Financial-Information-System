@@ -26,6 +26,7 @@ import ControlBook from "../components/OperatorComponents/ControlBook";
 import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 import ComparisonView from "../components/AdminComponents/ComparisonView"
 import Profile from "../components/Profile";
+import ResetPassword from "../components/SuperAdminComponents/ResetPassword";
 
 
 const Mainpage = () => {
@@ -72,9 +73,10 @@ const Mainpage = () => {
           <Route path="editform" element={<PrivateRoute allowedRoles={['2']}><Editform/></PrivateRoute>}/>
           <Route path="comparison" element={<PrivateRoute allowedRoles={['2']}><ComparisonView/></PrivateRoute>}/>
         </Route>
-        <Route path="/superadmin" element={<SuperAdminPage/>}>
-          <Route path="usermanagement" element={<UserManagement />}/>
-          <Route path="accesscontrol" element={<AccessControl />}/>
+        <Route path="/superadmin" element={<PrivateRoute allowedRoles={['0']}><SuperAdminPage/></PrivateRoute>}>
+          <Route path="usermanagement" element={<PrivateRoute allowedRoles={['0']}><UserManagement /></PrivateRoute>}/>
+          <Route path="accesscontrol" element={<PrivateRoute allowedRoles={['0']}><AccessControl /></PrivateRoute>}/>
+          <Route path="resetpasswordrequest" element={<PrivateRoute allowedRoles={['0']}><ResetPassword/></PrivateRoute>}/>
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>

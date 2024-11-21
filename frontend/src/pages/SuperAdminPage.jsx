@@ -7,6 +7,9 @@ import { useEffect, useState } from "react";
 import { PiUsersThreeBold } from "react-icons/pi";
 import { TbUserShield } from "react-icons/tb";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { RiLockPasswordLine } from "react-icons/ri";
+import { useSuperAdminHook } from "../hooks/useSuperAdminHook";
+import { useDispatch } from "react-redux";
 
 const SuperAdminPage = () => {
     const page = useLocation()
@@ -14,15 +17,30 @@ const SuperAdminPage = () => {
     const [navbarExpand, setNavbarExpand] = useState(true)
     const [navbarSize, setNavbarSize] = useState('')
     const [mainSize, setMainSize] = useState('')
+    const { getRequest } = useSuperAdminHook()
+    const dispatch = useDispatch()
 
     const navItems = [
       {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={22} />},
-      {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={22} />}
+      {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={22} />},
+      {label: 'Reset Password', path: '/superadmin/resetpasswordrequest', icon: <RiLockPasswordLine size={22} />}
     ]
+
+    useEffect(() => {
+      const getReq = async() => {
+        const unsubscribe = await getRequest(dispatch)
+        return () => unsubscribe
+      }
+      getReq()
+    }, [])
 
     useEffect(() => {
         if(page.pathname === "/superadmin/usermanagement"){
           setLocation('User Management')
+        } else if(page.pathname === "/superadmin/accesscontrol"){
+          setLocation('Access Control')
+        } else if(page.pathname === "/superadmin/resetpasswordrequest"){
+          setLocation('Reset Password Requests')
         }
       }, [page.pathname])
 

@@ -58,7 +58,7 @@ const Notification = ({ notification, markAsRead }) => {
       markAsRead(notification.key)
       const dvNo = notifData.DV_key
       openNotif(dvNo)
-    }}>
+      }}>
       <p >{notifMessage.message1} <strong>{notifData.docName}</strong> {notifMessage.message2} <strong>{notifData.name.replace(',', ' ')}</strong></p>
       <p className='text-xs mt-2 flex items-center justify-between'>{formatDistanceToNow(formateDateTime(notifData.date, notifData.time), { addSuffix: true })} {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}</p>
     </li>
