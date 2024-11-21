@@ -131,12 +131,15 @@ const Header = ({ currentPage}) => {
                 <h3 className='font-semibold text-xl my-2'>Notifications</h3>
 
                   <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
-                    {notifications.length > 0 ? (
-                      notifications.map((notification)=> (
-                        <Notification key={notification.key} notification={notification} markAsRead={markAsRead} />
-                      ))
-                      ) : (
-                        <li className='text-center'>No notifications found</li>
+                    {notifications.length > 0 ?( 
+                          notifications.map((notification)=> (
+                            <Notification key={notification.key} notification={notification} markAsRead={markAsRead} />
+                          ))
+                        
+                       ): (
+                        <div className='w-full h-full flex items-center justify-center'>
+                          <li className='text-center'>No Notifications found</li>
+                        </div>
                       )
                     }
                   </ul>

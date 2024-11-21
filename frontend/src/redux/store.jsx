@@ -5,6 +5,7 @@ import ControlBookReducer from "./ControlBookRedux"
 import TestForecastedReducer from "./TestForecastedRedux"
 import TotalExpenseReducer from "./TotalExpenseRedux"
 import AllVouchersReducer from './AllVouchersRedux'
+import ResetPasswordRequestsReducer from "./ResetPasswordRequests"
 
 export const store = configureStore({
     reducer : {
@@ -13,6 +14,7 @@ export const store = configureStore({
         controlBook: ControlBookReducer,
         testforecast: TestForecastedReducer,
         totalexpense: TotalExpenseReducer,
-        vouchers: AllVouchersReducer
+        vouchers: AllVouchersReducer,
+        request: ResetPasswordRequestsReducer
     }
 })
