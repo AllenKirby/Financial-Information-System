@@ -87,7 +87,6 @@ const FieldOffices = (props) => {
           <div className=" w-full h-auto px-5 mb-5">
             <p className="font-bold text-sm mt-1">Field Office: <span className="font-normal">{fieldOffice.fieldOffice}</span></p>
             <p className="font-bold text-sm mt-1">ASA: <span className="font-normal">{formatToPeso(fieldOffice.ASA)}</span></p>
-            <p className="font-bold text-sm mt-1">Available ASA Budget: <span className="font-normal">{formatToPeso(fieldOffice.leftBudget)}</span></p>
             <p className="font-bold text-sm mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(fieldOffice.RO)}</span></p>
             <p className="font-bold text-sm mt-1">Total Spending: <span className="font-normal">{formatToPeso(fieldOffice.FO)}</span></p>
           </div>

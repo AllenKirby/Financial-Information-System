@@ -11,13 +11,17 @@ const BudgetRecommendation = () => {
     const dispatch = useDispatch()
 
     const currentMonth = new Date().getMonth() + 1;
+    const curYear = new Date().getFullYear()
+    const currentMonth2 = `${curYear}-${currentMonth}`
     const currentYear = new Date().getFullYear()
     const [forecastedValues, setForecastedValues] = useState({});
     const [remainingMonths, setRemainingMonths] = useState([]);
-    const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+    const [selectedMonth, setSelectedMonth] = useState(currentMonth2);
     const [expense, setExpense] = useState(0)
     const {user} = useAuthContext()
     const [items, setItems] = useState({proportions: {}, value: 0})
+    const [dateSTR, setDateSTR] = useState({date: 0, year: 0})
+    
 
     const fetchData = async () => {
         try {
@@ -31,7 +35,7 @@ const BudgetRecommendation = () => {
         }
     };
 
-    const fetchPercentages = async (forecastValue) => {
+    const fetchPercentages = async (forecastValue, month = 11, year = 2024) => {
         // const storedProportions = sessionStorage.getItem("proportions");
         // if (storedProportions) {
         //     const parsedProportions = JSON.parse(storedProportions);
@@ -41,8 +45,8 @@ const BudgetRecommendation = () => {
         // }
         try {
             const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/adminhead/getPercentageForMonth`, {
-                month: 11,
-                year: 2024,
+                month: month,
+                year: year,
                 amount: forecastValue
             }, { withCredentials: true });
             // const proportions = calculateProportions(data);
@@ -83,19 +87,37 @@ const BudgetRecommendation = () => {
     }, []);
 
     const generateRemainingMonths = () => {
-        const currentMonth = new Date().getMonth() + 1;
+        const currentDate = new Date();
+        const currentMonth = currentDate.getMonth() + 1;
+        const currentYear = currentDate.getFullYear();
+        
         const months = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
-        const reaminging = months.slice(currentMonth - 1).map((month, index) => ({
+    
+        const remainingMonths = months.slice(currentMonth - 1).map((month, index) => ({
             name: month,
-            value: currentMonth + index
+            value: `${currentYear}-${String(currentMonth + index).padStart(2, '0')}`
         }));
-        setRemainingMonths(reaminging)
+    
+        const nextYearMonths = months.map((month, index) => ({
+            name: month,
+            value: `${currentYear + 1}-${String(index + 1).padStart(2, '0')}`
+        }));
+    
+        setRemainingMonths([...remainingMonths, ...nextYearMonths]);
     };
 
     const handleTest = async () => {
+        const forecast = await handleTestExpense(expense)
+        const forecastValue = Object.entries(forecast)[0][1].forecast
+        const proportions = await fetchPercentages(forecastValue, dateSTR.date, dateSTR.year);
+        setItems({proportions: proportions, value: forecastValue})
+    }
+
+
+    const handleTestExpense = async (expense) => {
         try{
             const data = {
                 frequency: 1,
@@ -105,7 +127,6 @@ const BudgetRecommendation = () => {
             const res = await axios.post(`${import.meta.env.VITE_API_URL}/adminhead/sendTestExpense`, data, {
                 withCredentials: true
             })
-            const proportions = await fetchPercentages();
             if(res.status === 200){
                 const forecast = res.data
                 const sampleData = {
@@ -113,11 +134,8 @@ const BudgetRecommendation = () => {
                 }
                 dispatch(setTestForecast(forecast))
                 dispatch(setSample(sampleData))
-                
-                if (proportions && forecast) {
-                    const monthDifference = selectedMonth >= currentMonth ? selectedMonth - currentMonth : (selectedMonth+12) - currentMonth
-                    calculateRecommendation(proportions, forecast, monthDifference, false);
-                }
+
+                return forecast
             }
         }catch(error){
             console.log(error)
@@ -127,13 +145,13 @@ const BudgetRecommendation = () => {
     const handleReset  =async() => {
         try{
             const forecast = await fetchForecastedValues();
-            const proportions = await fetchPercentages();
-            if (proportions && forecast) {
-                calculateRecommendation(proportions, forecast);
-                setExpense(0)
-                setSelectedMonth(currentMonth)
-                dispatch(resetTestForecast())
-            }
+            const forecastValue = Object.entries(forecast.monthly)[0][1].forecast
+            const proportions = await fetchPercentages(forecastValue);
+            setItems({proportions: proportions, value: forecastValue})
+            setExpense(0)
+            dispatch(resetTestForecast())
+            setSelectedMonth(currentMonth)
+           
         }catch(error){
             console.log(error)
         }
@@ -153,22 +171,32 @@ const BudgetRecommendation = () => {
                 <select 
                     className="border-2 rounded-md p-2 w-2/6"
                     value={selectedMonth}
-                    onChange={(e) => setSelectedMonth(Number(e.target.value))}>
-                    {
-                        remainingMonths.map(({name, value}) => (
-                            <option key={value} value={value}>
-                                {name}
-                            </option>
-                        ))
-                    }
+                    onChange={(e) => {
+                        const value = e.target.value
+                        const [y, m] = value.split('-')
+                        const year = Number(y)
+                        const month = Number(m)
+                        console.log(year, month); 
+                        setSelectedMonth(value);
+                        setDateSTR({date: month, year: year}) 
+                    }}
+                >
+                    <option value="" disabled>
+                        Select a month
+                    </option>
+                    {remainingMonths.map(({ name, value }) => (
+                        <option key={value} value={value}>
+                            {name} {value.split('-')[0]} {/* Display month and year */}
+                        </option>
+                    ))}
                 </select>
                 <button
                     className={`p-2 w-1/6 rounded-md text-white flex justify-center ${
-                        selectedMonth === currentMonth
+                        selectedMonth === currentMonth2
                             ? "bg-gray-400 cursor-not-allowed"
                             : "bg-customgreen hover:bg-green-600"
                     }`}
-                    disabled={selectedMonth === currentMonth}
+                    disabled={selectedMonth === currentMonth2}
                     onClick={handleTest}
                 >
                     <IoMdSend />
@@ -181,14 +209,7 @@ const BudgetRecommendation = () => {
                 </button>
             </div>
             <Dropdown title="Forecast Breakdown" categoryForecast={items.value} percentages={items.proportions}/>
-            {/* {Object.entries(forecastedValues).map(([categoryKey, { categoryForecast, subcategoryForecasts }]) => (
-                <Dropdown
-                    key={categoryKey}
-                    title={categoryKey}
-                    categoryForecast={categoryForecast}
-                    subcategoryForecast={subcategoryForecasts}
-                />
-            ))} */}
+            
         </div>
     );
 };

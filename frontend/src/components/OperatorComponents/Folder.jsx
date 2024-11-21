@@ -5,7 +5,7 @@ import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
 
 import { useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 import { useFundingHook } from '../../hooks/useFundingHook';
@@ -14,7 +14,8 @@ import AddControlBook from "./AddControlBook"
 
 const Folder = ({ASANo, controlBook}) => {
     const [controlBookFlag, setControlBookFlag] = useState(false)
-
+    const [deletable, setIsDeletable] = useState(true)
+    
     const navigate = useNavigate()
     console.log(controlBook)
     
@@ -57,6 +58,19 @@ const Folder = ({ASANo, controlBook}) => {
           });
     }
 
+    const isDeletable = () => {
+      const fieldOffices = controlBook?.fieldOffices ?? {};
+      const ans = Object.entries(fieldOffices).filter(([, fieldOffice]) =>
+          fieldOffice?.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0
+      );
+      const deletion = ans.length > 0;
+      setIsDeletable(deletion);
+  };
+
+  useEffect(() => {
+    isDeletable()
+  }, [controlBook])
+
   return (
     <div onClick={() => navigate(`${controlBook.ASANo}`)} className="h-1/2 rounded-lg p-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer">
       <div className='w-full h-[70%] flex items-center justify-center'>
@@ -71,9 +85,13 @@ const Folder = ({ASANo, controlBook}) => {
           <button onClick={modal}>
             <MdOutlineModeEdit size={18}/>
           </button>
-          <button disabled={isLoading} onClick={deleteCB}>
-            <MdDeleteOutline size={20} color='red'/>
-          </button>
+          {
+            !deletable && (
+              <button disabled={isLoading} onClick={deleteCB}>
+                <MdDeleteOutline size={20} color='red'/>
+              </button>
+            )
+          }
         </div>
         </div>
       <div className='px-4'>

@@ -28,7 +28,7 @@ const HeadPage = () => {
   const { dispatch: dispatchContext, documents } = useHeadDisbursementContext()
   const dispatch = useDispatch()
   const permission = useSelector((state) => state.permission)
-  const [status, setStatus] = useState([])
+  // const [status, setStatus] = useState([])
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
@@ -85,18 +85,18 @@ const HeadPage = () => {
     }
   }, [navbarExpand])
 
-  useEffect(() => {
-      if(permission?.data?.permission) {
-        setStatus(['Approved', 'Under Review', 'For Approval'])
-      } else {
-        setStatus(['Under Review'])
-      }
-  }, [permission])
+  // useEffect(() => {
+  //     if(permission?.data?.permission) {
+  //       setStatus(['Approved', 'Under Review', 'For Approval'])
+  //     } else {
+  //       setStatus(['Under Review'])
+  //     }
+  // }, [permission])
 
   useEffect(() => {
-    if (!status.length) return;  
-
-    const q = query(collection(firestore, 'records'), where('status', 'in', status ? ['Under Review'] : status));
+    // if (!status.length) return;  
+    const status = permission?.data?.permission ? ['Approved', 'Under Review', 'For Approval'] : ['Under Review']
+    const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['Under Review']));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const newDocuments = snapshot.docs.reduce((acc, doc) => {
         acc[doc.id] = { data: { ...doc.data() } };

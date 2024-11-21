@@ -2,14 +2,16 @@ import { useState } from "react";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc } from "firebase/firestore"
-import { setControlBook } from '../redux/ControlBookRedux'
+import { setControlBook, deleteFolder } from '../redux/ControlBookRedux'
 import { useAuthContext } from "./useAuthContext";
+import { useDispatch } from "react-redux";
 
 export const useFundingHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const { dispatch } = useAuthContext()
     const apiURL = import.meta.env.VITE_API_URL
+    const dispatchFolder = useDispatch()
 
     const returnDoc = async (data) => {
         setError(null)
@@ -254,6 +256,7 @@ export const useFundingHook = () => {
             if(res.status === 200) {
                 setIsLoading(false)
                 console.log(res.data)
+                dispatchFolder(deleteFolder(id))
                 return true
             }
         } catch(error) {
