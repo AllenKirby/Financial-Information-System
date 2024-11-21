@@ -272,11 +272,11 @@ const BudgetRecommendation = () => {
                             .map(([category, totalAmount]) => ({ category, totalAmount }));
 
                         return sortedCategories.map(({ category, totalAmount }) => (
-                            <li key={category} className="flex justify-between p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
-                            <div className="flex justify-between">
-                                <span className="font-semibold text-lg">{category}</span>
-                                <span className="font-medium text-gray-700">{totalAmount}</span>
-                            </div>
+                            <li key={category} className="list-none p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
+                              <div className="flex items-center justify-between">
+                                  <p className="font-semibold text-sm truncate">{category}</p>
+                                  <p className="font-medium text-gray-700">{totalAmount}</p>
+                              </div>
                             </li>
                         ));
                     })}
