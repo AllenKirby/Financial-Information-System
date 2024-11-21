@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { firestore } from "../../../config/firebase-config";
-import { collection, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, getDocs } from "firebase/firestore";
 import LineGraph from "./LineGraph";
 import BarChart from "./BarChart";
 
@@ -24,7 +24,7 @@ const ChartData = ({customYear}) => {
             },
             (error) => console.error("Error listening to collection:", error)
         );
-
+        console.log('docs')
         return () => unsubscribe();
     }, []);
 

@@ -183,7 +183,15 @@ const ViewDocument = () => {
   };
 
   const approve = async() => {
-
+    console.log(doc)
+    const data = {
+      payee: doc.payee,
+      amount: doc.amount,
+      fund: doc.fund,
+      date: doc.date,
+      optionalAmount: doc.optionalAmount,
+      accCategory: doc.accCategory
+    }
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -194,7 +202,7 @@ const ViewDocument = () => {
       confirmButtonText: "Yes, Approve it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await approveDV(idStatus.id, doc.payee)
+        const res = await approveDV(idStatus.id, data)
         if (res) {
           Swal.fire({
             title: "Approved!",

@@ -17,37 +17,40 @@ const BudgetRecommendation = () => {
     const [selectedMonth, setSelectedMonth] = useState(currentMonth);
     const [expense, setExpense] = useState(0)
     const {user} = useAuthContext()
+    const [items, setItems] = useState({proportions: {}, value: 0})
 
     const fetchData = async () => {
         try {
-            const proportions = await fetchPercentages();
             const forecast = await fetchForecastedValues();
-            if (proportions && forecast) {
-                calculateRecommendation(proportions, forecast);
-            }
+            
+            const forecastValue = Object.entries(forecast.monthly)[0][1].forecast
+            const proportions = await fetchPercentages(forecastValue);
+            setItems({proportions: proportions, value: forecastValue})
         } catch (error) {
             console.error("Error during data fetching or recommendation calculation", error);
         }
     };
 
-    const fetchPercentages = async () => {
-        const storedProportions = sessionStorage.getItem("proportions");
-        if (storedProportions) {
-            const parsedProportions = JSON.parse(storedProportions);
-            return parsedProportions;
-        } else {
-            try {
-                const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/adminhead/getPercentageForMonth`, {
-                    year: "2024",
-                    month: "10",
-                }, { withCredentials: true });
-                const proportions = calculateProportions(data);
-                sessionStorage.setItem("proportions", JSON.stringify(proportions));
-                return proportions;
-            } catch (error) {
-                console.error("Error fetching proportions:", error);
-                throw error;
-            }
+    const fetchPercentages = async (forecastValue) => {
+        // const storedProportions = sessionStorage.getItem("proportions");
+        // if (storedProportions) {
+        //     const parsedProportions = JSON.parse(storedProportions);
+        //     return parsedProportions;
+        // } else {
+            
+        // }
+        try {
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/adminhead/getPercentageForMonth`, {
+                month: 11,
+                year: 2024,
+                amount: forecastValue
+            }, { withCredentials: true });
+            // const proportions = calculateProportions(data);
+            // sessionStorage.setItem("proportions", JSON.stringify(proportions));
+            return data;
+        } catch (error) {
+            console.error("Error fetching proportions:", error);
+            throw error;
         }
     };
 
@@ -67,65 +70,6 @@ const BudgetRecommendation = () => {
                 console.error("Error fetching forecasted values:", error);
                 throw error;
             }
-        }
-    };
-
-    const calculateProportions = (data) => {
-        const totalSum = Object.values(data).reduce((total, category) => (
-            total + Object.values(category).reduce((catTotal, subcategory) => catTotal + subcategory, 0)
-        ), 0);
-
-        const proportions = {};
-        Object.keys(data).forEach((category) => {
-            const categoryTotal = Object.values(data[category]).reduce((sum, subcategory) => sum + subcategory, 0);
-            const categoryProportion = categoryTotal / totalSum;
-
-            proportions[category] = {
-                categoryProportion,
-                subcategoryProportions: {},
-            };
-
-            Object.keys(data[category]).forEach((subcategory) => {
-                const subcategoryProportion = data[category][subcategory] / categoryTotal;
-                proportions[category].subcategoryProportions[subcategory] = subcategoryProportion;
-            });
-        });
-
-        return proportions;
-    };
-
-    const calculateRecommendation = (proportions, forecast, thismonth = 0, flag = true) => {
-        let forecastValue = 0
-        if(flag){
-            if (!forecast?.monthly) return;
-
-            const dateString = Object.keys(forecast.monthly)[thismonth];
-            forecastValue = parseFloat(forecast.monthly[dateString]?.forecast);
-        }else{
-            if (!forecast) return;
-            const dateString = Object.keys(forecast)[thismonth];
-            forecastValue = parseFloat(forecast[dateString]?.forecast);
-        }
-
-        if (!isNaN(forecastValue)) {
-            const forecastDistribution = {};
-
-            Object.keys(proportions).forEach((category) => {
-                const categoryForecast = forecastValue * proportions[category].categoryProportion;
-                forecastDistribution[category] = {
-                    categoryForecast,
-                    subcategoryForecasts: {},
-                };
-
-                Object.keys(proportions[category].subcategoryProportions).forEach((subcategory) => {
-                    forecastDistribution[category].subcategoryForecasts[subcategory] =
-                        categoryForecast * proportions[category].subcategoryProportions[subcategory];
-                });
-            });
-
-            setForecastedValues(forecastDistribution);
-        } else {
-            console.warn("Invalid forecast value encountered.");
         }
     };
 
@@ -236,15 +180,15 @@ const BudgetRecommendation = () => {
                     <IoMdBackspace />
                 </button>
             </div>
-
-            {Object.entries(forecastedValues).map(([categoryKey, { categoryForecast, subcategoryForecasts }]) => (
+            <Dropdown title="Forecast Breakdown" categoryForecast={items.value} percentages={items.proportions}/>
+            {/* {Object.entries(forecastedValues).map(([categoryKey, { categoryForecast, subcategoryForecasts }]) => (
                 <Dropdown
                     key={categoryKey}
                     title={categoryKey}
                     categoryForecast={categoryForecast}
                     subcategoryForecast={subcategoryForecasts}
                 />
-            ))}
+            ))} */}
         </div>
     );
 };
