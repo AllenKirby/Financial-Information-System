@@ -13,7 +13,6 @@ const FundClusterModal = ({fundCluster, modal, vouchers}) => {
     useEffect(() => {
         const result = Object.entries(vouchers).filter(([,voucher]) => voucher.fund === fundCluster)
         if(result.length !== 0) {
-            console.log(result)
             setFilteredVouchers(result)
         } else {
             console.log(`${fundCluster} voucher(s) is empty`)

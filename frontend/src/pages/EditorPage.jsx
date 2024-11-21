@@ -35,7 +35,7 @@ const EditorPage = () => {
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
       : []),
-    { label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
+    //{ label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
   ];
 
   useEffect(() => {
