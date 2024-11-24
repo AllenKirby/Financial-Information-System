@@ -456,7 +456,9 @@ const appendDataToSheet = async (req, res) => {
         RO: TotalASA,
         FO: 0,
         endDate: endDate,
-        leftBudget: TotalASA
+        leftBudget: TotalASA,
+        prevMonth: 0,
+        thisMonth: 0
     }
 
     try {
