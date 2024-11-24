@@ -586,7 +586,20 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 value={payeeData.date}
                 placeholder="Date"
                 onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
-                required  />
+                required
+                min={new Date(new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" }))
+                .toISOString()
+                .slice(0, 7) + "-01"} 
+              max={new Date(
+                new Date(
+                  new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" })
+                ).getFullYear(),
+                new Date().getMonth() + 1,
+                0
+              )
+                .toISOString()
+                .slice(0, 10)}
+                  />
             </div>
           </div>
           <div className='w-full flex gap-2'>

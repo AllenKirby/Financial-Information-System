@@ -110,6 +110,7 @@ const AddControlBook = (props) => {
                             value={controlBookData.date}
                             onChange={(e) => setControlBookData({...controlBookData, date: e.target.value})}
                             required
+                            max={new Date().toISOString().split("T")[0]}
                             className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
                 <div className="w-1/2 flex flex-col">
@@ -119,7 +120,7 @@ const AddControlBook = (props) => {
                         value={controlBookData.endDate}
                         onChange={(e) => setControlBookData({...controlBookData, endDate: e.target.value})}
                         required
-                        min={new Date().toISOString().split("T")[0]}
+                        min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]}
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
             </div>
