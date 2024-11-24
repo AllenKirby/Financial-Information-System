@@ -23,7 +23,8 @@ export default {
         fundingGray: '#E2D0F9',
         preparerPrimary: '#195190',
         preparerSecondary: '#A2A2A1',
-        coolSteel: '#F8F7F4'
+        coolSteel: '#FDFDFD',
+        eggWhite: '#FDFDFD'
       },
       spacing: {
         'a4-width': '210mm',  // Custom A4 width

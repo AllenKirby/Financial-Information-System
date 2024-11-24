@@ -47,8 +47,7 @@ export const NameAndOffice = () => {
 
     const handleRemoveEntry = (keyToRemove) => {
         const deleting = async () => {
-            const res_bool = await deleteNameAndOffice(keyToRemove)
-            console.log('deleted?', res_bool)
+             deleteNameAndOffice(keyToRemove)
             setEntries((prevEntries) => {
                 const newEntries = { ...prevEntries };
                 delete newEntries[keyToRemove];

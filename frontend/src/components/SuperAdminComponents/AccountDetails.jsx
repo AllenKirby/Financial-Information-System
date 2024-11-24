@@ -95,7 +95,7 @@ const AccountDetails = ({index, account}) => {
     }
 
     return (
-        <div className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto flex rounded-md py-2 cursor-pointer my-1`}>
+        <div className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto flex py-2 cursor-pointer my-1`}>
             <div className='w-[90%] h-auto flex'>
                 <p className="w-1/5 px-2 truncate font-semibold">{account.customClaims.dispName.replace(',', ' ')}</p>
                 <p className="w-1/5 px-2">{role}</p>

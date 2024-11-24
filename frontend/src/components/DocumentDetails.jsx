@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { parse, formatDistanceToNow } from 'date-fns';
-import { BsFiletypePdf } from "react-icons/bs";
 
 const DocumentDetails = ({ index, documents, type }) => {
   const navigate = useNavigate();
@@ -81,20 +80,20 @@ const DocumentDetails = ({ index, documents, type }) => {
         return docu?.createdAt
       case '3':
         if (docu?.submittedBy) {
-          const [, date, time] = docu.submittedBy.split('|'); 
-          return `${date} ${time}`;
+          const [, dateTime] = docu.submittedBy.split('|'); 
+          return dateTime;
         }
         return;
       case '2':
         if (docu?.updatedBy) {
-          const [, date, time] = docu.updatedBy.split('|'); 
-          return `${date} ${time}`;
+          const [, dateTime] = docu.updatedBy.split('|'); 
+          return dateTime;
         }
         return;
       case '1':
         if (docu?.reviewedBy) {
-          const [, date, time] = docu.reviewedBy.split('|'); 
-          return `${date} ${time}`;
+          const [, dateTime] = docu.reviewedBy.split('|'); 
+          return dateTime;
         }
         return;
       default:
@@ -110,11 +109,11 @@ const DocumentDetails = ({ index, documents, type }) => {
   return (
     <div
       onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
-      className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 rounded-md mb-1 text-customFontGreen cursor-pointer flex items-center justify-center`}
+      className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 mb-1 text-customFontColor cursor-pointer flex items-center justify-center`}
     >
       {/* Payee column */}
       <h2 className={`font-semibold text-left text-sm ${type === '4' || type === '3' || type === '1'? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
-        <BsFiletypePdf size={25}/> {docu?.payee}
+        {docu?.payee}
       </h2>
       {/* DV No. column */}
       <h2 className="text-xs font-light text-center w-1/6">
@@ -127,7 +126,7 @@ const DocumentDetails = ({ index, documents, type }) => {
         </div>
       </h2>
       <h2 className="text-xs font-light text-center w-1/6">
-        {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}
+        {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
       </h2>
       {(type === '4' || type === '3') && <h2 className="text-xs font-light text-center w-1/6">
         {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}

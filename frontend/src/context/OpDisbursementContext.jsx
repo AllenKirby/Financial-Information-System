@@ -48,8 +48,6 @@ export const OpDisbursementContextProvider = ({children}) => {
         OpDocuments: { documents: {} } 
     })
 
-    console.log('op-Disbursement Context', state.OpDocuments)
-
     return(
         <OpDisbursementContext.Provider value={{...state, dispatch}}>
             {children}

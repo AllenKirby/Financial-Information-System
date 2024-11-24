@@ -23,10 +23,8 @@ export const AuthContextProvider = ({ children }) => {
     const [state, dispatch] = useReducer(authReducer, { user: null });
 
     useEffect(() => {
-        console.log('authcontext running...')
         const unsubscribe = onIdTokenChanged(auth, async (userAuth) => {
             if(userAuth){
-                console.log('onauthStateChanged is running...', userAuth)
                 try{
                     const token = await userAuth.getIdToken()
                     const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/refreshToken`, {
@@ -40,16 +38,13 @@ export const AuthContextProvider = ({ children }) => {
                         cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'Strict' });
                         dispatch({type: 'LOGIN', payload: response.data})
                     }
-                    console.log('refreshed')
                 }catch(error){
-                    console.log('logging out')
                     cookies.remove('token')
                     cookies.remove('user')
                     dispatch({type: 'LOGOUT'})
                     console.log(error)
                 }
             }else{
-                console.log("User is logged out.");
                 cookies.remove("token");
                 cookies.remove("user");
                 dispatch({ type: "LOGOUT" });
@@ -94,8 +89,6 @@ export const AuthContextProvider = ({ children }) => {
     //     })
     //     return () => unsubscribe();
     }, []);
-
-    console.log('AuthContext state:', state);
 
     return (
         <AuthContext.Provider value={{ ...state, dispatch }}>

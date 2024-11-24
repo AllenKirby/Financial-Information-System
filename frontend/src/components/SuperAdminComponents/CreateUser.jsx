@@ -5,7 +5,7 @@ import Loader from "../Loader"
 import PropTypes from 'prop-types'
 import { useSuperAdminHook } from "../../hooks/useSuperAdminHook"
 
-const UserManagement = ({modal, account = {}, flag, users}) => {
+const UserManagement = ({modal, account = {}, flag}) => {
   //state
   const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
   const [passwordError, setPasswordError] = useState('')
@@ -33,7 +33,6 @@ const UserManagement = ({modal, account = {}, flag, users}) => {
     setPasswordError("") 
 
     const res_creatingAccount = await createAcc(userData)
-    console.log(res_creatingAccount)
     if(res_creatingAccount){
       Swal.fire({
         title: "Saved",

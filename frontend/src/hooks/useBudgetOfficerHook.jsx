@@ -54,7 +54,6 @@ export const useBudgetOfficerHook = () => {
                 withCredentials: true
             })
             if(res.status === 200) {
-                console.log(res.data)
                 dispatch({type: 'LOGIN', payload: res.data})
                 setIsLoading(false)
                 return true

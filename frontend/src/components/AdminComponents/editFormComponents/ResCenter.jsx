@@ -39,8 +39,7 @@ export const ResCenter = () => {
 
     const handleDeleteRC = (key) => {
         const deletingRC = async () => {
-            const res_bool = await deleteRC(key)
-            console.log('deleted?', res_bool)
+            await deleteRC(key)
             setArrRC(prev => {
                 const newObj = { ...prev };
                 delete newObj[key];

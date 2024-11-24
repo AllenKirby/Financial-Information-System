@@ -63,7 +63,6 @@ const HeadPage = () => {
       const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         const documentData = { data: { ...docSnapshot.data() } };
-        console.log('Document Data:', documentData);
         dispatch(setPermission(documentData));
       } else {
         console.log('No such document!');
@@ -119,7 +118,7 @@ const HeadPage = () => {
   }, [user, dispatchContext, apiURL, status, documents, permission])
 
   return (
-    <main className="h-screen w-full flex bg-white">
+    <main className="h-screen w-full flex bg-coolSteel">
       <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
         <MdOutlineKeyboardArrowLeft 
           size={25}

@@ -9,7 +9,6 @@ export const ResetPasswordRequestsRedux = createSlice({
         },
         deleteRequest : (state, action) => {
             const uid = action.payload;
-            console.log(uid)
             const newState = { ...state }; 
             delete newState[uid]; 
             return newState;

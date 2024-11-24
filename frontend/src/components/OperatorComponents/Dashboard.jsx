@@ -12,8 +12,6 @@ const Dashboard = () => {
   const {OpDocuments} = useOpDisbursementContext()
   const navigate = useNavigate()
 
-  console.log(OpDocuments)
-
   useEffect(() => {
     const countInReview = () => {
       return Object.entries(OpDocuments?.documents || {}).filter(([, document]) => 

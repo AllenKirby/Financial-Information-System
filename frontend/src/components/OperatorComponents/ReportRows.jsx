@@ -7,12 +7,14 @@ const ReportRows = ({reportData}) => {
     previousTotal: 0
   })
 
+
   const formatToPeso = (value) => {
     return new Intl.NumberFormat('en-PH', {
         style: 'currency',
         currency: 'PHP',
     }).format(value);
   };
+
 
   useEffect(()=> {
     

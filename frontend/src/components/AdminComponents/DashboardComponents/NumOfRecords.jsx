@@ -16,10 +16,8 @@ const NumOfRecords = ({modal}) => {
     useEffect(() => {
         const getRecords = async () => {
             try{
-                console.log(recordx)
                 const storedRecords = sessionStorage.getItem('records')
                 if(storedRecords){
-                    console.log('if')
                     const recordData = JSON.parse(storedRecords)
                     dispatch(setRecords(recordData))
                     
@@ -28,9 +26,7 @@ const NumOfRecords = ({modal}) => {
                     withCredentials: true
                     })
                     if(res.status === 200){
-                        console.log('else')
                         const rec = res.data.records
-                        console.log(rec)
                         sessionStorage.setItem('records', JSON.stringify(rec))
                         dispatch(setRecords(rec))
                     }
