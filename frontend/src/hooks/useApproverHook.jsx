@@ -3,10 +3,12 @@ import { useState } from "react"
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot } from "firebase/firestore"
 import { setVouchers } from '../redux/AllVouchersRedux'
+import { useAuthContext } from "./useAuthContext"
 
 export const useApproverHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
+    const { dispatch } = useAuthContext()
     const apiURL = import.meta.env.VITE_API_URL
 
     const approveDV = async(DV, data) => {
@@ -243,6 +245,27 @@ export const useApproverHook = () => {
         return unsubscribe 
     }
 
+    const updateAccount = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/admin/updateAcc`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                console.log(res.data)
+                dispatch({type: 'LOGIN', payload: res.data})
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
+        }
+    }
+
   return {
     approveDV, 
     addNewFundCluster, 
@@ -258,6 +281,7 @@ export const useApproverHook = () => {
     getTaxType,
     deleteTax,
     getRecords,
+    updateAccount,
     isLoading, 
     error
     }

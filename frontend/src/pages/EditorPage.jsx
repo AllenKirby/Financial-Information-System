@@ -13,7 +13,8 @@ import Header from "../components/Header";
 
 //Icons
 import { TiDocumentText } from "react-icons/ti";
-import { TbLayoutDashboard } from "react-icons/tb";
+import { TbLayoutDashboard} from "react-icons/tb";
+import { BsTable } from "react-icons/bs";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { FiBook, FiUser } from "react-icons/fi";
 
@@ -30,12 +31,13 @@ const EditorPage = () => {
   const { retrieveControlBooks } = useFundingHook()
 
   const navItems = [
-    //{ label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={22} /> },
+    { label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <TiDocumentText size={22} /> } ,
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
       : []),
-    //{ label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
+    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <BsTable size={18} /> },
+    { label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
   ];
 
   useEffect(() => {
@@ -47,6 +49,8 @@ const EditorPage = () => {
       setLocation('Control Book')
     } else if(page.pathname === "/editor/profile"){
       setLocation('Profile')
+    } else if(page.pathname === "/editor/disbursementlogs"){
+      setLocation('Disbursement Logs')
     }
   }, [page.pathname])
 

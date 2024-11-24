@@ -15,7 +15,7 @@ import Disbursementrecords from '../components/OperatorComponents/DisbursementRe
 import HeadPage from "./HeadPage";
 import DisbursementRecordsHead from "../components/HeadComponents/DisbursementRecordsHead";
 import DisbursementRecordsAdmin from "../components/AdminComponents/DisbursementRecords"
-import HistoryLogs from "../components/AdminComponents/HistoryLogs";
+import HistoryLogs from "../components//HistoryLogs";
 import ForbiddenPage from "./ForbiddenPage";
 import SuperAdminPage from "./SuperAdminPage";
 import Editform from "../components/AdminComponents/EditForm";
@@ -26,7 +26,6 @@ import ControlBook from "../components/OperatorComponents/ControlBook";
 import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 import ComparisonView from "../components/AdminComponents/ComparisonView"
 import Profile from "../components/Profile";
-import ResetPassword from "../components/SuperAdminComponents/ResetPassword";
 
 
 const Mainpage = () => {
@@ -40,7 +39,7 @@ const Mainpage = () => {
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-          <Route path="historylogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
+          <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="editform" element={<PrivateRoute allowedRoles={['1']}><Editform/></PrivateRoute>}/>
           <Route path="comparison" element={<PrivateRoute allowedRoles={['1']}><ComparisonView/></PrivateRoute>}/>
         </Route>
@@ -53,6 +52,7 @@ const Mainpage = () => {
           </Route>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['4']}><DashboardPreparer/></PrivateRoute>}/>
           <Route path="profile" element={<PrivateRoute allowedRoles={['4']}><Profile/></PrivateRoute>}/>
+          <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['4']}><HistoryLogs/></PrivateRoute>}/>
         </Route>
         <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
@@ -63,20 +63,22 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewControlBook/></PrivateRoute>}/>
           </Route>
           <Route path="profile" element={<PrivateRoute allowedRoles={['3']}><Profile/></PrivateRoute>}/>
+          <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['3']}><HistoryLogs/></PrivateRoute>}/>
         </Route>
         <Route path="/head" element={<PrivateRoute allowedRoles={['2']}><HeadPage/></PrivateRoute>}>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['2']}><Dashboard/></PrivateRoute>}/>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['2']}><DisbursementRecordsHead/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['2']}><ViewDocument/></PrivateRoute>}/>
           </Route>
+          <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['2']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['2']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="editform" element={<PrivateRoute allowedRoles={['2']}><Editform/></PrivateRoute>}/>
           <Route path="comparison" element={<PrivateRoute allowedRoles={['2']}><ComparisonView/></PrivateRoute>}/>
+          <Route path="profile" element={<PrivateRoute allowedRoles={['2']}><Profile/></PrivateRoute>}/>
         </Route>
         <Route path="/superadmin" element={<PrivateRoute allowedRoles={['0']}><SuperAdminPage/></PrivateRoute>}>
           <Route path="usermanagement" element={<PrivateRoute allowedRoles={['0']}><UserManagement /></PrivateRoute>}/>
           <Route path="accesscontrol" element={<PrivateRoute allowedRoles={['0']}><AccessControl /></PrivateRoute>}/>
-          <Route path="resetpasswordrequest" element={<PrivateRoute allowedRoles={['0']}><ResetPassword/></PrivateRoute>}/>
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>

@@ -12,8 +12,10 @@ import { useEffect, useState } from "react"
 
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
+import { BsTable } from "react-icons/bs";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { TbLogs, TbEdit } from "react-icons/tb";
+import { FiUser } from "react-icons/fi";
 
 import { useAuthContext } from "../hooks/useAuthContext"
 
@@ -32,11 +34,13 @@ const HeadPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
-    { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={22} /> },
-    { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <TiDocumentText size={22} /> }, 
-    ...(permission?.data?.permission 
-      ? [{label: 'History Logs', path: '/head/historylogs', icon: <TbLogs size={22} /> } , {label: 'Edit Form', path: '/head/editform', icon: <TbEdit size={22}/>}] 
-      : [])
+      { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={22} /> },
+      { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <TiDocumentText size={22} /> }, 
+      ...(permission?.data?.permission 
+        ? [{label: 'History Logs', path: '/head/historylogs', icon: <TbLogs size={22} /> } , {label: 'Edit Form', path: '/head/editform', icon: <TbEdit size={22}/>}] 
+        : []),
+      { label: 'Disbursement Logs', path: '/head/disbursementlogs', icon: <BsTable size={18} /> },
+      { label: 'Profile', path: '/head/profile', icon: <FiUser size={18} /> },
     ];
 
   useEffect(() => {
@@ -72,6 +76,12 @@ const HeadPage = () => {
   useEffect(() => {
       if(page.pathname === "/head/disbursementrecords") {
         setLocation('Disbursement Records')
+      } else if(page.pathname === "/head/dashboard") {
+        setLocation('Dashboard')
+      }else if(page.pathname === "/head/disbursementlogs") {
+        setLocation('Disbursement Logs')
+      }else if(page.pathname === "/head/profile") {
+        setLocation('Profile')
       }
   }, [page.pathname])
 

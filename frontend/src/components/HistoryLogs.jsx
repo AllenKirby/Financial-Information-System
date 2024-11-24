@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { firestore } from "../../config/firebase-config";
+import { firestore } from "../config/firebase-config";
 import { doc, onSnapshot } from "firebase/firestore";
 
 const HistoryLogs = () => {
@@ -50,7 +50,7 @@ const HistoryLogs = () => {
             <div className="w-full h-[450px] overflow-y-auto">
                 {historyLogs && Object.entries(historyLogs).length > 0 ? (
                     Object.entries(historyLogs).map(([key, log], index) => (
-                        <div key={key} className={`${index % 2 == 0 ? 'bg-white' : 'bg-gray-200'} w-full flex py-2 rounded-lg`}>
+                        <div key={key} className={`${index % 2 == 0 ? 'bg-white' : 'bg-gray-100'} w-full flex py-2 rounded-lg`}>
                             <p className="w-1/4 text-sm text-left px-2">{log.split('!')[0]}</p>
                             <p className="w-1/4 text-sm text-center px-2">{log.split('!')[1].split('|').slice()[0]}</p>
                             <p className="w-1/4 text-sm text-center px-2">{log.split('!')[2].replace(',', ' ')}</p>
