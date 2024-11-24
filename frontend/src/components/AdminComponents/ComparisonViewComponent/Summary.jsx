@@ -212,11 +212,10 @@ const BudgetRecommendation = () => {
                 {openSections.monitoring && (
                 <div className="mt-4">
                 <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
-                  {Object.keys(monthCategory["2024"] || {}).map((key) => {
-                    const percentage = calculatePercentage(
-                      calculateTotalExpenses(monthCategory, "2024", "2024-11"),
-                      forecasted_data?.[key] || 0
-                    );
+                  {Object.keys(monthCategory["2024"] || {}).reverse().map((key) => {
+                    const totalExpense = calculateTotalExpenses(monthCategory, "2024", "2024-11")
+                    const forecastedValue = forecasted_data?.[key] || 0;
+                    const percentage = forecastedValue !== 0 ? calculatePercentage(totalExpense,forecastedValue) : 0;
               
                     return (
                       <li
@@ -227,7 +226,13 @@ const BudgetRecommendation = () => {
                         <div className="flex justify-between cursor-pointer" onClick={() => toggleMonth(key)}>
                           <span className="font-semibold text-lg">{key}</span>
                           <span className={`font-medium flex items-center space-x-1 ${percentage > 0 ? "text-green-500" : "text-red-500"}`}>
-                            {percentage}%{percentage >= 0 ? (<HiArrowSmUp className="w-6 h-6" />) : (<HiArrowSmDown className="w-6 h-6" />)}
+                            {forecastedValue === 0 ? "N/A" : `${percentage}%`}
+                            {forecastedValue !== 0 && (percentage >= 0 ? (
+                              <HiArrowSmUp className="w-6 h-6" />
+                            ) : (
+                              <HiArrowSmDown className="w-6 h-6" />
+                            ))}
+                            
                           </span>
                         </div>
                       </li>
@@ -275,7 +280,7 @@ const BudgetRecommendation = () => {
                             <li key={category} className="list-none p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
                               <div className="flex items-center justify-between">
                                   <p className="font-semibold text-sm truncate">{category}</p>
-                                  <p className="font-medium text-gray-700">{totalAmount}</p>
+                                  <p className="font-medium text-gray-700">{formatToPeso(totalAmount)}</p>
                               </div>
                             </li>
                         ));
