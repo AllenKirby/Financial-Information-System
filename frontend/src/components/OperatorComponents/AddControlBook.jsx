@@ -21,7 +21,8 @@ const AddControlBook = (props) => {
                 date: formatDateforUpdate(controlBook.DateOfAsa) || '',
                 SARONo: controlBook.SARONo || '',
                 TotalASA: controlBook.TotalASA || 0,
-                description: controlBook.description || ''
+                description: controlBook.description || '',
+                endDate: formatDateforUpdate(controlBook.endDate) || ''
             })
         }
     }, [controlBook, flag])

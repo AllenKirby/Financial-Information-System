@@ -6,7 +6,14 @@ const ReportRows = ({reportData}) => {
     previousFO: 0,
     previousTotal: 0
   })
-  console.log(reportData)
+
+  const formatToPeso = (value) => {
+    return new Intl.NumberFormat('en-PH', {
+        style: 'currency',
+        currency: 'PHP',
+    }).format(value);
+  };
+
   useEffect(()=> {
     
     const computePreviousRO = () => {
@@ -32,6 +39,8 @@ const ReportRows = ({reportData}) => {
         previousFO: computePreviousFO(),
         previousTotal: computePreviousFO() + computePreviousRO()
     })
+
+    console.log(reportData)
   }, [])
 
   return (
@@ -39,11 +48,36 @@ const ReportRows = ({reportData}) => {
         <tr>
             <td className='border-2 border-black'> </td>
             <td className='border-2 border-black font-bold'>{reportData.description}</td>
-            <td className='border-2 border-black text-right font-bold'>{reportData.TotalASA}</td>
-            <td className='border-2 border-black text-right font-bold'>{data.previousRO}</td>
-            <td className='border-2 border-black text-right font-bold'>{data.previousFO}</td>
-            <td className='border-2 border-black text-right font-bold'>{data.previousTotal}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.TotalASA)}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.RO)}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.FO)}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(data.previousTotal)}</td>
         </tr>
+        {
+          Object.keys(reportData.fieldOffices).length > 0 ? (
+            <>
+              {Object.keys(reportData.fieldOffices).map((key, index) => (
+                <tr key={index}>
+                  <td className='border-2 border-black'></td>
+                  <td className='border-2 border-black'>{key.split(',')[1]}</td>
+                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].ASA || 0)}</td>
+                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].RO || 0)}</td>
+                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].FO || 0)}</td>
+                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].ASA || 0)}</td>
+              </tr>
+              ))}
+            </>
+          ) : (
+            <tr>
+              <td className='border-2 border-black'> </td>
+              <td className='border-2 border-black'></td>
+              <td className='border-2 border-black text-right'></td>
+              <td className='border-2 border-black text-right'></td>
+              <td className='border-2 border-black text-right'></td>
+              <td className='border-2 border-black text-right'></td>
+          </tr>
+          )
+        }
     </tbody>
   )
 }
