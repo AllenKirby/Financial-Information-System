@@ -29,13 +29,10 @@ const FieldOffices = (props) => {
     }).format(value);
   };
 
-  console.log(fieldOffice)
 
   const deleteFO = async(e) => {
     e.stopPropagation()
     const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}`
-    // const encodedID = encodeURIComponent(id)
-    console.log(id)
 
     Swal.fire({
       title: "Are you sure?",

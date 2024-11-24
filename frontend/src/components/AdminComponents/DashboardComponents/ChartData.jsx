@@ -24,7 +24,6 @@ const ChartData = ({customYear}) => {
             },
             (error) => console.error("Error listening to collection:", error)
         );
-        console.log('docs')
         return () => unsubscribe();
     }, []);
 

@@ -41,8 +41,7 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
 
     const handleDeleteFund = (key) => {
         const deletingFund = async () => {
-            const res_bool = await deleteFundCluster(key)
-            console.log('deleted?', res_bool)
+             await deleteFundCluster(key)
             setArrFund(prev => {
                 const newObj = { ...prev };
                 delete newObj[key];

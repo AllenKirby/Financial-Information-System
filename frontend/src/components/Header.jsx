@@ -93,12 +93,12 @@ const Header = ({ currentPage}) => {
 
   return (
     <header className="w-full h-auto flex pt-2 gap-2">
-      <div className="w-4/6 p-3 flex items-center">
+      <div className="w-4/6 p-3 flex items-center justify-between">
         <h1 className={`text-2xl font-bold ${fontColor}`}>{currentPage}</h1>
       </div>
       <div className="h-14 w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
         {/* Notification Icon */}
-        <div>
+        <div className='w-1/4'>
           <div className="relative">
             <div className='flex items-center justify-center gap-3 p-2'>
               <GoInbox 
@@ -149,13 +149,15 @@ const Header = ({ currentPage}) => {
           </div>
         </div>
 
-        <div className="w-auto flex py-1 pl-1 pr-5 gap-1 bg-white font-medium relative">
-          <div className='flex items-center justify-center'>
-            <FaUserCircle size={40} className='text-customFontColor' />
-          </div>
-          <div>
-            <p className={`rounded-full gap-2 font-bold ${fontColor}`}>{user?.name ? user?.name : 'User'}</p>
-            <p className={`rounded-full text-xs gap-2 font-normal ${fontColor}`}>{user?.uemail ? user?.uemail : 'email@gmail.com'}</p>
+        <div className="flex items-center bg-white py-1 px-4 gap-2">
+          <FaUserCircle size={40} className="text-customFontColor" />
+          <div className="flex flex-col justify-center">
+            <p className={`font-bold text-sm truncate ${fontColor}`}>
+              {user?.name || "User"}
+            </p>
+            <p className={`text-xs truncate ${fontColor}`}>
+              {user?.uemail || "email@gmail.com"}
+            </p>
           </div>
         </div>
       </div>

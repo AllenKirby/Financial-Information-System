@@ -154,7 +154,6 @@ export const useApproverHook = () => {
             })
             if(res.status === 200){
                 const arr = res.data.formData
-                console.log('successfully added new RC', arr)
                 sessionStorage.setItem('RCData', JSON.stringify(arr));
                 return arr
                 
@@ -253,7 +252,6 @@ export const useApproverHook = () => {
                 withCredentials: true
             })
             if(res.status === 200) {
-                console.log(res.data)
                 dispatch({type: 'LOGIN', payload: res.data})
                 setIsLoading(false)
                 return true

@@ -78,10 +78,29 @@ const getUsers = async (role) => {
     return [];
 }
 
+const getDateTime = () => {
+    const today = new Date()
+    const dateCollection = today.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "2-digit"
+      });
+
+    const timeCollection = today.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true
+    });
+
+    return `${dateCollection} ${timeCollection}`;
+}
+
 module.exports = {
     addComments,
     setNotification,
     setHistoryLogs,
     updateUserAcc,
-    getUsers
+    getUsers,
+    getDateTime
 }

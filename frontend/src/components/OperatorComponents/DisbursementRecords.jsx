@@ -37,7 +37,6 @@ const DisbursementRecords = () => {
           document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
-      console.log(filteredResults)
       setFilteredDocuments(filteredResults);
     } else {
       setFilteredDocuments({});
@@ -131,71 +130,71 @@ const DisbursementRecords = () => {
   }
 
   return (
-    <section className='w-full h-[100%]'>
+    <section className='w-full h-full p-2'>
       {!id ? (
         <>
-          <div className='w-full h-auto py-2 flex'>
+          <div className='w-full h-[10%] py-2 flex'>
             <div className="w-1/2 flex flex-col">
               <div className='pt-3'>
                 <p className='font-semibold text-fundingBlueGreen px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
               </div>
             </div>
-          <div className='w-1/2 flex items-end justify-end gap-2'>
-            {(permission && permission?.data?.permission) && (
-              <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-full bg-fundingBlueGreen text-white hover:scale-125 transition-all duration-100">
-                <IoAdd size={20} className='font-bold'/>New
-              </button>
-            )}
-            <div className='relative'>
-              <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-full text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
-              {filterFlag && (
-                <>
-                  <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
-                  <div className='absolute w-full bg-white pt-5 top-5 z-0 p-1 border-[1px]'>
-                    <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
-                    <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
-                    <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
-                    <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Contract Farming</div>
-                  </div>
-                </>
+            <div className='w-1/2 flex items-end justify-end gap-2'>
+              {(permission && permission?.data?.permission) && (
+                <button onClick={modal} className="flex items-center justify-center gap-2 pl-3 py-2 pr-4 rounded-lg text-sm bg-fundingBlueGreen text-white">
+                  <IoAdd size={20} className='font-bold'/>New
+                </button>
               )}
-            </div>
-            <div className='relative w-auto'>
-              <IoSearchSharp size={20} className='absolute top-[10px] left-4 text-gray-400'/>
-              <input 
-                type="search"
-                placeholder='Search'
-                className='py-2 pr-3 text-sm pl-10 rounded-full focus:outline-none border-2' />
+              <div className='relative'>
+                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+                {filterFlag && (
+                  <>
+                    <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
+                    <div className='absolute w-full bg-white pt-5 top-5 z-0 p-1 border-[1px]'>
+                      <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
+                      <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
+                      <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
+                      <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Contract Farming</div>
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className='relative w-auto'>
+                <IoSearchSharp size={20} className='absolute top-[10px] left-4 text-gray-400'/>
+                <input 
+                  type="search"
+                  placeholder='Search'
+                  className='py-2 pr-3 text-sm pl-10 rounded-full focus:outline-none border-2' />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="w-full h-screen rounded-t-lg">
-          <div className='w-full h-full'>
-            <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
+        <div className="w-full h-[90%] rounded-lg">
+          <div className='w-full h-full rounded-lg border-2'>
+            <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-100 text-gray-400 text-sm'>
               <div className='w-2/6 flex '>
-              <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>
-                    Payee {alphabeticalFlag ? 
-                      <BsSortAlphaDownAlt 
-                        size={20} 
-                        onClick={() => sortAphabetically(true)}
-                        className='cursor-pointer'/> : 
-                      <BsSortAlphaDown 
-                        size={20} 
-                        onClick={() => sortAphabetically(false)}
-                        className='cursor-pointer'/>
-                    }
-                  </h1>
+                <h1 className='w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
+                  Payee {alphabeticalFlag ? 
+                    <BsSortAlphaDownAlt 
+                      size={20} 
+                      onClick={() => sortAphabetically(true)}
+                      className='cursor-pointer'/> : 
+                    <BsSortAlphaDown 
+                      size={20} 
+                      onClick={() => sortAphabetically(false)}
+                      className='cursor-pointer'/>
+                  }
+                </h1>
               </div>
-              <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-              <h1 className='w-1/6 text-center font-bold'>Status</h1>
+              <h1 className='w-1/6 text-center font-semibold'>DV No.</h1>
+              <h1 className='w-1/6 text-center font-semibold'>Status</h1>
               <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                  <h1 className='w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
                 </div>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
+                  <h1 className='w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
                 </div>
-            </section>
-            <div className="w-full h-[430px] overflow-auto bg-white border-[1px] p-1">
+            </div>
+            <div className="w-full h-[420px] overflow-auto">
               <PaginatedList items={filteredDocuments} type={'3'}/>
             </div>
           </div>

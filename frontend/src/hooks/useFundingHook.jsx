@@ -100,8 +100,6 @@ export const useFundingHook = () => {
             })
             if(res.status === 200){
                 setIsLoading(false)
-                const response = res.data
-                console.log(response)
             }
         } catch (error) {
             setIsLoading(false)
@@ -131,7 +129,6 @@ export const useFundingHook = () => {
     }
 
     const AddFieldOffice = async(data) => {
-        console.log(data.projectID)
         setIsLoading(true)
         setError(null)
         try {
@@ -213,7 +210,6 @@ export const useFundingHook = () => {
             if (docSnapshot.exists()) {
                 // Document data is available
                 const projectData = docSnapshot.data()
-                console.log(projectData);
                 sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
                 setASANo(projectData)
 
@@ -235,7 +231,6 @@ export const useFundingHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch(error) {
@@ -255,7 +250,6 @@ export const useFundingHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 dispatchFolder(deleteFolder(id))
                 return true
             }
@@ -268,7 +262,6 @@ export const useFundingHook = () => {
     }
 
     const deleteFieldOffice = async(id) => {
-        console.log(id)
         setIsLoading(true)
         setError(null)
         try {
@@ -277,7 +270,6 @@ export const useFundingHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch(error) {
@@ -297,7 +289,6 @@ export const useFundingHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch(error) {
@@ -316,7 +307,6 @@ export const useFundingHook = () => {
                 withCredentials: true
             })
             if(res.status === 200) {
-                console.log(res.data)
                 dispatch({type: 'LOGIN', payload: res.data})
                 setIsLoading(false)
                 return true

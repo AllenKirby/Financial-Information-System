@@ -16,7 +16,6 @@ export const AdminDisbursementContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(AdminDisbursementReducer, {
         AdminDocuments: null
     })
-    // console.log('Admin Disbursement Context', state.AdminDocuments)
 
     return(
         <AdminDisbursementContext.Provider value={{...state, dispatch}}>

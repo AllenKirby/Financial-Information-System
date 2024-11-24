@@ -50,7 +50,6 @@ const BudgetRecommendation = () => {
           collection(firestore, "MonthCategory"),
           (snapshot) => {
             if (snapshot.empty) {
-              console.log("No documents in MonthCategory.");
               setData({});
               return;
             }
@@ -82,8 +81,6 @@ const BudgetRecommendation = () => {
                 parsedData[year][monthId][category][subcategory] = value; // Assign subcategory value
               });
             });
-      
-            console.log("Parsed Data:", parsedData);
             setMonthCategory(parsedData);
           },
           (error) => {
@@ -126,13 +123,11 @@ const BudgetRecommendation = () => {
     const calculateTotalExpenses = (data, year, month) => {
         // Check if the year exists in the data
         if (!data[year]) {
-          console.log(`No data found for year ${year}`);
           return 0;
         }
       
         // Check if the month exists in the year's data
         if (!data[year][month]) {
-          console.log(`No data found for month ${month} in year ${year}`);
           return 0;
         }
       

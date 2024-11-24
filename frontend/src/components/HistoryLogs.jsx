@@ -37,21 +37,21 @@ const HistoryLogs = () => {
     };
 
   return (
-    <section className="w-full h-full bg-white p-3">
-        <div className="w-full table-auto rounded-t-lg">
+    <section className="w-full h-full p-3">
+        <div className="w-full table-auto rounded-t-lg border-2 bg-white">
             <div className="w-full rounded-t-lg">
-                <div className="w-full text-lg bg-gray-200 rounded-t-lg flex ">
-                    <p className="font-semibold w-1/4 py-2 border-white text-left px-2">Payee</p>
-                    <p className="font-semibold text-center w-1/4 py-2 border-white">DV No.</p>
-                    <p className="font-semibold text-center w-1/4 py-2 border-white">Last Action By Name</p>
-                    <p className="font-semibold text-center w-1/4 py-2 ">Action Time and Date</p>
+                <div className="w-full text-lg bg-gray-100 rounded-t-lg flex ">
+                    <p className="text-gray-400 text-sm font-semibold w-1/4 py-2 border-white text-left px-2">Payee</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/4 py-2 border-white">DV No.</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/4 py-2 border-white">Last Action By Name</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/4 py-2 ">Action Time and Date</p>
                 </div>
             </div>
             <div className="w-full h-[450px] overflow-y-auto">
                 {historyLogs && Object.entries(historyLogs).length > 0 ? (
                     Object.entries(historyLogs).map(([key, log], index) => (
-                        <div key={key} className={`${index % 2 == 0 ? 'bg-white' : 'bg-gray-100'} w-full flex py-2 rounded-lg`}>
-                            <p className="w-1/4 text-sm text-left px-2">{log.split('!')[0]}</p>
+                        <div key={key} className={`${index % 2 == 0 ? 'bg-white' : 'bg-gray-100'} w-full flex py-3`}>
+                            <p className="w-1/4 text-sm text-left px-2 truncate">{log.split('!')[0]}</p>
                             <p className="w-1/4 text-sm text-center px-2">{log.split('!')[1].split('|').slice()[0]}</p>
                             <p className="w-1/4 text-sm text-center px-2">{log.split('!')[2].replace(',', ' ')}</p>
                             <p className="w-1/4 text-sm text-center px-2">{`${log.split('!')[3]}`}</p>

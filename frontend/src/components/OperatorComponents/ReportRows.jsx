@@ -6,7 +6,6 @@ const ReportRows = ({reportData}) => {
     previousFO: 0,
     previousTotal: 0
   })
-  console.log(reportData)
   useEffect(()=> {
     
     const computePreviousRO = () => {

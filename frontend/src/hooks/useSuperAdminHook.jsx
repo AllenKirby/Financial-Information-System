@@ -18,12 +18,11 @@ export const useSuperAdminHook = () => {
         setError(null)
         try {
             const newUser = await createUserWithEmailAndPassword(auth, userData.email, userData.password)
-            console.log(newUser)
             sendEmailVerification(newUser.user);
             const newUser_token = await newUser.user.getIdToken();
             const data = {
                 role: userData.role,
-                name: `${userData.firstname},${userData.lastname}`
+                name: `${userData.firstname} ${userData.lastname}`
             }
             const res = await axios.post(`${apiURL}/superadmin/create`, data, {
                 headers: {
@@ -129,7 +128,6 @@ export const useSuperAdminHook = () => {
                 withCredentials: true
             })
             if(res.status === 200) {
-                console.log(res.data)
                 dispatchRequest(deleteRequest(id))
                 setIsLoading(false)
                 return true
