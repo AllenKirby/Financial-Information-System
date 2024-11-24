@@ -22,10 +22,8 @@ export default {
         fundingBlueGreen: '#317773',
         fundingGray: '#E2D0F9',
         preparerPrimary: '#195190',
-        preparerSecondary: '#A2A2A1'
-      },
-      boxShadow: {
-        'customShadowStyle': '2px 0 10px rgba(0, 0, 0, 0.2), 0 2px 10px rgba(0, 0, 0, 0.19)',
+        preparerSecondary: '#A2A2A1',
+        coolSteel: '#F8F7F4'
       },
       spacing: {
         'a4-width': '210mm',  // Custom A4 width

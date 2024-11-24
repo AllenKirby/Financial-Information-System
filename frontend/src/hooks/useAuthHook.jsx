@@ -7,7 +7,7 @@ import { useDisbursementContext } from './useDisbursementContext.jsx';
 import { useOpDisbursementContext } from './useOpDisbursementContext.jsx';
 import { useHeadDisbursementContext } from './useHeadDisbursementContext.jsx';
 
-import { getAuth, signOut } from "firebase/auth"; 
+import { getAuth, sendPasswordResetEmail, signOut } from "firebase/auth"; 
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useDispatch } from "react-redux";
@@ -94,13 +94,13 @@ export const useAuthHook = () => {
       const resetPassword = async(email) => {
         setIsLoading(true)
         setError(null)
+
+        const auth = getAuth()
+
         try {
-          const res = await axios.post(`${import.meta.env.VITE_API_URL}/forgotpassword`, {email}, {
-            withCredentials: true
-          })
-          if(res.status === 200)
-            setIsLoading(false)
-            return true
+          await sendPasswordResetEmail(auth, email)
+          setIsLoading(false);
+          return true;
         } catch (error) {
           setIsLoading(false)
           const errorMessage = error.response?.data?.message || error.message || "An error occurred";

@@ -8,6 +8,7 @@ import Header from "../components/Header"
 
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
+import { BsTable } from "react-icons/bs";
 import { useState, useEffect } from "react"
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { FiBook, FiUser } from "react-icons/fi";
@@ -33,10 +34,11 @@ const OperatorPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
-    //{ label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },
+    { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <TiDocumentText size={22} /> },
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
-    //{ label: 'Profile', path: '/operator/profile', icon: <FiUser size={22} /> }
+    { label: 'Disbursement Logs', path: '/operator/disbursementlogs', icon: <BsTable size={18} /> },
+    { label: 'Profile', path: '/operator/profile', icon: <FiUser size={22} /> }
   ]
 
   useEffect(() => {
@@ -48,7 +50,9 @@ const OperatorPage = () => {
       setLocation('Control Book')
     }else if(page.pathname === "/operator/profile"){
       setLocation('Profile')
-    }
+    } else if(page.pathname === "/operator/disbursementlogs"){
+      setLocation('Profile')
+    } 
   }, [page.pathname])
 
   useEffect(() => {
