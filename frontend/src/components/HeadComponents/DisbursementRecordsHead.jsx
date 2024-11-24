@@ -93,10 +93,10 @@ const DisbursementRecordsHead = () => {
   }
     
   return (
-    <section className="w-full h-full">
+    <section className="w-full h-full p-2">
       {!id ? (
         <>
-          <div className='w-full h-auto py-2 flex'>
+          <div className='w-full h-[10%] py-2 flex'>
             <div className='w-1/2 flex flex-col'>
               <div className='pt-3'>
                 <p className='font-semibold text-BOGreen px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
@@ -104,7 +104,7 @@ const DisbursementRecordsHead = () => {
             </div>
             <div className='w-1/2 flex items-end justify-end gap-2'>
               <div className='relative'>
-                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-full text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
                 {filterFlag && (
                   <>
                     <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
@@ -126,9 +126,9 @@ const DisbursementRecordsHead = () => {
               </div>
             </div>
           </div>
-          <div className="w-full h-full rounded-t-lg ">
-            <div className='w-full h-full'>
-              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
+          <div className="w-full h-[90%] rounded-lg">
+            <div className='w-full h-full rounded-lg border-2'>
+              <section className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-100 text-gray-400 text-sm'>
                 <div className='w-3/6 flex '>
                   <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>
                     Payee {alphabeticalFlag ? 
@@ -149,7 +149,7 @@ const DisbursementRecordsHead = () => {
                   <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
                 </div>
               </section>
-              <section className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
+              <section className="w-full h-[420px] overflow-auto bg-white">
                 <PaginatedList items={filteredDocuments} type={'2'}/>
               </section>
             </div>

@@ -21,8 +21,6 @@ export const DisbursementReducer = (state, action) => {
         case 'UPDATE_DOCUMENT': {
             const updatedKey = Object.keys(action.payload)[0];
             const updatedValue = Object.values(action.payload)[0];
-            console.log('hit update context')
-            console.log('hit update context', updatedValue)
             return {
                 ...state,
                 documents: {
@@ -48,7 +46,6 @@ export const DisbursementContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(DisbursementReducer, {
         documents: null
     })
-    console.log('Disbursement Context', state.documents)
 
     return(
         <DisbursementContext.Provider value={{...state, dispatch}}>

@@ -40,7 +40,6 @@ export const useAuthHook = () => {
           const token = await userCredential.user.getIdToken();
 
           if (user.emailVerified) {
-            console.log('hit')
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/login`, {
               headers: {
                 'Content-Type': 'application/json',
@@ -48,8 +47,6 @@ export const useAuthHook = () => {
               },
               withCredentials: true,
             });
-          
-            console.log(response)
             if (response.status === 200) {
               cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'Strict' });
               dispatchAuth({type: 'LOGIN', payload: response.data})
@@ -123,8 +120,7 @@ export const useAuthHook = () => {
                     },
                     withCredentials: true,
                 });
-            
-                console.log(response)
+          
                 if (response.status === 200) {
                     cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'strict' });
                     dispatch({type: 'LOGIN', payload: response.data})

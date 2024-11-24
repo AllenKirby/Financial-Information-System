@@ -53,7 +53,6 @@ export const usePreparerHook = () => {
 
     const getFormData = async () => {
         try{
-            console.log('gerformdata')
             const res = await axios.get(`${apiURL}/editor/getFormData`, {
                 withCredentials: true
             })
@@ -120,7 +119,7 @@ export const usePreparerHook = () => {
             withCredentials: true
            })
            if(res.status === 200){
-                console.log(res.data)
+            return true
            }
         }catch(error){
             console.log(error)
@@ -143,7 +142,6 @@ export const usePreparerHook = () => {
     }
 
     const updateAccount = async(data) => {
-        console.log(data)
         setIsLoading(true)
         setError(null)
         try {
@@ -151,7 +149,6 @@ export const usePreparerHook = () => {
                 withCredentials: true
             })
             if(res.status === 200) {
-                console.log(res.data)
                 dispatch({type: 'LOGIN', payload: res.data})
                 setIsLoading(false)
                 return true

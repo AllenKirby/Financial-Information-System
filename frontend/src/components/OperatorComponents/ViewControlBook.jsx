@@ -38,7 +38,6 @@ const ViewControlBook = () => {
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
       const selectedkey = Object.keys(controlBooks).find((key) => controlBooks[key].ASANo === id)
       if(selectedControlBook) {
-        console.log(selectedControlBook[1])
         setControlBook({key: selectedkey, data: selectedControlBook[1]})
       } else {
         console.log('No Control Book Found')

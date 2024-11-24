@@ -5,8 +5,11 @@ const {
     addComments,
     setNotification,
     setHistoryLogs,
-    updateUserAcc 
-} = require('./MultiAccess/Functions')
+    updateUserAcc,
+    getDateTime,
+    getUsers
+} = require('./MultiAccess/Functions');
+const { messaging } = require('firebase-admin');
 
 const formatDate = (rawDate) => {
     const dateObject = new Date(rawDate);
@@ -32,21 +35,7 @@ const createDV = async (req, res) => {
     const finalizeDVNo = await getOrigNumberOfCopies(DVnoKey, origNumber, DV, template)
     const DVKey = `${finalizeDVNo}|${fund.replace(/\s/g, '')}`
 
-    const today = new Date()
-    const dateCollection = today.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "2-digit"
-      });
-
-    const timeCollection = today.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-    });
-
-    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+    const dateTimeCollection = getDateTime();
     const createdByDetails = `${createdBy} at ${dateTimeCollection}`
 
     dvData = {
@@ -83,14 +72,11 @@ const createDV = async (req, res) => {
     }
     try{
         await db.collection('records').doc(dvData.DVKey).set(dvData);
-        document = {
-            [DVKey]: dvData
-        }
 
         // addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
         // addOnClusterAmount(amount, fund, date)
 
-        return res.status(200).json(document);
+        return res.status(200).json({message: 'Disbursement Voucher has been created'});
 
     }catch(error){
         console.log(`Error in saving data of payee and BIR: ${error}`)
@@ -117,66 +103,29 @@ const passDocument = async (req, res) => {
     const {DV, payee, remarks} = req.body;
     const dispName = req.user.name;
     const uid = req.user.uid;
-    const today = new Date()
-    const dateCollection = today.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "2-digit"
-      });
-    const timeCollection = today.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-    });
+
+    const dateTimeCollection = getDateTime();
     const notifMessage1 = "The Disbursement Voucher for"
     const notifMessage2 = "has been passed by"
-    const dataCollection = `${dateCollection}|${timeCollection}|${payee}|${dispName}`
-    const dateTimePassed = `${dateCollection}|${timeCollection}`;
-    const submittedBy = `${dispName}|${dateTimePassed }`
-    const logs = `${payee}!${DV}!Submitted By ${dispName}!${dateTimePassed}`
-    const comment = {dispName, remarks, dateTimePassed}
+    const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
+    const submittedBy = `${dispName}|${dateTimeCollection }`
+    const logs = `${payee}!${DV}!Submitted By ${dispName}!${dateTimeCollection}`
+    const comment = {dispName, remarks, dateTimeCollection}
 
     try {
-        const updatedDocu = await updateStatus(DV, submittedBy)
-        const returnData = {
-            [DV] : updatedDocu
-        }
-        const listOfOpAcc = await getListOfOperatorAccounts();
+        await updateStatus(DV, submittedBy)
+        const listOfOpAcc = await getUsers('3');
         await setNotification(listOfOpAcc, dataCollection, notifMessage1, notifMessage2, DV)
         if(remarks) {
             await addComments(DV, comment)
         }
-        await setHistoryLogs(dateTimePassed, logs)
+        await setHistoryLogs(dateTimeCollection, logs)
 
-        res.status(200).json({success: true, update: returnData});
+        res.status(200).json({message: 'Disbursement Voucher has been transfer'});
     }catch(error){
         console.log('error creating passed records: ', error)
         res.status(500).json({success: false, message: `error creating passed records: ${error}`});
     }
-}
-
-const getListOfOperatorAccounts = async () => {
-    try{
-
-        const docref = await db.collection('listOfUsers').get()
-
-        const uids = []
-
-        docref.forEach(doc => {
-            const data = doc.data()
-
-            if(data.role === '3' && data.uid){
-                uids.push(data.uid)
-            }
-        })
-
-        return uids;
-
-    }catch(error){
-        console.log(`Error in getting list of op : ${error}`)
-    }
-    return [];
 }
 
 const getAccountCodes = async (req, res) => {
@@ -241,64 +190,19 @@ const updateDV = async(req, res) => {
     const {birParticular} = req.body.bir_data
     const payeeData = req.body.payee_data
 
-    const today = new Date()
-    const dateCollection = today.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "2-digit"
-      });
 
-    const timeCollection = today.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
-    });
-
-    const dateTimeCollection = `${dateCollection} ${timeCollection}`;
+    const dateTimeCollection = getDateTime;
     const dvData = {
         ...payeeData,
         birParticular,
         updatedAt: dateTimeCollection
     }
-    // dvData = {
-    //     //payee data
-    //     payee: payee, 
-    //     TIN: TIN, 
-    //     address: address,
-    //     fund: fund,
-    //     date: formatDate(date), 
-    //     DV: DV,
-    //     DVKey: DVKey,
-    //     NF_name: NF_name,
-    //     NF_office: NF_office,
-    //     TT_cost: TT_cost,
-    //     TT_formula1: TT_formula1,
-    //     TT_formula2: TT_formula2,
-    //     TT_tax: TT_tax,
-    //     optionalAmount: optionalAmount,
-    //     RC: RC, 
-    //     accTitle: accTitle,
-    //     accCode: accCode, 
-    //     amount: amount, 
-    //     particular: particular,
-    //     //BIR data
-    //     birParticular: birParticular,
-    //     //other data
-    //     updatedAt: dateTimeCollection
-    // }
+
     try {
         const docref = db.collection('records').doc(id)
         await docref.update(dvData)
-        const updatedDoc = await docref.get()
-        if(updatedDoc.exists){
-            const doc = updatedDoc.data()
-            document = {
-                [doc.DVKey] : doc
-            }
-        }
 
-        res.status(200).json(document)
+        res.status(200).json({message: 'Disbursement Voucher has been updated'})
     } catch (error) {
         console.error("Error updating document: ", error);
         res.status(500).json({ success: false, error: error.message });
@@ -518,7 +422,7 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
 const updateAccount = async(req, res) => {
     const {name, role} = req.body
     const uid = req.user.uid
-    console.log(name, uid, role)
+    
     try {
         const response = await updateUserAcc(uid, role, name)
 

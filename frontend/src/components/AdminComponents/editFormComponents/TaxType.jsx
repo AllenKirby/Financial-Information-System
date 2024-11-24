@@ -90,8 +90,7 @@ export const TaxType = () => {
 
       const handleRemoveEntry = (keyToRemove) => {
         const deleting = async () => {
-            const res_bool = await deleteTax(keyToRemove)
-            console.log('deleted?', res_bool)
+            await deleteTax(keyToRemove)
             setEntries((prevEntries) => {
                 const newEntries = { ...prevEntries };
                 delete newEntries[keyToRemove];

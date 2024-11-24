@@ -19,7 +19,6 @@ const AccessControl = () => {
 
         if (res.status === 200) {
           const data = res.data;
-          console.log('Roles: ', data);
           setRoles(data);
         }
       } catch (error) {

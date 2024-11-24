@@ -17,7 +17,6 @@ const Folder = ({ASANo, controlBook}) => {
     const [deletable, setIsDeletable] = useState(true)
     
     const navigate = useNavigate()
-    console.log(controlBook)
     
     const { deleteControlBook, isLoading, error } = useFundingHook()
 

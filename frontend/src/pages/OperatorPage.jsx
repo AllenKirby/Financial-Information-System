@@ -67,7 +67,6 @@ const OperatorPage = () => {
 
   useEffect(() => {
     const fetch = async() => {
-      console.log('start getting control books')
       const unsubscribe = retrieveControlBooks(dispatch)
       return () => unsubscribe;
     }
@@ -118,7 +117,7 @@ const OperatorPage = () => {
 
 
   return (
-    <main className="w-full h-screen flex bg-white">
+    <main className="w-full h-screen flex bg-coolSteel">
       <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
         <MdOutlineKeyboardArrowLeft 
           size={25}

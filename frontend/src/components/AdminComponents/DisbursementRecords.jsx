@@ -95,10 +95,10 @@ const DisbursementRecords = () => {
   }
 
   return (
-    <section className='w-full h-full'>
+    <section className='w-full h-full p-2'>
       {!id ? (
         <>
-          <div className='w-full h-auto py-2 flex'>
+          <div className='w-full h-[10%] py-2 flex'>
             <div className='w-1/2 flex flex-col'>
               <div className='pt-3'>
                 <p className='font-semibold text-customgreen px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
@@ -106,7 +106,7 @@ const DisbursementRecords = () => {
             </div>
             <div className='w-1/2 flex items-end justify-end gap-2'>
               <div className='relative'>
-                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-full text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
+                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm'><HiAdjustmentsHorizontal size={15}/>{filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></>: 'Filter by Fund Cluster'}</button>
                 {filterFlag && (
                   <>
                     <div className="fixed inset-0 z-0" onClick={() => setFilterFlag(!filterFlag)}/>
@@ -128,11 +128,11 @@ const DisbursementRecords = () => {
               </div>
             </div>
           </div>
-          <div className="w-full h-full rounded-lg">
-            <div className='w-full h-full'>
-              <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-200'>
+          <div className="w-full h-[90%] rounded-lg">
+            <div className='w-full h-full rounded-lg border-2'>
+              <div className='w-full h-auto flex px-2 py-2 rounded-t-lg bg-gray-100 text-gray-400 text-sm'>
                 <div className='w-2/6 flex '>
-                  <h1 className='w-auto text-left px-2 font-bold flex items-center justify-center gap-2'>
+                  <h1 className='w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
                     Payee {alphabeticalFlag ? 
                       <BsSortAlphaDownAlt 
                         size={20} 
@@ -145,16 +145,16 @@ const DisbursementRecords = () => {
                     }
                   </h1>
                 </div>
-                <h1 className='w-1/6 text-center font-bold'>DV No.</h1>
-                <h1 className='w-1/6 text-center font-bold'>Status</h1>
+                <h1 className='w-1/6 text-center font-semibold'>DV No.</h1>
+                <h1 className='w-1/6 text-center font-semibold'>Status</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                  <h1 className='w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
                 </div>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-bold flex items-center justify-center gap-2'>Time Approved <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                  <h1 className='w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Approved <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
                 </div>
               </div>
-              <div className="w-full h-[430px] overflow-auto bg-white border-[1px] px-1">
+              <div className="w-full h-[420px] overflow-auto bg-white">
                 <PaginatedList items={filteredDocuments} type={'1'}/>
               </div>
             </div>
