@@ -48,12 +48,12 @@ export const useInitialStateDV = () => {
                 withCredentials: true
             })
             if(res.status === 200){
-                const burnumber = res.data.currentBUR
-                console.log(burnumber)
-                const increamentedData = (parseInt(burnumber, 10) + 1).toString().padStart(4, 0)
+                const origBur = res.data.currentBUR
+                console.log(origBur)
+                const increamentedData = (parseInt(origBur, 10) + 1).toString().padStart(4, 0)
                 const today = new Date()
                 const bur = `501-${today.getFullYear()}-${today.getMonth()+1}-${increamentedData}`
-                return {bur, burnumber}
+                return {bur, origBur}
             }
             
             return bur

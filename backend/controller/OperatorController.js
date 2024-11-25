@@ -66,17 +66,25 @@ const updateASA_ORS = async (req, res) => {
             const doc = await docref.get()
 
             if (findDoc.exists) {
-
+                await handleControlBook(prevASA, amount, 'subtract')
                 const parseAmount = parseFloat(amount)
                 const RO = parseFloat(doc.data().RO)
                 const FO = parseFloat(doc.data().FO)
+                const thisMonthFO = parseFloat(doc.data().thisMonthFO)
+
                 const updatedRO = RO + parseAmount 
                 const updatedFO = FO - parseAmount
+                const updatedThisMonthFO = thisMonthFO - parseAmount
+                const updatedThisMonthRO = updatedRO
 
                 await docref.update({
                     RO: updatedRO,
-                    FO: updatedFO
+                    FO: updatedFO,
+                    thisMonthFO: updatedThisMonthFO, 
+                    thisMonthRO: updatedThisMonthRO
                 });
+
+                await handleFormDataRemainingAmount_RO(prevASA, prevFO, updatedRO)
 
                 await docRef.delete();
 
@@ -84,25 +92,31 @@ const updateASA_ORS = async (req, res) => {
                 const project = await ref.get()
 
                 if(project.exists){
+                    await handleControlBook(ASANo, amount)
                     const parseAmount = parseFloat(amount)
                     const RO = parseFloat(project.data().RO)
                     const FO = parseFloat(project.data().FO)
+                    const thisMonthFO = parseFloat(project.data().thisMonthFO)
                     const updatedRO = RO - parseAmount 
                     const updatedFO = FO + parseAmount
+                    const updatedThisMonthFO = thisMonthFO + parseAmount
+                    const updatedThisMonthRO = updatedRO
 
                     if(updatedRO < 0){
                         throw Error("Insufficient amount.")
                     }
                     await ref.update({
                         RO: updatedRO,
-                        FO: updatedFO
+                        FO: updatedFO,
+                        thisMonthFO: updatedThisMonthFO, 
+                        thisMonthRO: updatedThisMonthRO
                     });
+                    await handleFormDataRemainingAmount_RO(ASANo, projectID, updatedRO)
                 }
 
                 await db.collection('ControlBook').doc(ASANo)
                     .collection('FieldOffices').doc(projectID)
                     .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
-                
                 
 
             } else {
@@ -119,16 +133,23 @@ const updateASA_ORS = async (req, res) => {
                 const parseAmount = parseFloat(amount)
                 const RO = parseFloat(project.data().RO)
                 const FO = parseFloat(project.data().FO)
+                const thisMonthFO = parseFloat(project.data().thisMonthFO)
+
                 const updatedRO = RO - parseAmount 
                 const updatedFO = FO + parseAmount
+                const updatedThisMonthFO = thisMonthFO + parseAmount
+                const updatedThisMonthRO = updatedRO
 
                 if(updatedRO < 0){
                     throw Error("Insufficient amount.")
                 }
                 await docRef.update({
                     RO: updatedRO,
-                    FO: updatedFO
+                    FO: updatedFO,
+                    thisMonthFO: updatedThisMonthFO,
+                    thisMonthRO: updatedThisMonthRO
                 });
+                await handleFormDataRemainingAmount_RO(ASANo, projectID, updatedRO)
             }
 
 
@@ -217,20 +238,73 @@ const updateStatus = async (DV, dTPassed, flag) => {
     return updatedDoc.data();
 };
 
-const handleControlBook = async (ASANo, amount) => {
+const handleFormDataRemainingAmount_RO = async (controBookID, projectID, newAmount) => {
+    try{
+        const docRef = db.collection('formData').doc('ControlBook')
+        const doc = await docRef.get()
+
+        if(!doc.exists){
+            console.log('Document not found')
+            return
+        }
+
+        const data = doc.data()
+        if (!data[controBookID] || !Array.isArray(data[controBookID])) {
+            console.error(`controBookID ${controBookID} not found or is not an array`);
+            return;
+        }
+
+        const updatedArray = data[controBookID].map((item) => {
+            if (item.projectID === projectID) {
+                return { ...item, RO: newAmount };
+            }
+            return item; 
+        });
+
+        await docRef.update({
+            [controBookID]: updatedArray,
+        });
+    }catch(err){
+        console.error('Error updating amount:', err);
+    }
+}
+
+const handleControlBook = async (ASANo, amount, operation='add') => {
     const controlBookRef = db.collection('ControlBook').doc(ASANo);
     const controlBook = await controlBookRef.get();
 
     if (controlBook.exists) {
-        const parseAmount = parseFloat(amount)
-        const totalRO = parseFloat(controlBook.data().RO);
-        const totalFO = parseFloat(controlBook.data().FO);
-        const updatedRO = totalRO - parseAmount;
-        const updateFO = totalFO + parseAmount
+        let updatedRO
+        let updateFO
+        let updatedThisMonthFO
+        let updatedThisMonthRO
+        if(operation == 'add'){
+            const parseAmount = parseFloat(amount)
+            const totalRO = parseFloat(controlBook.data().RO);
+            const totalFO = parseFloat(controlBook.data().FO);
+            const thisMonthFO_value = parseFloat(controlBook.data().thisMonthFO || 0)
+
+            updatedRO = totalRO - parseAmount;
+            updateFO = totalFO + parseAmount
+            updatedThisMonthFO = thisMonthFO_value + parseAmount
+            updatedThisMonthRO = updatedRO
+        }else{
+            const parseAmount = parseFloat(amount)
+            const totalRO = parseFloat(controlBook.data().RO);
+            const totalFO = parseFloat(controlBook.data().FO);
+            const thisMonthFO_value = parseFloat(controlBook.data().thisMonthFO || 0)
+
+            updatedRO = totalRO + parseAmount;
+            updateFO = totalFO - parseAmount
+            updatedThisMonthFO = thisMonthFO_value - parseAmount
+            updatedThisMonthRO = updatedRO
+        }
 
         await controlBookRef.update({
             RO: updatedRO,
-            FO: updateFO
+            FO: updateFO,
+            thisMonthFO: updatedThisMonthFO,
+            thisMonthRO: updatedThisMonthRO
         });
     } else {
         console.log("No such document!");
@@ -457,8 +531,10 @@ const appendDataToSheet = async (req, res) => {
         FO: 0,
         endDate: endDate,
         leftBudget: TotalASA,
-        prevMonth: 0,
-        thisMonth: 0
+        prevMonthFO: 0,
+        prevMonthRO: 0,
+        thisMonthFO: 0,
+        thisMonthRO: 0
     }
 
     try {
@@ -491,7 +567,11 @@ const appendDataToSheet = async (req, res) => {
         createdAt: dateTimeCollection,
         RO: ASA,
         FO: 0,
-        leftBudget: ASA
+        leftBudget: ASA,
+        prevMonthFO: 0,
+        prevMonthRO: 0,
+        thisMonthFO: 0,
+        thisMonthRO: 0
     }
 
     const formData = {
@@ -672,8 +752,10 @@ const getOrigNumberOfCopiesBUR = async(givenNo) => {
 
             let incrementedByOne;
             if(currentNoBUR === givenNo){
-                incrementedByOne = (parseInt(givenNo, 10)+1).toString().padStart(4, '0');
+                console.log(currentNoBUR, givenNo, 'here')
+                incrementedByOne = parseInt(givenNo, 10).toString().padStart(4, '0');
             }else{
+                console.log(currentNoBUR, givenNo, 'here2')
                 incrementedByOne = (parseInt(currentNoBUR, 10)+1).toString().padStart(4, '0');
             }
 
