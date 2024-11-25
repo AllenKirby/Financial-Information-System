@@ -26,23 +26,23 @@ const FundingModal = ({modal, data}) => {
     };
 
     useEffect(() => {
-        const fetch = async () => {
+        const fetch = async () => { 
             const {bur, origBur} = await getBurNo()
-            setOperatorInput({...operatorInput, ors: bur})
-            setBUR(bur)
+            const primaryBUR = data.ORSBURS ? data.ORSBURS : bur
+            setOperatorInput({...operatorInput, ors: primaryBUR})
+            setBUR(primaryBUR)
             setOrigBUR(origBur)
-            // const parsedPorjectName = JSON.parse(sessionStorage.getItem('ProjectName'))
-            // if (parsedPorjectName){
-            //     setASANo(parsedPorjectName)
-            // }else{
-            //     const unsubscribe = await retrieveProjectName(setASANo)
-            //     return () => unsubscribe()
-            // }
             const unsubscribe = await retrieveProjectName(setASANo)
             return () => unsubscribe()
         }
         fetch()
+        const asa = data.ASA ? data.asa : ''
+        
     }, [])
+
+    useEffect(() => {
+        console.log(ASANo)
+    }, [ASANo])
 
     useEffect(() => {
         const getData = async() => {

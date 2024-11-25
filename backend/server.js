@@ -4,6 +4,7 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const {admin, db, rtdb}  = require('./config/firebase');
+const {updateControlBook} = require('./tasks/monthlyUpdate')
 
 const requireAuth = require('./middleware/requireAuth');
 const AdminRoutes = require('./routes/AdminRoutes');
@@ -34,6 +35,8 @@ app.get('/logout', (req, res) => {
   res.clearCookie('token', { path: '/' });
   res.status(200).json({message: "cleared"})
 })
+
+updateControlBook()
 
 app.use('/user',UserRoutes)
 
