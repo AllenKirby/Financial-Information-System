@@ -15,15 +15,13 @@ import Header from "../components/Header";
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard} from "react-icons/tb";
 import { BsTable } from "react-icons/bs";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { FiBook, FiUser } from "react-icons/fi";
+import { IoIosClose } from "react-icons/io";
 
 const EditorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
   const [navbarExpand, setNavbarExpand] = useState(true)
-  const [navbarSize, setNavbarSize] = useState('')
-  const [mainSize, setMainSize] = useState('')
   const { dispatch: dispatchContext } = useDisbursementContext()
   const dispatch = useDispatch()
   const apiURL = import.meta.env.VITE_API_URL
@@ -36,7 +34,7 @@ const EditorPage = () => {
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
       : []),
-    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <BsTable size={18} /> },
+    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <BsTable size={22} /> },
     { label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
   ];
 
@@ -53,16 +51,6 @@ const EditorPage = () => {
       setLocation('Disbursement Logs')
     }
   }, [page.pathname])
-
-  useEffect(() => {
-    if(!navbarExpand) {
-      setNavbarSize('w-[70px]')
-      setMainSize('w-full')
-    }else {
-      setNavbarSize('w-1/6')
-      setMainSize('w-5/6')
-    }
-  }, [navbarExpand])
 
   useEffect(() => {
     const fetch = async() => {
@@ -108,20 +96,30 @@ const EditorPage = () => {
     return () => unsubscribe()   
   }, [dispatch, apiURL])
 
+  const collapseSideBar = () => {
+    setNavbarExpand(!navbarExpand)
+  }
+
+
+
   return (
-    <main className="h-screen w-full flex bg-coolSteel">
-      <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
-        <MdOutlineKeyboardArrowLeft 
-          size={25}
-          className='absolute top-6 z-10 -right-3 bg-white cursor-pointer rounded-full border-[1px]'
-          onClick={() => setNavbarExpand(!navbarExpand)}/>
+    <main className="relative h-screen w-full flex bg-coolSteel">
+      {navbarExpand && (
+        <aside className={`${navbarExpand ? 'w-full' : 'w-0'} z-30 block lg:hidden absolute top-0 left-0 h-full transition-all duration-100`}>
+          <div className="relative w-3/4 h-full z-40">
+            <IoIosClose onClick={collapseSideBar} size={30} className="z-50 absolute top-5 right-5 sm:top-6 sm:right-6"/>
+            <Navbar items={navItems} flag={navbarExpand} sidebar={collapseSideBar}/>
+          </div>
+        </aside>
+      )}
+      <aside className={`${navbarExpand ? 'absolute lg:relative hidden lg:w-1/6' : 'w-[78px]'} hidden lg:block h-full transition-all duration-100`}>
         <Navbar items={navItems} flag={navbarExpand}/>
       </aside>
-      <section className={`h-full ${mainSize} ml-3`}>
-        <section className="h-[13%] w-full">
-            <Header currentPage={location}/>
+      <section className={`h-full ${navbarExpand ? 'w-full sm:w-full md:w-full lg:w-5/6 xl:w-5/6 2xl:w-5/6' : 'w-full'}`}>
+        <section className="h-[8%] lg:h-[10%] w-full flex items-center justify-center border-b-2">
+          <Header currentPage={location} sidebar={collapseSideBar}/>
         </section>
-        <section className="h-[87%] w-full flex pr-3">
+        <section className="h-[92%] lg:h-[90%] w-full flex">
             <Outlet/>
         </section>
       </section>

@@ -30,7 +30,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
     }, [user]);
 
     return (
-        <div className='w-full h-full flex items-center justify-between px-3'>
+        <div className='w-full h-full flex items-center justify-between gap-3 px-3'>
             <button 
                 onClick={() => onPageChange(currentPage - 1)} 
                 disabled={currentPage === 1} 

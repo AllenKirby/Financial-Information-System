@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoMdNotifications } from "react-icons/io";
 import { FaUserCircle } from "react-icons/fa";
-import { GoInbox } from "react-icons/go";
+import { GiHamburgerMenu } from "react-icons/gi";
 
 import { useState, useEffect } from "react";
 import { ref, onValue, update } from 'firebase/database';
@@ -14,7 +14,7 @@ import Notification from './Notification';
 
 
 
-const Header = ({ currentPage}) => {
+const Header = ({ currentPage, sidebar}) => {
   const [showNotifications, setShowNotifications] = useState(false); // For showing notification dropdown
   const [unreadNotifs, setUnreadNotifs] = useState(0)
   const [notifications, setNotifications] = useState([]);
@@ -92,19 +92,19 @@ const Header = ({ currentPage}) => {
   },[user])
 
   return (
-    <header className="w-full h-auto flex pt-2 gap-2">
-      <div className="w-4/6 p-3 flex items-center justify-between">
-        <h1 className={`text-2xl font-bold ${fontColor}`}>{currentPage}</h1>
+    <header className="w-full h-auto flex gap-2 px-2">
+      <div className="w-4/6 p-3 flex items-center justify-start gap-2">
+        <GiHamburgerMenu 
+          size={25}
+          className='bg-white cursor-pointer'
+          onClick={sidebar}/>
+        <h1 className={`text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold ${fontColor}`}>{currentPage}</h1>
       </div>
-      <div className="h-14 w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
+      <div className="h-inherit w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
         {/* Notification Icon */}
         <div className='w-1/4'>
           <div className="relative">
-            <div className='flex items-center justify-center gap-3 p-2'>
-              <GoInbox 
-                size={23} 
-                className="bg-white cursor-pointer"
-              />
+            <div className='flex items-center justify-end gap-3'>
               {showNotifications ? (
                 <IoMdNotifications 
                   size={25} 
@@ -118,8 +118,8 @@ const Header = ({ currentPage}) => {
                   onClick={() => setShowNotifications(!showNotifications)}/>
               )}
             </div>
-            <div className={`absolute -top-1 right-1 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
-              <p className="text-xs font-semibold">{unreadNotifs}</p>
+            <div className={`absolute -top-2 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
+              <p className="text-[8px] font-semibold">{unreadNotifs}</p>
             </div>
             {/* Notifications Dropdown */}
           {showNotifications && (
@@ -149,16 +149,19 @@ const Header = ({ currentPage}) => {
           </div>
         </div>
 
-        <div className="flex items-center bg-white py-1 px-4 gap-2">
-          <FaUserCircle size={40} className="text-customFontColor" />
+        <div className="hidden sm:hidden md:hidden lg:flex xl:flex 2xl:flex items-center gap-2">
+          <FaUserCircle className="text-customFontColor xl:text-[40px] 2xl:text-[50px]" />
           <div className="flex flex-col justify-center">
-            <p className={`font-bold text-sm truncate ${fontColor}`}>
+            <p className={`font-bold text-sm lg:text-lg truncate ${fontColor}`}>
               {user?.name || "User"}
             </p>
-            <p className={`text-xs truncate ${fontColor}`}>
+            <p className={`text-xs lg:text-base truncate ${fontColor}`}>
               {user?.uemail || "email@gmail.com"}
             </p>
           </div>
+        </div>
+        <div className='sm:flex md:flex lg:hidden xl:hidden 2xl:hidden flex items-center justify-center'>
+          <FaUserCircle size={30} className="text-customFontColor" />
         </div>
       </div>
     </header>
@@ -166,7 +169,8 @@ const Header = ({ currentPage}) => {
 };
 
 Header.propTypes = {
-  currentPage: PropTypes.string.isRequired
+  currentPage: PropTypes.string.isRequired,
+  sidebar: PropTypes.func.isRequired
 };
 
 export default Header;
