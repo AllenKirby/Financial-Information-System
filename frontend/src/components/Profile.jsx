@@ -165,8 +165,8 @@ const Profile = () => {
     }
 
   return (
-    <section className='w-full h-full p-3 flex items-center justify-center gap-3'>
-        <div className='w-2/3 h-full border-2 rounded-lg'>  
+    <section className='w-full h-full p-3 flex flex-col sm:flex-col md:flex-col lg:flex-row items-center justify-center gap-3'>
+        <div className='w-full sm:w-full md:w-full lg:w-2/3 h-full border-2 rounded-lg'>  
             <div className={`${bgColor()} relative w-full h-1/2 rounded-t-lg flex items-center justify-end p-5`}>
                 {editProfile ? (
                     <div className='flex gap-3'>
@@ -210,27 +210,29 @@ const Profile = () => {
                 </div>
             </div>
         </div>
-        <div className='w-1/3 h-full flex flex-col gap-3'>
-            <div className='w-full h-1/3 border-2 rounded-lg p-5'>
-                <h1 className='text-lg font-bold'>General Information</h1>
-                <div className='flex flex-col gap-3 my-3 px-3'>
-                    <div className='w-full flex items-center justify-start'>
-                        <p className='text-lg flex items-center justify-start gap-3'>
-                            <FiUser size={25}/> 
-                            {userRole(user?.role)}
-                        </p>
-                    </div>
-                    <div className='w-full flex items-center justify-start'>
-                        <p className='text-lg flex items-center justify-start gap-3'>
-                            <MdOutlineMailOutline size={25}/> 
-                            {user?.uemail}
-                            <MdVerified color='green'/>
-                        </p>
+        <div className='w-full lg:w-1/3 h-full flex flex-col md:flex-row lg:flex-col gap-3'>
+            <div className='flex items-center justify-center w-full h-1/3 border-2 rounded-lg p-3 md:p-4 lg:p-5'>
+                <div>
+                    <h1 className='text-sm sm:text-base md:text-lg font-bold'>General Information</h1>
+                    <div className='flex flex-col gap-3 my-3 px-3'>
+                        <div className='w-full flex items-center justify-start'>
+                            <p className='text-sm sm:text-base md:text-lg flex items-center justify-start gap-3'>
+                                <FiUser size={25}/> 
+                                {userRole(user?.role)}
+                            </p>
+                        </div>
+                        <div className='w-full flex items-center justify-start'>
+                            <p className='text-sm sm:text-base md:text-lg flex items-center justify-start gap-3'>
+                                <MdOutlineMailOutline size={25}/> 
+                                {user?.uemail}
+                                <MdVerified color='green'/>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className='w-full h-2/3 border-2 rounded-lg p-3'>
-                <div className='px-2 py-2'>
+            <div className='w-full h-2/3 border-2 rounded-lg p-2'>
+                <div className='h-1/6 px-2 py-2'>
                     <h1 className='text-lg font-bold h-1/6'>Security</h1>
                 </div>
                 <div className='w-full h-5/6 flex items-center justify-center p-2 bg-gray-200 rounded-lg'>
