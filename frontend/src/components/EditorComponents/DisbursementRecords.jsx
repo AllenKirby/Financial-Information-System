@@ -140,7 +140,7 @@ const DisbursementRecords = () => {
                 <input 
                   type="search"
                   placeholder='Search'
-                  className='w-full py-2 text-sm pl-10 rounded-lg focus:outline-preparerPrimary border-2' />
+                  className='w-full py-2 text-sm 2xl:text-base pl-10 rounded-lg focus:outline-preparerPrimary border-2' />
               </div>
               <button onClick={() => setSearchModal(!searchModal)} className='w-1/6 py-1 flex items-center justify-center border-2 rounded-lg'>
                 <IoIosClose size={25}/>
@@ -150,15 +150,15 @@ const DisbursementRecords = () => {
           <div className='w-full h-[10%] pb-2 flex'>
             <div className="w-2/3 sm:w-1/2 flex items-end">
               <div className='pt-3'>
-                <p className='font-semibold text-xs lg:text-base text-preparerPrimary px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
+                <p className='font-semibold text-xs lg:text-base 2xl:text-lg text-preparerPrimary px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
               </div>
             </div>
             <div className='w-1/3 sm:w-1/2 flex items-end justify-end gap-2'>
-              <button onClick={modal} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm bg-preparerPrimary text-white ">
+              <button onClick={modal} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm 2xl:text-base bg-preparerPrimary text-white ">
                 <IoAdd size={20} className='font-bold'/> <span className='hidden lg:block'>New</span>
               </button>
               <div className='relative'>
-                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm'>
+                <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm 2xl:text-base'>
                   <HiAdjustmentsHorizontal 
                     size={18}/>
                     {filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></> : <span className='hidden sm:hidden md:hidden lg:hidden xl:block'>Filter by Fund Cluster</span>}
@@ -180,7 +180,7 @@ const DisbursementRecords = () => {
                 <input 
                   type="search"
                   placeholder='Search'
-                  className='w-14 sm:w-auto py-2 text-sm pl-10 placeholder-transparent sm:placeholder-gray-500 rounded-lg focus:outline-none border-2' />
+                  className='w-14 sm:w-auto py-2 text-sm 2xl:text-base pl-10 placeholder-transparent sm:placeholder-gray-500 rounded-lg focus:outline-none border-2' />
               </div>
               <button onClick={() => setSearchModal(!searchModal)} className='block sm:hidden'>
                 <IoSearchSharp size={38} className='border-2 rounded-lg px3 py-2 text-gray-400'/>
@@ -191,7 +191,7 @@ const DisbursementRecords = () => {
             <div className='w-full h-full rounded-lg border-2'>
               <div className='w-full h-[8%] flex items-center justify-center px-2 py-2 rounded-t-lg bg-gray-100 text-gray-400 text-sm'>
                 <div className='w-2/6 flex '>
-                  <h1 className='w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
+                  <h1 className='lg:text-base 2xl:text-lg w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
                     Payee {alphabeticalFlag ? 
                       <BsSortAlphaDownAlt 
                         size={20} 
@@ -204,13 +204,13 @@ const DisbursementRecords = () => {
                     }
                   </h1>
                 </div>
-                <h1 className='w-1/6 text-center font-semibold'>DV No.</h1>
-                <h1 className='w-1/6 text-center font-semibold'>Status</h1>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>DV No.</h1>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Status</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Created <FaSort className='cursor-pointer' onClick={timeCreatedFlag ? sortTimeCreatedDesc : sortTimeCreatedAsc}/></h1>
+                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Created <FaSort className='cursor-pointer' onClick={timeCreatedFlag ? sortTimeCreatedDesc : sortTimeCreatedAsc}/></h1>
                 </div>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
+                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
                 </div>
               </div>
               <div className="w-full h-[92%] overflow-auto bg-white rounded-lg">

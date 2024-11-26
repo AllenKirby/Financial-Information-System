@@ -92,13 +92,13 @@ const Header = ({ currentPage, sidebar}) => {
   },[user])
 
   return (
-    <header className="w-full h-auto flex gap-2 px-2">
+    <header className="w-full h-auto flex px-2">
       <div className="w-4/6 p-3 flex items-center justify-start gap-2">
         <GiHamburgerMenu 
           size={25}
           className='bg-white cursor-pointer'
           onClick={sidebar}/>
-        <h1 className={`text-sm sm:text-lg md:text-xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold ${fontColor}`}>{currentPage}</h1>
+        <h1 className={`text-base sm:text-lg md:text-2xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold ${fontColor}`}>{currentPage}</h1>
       </div>
       <div className="h-inherit w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
         {/* Notification Icon */}
@@ -107,14 +107,12 @@ const Header = ({ currentPage, sidebar}) => {
             <div className='flex items-center justify-end gap-3'>
               {showNotifications ? (
                 <IoMdNotifications 
-                  size={25} 
-                  className="bg-white cursor-pointer"
+                  className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
                   onClick={() => setShowNotifications(!showNotifications)}/>
                 )
               :(
                 <IoMdNotificationsOutline 
-                  size={25} 
-                  className="bg-white cursor-pointer"
+                  className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
                   onClick={() => setShowNotifications(!showNotifications)}/>
               )}
             </div>
@@ -150,18 +148,18 @@ const Header = ({ currentPage, sidebar}) => {
         </div>
 
         <div className="hidden sm:hidden md:hidden lg:flex xl:flex 2xl:flex items-center gap-2">
-          <FaUserCircle className="text-customFontColor xl:text-[40px] 2xl:text-[50px]" />
+          <FaUserCircle className="text-customFontColor lg:text-[35px] xl:text-[40px] 2xl:text-[50px]" />
           <div className="flex flex-col justify-center">
-            <p className={`font-bold text-sm lg:text-lg truncate ${fontColor}`}>
+            <p className={`font-bold text-sm lg:textbase xl:text-base 2xl:text-xl truncate ${fontColor}`}>
               {user?.name || "User"}
             </p>
-            <p className={`text-xs lg:text-base truncate ${fontColor}`}>
+            <p className={`text-xs lg:text-sm xl:text-sm 2xl:text-lg truncate ${fontColor}`}>
               {user?.uemail || "email@gmail.com"}
             </p>
           </div>
         </div>
         <div className='sm:flex md:flex lg:hidden xl:hidden 2xl:hidden flex items-center justify-center'>
-          <FaUserCircle size={30} className="text-customFontColor" />
+          <FaUserCircle className="text-customFontColor text-[35px] sm:text-[40px] md:text-[45px]" />
         </div>
       </div>
     </header>

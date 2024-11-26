@@ -21,7 +21,6 @@ const {getAllLogs,
        approveDV,
        getNumberOfRecords
         } = require('../controller/AdminController');
-const { updateAccount } = require('../controller/HeadController');
 
 adminRouter.use(setRole([1]))
 
@@ -45,7 +44,6 @@ adminRouter.post('/addTaxType', addTaxType)
 adminRouter.get('/getTaxType', getTaxType)
 adminRouter.delete('/deleteTax/:field_key', deleteTax)
 //DASHBOARD (NUMBER OF RECORDS)
-adminRouter.patch('/updateAcc', updateAccount)
 
 
 module.exports = adminRouter;

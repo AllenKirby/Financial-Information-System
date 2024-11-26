@@ -3,13 +3,11 @@ import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc } from "firebase/firestore"
 import { setControlBook, deleteFolder } from '../redux/ControlBookRedux'
-import { useAuthContext } from "./useAuthContext";
 import { useDispatch } from "react-redux";
 
 export const useFundingHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
-    const { dispatch } = useAuthContext()
     const apiURL = import.meta.env.VITE_API_URL
     const dispatchFolder = useDispatch()
 
@@ -298,26 +296,6 @@ export const useFundingHook = () => {
             console.log(error)
         }
     }
-
-    const updateAccount = async(data) => {
-        setIsLoading(true)
-        setError(null)
-        try {
-            const res = await axios.patch(`${apiURL}/operator/updateAcc`, data, {
-                withCredentials: true
-            })
-            if(res.status === 200) {
-                dispatch({type: 'LOGIN', payload: res.data})
-                setIsLoading(false)
-                return true
-            }
-        } catch (error) {
-            setIsLoading(false)
-            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
-            setError(errorMessage);
-            console.log(errorMessage)
-        }
-    }
       
     return {
         returnDoc, 
@@ -333,7 +311,6 @@ export const useFundingHook = () => {
         updateFieldOffice,
         retrieveProjectName,
         updateASA_ORS,
-        updateAccount,
         isLoading, 
         error
     }
