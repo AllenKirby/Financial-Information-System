@@ -4,33 +4,56 @@ const cron = require('node-cron')
 const updateControlBook = () => {
     cron.schedule('0 0 1 * *', async () => {
         try{
-            const colRef = await db.collection('ControlBook').get();
+            const colRef = await db.collection('ControlBook')
+            .select('prevMonthFO', 'prevMonthRO', 'thisMonthFO', 'thisMonthRO')
+            .get();
+
             if(colRef.empty){
                 return;
             }
 
-            for(const doc of colRef.docs) {
-                const data = doc.data();
-                const prevMonthFO_value = data.prevMonthFO || 0
-                const prevMonthRO_value = data.prevMonthRO || 0
-                const thisMonthFO_value = data.thisMonthFO || 0
-                const thisMonthRO_value = data.thisMonthRO || 0
+            await Promise.all(
+                colRef.docs.map(async (doc) => {
+                    const data = doc.data();
+                    const prevMonthFO_value = Number(data.prevMonthFO || 0)
+                    const prevMonthRO_value = Number(data.prevMonthRO || 0)
+                    const thisMonthFO_value = Number(data.thisMonthFO || 0)
+                    const thisMonthRO_value = Number(data.thisMonthRO || 0)
 
-                try {
-                    await doc.ref.update({
+                    const batch = db.batch();
+
+                    batch.update(doc.ref, {
                         prevMonthFO: prevMonthFO_value + thisMonthFO_value,
                         prevMonthRO: prevMonthRO_value + thisMonthRO_value,
                         thisMonthFO: 0,
                         thisMonthRO: 0
                     })
-                    console.log("succesfully updated ", doc.id)
-                }catch (error){
-                    console.log('Error on ', doc.id, error)
-                }
 
-            }
+                    const fieldOfficesRef = doc.ref.collection('FieldOffices');
+                    const fieldOfficesSnap = await fieldOfficesRef.select('prevMonthFO', 'prevMonthRO', 'thisMonthFO', 'thisMonthRO').get();
+                    if(!fieldOfficesSnap.empty){
+                        fieldOfficesSnap.docs.forEach((subDoc) => {
+                            const subData = subDoc.data()
+                            const subPrevMonthFO = Number(subData.prevMonthFO || 0);
+                            const subPrevMonthRO = Number(subData.prevMonthRO || 0);
+                            const subThisMonthFO = Number(subData.thisMonthFO || 0);
+                            const subThisMonthRO = Number(subData.thisMonthRO || 0);
+
+                            batch.update(subDoc.ref, {
+                                prevMonthFO: subPrevMonthFO + subThisMonthFO,
+                                prevMonthRO: subPrevMonthRO + subThisMonthRO,
+                                thisMonthFO: 0,
+                                thisMonthRO: 0,
+                            });
+                        })
+                    }
+                    await batch.commit()
+                    console.log(`Successfully updated ControlBook and FieldOffices for document ${doc.id}`);
+                })
+            )
+            console.log('All updates completed successfully.');
         }catch(err){
-            console.log('error getting control book', err)
+            console.log('error updating control book', err)
         }
     })
     
