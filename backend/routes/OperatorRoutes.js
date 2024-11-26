@@ -16,7 +16,6 @@ const {
     updateFieldOffice,
     deleteFieldOffice,
     updateASA_ORS,
-    updateAccount,
     getBUR
 } = require('../controller/OperatorController');
 
@@ -33,7 +32,6 @@ OperatorRouter.delete('/deleteControlBook/:id', deleteControlBook)
 OperatorRouter.patch('/updateFieldOffice/:id', updateFieldOffice)
 OperatorRouter.delete('/deleteFieldOffice/:id', deleteFieldOffice)
 OperatorRouter.patch('/updateASA_ORS/:id', updateASA_ORS)
-OperatorRouter.patch('/updateAcc', updateAccount)
 OperatorRouter.get('/getBUR', getBUR)
 
 module.exports = OperatorRouter

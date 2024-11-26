@@ -14,9 +14,8 @@ import Header from "../components/Header";
 //Icons
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard} from "react-icons/tb";
-import { BsTable } from "react-icons/bs";
-import { FiBook, FiUser } from "react-icons/fi";
-import { IoIosClose } from "react-icons/io";
+import { FiBook} from "react-icons/fi";
+import { LuTable } from "react-icons/lu";
 
 const EditorPage = () => {
   const page = useLocation()
@@ -34,8 +33,7 @@ const EditorPage = () => {
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
       : []),
-    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <BsTable size={22} /> },
-    { label: 'Profile', path: '/editor/profile', icon: <FiUser size={22} /> }
+    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <LuTable size={22} /> }
   ];
 
   useEffect(() => {
@@ -45,8 +43,6 @@ const EditorPage = () => {
       setLocation('Dashboard')
     } else if(page.pathname === "/editor/controlbook"){
       setLocation('Control Book')
-    } else if(page.pathname === "/editor/profile"){
-      setLocation('Profile')
     } else if(page.pathname === "/editor/disbursementlogs"){
       setLocation('Disbursement Logs')
     }
@@ -107,7 +103,6 @@ const EditorPage = () => {
       {navbarExpand && (
         <aside className={`${navbarExpand ? 'w-full' : 'w-0'} z-30 block lg:hidden absolute top-0 left-0 h-full transition-all duration-100`}>
           <div className="relative w-3/4 h-full z-40">
-            <IoIosClose onClick={collapseSideBar} size={30} className="z-50 absolute top-5 right-5 sm:top-6 sm:right-6"/>
             <Navbar items={navItems} flag={navbarExpand} sidebar={collapseSideBar}/>
           </div>
         </aside>

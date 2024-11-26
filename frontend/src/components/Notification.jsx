@@ -13,7 +13,7 @@ const Notification = ({ notification, markAsRead }) => {
   const {OpDocuments} = useOpDisbursementContext();
   const navigate = useNavigate();
   const { user } = useAuthContext()
-  const [notifData, setNotifData] = useState({date: '', time: '', docName: '', name: '', DV: ''})
+  const [notifData, setNotifData] = useState({dateTime: '', docName: '', name: '', DV: ''})
   const [notifMessage, setNotifMessage] = useState({message1: '', message2: '' })
   const { documents } = useDisbursementContext()
   const { HeadDocuments } = useHeadDisbursementContext()
@@ -21,9 +21,9 @@ const Notification = ({ notification, markAsRead }) => {
 
   
   useEffect(() => {
-      const [date, time, docName, name, DV, fund] = notification.data.split('|');
+      const [dateTime, docName, name, DV, fund] = notification.data.split('|');
       const DV_key = `${DV}|${fund}`
-      setNotifData({ date, time, docName, name, DV_key });
+      setNotifData({ dateTime, docName, name, DV_key });
       setNotifMessage({message1: notification.message1, message2: notification.message2})
     
   }, [notification]);

@@ -1,10 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-import { useAuthContext } from '../hooks/useAuthContext'
 
 export const usePreparerHook = () => {
     const [error, setError] = useState(null)
-    const { dispatch } = useAuthContext()
     const [isLoading, setIsLoading] = useState(false)
     const apiURL = import.meta.env.VITE_API_URL
 
@@ -141,26 +139,6 @@ export const usePreparerHook = () => {
         }
     }
 
-    const updateAccount = async(data) => {
-        setIsLoading(true)
-        setError(null)
-        try {
-            const res = await axios.patch(`${apiURL}/editor/updateAcc`, data, {
-                withCredentials: true
-            })
-            if(res.status === 200) {
-                dispatch({type: 'LOGIN', payload: res.data})
-                setIsLoading(false)
-                return true
-            }
-        } catch (error) {
-            setIsLoading(false)
-            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
-            setError(errorMessage);
-            console.log(errorMessage)
-        }
-    }
-
   return {
     createDisbursement, 
     deleteDV, 
@@ -169,7 +147,6 @@ export const usePreparerHook = () => {
     updateDV, 
     savePayeeData, 
     loadPayee, 
-    updateAccount,
     isLoading, 
     error}
 }

@@ -2,6 +2,11 @@ import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import html2pdf from 'html2pdf.js'
+//icons
+import { RxPaperPlane } from "react-icons/rx";
+import { FiEdit3 } from "react-icons/fi";
+import { MdDeleteOutline } from "react-icons/md";
+import { IoIosArrowRoundBack } from "react-icons/io";
 //components
 import DisbursementVoucher from './DisbursementVoucher';
 import Document from "./Document";
@@ -29,7 +34,7 @@ const ViewDocument = () => {
   const [idStatus, setIdStatus] = useState({id: '', status: '', type: ''})
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalComment, setModalComment] = useState(false)
-  const [userRecord, setUserRecord] = useState('')
+  //const [userRecord, setUserRecord] = useState('')
   const [primaryColor, setPrimaryColor] = useState('')
   const [secondaryColor, setSecondaryColor] = useState('')
   const [type, setType] = useState('')
@@ -223,8 +228,8 @@ const ViewDocument = () => {
   }
 
   return (
-    <section className="w-full h-auto flex gap-2">
-      <div className='relative w-5/6 h-[500px] py-3 bg-white rounded-lg'>
+    <section className="w-full h-full flex flex-col lg-portrait:flex-col lg-landscape:flex-row gap-2">
+      <div className='relative w-full lg-landscape:w-5/6 py-3 h-[90%] lg-landscape:h-full bg-white rounded-lg'>
         {isCommentOpen && (
           <div className={`h-[inherit] absolute overflow-hidden p-2 top-0 left-0 z-10 rounded-lg transition-all duration-500 ease-in-out bg-white border-2 ${isCommentOpen ? 'w-full' : 'w-0'}`}>
             <div className="px-2 my-2">
@@ -245,38 +250,38 @@ const ViewDocument = () => {
             </div>
           </div>
         )}
-        <div className="overflow-y-auto h-full w-full">
+        <div className="overflow-auto h-full w-full">
           <Document document={doc} />
         </div>
       </div>
-      <div className="w-1/6 h-auto p-3 bg-white rounded-lg">
-        <div className="flex flex-col gap-2">
+      <div className="w-full lg-landscape:w-1/6 h-[10%] lg-landscape:h-full p-3 bg-white rounded-lg">
+        <div className="flex flex-row overflow-x-auto lg-portrait:flex-row lg-landscape:flex-col  gap-2">
 
           {idStatus.type === '4' && (
             <button
               //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
               onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
-              className={`w-full px-5 py-2 rounded-lg bg-preparerPrimary text-white hover:scale-125 transition-all duration-150`}
+              className={`w-auto lg-landscape:w-full px-5 py-2 rounded-lg bg-preparerPrimary text-white`}
               >
-              Submit
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
             </button>
           )}
 
           {idStatus.type === '3' && (
             <button
               onClick={() => openModal('SubmitFunding')}
-              className={`w-full px-5 py-2 rounded-lg bg-fundingBlueGreen text-white hover:scale-125 transition-all duration-150`}
+              className={`w-auto lg-landscape:w-full px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
               >
-              Submit
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
             </button>
           )}
 
           {(idStatus.type === '2' && !permission.data.permission) && (
             <button
               onClick={() => openModal('SubmitBO')}
-              className={`w-full px-5 py-2 rounded-lg bg-fundingBlueGreen text-white hover:scale-125 transition-all duration-150`}
+              className={`w-auto lg-landscape:w-full px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
               >
-              Submit
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
             </button>
           )}
 
@@ -284,7 +289,7 @@ const ViewDocument = () => {
             <button
               onClick={approve}
               disabled={isLoadingApprover}
-              className={` w-full px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white hover:scale-125 transition-all duration-150`}
+              className={` w-full px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white`}
               >
               Approve
             </button>
@@ -293,15 +298,15 @@ const ViewDocument = () => {
           {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
             <button
               onClick={modal}
-              className={`w-full rounded-lg py-2 bg-${primaryColor} text-white hover:scale-125 transition-all duration-100`}
+              className={`w-auto lg-landscape:w-full rounded-lg px-5 py-2 bg-${primaryColor} text-white`}
               >
-              Update
+              <FiEdit3 size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Update</span>
             </button>
           )}
           {(idStatus.type === '3' || idStatus.type === '4' && permission?.data?.permission) && (
             <button
               onClick={isFundingModalOpen}
-              className={`w-full rounded-lg py-2 bg-${primaryColor} text-white hover:scale-125 transition-all duration-100`}
+              className={`w-full rounded-lg py-2 bg-${primaryColor} text-white`}
               >
               Add Data
             </button>
@@ -310,7 +315,7 @@ const ViewDocument = () => {
           {idStatus.status === 'Approved' && (
             <button
             onClick={handleDownload}
-            className={`w-full rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white hover:scale-125 transition-all duration-100`}
+            className={`w-full rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white`}
             >
             Download
           </button>)}
@@ -319,16 +324,16 @@ const ViewDocument = () => {
             <button
               onClick={(idStatus.type === '4' || idStatus.status === 'Drafting') ? delDV : () => openModal('ReturnDV')}
               disabled={isLoadingPreparer}
-              className={`w-full rounded-lg py-2 text-white ${secondaryColor} ${isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-red-500 hover:scale-125'} transition-all duration-100`}
+              className={`w-auto lg-landscape:w-full px-5 rounded-lg py-2 text-white ${secondaryColor} ${isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-red-500 '}`}
               >
-              {(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}
+              <MdDeleteOutline size={22} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">{(idStatus.type === '4' || idStatus.status === 'Drafting') ? 'Delete' : 'Return'}</span>
             </button>
           )}
 
           {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
             <button
               onClick={() => openModal('ReturnToFunding')}
-              className={`w-full rounded-lg text-sm py-2 text-white ${secondaryColor}  hover:scale-125 transition-all duration-100`}
+              className={`w-full rounded-lg text-sm py-2 text-white ${secondaryColor}`}
               >
               Return to Funding
             </button>
@@ -337,7 +342,7 @@ const ViewDocument = () => {
           {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
             <button
               onClick={() => openModal('ReturnToPreparer')}
-              className={`w-full rounded-lg text-sm py-2 text-white ${secondaryColor}  hover:scale-125tyg6 transition-all duration-100`}
+              className={`w-full rounded-lg text-sm py-2 text-white ${secondaryColor}`}
               >
               Return to Preparer
             </button>
@@ -345,9 +350,9 @@ const ViewDocument = () => {
 
           <button
             onClick={() => window.history.back()}
-            className={`w-full py-2 rounded-lg text-white ${secondaryColor} hover:scale-125 transition-all duration-150`}
+            className={`w-auto lg-landscape:w-full px-5 py-2 rounded-lg text-white ${secondaryColor}`}
             >
-            Back
+           <IoIosArrowRoundBack size={27} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Back</span>
           </button>
           
           {idStatus.status !== 'Drafting' && (
@@ -377,7 +382,7 @@ const ViewDocument = () => {
               </section>
             </>
           )}
-          <select 
+          {/* <select 
             className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none"
             onChange={(e) => setUserRecord(e.target.value)}
             value={userRecord}>
@@ -397,10 +402,10 @@ const ViewDocument = () => {
                 return <option key={key} value={doc[key]}>{formattedKey}:</option>;
                 });
             })()}
-          </select>
-          <div className="pl-5">
+          </select> */}
+          {/* <div className="pl-5">
             <p>{userRecord.replace(/[,|]/g, ' ')}</p>
-          </div>
+          </div> */}
         </div>
       </div>
       {modalComment && (

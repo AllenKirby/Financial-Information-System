@@ -5,8 +5,7 @@ const fs = require('fs');
 const FieldValue = admin.firestore.FieldValue;
 
 const {
-    setHistoryLogs, 
-    updateUserAcc,
+    setHistoryLogs,
     getDateTime
   } = require('./MultiAccess/Functions')
 
@@ -452,25 +451,6 @@ const getNumberOfRecords = async (req, res) => {
   }
 }
 
-const updateAccount = async(req, res) => {
-  const {name, role} = req.body
-  const uid = req.user.uid
-  
-  try {
-      const response = await updateUserAcc(uid, role, name)
-
-      const uname = response.customClaims.dispName
-      const urole = response.customClaims.role
-      const userid = response.uid
-      const email = response.email
-
-      res.status(200).json({ success: true, role: urole, name: uname, uid: userid, uemail: email})
-  } catch (error) {
-      console.log(`Error updating ${error}`)
-      res.status(500).json({ success: false, error: error.message });
-  }
-}
-
 module.exports = {
   getAllLogs,
   //readAdmin_records,
@@ -487,6 +467,5 @@ module.exports = {
   getTaxType,
   deleteTax,
   approveDV,
-  getNumberOfRecords,
-  updateAccount
+  getNumberOfRecords
 };

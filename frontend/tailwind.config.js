@@ -6,6 +6,10 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'lg-portrait': { raw: '(min-width: 1024px) and (orientation: portrait)' },
+        'lg-landscape': { raw: '(min-width: 1024px) and (orientation: landscape)' },
+      },
       fontFamily: {
         'times': ['"Times New Roman"', 'serif'],
         poppins: ['Poppins', 'sans-serif'],
