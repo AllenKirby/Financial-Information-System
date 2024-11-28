@@ -5,6 +5,7 @@ const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const {admin, db, rtdb}  = require('./config/firebase');
 const {updateControlBook} = require('./tasks/monthlyUpdate')
+const {updateASADue} = require('./tasks/dailyUpdate')
 
 const requireAuth = require('./middleware/requireAuth');
 const AdminRoutes = require('./routes/AdminRoutes');
@@ -37,6 +38,7 @@ app.get('/logout', (req, res) => {
 })
 
 updateControlBook()
+updateASADue()
 
 app.use('/user',UserRoutes)
 

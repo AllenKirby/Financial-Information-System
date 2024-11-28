@@ -533,7 +533,8 @@ const appendDataToSheet = async (req, res) => {
         prevMonthFO: 0,
         prevMonthRO: 0,
         thisMonthFO: 0,
-        thisMonthRO: 0
+        thisMonthRO: 0,
+        cbStatus: 'active'
     }
 
     try {

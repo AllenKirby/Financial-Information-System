@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 const ReportRows = ({reportData}) => {
   const [data, setData] = useState({
@@ -55,6 +55,23 @@ const ReportRows = ({reportData}) => {
     return sum
   } 
 
+  const subtract = (firstNum, secondNum) => {
+    const difference = parseFloat(firstNum || 0) - parseFloat(secondNum || 0)
+    return difference
+  }
+
+  const CB_TotalObligations_RO = useMemo(() => {
+    return add(reportData?.prevMonthRO, reportData?.thisMonthRO)
+  }, [reportData?.thisMonthRO, reportData?.prevMonthRO])
+
+  const CB_TotalObligations_FO = useMemo(() => {
+    return add(reportData?.prevMonthFO, reportData?.thisMonthFO)
+  }, [reportData?.thisMonthFO, reportData?.prevMonthFO])
+
+  const CB_TotalObligations = useMemo(() => {
+    return add(CB_TotalObligations_RO, CB_TotalObligations_FO)
+  }, [reportData?.thisMonthFO, reportData?.prevMonthFO])
+
   return (
     <tbody className="w-full h-full">
         <tr>
@@ -67,23 +84,39 @@ const ReportRows = ({reportData}) => {
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.thisMonthRO || 0)}</td>
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.thisMonthFO || 0)}</td>
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(add(reportData.thisMonthRO, reportData.thisMonthFO))}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(CB_TotalObligations_RO)}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(CB_TotalObligations_FO)}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(CB_TotalObligations)}</td>
+            <td className='border-2 border-black text-center font-bold'>{`(TOTAL OBLG. - ASA)`}</td>
         </tr>
         {
           Object.keys(reportData.fieldOffices).length > 0 ? (
             <>
-              {Object.keys(reportData.fieldOffices).map((key, index) => (
-                <tr key={index}>
-                  <td className='border-2 border-black'></td>
-                  <td className='border-2 border-black'>{key.split(',')[1]}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].ASA || 0)}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].prevMonthRO || 0)}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].prevMonthFO || 0)}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(add(reportData.fieldOffices[key].prevMonthRO, reportData.fieldOffices[key].prevMonthFO) || 0)}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].thisMonthRO || 0)}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].thisMonthFO || 0)}</td>
-                  <td className='border-2 border-black text-right'>{formatToPeso(add(reportData.fieldOffices[key].thisMonthRO, reportData.fieldOffices[key].thisMonthFO) || 0)}</td>
-              </tr>
-              ))}
+              {
+                Object.keys(reportData.fieldOffices).map((key, index) => {
+                  const totalObligationRO = add(reportData.fieldOffices[key].prevMonthRO, reportData.fieldOffices[key].thisMonthRO) || 0
+                  const totalObligationFO = add(reportData.fieldOffices[key].prevMonthFO, reportData.fieldOffices[key].thisMonthFO) || 0
+                  const totalObligation = add(totalObligationRO, totalObligationFO)
+                  const Unobligated = subtract(totalObligation, reportData.fieldOffices[key].ASA || 0)
+                  return (
+                    <tr key={index}>
+                      <td className='border-2 border-black'></td>
+                      <td className='border-2 border-black'>{key.split(',')[1]}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].ASA || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].prevMonthRO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].prevMonthFO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(add(reportData.fieldOffices[key].prevMonthRO, reportData.fieldOffices[key].prevMonthFO) || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].thisMonthRO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].thisMonthFO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(add(reportData.fieldOffices[key].thisMonthRO, reportData.fieldOffices[key].thisMonthFO) || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(totalObligationRO)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(totalObligationFO)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(totalObligation)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(Unobligated)}</td>
+                  </tr>
+                  )
+                })
+              }
             </>
           ) : (
             <tr>

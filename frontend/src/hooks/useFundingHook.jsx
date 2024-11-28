@@ -204,9 +204,8 @@ export const useFundingHook = () => {
 
     const retrieveProjectName = async (setASANo) => {
         const docRef = doc(firestore,'formData', 'ControlBook');
-        const unsubscribe = onSnapshot(docRef, async (docSnapshot) => {
+        const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
-                // Document data is available
                 const projectData = docSnapshot.data()
                 sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
                 setASANo(projectData)
