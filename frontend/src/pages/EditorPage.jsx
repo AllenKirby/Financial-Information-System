@@ -96,8 +96,6 @@ const EditorPage = () => {
     setNavbarExpand(!navbarExpand)
   }
 
-
-
   return (
     <main className="relative h-screen w-full flex bg-coolSteel">
       {navbarExpand && (
