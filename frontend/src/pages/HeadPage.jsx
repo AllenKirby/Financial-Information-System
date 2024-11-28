@@ -13,7 +13,6 @@ import { useEffect, useState } from "react"
 import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
 import { BsTable } from "react-icons/bs";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { TbLogs, TbEdit } from "react-icons/tb";
 
 import { useAuthContext } from "../hooks/useAuthContext"
@@ -23,8 +22,6 @@ const HeadPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
   const [navbarExpand, setNavbarExpand] = useState(true)
-  const [navbarSize, setNavbarSize] = useState('')
-  const [mainSize, setMainSize] = useState('')
   const { user } = useAuthContext() 
   const { dispatch: dispatchContext, documents } = useHeadDisbursementContext()
   const dispatch = useDispatch()
@@ -80,16 +77,6 @@ const HeadPage = () => {
       }
   }, [page.pathname])
 
-  useEffect(() => {
-    if(!navbarExpand) {
-      setNavbarSize('w-[70px]')
-      setMainSize('w-full')
-    }else {
-      setNavbarSize('w-1/6')
-      setMainSize('w-5/6')
-    }
-  }, [navbarExpand])
-
   // useEffect(() => {
   //     if(permission?.data?.permission) {
   //       setStatus(['Approved', 'Under Review', 'For Approval'])
@@ -113,22 +100,29 @@ const HeadPage = () => {
     return () => unsubscribe()
   }, [user, dispatchContext, apiURL, status, documents, permission])
 
+  const collapseSideBar = () => {
+    setNavbarExpand(!navbarExpand)
+  }
+
   return (
-    <main className="h-screen w-full flex bg-coolSteel">
-      <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
-        <MdOutlineKeyboardArrowLeft 
-          size={25}
-          className='absolute top-6 z-10 -right-3 bg-white cursor-pointer rounded-full border-[1px]'
-          onClick={() => setNavbarExpand(!navbarExpand)}/>
+    <main className="relative h-screen w-full flex bg-coolSteel">
+      {navbarExpand && (
+        <aside className={`${navbarExpand ? 'w-full' : 'w-0'} z-30 block lg:hidden absolute top-0 left-0 h-full transition-all duration-100`}>
+          <div className="relative w-3/4 h-full z-40">
+            <Navbar items={navItems} flag={navbarExpand} sidebar={collapseSideBar}/>
+          </div>
+        </aside>
+      )}
+      <aside className={`${navbarExpand ? 'absolute lg:relative hidden lg:w-1/6' : 'w-[78px]'} hidden lg:block h-full transition-all duration-100`}>
         <Navbar items={navItems} flag={navbarExpand}/>
       </aside>
-      <section className={`h-full ${mainSize} ml-3`}>
-          <section className="h-[13%] w-full">
-              <Header currentPage={location}/>
-          </section>
-          <section className="h-[87%] w-full pr-3">
-              <Outlet/>
-          </section>
+      <section className={`h-full ${navbarExpand ? 'w-full sm:w-full md:w-full lg:w-5/6 xl:w-5/6 2xl:w-5/6' : 'w-full'}`}>
+        <section className="h-[8%] lg:h-[10%] w-full flex items-center justify-center border-b-2">
+          <Header currentPage={location} sidebar={collapseSideBar}/>
+        </section>
+        <section className="h-[92%] lg:h-[90%] w-full flex">
+            <Outlet/>
+        </section>
       </section>
     </main>
   )
