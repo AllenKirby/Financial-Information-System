@@ -16,6 +16,7 @@ const FundingModal = ({modal, data}) => {
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
     const [origBUR, setOrigBUR] = useState('')
+    const [same, setSame] = useState(false)
     const prevASARef = useRef();
 
     const formatToPeso = (value) => {
@@ -29,20 +30,19 @@ const FundingModal = ({modal, data}) => {
         const fetch = async () => { 
             const {bur, origBur} = await getBurNo()
             const primaryBUR = data.ORSBURS ? data.ORSBURS : bur
-            setOperatorInput({...operatorInput, ors: primaryBUR})
+            if(!data.ORSBURS){
+                setOperatorInput({...operatorInput, ors: primaryBUR})
+            }
             setBUR(primaryBUR)
             setOrigBUR(origBur)
             const unsubscribe = await retrieveProjectName(setASANo)
             return () => unsubscribe()
         }
         fetch()
-        const asa = data.ASA ? data.asa : ''
+
         
     }, [])
 
-    useEffect(() => {
-        console.log(ASANo)
-    }, [ASANo])
 
     useEffect(() => {
         const getData = async() => {
@@ -82,6 +82,7 @@ const FundingModal = ({modal, data}) => {
             origBUR: origBUR
         }
         console.log(fundingData)
+        
         const res = await updateASA_ORS(fundingData, DVNo)
 
         if(res){
@@ -139,7 +140,12 @@ const FundingModal = ({modal, data}) => {
                     <label className="font-semibold">ASA No.</label>
                     <select    
                         className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                        onChange={(e) => setOperatorInput({...operatorInput, asa: e.target.value})}
+                        onChange={(e) => {
+                            if(e.target.value !== operatorInput.asa){
+                                
+                            }
+                            setOperatorInput({...operatorInput, asa: e.target.value})
+                        }}
                         value={operatorInput.asa}
                         required>
                         <option value="" disabled>Select</option>
@@ -163,37 +169,6 @@ const FundingModal = ({modal, data}) => {
                     </select>
                 </div>
             </div>
-            {/* <div className="px-3">
-                <div className="my-2">
-                    <label className="font-semibold">Add ASA</label>
-                    <select    
-                        className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                        onChange={(e) => {
-                            
-                            setOperatorInput({...operatorInput, asa: e.target.value})
-                        }}
-                        value={operatorInput.asa}
-                        required>
-                        <option value="" disabled>Select</option>
-                        {Object.entries(ASANo).length > 0 ? (
-                            Object.entries(ASANo).map(([key, asano]) => {
-                                const finalASANO = key.replace('|', ' ')
-                                return(
-                                    <optgroup key={key} label={finalASANO}>
-                                        {asano.map((projectName, index) => (
-                                            <option key={index} value={`${key}/${projectName.projectID}`}>{projectName.projectName  }</option>
-                                        ))}
-                                    </optgroup>
-                                )   
-                            })
-                        ) : (
-                            <option value="" disabled>
-                                No options available
-                            </option>
-                        )}
-                    </select>
-                </div>
-            </div> */}
             <div className="flex items-center justify-end gap-3 my-2">
                 <button
                     type="submit"

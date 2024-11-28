@@ -150,10 +150,10 @@ const Header = ({ currentPage, sidebar}) => {
         <div className="hidden sm:hidden md:hidden lg:flex xl:flex 2xl:flex items-center gap-2">
           <FaUserCircle className="text-customFontColor lg:text-[35px] xl:text-[40px] 2xl:text-[50px]" />
           <div className="flex flex-col justify-center">
-            <p className={`font-bold text-sm lg:textbase xl:text-base 2xl:text-xl truncate ${fontColor}`}>
+            <p className={`font-bold text-sm lg:text-base xl:text-base 2xl:text-base truncate ${fontColor}`}>
               {user?.name || "User"}
             </p>
-            <p className={`text-xs lg:text-sm xl:text-sm 2xl:text-lg truncate ${fontColor}`}>
+            <p className={`text-xs lg:text-sm xl:text-sm 2xl:text-base truncate ${fontColor}`}>
               {user?.uemail || "email@gmail.com"}
             </p>
           </div>

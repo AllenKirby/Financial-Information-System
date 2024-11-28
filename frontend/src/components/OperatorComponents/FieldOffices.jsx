@@ -87,36 +87,32 @@ const FieldOffices = (props) => {
             <p className="font-bold text-sm mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(fieldOffice.RO)}</span></p>
             <p className="font-bold text-sm mt-1">Total Spending: <span className="font-normal">{formatToPeso(fieldOffice.FO)}</span></p>
           </div>
-          <table className='w-full border-2 table-auto'>
-            <thead className='bg-gray-200'>
-              <tr>
-                <th className='border-2'>Date</th>
-                <th className='border-2'>DV No.</th>
-                <th className='border-2'>BUR No.</th>
-                <th className='border-2'>Payee</th>
-                <th className='border-2'>Particulars</th>
-                <th className='border-2'>ASA</th>
-              </tr>
-            </thead>
-            <tbody>
-              {fieldOffice.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0 ? (
-                Object.entries(fieldOffice.dvCollection).map(([key, DV]) => (
-                  <tr key={key}>
-                    <td className='text-center border-2 px-16'>{DV.date}</td>
-                    <td className='text-center border-2 px-12'>{DV.DVNoCount}</td>
-                    <td className='text-center border-2 px-12'>{DV.orsData}</td>
-                    <td className='truncate px-5 border-2'>{DV.payee}</td>
-                    <td className='truncate px-5 border-2'>{DV.particulars}</td>
-                    <td className='text-center border-2 px-16'>{DV.amount}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="text-xl font-semibold text-center py-5">No Voucher Found</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div className="w-full border-2">
+            <div className="bg-gray-200 grid grid-cols-6 gap-2 border-b-2 p-2">
+              <div className="font-semibold text-center">Date</div>
+              <div className="font-semibold text-center">DV No.</div>
+              <div className="font-semibold text-center">BUR No.</div>
+              <div className="font-semibold text-center">Payee</div>
+              <div className="font-semibold text-center">Particulars</div>
+              <div className="font-semibold text-center">ASA</div>
+            </div>
+
+            {fieldOffice.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0 ? (
+              Object.entries(fieldOffice.dvCollection).map(([key, DV]) => (
+                <div key={key} className="grid grid-cols-6 gap-2 border-b-2 p-2 items-center">
+                  <div className="text-center">{DV.date}</div>
+                  <div className="text-center">{DV.DVNoCount}</div>
+                  <div className="text-center">{DV.orsData}</div>
+                  <div className="text-center break-words">{DV.payee}</div>
+                  <div className="break-words">{DV.particulars}</div> {/* Handles long text */}
+                  <div className="text-center">{DV.amount}</div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center font-semibold p-4">No Voucher Found</div>
+            )}
+          </div>
+
         </div>
         {FieldOfficeModal && (
         <>

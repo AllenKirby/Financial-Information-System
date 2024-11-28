@@ -8,6 +8,7 @@ import {useAuthContext} from '../../hooks/useAuthContext'
 
 const ControlBook = () => {
   const [controlBookFlag, setControlBookFlag] = useState(false)
+  const [CBStatus, setCBStatus] = useState('active')
 
   const controlBooks = useSelector((state) => state.controlBook)
   const { user } = useAuthContext()
@@ -17,21 +18,34 @@ const ControlBook = () => {
 
   const modal = () => setControlBookFlag(!controlBookFlag)
 
+  console.log(controlBooks)
+
   return (
     <section className="w-full h-full">
       {!id ? (
         <>
           <div className="w-full h-[10%] flex items-end justify-between py-2">
             <p className="font-semibold">Control Books({controlBooks ? Object.entries(controlBooks).length : 0})</p>
-            <button 
-              onClick={modal}
-              className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} px-3 py-2 rounded-lg text-white`}
-              >New Control Book
-            </button>
+            <div className="flex space-x-2">
+              <select
+              onChange={(e) => setCBStatus(e.target.value)} 
+              className="px-3 py-2 border rounded bg-white text-gray-700 shadow-sm">
+                <option value="active">Active</option>
+                <option value="disabled">Disabled</option>
+                <option value="ended">Ended</option>
+              </select>
+              <button 
+                onClick={modal}
+                className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} px-3 py-2 rounded-lg text-white`}
+                >New Control Book
+              </button>
+            </div>
           </div>
           <div className="relative p-2 w-full h-[88%] grid grid-cols-4 gap-2 border-2 rounded-lg">
             {controlBooks && Object.entries(controlBooks).length > 0 ? (
-              Object.entries(controlBooks).map(([key, controlBook]) => (
+              Object.entries(controlBooks)
+              .filter(([key, controlBook]) => controlBook.cbStatus === CBStatus)
+              .map(([key, controlBook]) => (
                 <Folder key={key} ASANo={key} controlBook={controlBook}/>
               ))
             ) : (
