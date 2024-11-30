@@ -103,8 +103,8 @@ const DocumentDetails = ({ index, documents, type }) => {
 
   const getTimeDateforReturned = (dateTime) => {
     if(dateTime) {
-      const [, date, time] = dateTime.split('|'); 
-      return `${date} ${time}`;
+      const DT = dateTime.split('|').slice()[1]; 
+      return DT;
     }
   }
 
@@ -132,9 +132,8 @@ const DocumentDetails = ({ index, documents, type }) => {
       </h2>
       {(type === '4' || type === '3') && <h2 className="text-xs font-light text-center w-1/6">
         {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
-        {/* {type === '4' && docu?.returnedToPreparer ? formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) : '-'}
-        {type === '3' && docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) : '-'} */}
-        {getTimeDateforReturned(docu?.returnedToPreparer)}
+        {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
+        {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
       </h2>}
       {type === '1' && <h2 className="text-xs font-light text-center w-1/6">
         {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}

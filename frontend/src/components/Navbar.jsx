@@ -59,7 +59,7 @@ const Navbar = ({ items, flag, sidebar = () => {} }) => {
       <div className="h-[8%] lg:h-[10%] relative w-full px-4 py-1 sm:py-3 md:py-5 xl:py-3 2xl:py-8 flex gap-2 items-center justify-start">
           <IoIosClose onClick={sidebar} size={30} className="z-50 absolute top-1/2 right-2 transform -translate-y-1/2 block lg:hidden"/>
           <img src={bgImage} alt="" className="w-10 sm:w-12 md:w-12 lg:w-10" />
-          <h1 className={`font-bold text-2xl sm:text-3xl md:text-3xl lg:text-xl xl:text-3xl 2xl:text-4xl text-customgreen ${hideText}`}>NIA-FIS</h1>
+          <h1 className={`font-bold text-2xl sm:text-3xl md:text-3xl lg:text-xl xl:text-3xl 2xl:text-4xl text-customgreen ${hideText}`}>NIA|FIS</h1>
         </div>
       <div className='flex flex-col items-start justify-between w-full h-[92%] lg:h-[90%]'>
         <div className="w-full flex flex-col p-2">

@@ -23,6 +23,7 @@ const Notification = ({ notification, markAsRead }) => {
   useEffect(() => {
       const [dateTime, docName, name, DV, fund] = notification.data.split('|');
       const DV_key = `${DV}|${fund}`
+      console.log(dateTime)
       setNotifData({ dateTime, docName, name, DV_key });
       setNotifMessage({message1: notification.message1, message2: notification.message2})
     
@@ -60,7 +61,7 @@ const Notification = ({ notification, markAsRead }) => {
       openNotif(dvNo)
       }}>
       <p >{notifMessage.message1} <strong>{notifData.docName}</strong> {notifMessage.message2} <strong>{notifData.name.replace(',', ' ')}</strong></p>
-      <p className='text-xs mt-2 flex items-center justify-between'>{formatDistanceToNow(formateDateTime(notifData.date, notifData.time), { addSuffix: true })} {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}</p>
+      <p className='text-xs mt-2 flex items-center justify-between'>{formatDistanceToNow(formateDateTime(notifData.dateTime), { addSuffix: true })} {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}</p>
     </li>
   );
 };

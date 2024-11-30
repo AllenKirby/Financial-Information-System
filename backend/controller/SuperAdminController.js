@@ -61,6 +61,7 @@ const getAllAccounts = async (req, res) => {
     const role = req.body.role;
     const dispName = req.body.name
     
+    
     const email = decodedToken.email
     const uid = decodedToken.uid
   
@@ -69,11 +70,15 @@ const getAllAccounts = async (req, res) => {
       uid : uid,
       name : dispName,
       email: email,
-      role : role
+      role : role,
+      firstTimeLogin: true
     }
   
     try{
-       await admin.auth().setCustomUserClaims(uid, { role, dispName });
+        await admin.auth().setCustomUserClaims(uid, { 
+          role, 
+          dispName
+        });
   
        await db.collection('listOfUsers').doc(uid).set(userData);
        

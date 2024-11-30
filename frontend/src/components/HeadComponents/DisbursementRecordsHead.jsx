@@ -8,7 +8,6 @@ import { IoSearchSharp } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 import { BsSortAlphaDown, BsSortAlphaDownAlt } from "react-icons/bs";
-import { FaSort } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 
 const DisbursementRecordsHead = () => {
@@ -18,7 +17,6 @@ const DisbursementRecordsHead = () => {
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
   const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
-  const [timePassedFlag, setTimePassedFlag] = useState(false)
   const [searchModal, setSearchModal] = useState(false)
 
   const filterModal = (value) => {
@@ -33,7 +31,8 @@ const DisbursementRecordsHead = () => {
           document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
-      setFilteredDocuments(filteredResults);
+      const descFilteredResults = sortTimePassedDesc(filteredResults)
+      setFilteredDocuments(descFilteredResults);
     } else {
       setFilteredDocuments({});
     }
@@ -61,37 +60,16 @@ const DisbursementRecordsHead = () => {
     }
   }
 
-  const sortTimePassedAsc = () => {
-    setTimePassedFlag(!timePassedFlag)
-    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
-      const sortedEntries = Object.entries(HeadDocuments).sort(([, a], [, b]) => {
-        const [, dateA, timeA] = a.data.updatedBy ? a.data.updatedBy.split('|') : ["", "", ""];
-        const [, dateB, timeB] = b.data.updatedBy ? b.data.updatedBy.split('|') : ["", "", ""];
-        const aDate = `${dateA} ${timeA}` 
-        const bDate = `${dateB} ${timeB}` 
-        return new Date(aDate) - new Date(bDate)
+  const sortTimePassedDesc = (docu) => {
+    if (docu && Object.keys(docu).length > 0) {
+      const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
+        const dateTimeA = a.data.updatedBy.split('|').slice()[1]
+        const dateTimeB = b.data.updatedBy.split('|').slice()[1]
+        return new Date(dateTimeB) - new Date(dateTimeA)
       });
-      const filteredResults = Object.fromEntries(sortedEntries);
-      setFilteredDocuments(filteredResults);
+      return Object.fromEntries(sortedEntries)
     } else {
-      setFilteredDocuments({}); 
-    }
-  }
-
-  const sortTimePassedDesc = () => {
-    setTimePassedFlag(!timePassedFlag)
-    if (HeadDocuments && Object.keys(HeadDocuments).length > 0) {
-      const sortedEntries = Object.entries(HeadDocuments).sort(([, a], [, b]) => {
-        const [, dateA, timeA] = a.data.updatedBy ? a.data.updatedBy.split('|') : ["", "", ""];
-        const [, dateB, timeB] = b.data.updatedBy ? b.data.updatedBy.split('|') : ["", "", ""];
-        const aDate = `${dateA} ${timeA}` 
-        const bDate = `${dateB} ${timeB}` 
-        return new Date(aDate) - new Date(bDate)
-      });
-      const filteredResults = Object.fromEntries(sortedEntries.reverse());
-      setFilteredDocuments(filteredResults);
-    } else {
-      setFilteredDocuments({}); 
+      return {} 
     }
   }
     
@@ -170,9 +148,7 @@ const DisbursementRecordsHead = () => {
                 </div>
                 <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>DV No.</h1>
                 <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Status</h1>
-                <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
-                </div>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Time Transferred </h1>
               </section>
               <section className="w-full h-[92%] overflow-auto bg-white rounded-lg">
                 <PaginatedList items={filteredDocuments} type={'2'}/>

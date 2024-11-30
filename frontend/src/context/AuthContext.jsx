@@ -4,6 +4,8 @@ import Cookies from 'universal-cookie';
 import { onIdTokenChanged } from 'firebase/auth';
 import axios from 'axios';
 import { auth } from '../config/firebase-config';
+import { toggleChangePassFlag } from '../redux/ChangePasswordFlagRedux';
+import { useDispatch } from 'react-redux';
 
 export const AuthContext = createContext();
 
@@ -21,6 +23,7 @@ export const authReducer = (state, action) => {
 export const AuthContextProvider = ({ children }) => {
     const cookies = new Cookies();
     const [state, dispatch] = useReducer(authReducer, { user: null });
+    const dispatchFlag = useDispatch()
 
     useEffect(() => {
         const unsubscribe = onIdTokenChanged(auth, async (userAuth) => {
@@ -35,8 +38,22 @@ export const AuthContextProvider = ({ children }) => {
                         withCredentials: true,
                     });
                     if (response.status === 200) {
-                        cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'Strict' });
-                        dispatch({type: 'LOGIN', payload: response.data})
+                        const userData = response.data
+                        const data = {
+                            success: userData.success,
+                            name: userData.name,
+                            uemail: userData.uemail,
+                            uid: userData.uid,
+                            role: userData.role,
+                            firstTimeLogin: userData.firstTimeLogin
+                        }
+                        console.log(userData.firstTimeLogin)
+                        if(userData.firstTimeLogin){
+                            dispatchFlag(toggleChangePassFlag())
+                        } else {
+                            cookies.set('user', JSON.stringify(data), { path: '/', secure: true, sameSite: 'Strict' });
+                            dispatch({type: 'LOGIN', payload: data})
+                        }
                     }
                 }catch(error){
                     cookies.remove('token')
@@ -51,43 +68,6 @@ export const AuthContextProvider = ({ children }) => {
             }
         })
         return () => unsubscribe()
-    //   const userCookie = cookies.get('user');
-    //     if (userCookie) {
-    //       dispatch({ type: 'LOGIN', payload: userCookie });
-    //     }
-
-    //     const unsubscribe = onIdTokenChanged(auth, async (user) => {
-            
-    //         if(user){
-    //             if(user.emailVerified){
-    //                 try{
-    //                     const token = await user.getIdToken();
-    //                     const response = await axios.post(${import.meta.env.VITE_API_URL}/user/refreshToken, {}, {
-    //                         headers: {
-    //                         'Content-Type': 'application/json',
-    //                         'Authorization':` Bearer ${token} `
-    //                         },
-    //                         withCredentials: true,
-    //                     });
-    
-    //                     if (response.status === 200) {
-    //                         cookies.set('user', JSON.stringify(response.data), { path: '/', secure: true, sameSite: 'None' });
-    //                         dispatch({type: 'LOGIN', payload: response.data})
-    //                     } 
-    //                 }catch(error){
-    //                     console.log("Error at authcontext: ", error)
-    //                     console.error('Token verification failed:', error);
-    //                     dispatch({ type: 'LOGOUT' }); 
-    //                     cookies.remove('user', { path: '/' });
-    //                 }
-    //             }
-    //         }else {
-    //             console.log('else authcontetx')
-    //             dispatch({ type: 'LOGOUT' }); 
-    //             cookies.remove('user', { path: '/' }); 
-    //         }
-    //     })
-    //     return () => unsubscribe();
     }, []);
 
     return (

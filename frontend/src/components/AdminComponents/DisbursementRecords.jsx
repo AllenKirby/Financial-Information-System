@@ -19,7 +19,6 @@ const DisbursementRecords = () => {
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
   const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
-  const [timePassedFlag, setTimePassedFlag] = useState(false)
   const [searchModal, setSearchModal] = useState(false)
 
   const filterModal = (value) => {
@@ -33,7 +32,8 @@ const DisbursementRecords = () => {
           document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
-      setFilteredDocuments(filteredResults);
+      const descFilteredResults = sortTimePassedDesc(filteredResults)
+      setFilteredDocuments(descFilteredResults);
     } else {
       setFilteredDocuments({});
     }
@@ -61,37 +61,16 @@ const DisbursementRecords = () => {
     }
   }
 
-  const sortTimePassedAsc = () => {
-    setTimePassedFlag(!timePassedFlag)
-    if (AdminDocuments && Object.keys(AdminDocuments).length > 0) {
-      const sortedEntries = Object.entries(AdminDocuments).sort(([, a], [, b]) => {
-        const [, dateA, timeA] = a.data.reviewedBy ? a.data.reviewedBy.split('|') : ["", "", ""];
-        const [, dateB, timeB] = b.data.reviewedBy ? b.data.reviewedBy.split('|') : ["", "", ""];
-        const aDate = `${dateA} ${timeA}` 
-        const bDate = `${dateB} ${timeB}` 
-        return new Date(aDate) - new Date(bDate)
+  const sortTimePassedDesc = (docu) => {
+    if (docu && Object.keys(docu).length > 0) {
+      const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
+        const dateTimeA = a.data.reviewedBy.split('|').slice()[1]
+        const dateTimeB = b.data.reviewedBy.split('|').slice()[1]
+        return new Date(dateTimeB) - new Date(dateTimeA)
       });
-      const filteredResults = Object.fromEntries(sortedEntries);
-      setFilteredDocuments(filteredResults);
+      return Object.fromEntries(sortedEntries)
     } else {
-      setFilteredDocuments({}); 
-    }
-  }
-
-  const sortTimePassedDesc = () => {
-    setTimePassedFlag(!timePassedFlag)
-    if (AdminDocuments && Object.keys(AdminDocuments).length > 0) {
-      const sortedEntries = Object.entries(AdminDocuments).sort(([, a], [, b]) => {
-        const [, dateA, timeA] = a.data.reviewedBy ? a.data.reviewedBy.split('|') : ["", "", ""];
-        const [, dateB, timeB] = b.data.reviewedBy ? b.data.reviewedBy.split('|') : ["", "", ""];
-        const aDate = `${dateA} ${timeA}` 
-        const bDate = `${dateB} ${timeB}` 
-        return new Date(aDate) - new Date(bDate)
-      });
-      const filteredResults = Object.fromEntries(sortedEntries.reverse());
-      setFilteredDocuments(filteredResults);
-    } else {
-      setFilteredDocuments({}); 
+      return {} 
     }
   }
 
@@ -170,11 +149,9 @@ const DisbursementRecords = () => {
                 </div>
                 <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>DV No.</h1>
                 <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Status</h1>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold flex items-center justify-center gap-2'>Time Transferred</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
-                </div>
-                <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Approved <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
+                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Approved <FaSort className='cursor-pointer'/></h1>
                 </div>
               </div>
               <div className="w-full h-[92%] overflow-auto bg-white rounded-lg">

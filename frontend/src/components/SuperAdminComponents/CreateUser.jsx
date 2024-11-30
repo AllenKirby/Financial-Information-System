@@ -2,13 +2,15 @@ import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
 import Loader from "../Loader"
 
+import { FiEye, FiEyeOff } from "react-icons/fi";
+
 import PropTypes from 'prop-types'
 import { useSuperAdminHook } from "../../hooks/useSuperAdminHook"
 
 const UserManagement = ({modal, account = {}, flag}) => {
   //state
-  const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '', confirmPassword: '' })
-  const [passwordError, setPasswordError] = useState('')
+  const [userData, setUserData] = useState({ firstname: '', lastname: '', role: '', email: '', password: '' })
+  const [isChecked, setIsChecked] = useState(false)
   //hooks
   const {createAcc, isLoading, error} = useSuperAdminHook()
 
@@ -23,14 +25,28 @@ const UserManagement = ({modal, account = {}, flag}) => {
     }
   }, [account, flag])
 
+  useEffect(() => {
+    switch(userData.role) {
+      case '0':
+        setUserData({...userData, password: 'SuperAdmin123'})
+        break
+      case '1':
+        setUserData({...userData, password: 'Approver123'})
+        break
+      case '2':
+        setUserData({...userData, password: 'BudgetOfficer123'})
+        break
+      case '3':
+        setUserData({...userData, password: 'Funding123'})
+        break
+      case '4':
+        setUserData({...userData, password: 'Preparer123'})
+        break
+    }
+  }, [userData.role])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-
-    if (userData.password !== userData.confirmPassword) {
-      setPasswordError("Passwords do not match")
-      return
-    }
-    setPasswordError("") 
 
     const res_creatingAccount = await createAcc(userData)
     if(res_creatingAccount){
@@ -51,7 +67,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
         <div className="flex flex-col w-1/2">
           <label className="text-base">Firstname</label>
           <input
-            className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+            className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
             type="text"
             placeholder="e.g., John"
             value={userData.firstname}
@@ -62,7 +78,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
         <div>
         <label className="text-base">Lastname</label>
           <input
-            className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+            className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
             type="text"
             placeholder="e.g., Dela Cruz"
             value={userData.lastname}
@@ -78,7 +94,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
             <div className="flex flex-col w-2/3">
               <label className="text-base">Email</label>
               <input
-                className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+                className=" w-full px-4 py-2 rounded-md border-2 focus:outline-none"
                 type="email"
                 placeholder="email@gmail.com"
                 value={userData.email}
@@ -87,7 +103,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
             </div>
             <div className="w-1/3 flex flex-col">
               <label className="text-base">Role</label>
-              <select className="w-full px-4 pt-[6px] pb-[5px] rounded-md border-2 focus:outline-none" 
+              <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 required 
                 value={userData.role} 
                 onChange={(e) => setUserData({ ...userData, role: e.target.value })}>
@@ -100,39 +116,36 @@ const UserManagement = ({modal, account = {}, flag}) => {
               </select>
             </div>
           </div>
-          {!flag && (<div className="flex gap-3 mt-3">
-            <div className="flex flex-col w-1/2">
-              <label className="text-base">Password</label>
+          <div className="flex flex-col w-full my-3">
+            <label className="text-base">Password</label>
+            <div className="relative">
               <input
-                className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
-                type="password"
+                className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
+                type={isChecked ? "text" : "password"}
                 placeholder="••••••••"
+                value={userData.password}
+                disabled
                 pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                 title="Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long"
                 onChange={(e) => setUserData({ ...userData, password: e.target.value })}
                 required />
-            </div>
-            <div className="flex flex-col w-1/2">
-              <label className="text-base">Confirm your Password</label>
-              <input
-                className="text-sm w-full px-4 py-2 rounded-md border-2 focus:outline-none"
-                type="password"
-                placeholder="••••••••"
-                onChange={(e) => setUserData({ ...userData, confirmPassword: e.target.value })}
-                required />
+                {!isChecked ? 
+                  <FiEyeOff 
+                      className="absolute right-4 top-3 text-gray-500 cursor-pointer" 
+                      size={20}
+                      onClick={() => setIsChecked(!isChecked)}/> : 
+                  <FiEye 
+                      className="absolute right-4 top-3 text-gray-500 cursor-pointer" 
+                      size={20}
+                      onClick={() => setIsChecked(!isChecked)}/>
+                }
             </div>
           </div>
-        )}
         </div>
-        {passwordError && (
-          <div className="text-superAdminMustard font-semibold">
-            {passwordError}
-          </div>
-        )}
       </div>
       <div className="w-full h-auto py-4 flex items-center justify-end gap-3">
-        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white hover:scale-125 transition-all duration-100">{isLoading ? <Loader /> : 'Save'}</button>
-        <button onClick={modal} className="px-10 py-2 bg-slate-100 rounded-lg text-superAdminBlue font-semibold hover:scale-125 transition-all duration-100">Back</button>
+        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white">{isLoading ? <Loader /> : 'Save'}</button>
+        <button onClick={modal} className="px-10 py-2 rounded-lg text-superAdminBlue font-semibold">Back</button>
       </div>
       {error && (
         <div className="h-auto w-full py-3 text-center">

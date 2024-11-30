@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 
 import { PiUsersThreeBold } from "react-icons/pi";
 import { TbUserShield } from "react-icons/tb";
-import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { useSuperAdminHook } from "../hooks/useSuperAdminHook";
 import { useDispatch } from "react-redux";
 
@@ -14,8 +13,6 @@ const SuperAdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
     const [navbarExpand, setNavbarExpand] = useState(true)
-    const [navbarSize, setNavbarSize] = useState('')
-    const [mainSize, setMainSize] = useState('')
     const { getRequest } = useSuperAdminHook()
     const dispatch = useDispatch()
 
@@ -41,36 +38,33 @@ const SuperAdminPage = () => {
           setLocation('Reset Password Requests')
         }
       }, [page.pathname])
-
-    useEffect(() => {
-      if(!navbarExpand) {
-        setNavbarSize('w-[70px]')
-        setMainSize('w-full')
-      }else {
-        setNavbarSize('w-1/6')
-        setMainSize('w-5/6')
-      }
-    }, [navbarExpand])
       
-  return (
-    <main className="w-full h-screen flex bg-white">
-      <aside className={`h-full ${navbarSize} relative transition-all duration-100`}>
-        <MdOutlineKeyboardArrowLeft 
-          size={25}
-          className='absolute top-6 z-10 -right-3 bg-white cursor-pointer rounded-full border-[1px]'
-          onClick={() => setNavbarExpand(!navbarExpand)}/>
-        <Navbar items={navItems} flag={navbarExpand}/>
-      </aside>
-      <section className={`h-full ${mainSize} ml-3`}>
-          <section className="h-[13%] w-full">
-              <Header currentPage={location}/>
+    const collapseSideBar = () => {
+      setNavbarExpand(!navbarExpand)
+    }
+  
+    return (
+      <main className="relative h-screen w-full flex bg-coolSteel">
+        {navbarExpand && (
+          <aside className={`${navbarExpand ? 'w-full' : 'w-0'} z-30 block lg:hidden absolute top-0 left-0 h-full transition-all duration-100`}>
+            <div className="relative w-3/4 h-full z-40">
+              <Navbar items={navItems} flag={navbarExpand} sidebar={collapseSideBar}/>
+            </div>
+          </aside>
+        )}
+        <aside className={`${navbarExpand ? 'absolute lg:relative hidden lg:w-1/6' : 'w-[78px]'} hidden lg:block h-full transition-all duration-100`}>
+          <Navbar items={navItems} flag={navbarExpand}/>
+        </aside>
+        <section className={`h-full ${navbarExpand ? 'w-full sm:w-full md:w-full lg:w-5/6 xl:w-5/6 2xl:w-5/6' : 'w-full'}`}>
+          <section className="h-[8%] lg:h-[10%] w-full flex items-center justify-center border-b-2">
+            <Header currentPage={location} sidebar={collapseSideBar}/>
           </section>
-          <section className="h-[87%] w-full pr-3">
+          <section className="h-[92%] lg:h-[90%] w-full flex">
               <Outlet/>
           </section>
-      </section>
-    </main>
-  )
+        </section>
+      </main>
+    )
 }
 
 export default SuperAdminPage

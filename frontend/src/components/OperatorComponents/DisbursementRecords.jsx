@@ -22,7 +22,6 @@ const DisbursementRecords = () => {
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({})
   const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
-  const [timePassedFlag, setTimePassedFlag] = useState(false)
   const [timeReturnedFlag, setTimeReturnedFlag] = useState(false)
   const [searchModal, setSearchModal] = useState(false)
 
@@ -40,7 +39,8 @@ const DisbursementRecords = () => {
           document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
-      setFilteredDocuments(filteredResults);
+      const descFilteredResults = sortTimePassedDesc(filteredResults)
+      setFilteredDocuments(descFilteredResults);
     } else {
       setFilteredDocuments({});
     }
@@ -68,29 +68,16 @@ const DisbursementRecords = () => {
     }
   }
 
-  const sortTimePassedAsc = () => {
-    setTimePassedFlag(!timePassedFlag)
-    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
-      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
-        new Date(b.data.submittedBy) - new Date(a.data.submittedBy)
-      );
-      const filteredResults = Object.fromEntries(sortedEntries);
-      setFilteredDocuments(filteredResults);
+  const sortTimePassedDesc = (docu) => {
+    if (docu && Object.keys(docu).length > 0) {
+      const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
+        const dateTimeA = a.data.submittedBy.split('|').slice()[1]
+        const dateTimeB = b.data.submittedBy.split('|').slice()[1]
+        return new Date(dateTimeB) - new Date(dateTimeA)
+      });
+      return Object.fromEntries(sortedEntries)
     } else {
-      setFilteredDocuments({}); 
-    }
-  }
-
-  const sortTimePassedDesc = () => {
-    setTimePassedFlag(!timePassedFlag)
-    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
-      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
-        new Date(b.data.submittedBy) - new Date(a.data.submittedBy)
-      );
-      const filteredResults = Object.fromEntries(sortedEntries.reverse());
-      setFilteredDocuments(filteredResults);
-    } else {
-      setFilteredDocuments({}); 
+      return {} 
     }
   }
 
@@ -210,11 +197,9 @@ const DisbursementRecords = () => {
                   }
                 </h1>
               </div>
-              <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>DV No.</h1>
-              <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Status</h1>
-              <div className='w-1/6 flex items-end justify-center gap-2'>
-                  <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Transferred <FaSort className='cursor-pointer' onClick={timePassedFlag ? sortTimePassedDesc : sortTimePassedAsc}/></h1>
-                </div>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>DV No.</h1>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Status</h1>
+                <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Time Transferred</h1>
                 <div className='w-1/6 flex items-end justify-center gap-2'>
                   <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
                 </div>
