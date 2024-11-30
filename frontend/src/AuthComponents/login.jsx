@@ -5,10 +5,11 @@ import Swal from 'sweetalert2'
 import { useAuthHook } from "../hooks/useAuthHook";
 
 //import { FcGoogle } from "react-icons/fc";
-import { FiEye } from "react-icons/fi";
-import { FiEyeOff } from "react-icons/fi";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import NIAlogo from '../assets/images/NIAimg.png' 
+import { useSelector } from "react-redux";
+import ChangePass from './ChangePass'
 
 const Login = () => {
     const [isChecked, setIsChecked] = useState(false)
@@ -16,8 +17,10 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [flag, setFlag] = useState(false)
     const [recoveryEmail, setRecoveryEmail] = useState('')
+    
     //hooks
     const {login, resetPassword,  isLoading, error} = useAuthHook()
+    const changePass = useSelector((state) => state.changePass)
 
     const openForgotPass = () => {
         setFlag(!flag)
@@ -154,7 +157,14 @@ const Login = () => {
             </div>
 
         )}
-        
+        {changePass && (
+            <>
+                <div className="fixed inset-0 z-20 bg-black opacity-50"/>
+                <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                    <ChangePass/>
+                </div>
+            </>
+        )}
         
     </section>
   )

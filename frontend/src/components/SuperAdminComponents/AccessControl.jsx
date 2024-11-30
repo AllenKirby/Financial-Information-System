@@ -64,7 +64,7 @@ const AccessControl = () => {
   };
 
   return (
-    <section className="w-full h-full">
+    <section className="w-full h-full p-3">
       <div className="w-full h-auto flex rounded-t-lg bg-superAdminBlue text-white px-1">
         <div className="w-full h-auto flex">
           <h1 className="w-1/4 px-2 py-1">Role</h1>
