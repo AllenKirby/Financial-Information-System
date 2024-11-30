@@ -88,6 +88,26 @@ const ReportRows = ({reportData}) => {
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(CB_TotalObligations_FO)}</td>
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(CB_TotalObligations)}</td>
             <td className='border-2 border-black text-center font-bold'>{`(TOTAL OBLG. - ASA)`}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week1FO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week2FO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week3FO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week4FO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week5FO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week1RO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week2RO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week3RO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week4RO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{formatToPeso(reportData.week5RO)}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
+            <td className='border-2 border-black text-center font-bold'>{}</td>
         </tr>
         {
           Object.keys(reportData.fieldOffices).length > 0 ? (
@@ -113,6 +133,27 @@ const ReportRows = ({reportData}) => {
                       <td className='border-2 border-black text-right'>{formatToPeso(totalObligationFO)}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(totalObligation)}</td>
                       <td className='border-2 border-black text-center'>{formatToPeso(Unobligated)}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week1FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week2FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week3FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week4FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week5FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week1RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week2RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week3RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week4RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week5RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+                      <td className='border-2 border-black text-center'>{}</td>
+
                   </tr>
                   )
                 })
