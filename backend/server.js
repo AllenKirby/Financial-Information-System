@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const {admin, db, rtdb}  = require('./config/firebase');
 const {updateControlBook} = require('./tasks/monthlyUpdate')
 const {updateASADue} = require('./tasks/dailyUpdate')
+const {updateWeeklyRecords} = require('./tasks/weeklyUpdate')
 
 const requireAuth = require('./middleware/requireAuth');
 const AdminRoutes = require('./routes/AdminRoutes');
@@ -39,6 +40,7 @@ app.get('/logout', (req, res) => {
 
 updateControlBook()
 updateASADue()
+updateWeeklyRecords()
 
 app.use('/user',UserRoutes)
 

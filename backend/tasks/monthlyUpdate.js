@@ -26,7 +26,19 @@ const updateControlBook = () => {
                         prevMonthFO: prevMonthFO_value + thisMonthFO_value,
                         prevMonthRO: prevMonthRO_value + thisMonthRO_value,
                         thisMonthFO: 0,
-                        thisMonthRO: 0
+                        thisMonthRO: 0,
+                        weekFO: 0,
+                        week1FO: 0,
+                        week2FO: 0,
+                        week3FO: 0,
+                        week4FO: 0,
+                        week5FO: 0,
+                        weekRO: 0,
+                        week1RO: 0,
+                        week2RO: 0,
+                        week3RO: 0,
+                        week4RO: 0,
+                        week5RO: 0,
                     })
 
                     const fieldOfficesRef = doc.ref.collection('FieldOffices');
@@ -44,6 +56,18 @@ const updateControlBook = () => {
                                 prevMonthRO: subPrevMonthRO + subThisMonthRO,
                                 thisMonthFO: 0,
                                 thisMonthRO: 0,
+                                weekFO: 0,
+                                week1FO: 0,
+                                week2FO: 0,
+                                week3FO: 0,
+                                week4FO: 0,
+                                week5FO: 0,
+                                weekRO: 0,
+                                week1RO: 0,
+                                week2RO: 0,
+                                week3RO: 0,
+                                week4RO: 0,
+                                week5RO: 0,
                             });
                         })
                     }

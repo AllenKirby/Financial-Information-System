@@ -66,23 +66,28 @@ const updateASA_ORS = async (req, res) => {
 
             if (findDoc.exists) {
                 await handleControlBook(prevASA, amount, 'subtract')
+                const docdata = doc.data()
                 const parseAmount = parseFloat(amount)
-                const RO = parseFloat(doc.data().RO)
-                const FO = parseFloat(doc.data().FO)
-                const thisMonthFO = parseFloat(doc.data().thisMonthFO)
+                const RO = parseFloat(docdata.RO)
+                const FO = parseFloat(docdata.FO)
+                const thisMonthFO = parseFloat(docdata.thisMonthFO)
+                const weekFO = parseFloat(docdata.weekFO)
 
                 const updatedRO = RO + parseAmount 
                 const updatedFO = FO - parseAmount
                 const updatedThisMonthFO = thisMonthFO - parseAmount
                 const updatedThisMonthRO = updatedRO
+                const updatedWeekFO = (weekFO - parseAmount) <= 0 ? weekFO - parseAmount : 0
 
                 await docref.update({
                     RO: updatedRO,
                     FO: updatedFO,
                     thisMonthFO: updatedThisMonthFO, 
-                    thisMonthRO: updatedThisMonthRO
+                    thisMonthRO: updatedThisMonthRO,
+                    weekFO: updatedWeekFO,
+                    weekRO: updatedRO
                 });
-
+ 
                 await handleFormDataRemainingAmount_RO(prevASA, prevFO, updatedRO)
 
                 await docRef.delete();
@@ -92,14 +97,18 @@ const updateASA_ORS = async (req, res) => {
 
                 if(project.exists){
                     await handleControlBook(ASANo, amount)
+                    const projectdata = project.data()
                     const parseAmount = parseFloat(amount)
-                    const RO = parseFloat(project.data().RO)
-                    const FO = parseFloat(project.data().FO)
-                    const thisMonthFO = parseFloat(project.data().thisMonthFO)
+                    const RO = parseFloat(projectdata.RO)
+                    const FO = parseFloat(projectdata.FO)
+                    const thisMonthFO = parseFloat(projectdata.thisMonthFO)
+                    const weekFO = parseFloat(projectdata.weekFO)
+
                     const updatedRO = RO - parseAmount 
                     const updatedFO = FO + parseAmount
                     const updatedThisMonthFO = thisMonthFO + parseAmount
                     const updatedThisMonthRO = updatedRO
+                    const updatedWeekFO = weekFO + parseAmount
 
                     if(updatedRO < 0){
                         throw Error("Insufficient amount.")
@@ -108,7 +117,9 @@ const updateASA_ORS = async (req, res) => {
                         RO: updatedRO,
                         FO: updatedFO,
                         thisMonthFO: updatedThisMonthFO, 
-                        thisMonthRO: updatedThisMonthRO
+                        thisMonthRO: updatedThisMonthRO,
+                        weekFO: updatedWeekFO,
+                        weekRO: updatedRO
                     });
                     await handleFormDataRemainingAmount_RO(ASANo, projectID, updatedRO)
                 }
@@ -130,14 +141,17 @@ const updateASA_ORS = async (req, res) => {
 
             if(project.exists){
                 const parseAmount = parseFloat(amount)
-                const RO = parseFloat(project.data().RO)
-                const FO = parseFloat(project.data().FO)
-                const thisMonthFO = parseFloat(project.data().thisMonthFO)
+                const projectdata = project.data()
+                const RO = parseFloat(projectdata.RO)
+                const FO = parseFloat(projectdata.FO)
+                const thisMonthFO = parseFloat(projectdata.thisMonthFO)
+                const weekFO = parseFloat(projectdata.weekFO)
 
                 const updatedRO = RO - parseAmount 
                 const updatedFO = FO + parseAmount
                 const updatedThisMonthFO = thisMonthFO + parseAmount
                 const updatedThisMonthRO = updatedRO
+                const updatedWeekFO = weekFO + parseAmount
 
                 if(updatedRO < 0){
                     throw Error("Insufficient amount.")
@@ -146,7 +160,9 @@ const updateASA_ORS = async (req, res) => {
                     RO: updatedRO,
                     FO: updatedFO,
                     thisMonthFO: updatedThisMonthFO,
-                    thisMonthRO: updatedThisMonthRO
+                    thisMonthRO: updatedThisMonthRO,
+                    weekFO: updatedWeekFO,
+                    weekRO: updatedRO
                 });
                 await handleFormDataRemainingAmount_RO(ASANo, projectID, updatedRO)
             }
@@ -273,37 +289,47 @@ const handleControlBook = async (ASANo, amount, operation='add') => {
     const controlBook = await controlBookRef.get();
 
     if (controlBook.exists) {
+        const controlBookdata = controlBook.data()
         let updatedRO
         let updateFO
         let updatedThisMonthFO
         let updatedThisMonthRO
+        let updatedWeekFO
+
         if(operation == 'add'){
             const parseAmount = parseFloat(amount)
-            const totalRO = parseFloat(controlBook.data().RO);
-            const totalFO = parseFloat(controlBook.data().FO);
-            const thisMonthFO_value = parseFloat(controlBook.data().thisMonthFO || 0)
+            const totalRO = parseFloat(controlBookdata.RO);
+            const totalFO = parseFloat(controlBookdata.FO);
+            const thisMonthFO_value = parseFloat(controlBookdata.thisMonthFO || 0)
+            const weekFO = parseFloat(controlBookdata.weekFO)
 
             updatedRO = totalRO - parseAmount;
             updateFO = totalFO + parseAmount
             updatedThisMonthFO = thisMonthFO_value + parseAmount
             updatedThisMonthRO = updatedRO
+            updatedWeekFO = weekFO + parseAmount
+            
         }else{
             const parseAmount = parseFloat(amount)
-            const totalRO = parseFloat(controlBook.data().RO);
-            const totalFO = parseFloat(controlBook.data().FO);
-            const thisMonthFO_value = parseFloat(controlBook.data().thisMonthFO || 0)
+            const totalRO = parseFloat(controlBookdata.RO);
+            const totalFO = parseFloat(controlBookdata.FO);
+            const thisMonthFO_value = parseFloat(controlBookdata.thisMonthFO || 0)
+            const weekFO = parseFloat(controlBookdata.weekFO)
 
             updatedRO = totalRO + parseAmount;
             updateFO = totalFO - parseAmount
             updatedThisMonthFO = thisMonthFO_value - parseAmount
             updatedThisMonthRO = updatedRO
+            updatedWeekFO = (weekFO - parseAmount) <= 0 ? weekFO - parseAmount : 0 
         }
 
         await controlBookRef.update({
             RO: updatedRO,
             FO: updateFO,
             thisMonthFO: updatedThisMonthFO,
-            thisMonthRO: updatedThisMonthRO
+            thisMonthRO: updatedThisMonthRO,
+            weekFO: updatedWeekFO,
+            weekRO: updatedRO
         });
     } else {
         console.log("No such document!");
@@ -534,7 +560,20 @@ const appendDataToSheet = async (req, res) => {
         prevMonthRO: 0,
         thisMonthFO: 0,
         thisMonthRO: 0,
-        cbStatus: 'active'
+        cbStatus: 'active',
+        weekFO: 0,
+        week1FO: 0,
+        week2FO: 0,
+        week3FO: 0,
+        week4FO: 0,
+        week5FO: 0,
+        weekRO: 0,
+        week1RO: 0,
+        week2RO: 0,
+        week3RO: 0,
+        week4RO: 0,
+        week5RO: 0,
+
     }
 
     try {
@@ -571,7 +610,19 @@ const appendDataToSheet = async (req, res) => {
         prevMonthFO: 0,
         prevMonthRO: 0,
         thisMonthFO: 0,
-        thisMonthRO: 0
+        thisMonthRO: 0,
+        weekFO: 0,
+        week1FO: 0,
+        week2FO: 0,
+        week3FO: 0,
+        week4FO: 0,
+        week5FO: 0,
+        weekRO: 0,
+        week1RO: 0,
+        week2RO: 0,
+        week3RO: 0,
+        week4RO: 0,
+        week5RO: 0,
     }
 
     const formData = {
@@ -769,6 +820,17 @@ const getOrigNumberOfCopiesBUR = async(givenNo) => {
     }catch(error){
         console.log(`Error on get_ORIG_NumberOfCopies for BUR (operator controller) ${error}`)
     }
+}
+
+const getWeek = () => {
+    const date = new Date().toISOString().split('T')[0]
+    const startOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+    const dayOfMonth = date.getDate();
+    const dayOfWeek = startOfMonth.getDay();
+    const weekNum = Math.ceil((dayOfMonth + dayOfWeek) / 7)
+
+    return `week${weekNum}`;
+
 }
 
 module.exports = {
