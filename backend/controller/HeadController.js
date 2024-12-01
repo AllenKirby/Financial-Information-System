@@ -17,7 +17,7 @@ const returnRecordTo = async(req, res) => {
     const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
     const returnedBy = `${dispName}|${dateTimeCollection}`
     const comment = {dispName, remarks, dateTimeCollection}
-    const logs = `${payee}!${DV}!Returned By ${dispName}!${dateTimeCollection}`
+    const logs = `${payee}!${DV}!Returned By ${dispName}!${dateTimeCollection}!Returned`
     
     try{
         const updatedDocu = await updateStatus(DV, returnedBy, returnTo)
@@ -83,7 +83,7 @@ const transferDocument = async (req, res) => {
     const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
     const reviewedBy = `${dispName}|${dateTimeCollection}`
     const comment = {dispName, remarks, dateTimeCollection}
-    const logs = `${payee}!${DV}!Reviewed By ${dispName}!${dateTimeCollection}`
+    const logs = `${payee}!${DV}!Reviewed By ${dispName}!${dateTimeCollection}!For Approval`
 
     try {
         await updateStatusToApproved(DV, reviewedBy)

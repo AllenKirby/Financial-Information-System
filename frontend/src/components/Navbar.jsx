@@ -55,7 +55,7 @@ const Navbar = ({ items, flag, sidebar = () => {} }) => {
   }, [user]);
 
   return (
-    <nav className="h-screen w-full flex flex-col justify-start bg-eggWhite border-r-2 shadow-gray-300 shadow-lg">
+    <nav className="h-screen w-full flex flex-col justify-start bg-eggWhite border-r-2">
       <div className="h-[8%] lg:h-[10%] relative w-full px-4 py-1 sm:py-3 md:py-5 xl:py-3 2xl:py-8 flex gap-2 items-center justify-start">
           <IoIosClose onClick={sidebar} size={30} className="z-50 absolute top-1/2 right-2 transform -translate-y-1/2 block lg:hidden"/>
           <img src={bgImage} alt="" className="w-10 sm:w-12 md:w-12 lg:w-10" />

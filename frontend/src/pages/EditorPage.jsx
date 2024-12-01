@@ -12,10 +12,9 @@ import Navbar from "../components/Navbar"
 import Header from "../components/Header";
 
 //Icons
-import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard} from "react-icons/tb";
 import { FiBook} from "react-icons/fi";
-import { LuTable } from "react-icons/lu";
+import { PiFileThin, PiTableThin } from "react-icons/pi";
 
 const EditorPage = () => {
   const page = useLocation()
@@ -29,11 +28,11 @@ const EditorPage = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={22} /> },
-    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <TiDocumentText size={22} /> } ,
+    { label: 'Disbursement Records', path: '/editor/disbursementrecords', icon: <PiFileThin size={22} /> } ,
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
       : []),
-    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <LuTable size={22} /> }
+    { label: 'Disbursement Logs', path: '/editor/disbursementlogs', icon: <PiTableThin size={20} /> }
   ];
 
   useEffect(() => {

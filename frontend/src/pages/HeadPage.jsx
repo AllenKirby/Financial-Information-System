@@ -10,10 +10,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setPermission } from "../redux/PermissionRedux" 
 import { useEffect, useState } from "react"
 
-import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
-import { BsTable } from "react-icons/bs";
 import { TbLogs, TbEdit } from "react-icons/tb";
+import { PiFileThin, PiTableThin } from "react-icons/pi";
 
 import { useAuthContext } from "../hooks/useAuthContext"
 
@@ -31,11 +30,11 @@ const HeadPage = () => {
 
   const navItems = [
       { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={22} /> },
-      { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <TiDocumentText size={22} /> }, 
+      { label: 'Disbursement Records', path: '/head/disbursementrecords', icon: <PiFileThin size={22} /> }, 
       ...(permission?.data?.permission 
         ? [{label: 'History Logs', path: '/head/historylogs', icon: <TbLogs size={22} /> } , {label: 'Edit Form', path: '/head/editform', icon: <TbEdit size={22}/>}] 
         : []),
-      { label: 'Disbursement Logs', path: '/head/disbursementlogs', icon: <BsTable size={18} /> }
+      { label: 'Disbursement Logs', path: '/head/disbursementlogs', icon: <PiTableThin size={20} /> }
     ];
 
   useEffect(() => {

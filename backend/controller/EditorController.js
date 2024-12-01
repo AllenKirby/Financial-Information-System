@@ -108,7 +108,7 @@ const passDocument = async (req, res) => {
     const notifMessage2 = "has been passed by"
     const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
     const submittedBy = `${dispName}|${dateTimeCollection }`
-    const logs = `${payee}!${DV}!Submitted By ${dispName}!${dateTimeCollection}`
+    const logs = `${payee}!${DV}!Submitted By ${dispName}!${dateTimeCollection}!In Review`
     const comment = {dispName, remarks, dateTimeCollection}
 
     try {
