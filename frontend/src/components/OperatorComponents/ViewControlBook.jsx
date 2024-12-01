@@ -67,7 +67,7 @@ const ViewControlBook = () => {
               <button 
                 onClick={() => window.history.back()}
                 className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={25}/></button>
-              <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
+              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
               <div className="relative w-auto h-auto">
                 <GrCircleInformation 
                   size={28} 
@@ -78,7 +78,7 @@ const ViewControlBook = () => {
                     <>
                       <div className="absolute w-8 h-8 -top-[2px] -right-10 rotate-45 rounded bg-white shadow-lg shadow-gray border-[1px]"/>
                       <div className="absolute -right-[300px] -top-11 rounded-lg bg-white w-72 shadow-gray shadow-lg border-[1px]">
-                        <h1 className={`${user.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} font-semibold w-full text-center text-white text-lg bg-fundingBlueGreen rounded-t-lg py-2`}>Full Information</h1>
+                        <h1 className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} font-semibold w-full text-center text-white text-lg bg-fundingBlueGreen rounded-t-lg py-2`}>Full Information</h1>
                         <div className="w-full h-full p-3">
                           <p className="font-bold text-sm mt-1">Amount: <span className="font-normal">{formatToPeso(ControlBook.data.TotalASA)}</span></p>
                           <p className="font-bold text-sm mt-1">SARO No: <span className="font-normal">{ControlBook.data.SARONo}</span></p>
@@ -92,7 +92,7 @@ const ViewControlBook = () => {
               </div>
               <div className="px-5">
                 <button 
-                  className={`${user.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} text-white px-5 py-2 rounded-lg`}
+                  className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} text-white px-5 py-2 rounded-lg`}
                   onClick={showReport}
                   >Generate Report</button>
               </div>
@@ -104,7 +104,7 @@ const ViewControlBook = () => {
                     <p className="font-semibold text-sm">Available ASA Budget</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
+                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg p-3 border-2">
@@ -112,7 +112,7 @@ const ViewControlBook = () => {
                     <p className="font-semibold text-sm">Remaining ASA Balance</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.RO)}</p>
+                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.RO)}</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg border-2 p-3">
@@ -120,10 +120,10 @@ const ViewControlBook = () => {
                     <p className="font-semibold text-sm">Total Spending</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.FO)}</p>
+                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.FO)}</p>
                   </div>
                 </div>
-                <button onClick={modal} className={`${user.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
+                <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
                 <div className="flex flex-col">
                     <div className="w-full flex items-center justify-center">
                       <IoAddOutline size={40}/>

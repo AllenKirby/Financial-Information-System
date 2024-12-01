@@ -338,7 +338,7 @@ const approveDV = async(req, res) => {
   const {payee, amount, fund, date, optionalAmount, accCategory}= req.body.data
 
   const dateTimeCollection = getDateTime();
-  const logs = `${payee}!${DV}!Approved By ${dispName}!${dateTimeCollection}`
+  const logs = `${payee}!${DV}!Approved By ${dispName}!${dateTimeCollection}!Approved`
 
   try{
     const docRef = db.collection('records').doc(DV);

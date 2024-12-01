@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
-import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard, TbEdit } from "react-icons/tb";
 import { BiGitCompare } from "react-icons/bi";
-import { BsTable } from "react-icons/bs";
+import { PiFileThin, PiTableThin } from "react-icons/pi";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
@@ -28,8 +27,8 @@ const AdminPage = () => {
 
     const navItems = [
         { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
-        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <TiDocumentText size={22} /> },
-        { label: 'Disbursement Logs', path: '/admin/disbursementlogs', icon: <BsTable size={18} /> },
+        { label: 'Disbursement Records', path: '/admin/disbursementrecords', icon: <PiFileThin size={22} /> },
+        { label: 'Disbursement Logs', path: '/admin/disbursementlogs', icon: <PiTableThin size={20} /> },
         { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>},
         { label: 'Comparison', path:'/admin/comparison', icon: <BiGitCompare size={22}/>}
     ];

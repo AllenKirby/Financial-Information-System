@@ -219,7 +219,7 @@ const opReturnDocu = async (req, res) => {
     const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
     const returnedBy = `${dispName}|${dateTimeCollection}`
     const comment = {dispName, remarks, dateTimeCollection}
-    const logs = `${payee}!${DV}!Returned By ${dispName}!${dateTimeCollection}`
+    const logs = `${payee}!${DV}!Returned By ${dispName}!${dateTimeCollection}!Returned`
 
     try{
         const updatedDocu = await updateStatus(DV, returnedBy, true)
@@ -448,7 +448,7 @@ const transferDocument = async (req, res) => {
     const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
     const updatedBy = `${dispName}|${dateTimeCollection}`
     const comment = {dispName, remarks, dateTimeCollection}
-    const logs = `${payee}!${DV}!Updated By ${dispName}!${dateTimeCollection}`
+    const logs = `${payee}!${DV}!Updated By ${dispName}!${dateTimeCollection}!Under Review`
 
     try {
          await updateStatus(DV, updatedBy, false)

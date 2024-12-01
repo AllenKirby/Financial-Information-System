@@ -6,11 +6,10 @@ import { collection, doc, query, where, onSnapshot } from "firebase/firestore"
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
 
-import { TiDocumentText } from "react-icons/ti";
 import { TbLayoutDashboard } from "react-icons/tb";
-import { BsTable } from "react-icons/bs";
 import { useState, useEffect } from "react"
 import { FiBook } from "react-icons/fi";
+import { PiFileThin, PiTableThin } from "react-icons/pi";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useFundingHook } from "../hooks/useFundingHook"
@@ -32,9 +31,9 @@ const OperatorPage = () => {
 
   const navItems = [
     { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },
-    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <TiDocumentText size={22} /> },
+    { label: 'Disbursement Records', path: '/operator/disbursementrecords', icon: <PiFileThin size={22} /> },
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
-    { label: 'Disbursement Logs', path: '/operator/disbursementlogs', icon: <BsTable size={18} /> }
+    { label: 'Disbursement Logs', path: '/operator/disbursementlogs', icon: <PiTableThin size={20} /> }
   ]
 
   useEffect(() => {

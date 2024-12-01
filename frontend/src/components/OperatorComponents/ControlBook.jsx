@@ -21,7 +21,7 @@ const ControlBook = () => {
   console.log(controlBooks)
 
   return (
-    <section className="w-full h-full">
+    <section className="w-full h-full p-3">
       {!id ? (
         <>
           <div className="w-full h-[10%] flex items-end justify-between py-2">

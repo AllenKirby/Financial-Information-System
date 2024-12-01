@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Loader from "../components/Loader";
 import Swal from 'sweetalert2'
@@ -17,6 +17,7 @@ const Login = () => {
     const [password, setPassword] = useState('')
     const [flag, setFlag] = useState(false)
     const [recoveryEmail, setRecoveryEmail] = useState('')
+    const [errorMessage, setErrorMessage] = useState(null)
     
     //hooks
     const {login, resetPassword,  isLoading, error} = useAuthHook()
@@ -35,8 +36,18 @@ const Login = () => {
     //     e.preventDefault()
     //     await googleLogin()
     // }
+
+    useEffect(() => {
+        if(error) {
+            if(error === 'Firebase: Error (auth/invalid-credential).') {
+                setErrorMessage('Invalid Credentials. Please try again')
+            }
+        }
+    }, [error])
+
     const forgotPassword = async(e) => {
         e.preventDefault()
+        setErrorMessage(null)
         const res = await resetPassword(recoveryEmail)
         if(res){
             Swal.fire({
@@ -58,7 +69,7 @@ const Login = () => {
     <section className="w-full h-screen flex flex-col sm:flex-col md:flex-col lg:flex-row xl:flex-row items-center justify-start bg-slate-100">
         <div className="w-full sm:w-full md:w-full lg:1/2 xl:1/2 h-1/3 sm:1/3 md:h-1/3 lg:h-full xl:h-full relative py-5 flex flex-col items-center justify-center gap-2 px-5 bg-gradient-to-tr from-customgreen to-white overflow-hidden">
             <div className="absolute inset-0 w-full h-full overflow-hidden">
-                <div className="absolute -top-16 -left-10 w-screen h-2/3 transform rotate-12 bg-gradient-to-tr from-customgreen to-white opacity-50"></div>
+                <div className="absolute -top-16 -left-10 w-[2000px] h-2/3 transform rotate-12 bg-gradient-to-tr from-customgreen to-white opacity-50"></div>
             </div>
             <img className="w-28 sm:w-36 md:w-48 lg:70 xl:w-82 z-10" src={NIAlogo} alt="" />
             <h1 className="text-white text-center font-bold z-10 text-xl sm:text-xl md:text-3xl lg:text-4xl xl:text-5xl">Financial Information System</h1>
@@ -67,9 +78,15 @@ const Login = () => {
             <div className="w-5/6 sm:w-5/6 md:w-5/6 lg:w-1/2 xl:w-1/2 h-2/3 sm:h-2/3 md:h-2/3 lg:h-full xl:h-full flex items-center justify-center">
                 <form action="#" onSubmit={handleLogin} className="w-full h-[26rem] sm:h-[26rem] md:h-auto lg:h-auto xl:h-auto p-5">
                     <div className="text-center mb-3">
-                        <h1 className="text-2xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-4xl text-customgreen font-bold">Login</h1>
+                        <h1 className="text-2xl md:text-3xl lg:text-4xl xl:text-4xl text-customgreen font-bold">Login</h1>
                         <h2 className="text-xs sm:text-xs md:text-sm lg:text-base xl:text-base my-2 text-gray-400">Please login your details to continue</h2>
                     </div>
+                    {errorMessage && (
+                        <div className={`w-full my-2 h-auto p-3 border-2 rounded-lg ${errorMessage || error ? 'border-red-500 text-red-500 bg-red-100' : 'border-customgreen text-customgreen bg-green-100'}`}>
+                            <p className="text-center text-xs sm:text-sm md:text-base 2xl:text-lg">
+                            {errorMessage && errorMessage }</p>
+                        </div>
+                    )}
                     <div className="w-full py-2 px-2 gap-2">
                         <label className="font-semibold text-base sm:text-base md:text-lg lg:text-base xl:text-base">Email</label>
                         <input 
@@ -109,9 +126,6 @@ const Login = () => {
                     <div className="w-full my-2 text-center">
                         <p onClick={openForgotPass} className="cursor-pointer">Forgot Password?</p>
                     </div>
-                    {error && (<div className="w-full text-center">
-                        <h4 className="text-lg text-red-600">{error === 'Firebase: Error (auth/invalid-credential).' ? 'Invalid Credentials' : error}</h4>
-                    </div>)}
                     {/* <div className="w-full h-auto px-2 pt-2">
                         <div className="w-full h-auto px-2 pt-2 border-t-2 relative">
                             <p className="text-center text-sm bg-slate-100 rounded-lg px-3 absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">Or</p>

@@ -41,10 +41,11 @@ const HistoryLogs = () => {
         <div className="w-full h-full table-auto rounded-t-lg border-2 bg-white">
             <div className="w-full h-[7%] rounded-t-lg">
                 <div className="w-full text-lg bg-gray-100 rounded-t-lg flex ">
-                    <p className="text-gray-400 text-sm font-semibold w-1/4 py-2 border-white text-left px-2">Payee</p>
-                    <p className="text-gray-400 text-sm font-semibold text-center w-1/4 py-2 border-white">DV No.</p>
-                    <p className="text-gray-400 text-sm font-semibold text-center w-1/4 py-2 border-white">Last Action By Name</p>
-                    <p className="text-gray-400 text-sm font-semibold text-center w-1/4 py-2 ">Action Time and Date</p>
+                    <p className="text-gray-400 text-sm font-semibold w-1/5 py-2 border-white text-left px-2">Payee</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/5 py-2 border-white">DV No.</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/5 py-2 border-white">Status</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/5 py-2 border-white">Last Action By Name</p>
+                    <p className="text-gray-400 text-sm font-semibold text-center w-1/5 py-2 ">Action Time and Date</p>
                 </div>
             </div>
             <div className="w-full h-[93%] overflow-y-auto">
@@ -53,6 +54,7 @@ const HistoryLogs = () => {
                         <div key={key} className={`${index % 2 == 0 ? 'bg-white' : 'bg-gray-100'} w-full flex py-3`}>
                             <p className="w-1/4 text-sm text-left px-2 truncate">{log.split('!')[0]}</p>
                             <p className="w-1/4 text-sm text-center px-2">{log.split('!')[1].split('|').slice()[0]}</p>
+                            <p className="w-1/4 text-sm text-center px-2">{log.split('!')[4]}</p>
                             <p className="w-1/4 text-sm text-center px-2">{log.split('!')[2].replace(',', ' ')}</p>
                             <p className="w-1/4 text-sm text-center px-2">{`${log.split('!')[3]}`}</p>
                         </div>

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { PiUsersThreeBold } from "react-icons/pi";
 import { TbUserShield } from "react-icons/tb";
+
 import { useSuperAdminHook } from "../hooks/useSuperAdminHook";
 import { useDispatch } from "react-redux";
 
@@ -17,7 +18,7 @@ const SuperAdminPage = () => {
     const dispatch = useDispatch()
 
     const navItems = [
-      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={22} />},
+      {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={20} />},
       {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={22} />},
     ]
 
