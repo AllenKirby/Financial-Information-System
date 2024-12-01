@@ -20,6 +20,7 @@ const SuperAdminPage = () => {
     const navItems = [
       {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={20} />},
       {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={22} />},
+      {label: 'Logs', path: '/superadmin/logs', icon: <TbUserShield size={22} />}
     ]
 
     useEffect(() => {
@@ -37,6 +38,8 @@ const SuperAdminPage = () => {
           setLocation('Access Control')
         } else if(page.pathname === "/superadmin/resetpasswordrequest"){
           setLocation('Reset Password Requests')
+        }else if(page.pathname === '/superadmin/logs'){
+          setLocation('Access Logs')
         }
       }, [page.pathname])
       

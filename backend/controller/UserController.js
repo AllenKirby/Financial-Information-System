@@ -13,7 +13,7 @@ const login = async(req, res) => {
 
         const docref = db.collection('listOfUsers').doc(uid)
         const user = await docref.get()
-
+        addLoginLogs(uid, email, name, role)
         res.cookie('token', token, {
             httpOnly: true,  
             secure: true,  
@@ -69,6 +69,25 @@ const changePass = async(req, res) => {
     }catch(error){
         res.status(500).json({ success: false, message: 'Login failed', error: error.message });
     }
+}
+
+const addLoginLogs = (uid, email, name, role) => {
+    const year = new Intl.DateTimeFormat('en-PH', {year: 'numeric'}).format(new Date())
+    const month = new Intl.DateTimeFormat('en-PH', {month: '2-digit'}).format(new Date())
+    const yearMonth = `${year}-${month}`
+    const timestamp = new Date().toLocaleString('en-PH', {
+        timeZone: 'Asia/Manila',
+        hour12: false,
+    });
+    const docRef = db.collection('loginLogs').doc(yearMonth)
+    docRef.set({
+        [timestamp]: {
+            uid: uid,
+            email: email,
+            name: name,
+            role: role
+        }
+    }, {merge: true})
 }
 
 module.exports = {
