@@ -25,6 +25,7 @@ import DashboardPreparer from "../components/EditorComponents/Dashboard"
 import ControlBook from "../components/OperatorComponents/ControlBook";
 import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 import ComparisonView from "../components/AdminComponents/ComparisonView"
+import Logs from "../components/SuperAdminComponents/Logs";
 
 
 const Mainpage = () => {
@@ -75,6 +76,7 @@ const Mainpage = () => {
         <Route path="/superadmin" element={<PrivateRoute allowedRoles={['0']}><SuperAdminPage/></PrivateRoute>}>
           <Route path="usermanagement" element={<PrivateRoute allowedRoles={['0']}><UserManagement /></PrivateRoute>}/>
           <Route path="accesscontrol" element={<PrivateRoute allowedRoles={['0']}><AccessControl /></PrivateRoute>}/>
+          <Route path="logs" element={<PrivateRoute allowedRoles={['0']}><Logs /></PrivateRoute>}/>
         </Route>
 
         <Route path="/unauthorized" element={<NotFound/>}/>

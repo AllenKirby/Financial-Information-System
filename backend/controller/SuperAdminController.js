@@ -141,6 +141,7 @@ const getAllAccounts = async (req, res) => {
       await db.collection('Roles').doc(roleName).update({
         permission: newPermission
       })
+      addAccessControlLogs(newPermission, roleName)
       res.status(200).json({message: 'Permission Change'})
     }catch(error){
       console.error('Error changing permission:', error);
@@ -149,6 +150,75 @@ const getAllAccounts = async (req, res) => {
         message: 'Error changing permission', 
         error: error.message 
       });
+    }
+  }
+
+  const addAccessControlLogs = (event, role) => {
+    const year = new Intl.DateTimeFormat('en-PH', {year: 'numeric'}).format(new Date())
+    const month = new Intl.DateTimeFormat('en-PH', {month: '2-digit'}).format(new Date())
+    const yearMonth = `${year}-${month}`
+    const timestamp = new Date().toLocaleString('en-PH', {
+        timeZone: 'Asia/Manila',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,
+    });
+    const feature = role === 'Budget Officer' ? (event ? 'Approver' : 'Budget Officer') :
+                    role === 'Funding' ? (event ? 'Preparer' : 'Funding') :
+                    role === 'Preparer' ? (event ? 'Funding' : 'Preparer') :
+                    'Approver';
+    const docRef = db.collection('accessControlLogs').doc(yearMonth)
+    docRef.set({
+      [timestamp]: {
+        event: event,
+        role: role,
+        feature: feature
+      }
+    }, {merge: true})
+  }
+
+  const getLogs = async (req, res) => {
+    try{
+      const loginLogs = await getLoginLogs()
+      const accessLogs = await getAccessLogs()
+      res.status(200).json({loginLogs: loginLogs, accessLogs: accessLogs})
+    }catch(err){
+      console.log('error on getlogs superadmincontroller', err)
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Error getting login logs', 
+        error: err.message 
+      });
+    }
+  }
+
+  const getLoginLogs = async () => {
+    try{
+      const loginRef = await db.collection('loginLogs').get()
+      const result = {}
+      loginRef.forEach((doc) => {
+        result[doc.id] = doc.data()
+      })
+      return result
+    }catch(err){
+      console.log('error on getloginlogs superadmincontroller', err)
+    }
+  }
+
+  const getAccessLogs = async() => {
+    try{
+      const accessLogRef = await db.collection('accessControlLogs').get()
+      const result = {}
+      accessLogRef.forEach((doc) => {
+        result[doc.id] = doc.data()
+      })
+      return result
+    }catch(err){
+      console.log('error on getaccesslogs superadmincontroller', err)
     }
   }
 
@@ -176,5 +246,6 @@ const getAllAccounts = async (req, res) => {
     deleteAcc,
     retrieveRoles,
     changeAccess,
-    deleteRequest
+    deleteRequest,
+    getLogs
   };

@@ -28,38 +28,40 @@ export const AuthContextProvider = ({ children }) => {
     useEffect(() => {
         const unsubscribe = onIdTokenChanged(auth, async (userAuth) => {
             if(userAuth){
-                try{
-                    const token = await userAuth.getIdToken()
-                    const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/refreshToken`, {
-                        headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization':` Bearer ${token} `
-                        },
-                        withCredentials: true,
-                    });
-                    if (response.status === 200) {
-                        const userData = response.data
-                        const data = {
-                            success: userData.success,
-                            name: userData.name,
-                            uemail: userData.uemail,
-                            uid: userData.uid,
-                            role: userData.role,
-                            firstTimeLogin: userData.firstTimeLogin
+                if(userAuth.emailVerified){
+                    try{
+                        const token = await userAuth.getIdToken()
+                        const response = await axios.get(`${import.meta.env.VITE_API_URL}/user/refreshToken`, {
+                            headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization':` Bearer ${token} `
+                            },
+                            withCredentials: true,
+                        });
+                        if (response.status === 200) {
+                            const userData = response.data
+                            const data = {
+                                success: userData.success,
+                                name: userData.name,
+                                uemail: userData.uemail,
+                                uid: userData.uid,
+                                role: userData.role,
+                                firstTimeLogin: userData.firstTimeLogin
+                            }
+                            console.log(userData.firstTimeLogin)
+                            if(userData.firstTimeLogin){
+                                dispatchFlag(toggleChangePassFlag())
+                            } else {
+                                cookies.set('user', JSON.stringify(data), { path: '/', secure: true, sameSite: 'Strict' });
+                                dispatch({type: 'LOGIN', payload: data})
+                            }
                         }
-                        console.log(userData.firstTimeLogin)
-                        if(userData.firstTimeLogin){
-                            dispatchFlag(toggleChangePassFlag())
-                        } else {
-                            cookies.set('user', JSON.stringify(data), { path: '/', secure: true, sameSite: 'Strict' });
-                            dispatch({type: 'LOGIN', payload: data})
-                        }
+                    }catch(error){
+                        cookies.remove('token')
+                        cookies.remove('user')
+                        dispatch({type: 'LOGOUT'})
+                        console.log(error)
                     }
-                }catch(error){
-                    cookies.remove('token')
-                    cookies.remove('user')
-                    dispatch({type: 'LOGOUT'})
-                    console.log(error)
                 }
             }else{
                 cookies.remove("token");
