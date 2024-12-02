@@ -75,7 +75,7 @@ const FieldOffices = (props) => {
         <div className='flex items-center justify-between my-2'>
           <div className='flex items-center justify-center gap-3'>
             {dropDown? <FaAngleUp size={25}/> : <FaAngleDown size={25}/>}
-            <p className='lg:text-xl 2xl:text-2xl font-bold'>{fieldOffice.projectName}</p>
+            <p className='lg:text-lg 2xl:text-2xl font-bold'>{fieldOffice.projectName}</p>
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>
@@ -112,7 +112,7 @@ const FieldOffices = (props) => {
                   <div className="text-center">{DV.DVNoCount}</div>
                   <div className="text-center">{DV.orsData}</div>
                   <div className="text-center break-words">{DV.payee}</div>
-                  <div className="break-words">{DV.particulars}</div> {/* Handles long text */}
+                  <div className="break-words truncate">{DV.particulars}</div> {/* Handles long text */}
                   <div className="text-center">{DV.amount}</div>
                 </div>
               ))

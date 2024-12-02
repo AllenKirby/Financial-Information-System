@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from 'axios';
 import Swal from 'sweetalert2'
+import { collection, onSnapshot } from "firebase/firestore"
+import { firestore } from "../../config/firebase-config"
 
 import { useSuperAdminHook } from "../../hooks/useSuperAdminHook";
 
@@ -11,32 +12,21 @@ const AccessControl = () => {
   const {changeAccess, isLoading, error} = useSuperAdminHook()
 
   useEffect(() => {
-    const retrieveRoles = async () => {
-      try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL}/superadmin/roles`, {
-          withCredentials: true
-        });
+    const q = collection(firestore, 'Roles');
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const users = snapshot.docs.reduce((acc, doc) => {
+        acc[doc.id] = {...doc.data()}
+        return acc;
+      }, {});
+      setRoles(users)
+    })
 
-        if (res.status === 200) {
-          const data = res.data;
-          setRoles(data);
-        }
-      } catch (error) {
-        console.log('Error: ', error);
-      }
-    };
-    retrieveRoles();
+    return () => unsubscribe()   
   }, []);
 
-  const handleToggleChange = async(index, roleName) => {
-    const updatedRoles = [...roles];
-    const newPermissionValue = !updatedRoles[index].permission;
-
-    updatedRoles[index].permission = !updatedRoles[index].permission;
-    setRoles(updatedRoles);
-
+  const handleToggleChange = async( roleName, currentPermission) => {
     Swal.fire({
-      title: "Do you really want to grant access",
+      title: `Do you really want to ${currentPermission ? 'revoke' : 'grant'} access?`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#009933",
@@ -44,7 +34,8 @@ const AccessControl = () => {
       confirmButtonText: "Yes, Grant it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-            const res = await changeAccess(roleName, newPermissionValue)
+          const newPermission = !currentPermission
+            const res = await changeAccess(roleName, newPermission)
             if (res) {
                 Swal.fire({
                     title: "Access Granted!",
@@ -65,42 +56,48 @@ const AccessControl = () => {
 
   return (
     <section className="w-full h-full p-3">
-      <div className="w-full h-auto flex rounded-t-lg bg-superAdminBlue text-white px-1">
-        <div className="w-full h-auto flex">
-          <h1 className="w-1/4 px-2 py-1">Role</h1>
-          <h1 className="w-1/4 px-2 py-1">Permission</h1>
-          <h1 className="w-1/4 px-2 py-1">Granted Features</h1>
-          <h1 className="w-1/4 px-2 py-1">Description</h1>
-        </div>
-      </div>
-      <div className="w-full h-full bg-white p-1">
-        {roles.length > 0 ? (
-          roles.map((role, index) => (
-            <div key={index} className="w-full h-auto border-[1px] flex rounded-md py-2 hover:bg-slate-100 cursor-pointer my-1">
-              <p className="w-1/4 px-2 font-bold">{role.roleName}</p>
-              <p className="w-1/4 px-2">
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    className="sr-only peer"
-                    disabled={isLoading}
-                    checked={role.permission}
-                    onChange={() => handleToggleChange(index, role.roleName)}
-                  />
-                  <div className="group peer bg-white rounded-full duration-300 w-8 h-4 ring-2 ring-superAdminMustard after:duration-300 after:bg-superAdminMustard peer-checked:after:bg-green-500 peer-checked:ring-green-500 after:rounded-full after:absolute after:h-3 after:w-3 after:top-0.5 after:left-0.5 after:flex after:justify-center after:items-center peer-checked:after:translate-x-4 peer-hover:after:scale-95"></div>
-                </label>
-              </p>
-              <p className="w-1/4 px-2">{role.grantedAccess}</p>
-              <p className="w-1/4 px-2 truncate">{role.description}</p>
-            </div>
-          ))
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <div>
-              <h1 className="text-xl font-semibold">No Roles Found</h1>
-            </div>
+      <div className="w-full h-full border rounded-lg">
+        <div className="w-full h-auto flex rounded-t-lg bg-gray-100 text-gray-500 px-1">
+          <div className="w-full h-auto flex">
+            <h1 className="w-1/4 px-2 py-1">Role</h1>
+            <h1 className="w-1/4 px-2 py-1">Permission</h1>
+            <h1 className="w-1/4 px-2 py-1">Granted Features</h1>
+            <h1 className="w-1/4 px-2 py-1">Description</h1>
           </div>
-        )}
+        </div>
+        <div className="w-full h-full bg-white">
+          {roles && Object.entries(roles).length > 0 ? (
+            Object.entries(roles).map(([key, role], index) => (
+              <div key={key} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto flex py-2 cursor-pointer my-1`}>
+                <p className="w-1/4 px-2 font-bold">{role.roleName}</p>
+                <p className="w-1/4 px-2">
+                  <label
+                    className="has-[:checked]:bg-green-500 bg-gray-300 relative inline-block h-7 w-14 cursor-pointer rounded-full transition [-webkit-tap-highlight-color:_transparent]"
+                  >
+                    <input 
+                      className="peer sr-only" 
+                      id="AcceptConditions" 
+                      type="checkbox" 
+                      disabled={isLoading}
+                      checked={role.permission}
+                      onChange={() => handleToggleChange(role.roleName, role.permission)}/>
+                    <span
+                      className="absolute inset-y-0 m-1 rounded-full peer-checked:start-8 peer-checked:w-2 peer-checked:bg-white peer-checked:ring-transparent start-0 size-5 bg-gray-300 ring-[6px] ring-inset ring-white transition-all"
+                    ></span>
+                  </label>
+                </p>
+                <p className="w-1/4 px-2">{role.grantedAccess}</p>
+                <p className="w-1/4 px-2 truncate">{role.description}</p>
+              </div>
+            ))
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div>
+                <h1 className="text-xl font-semibold">No Roles Found</h1>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

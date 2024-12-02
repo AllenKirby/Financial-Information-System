@@ -4,7 +4,7 @@ import Header from "../components/Header"
 import { Outlet, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react";
 
-import { PiUsersThreeBold } from "react-icons/pi";
+import { PiUsersThreeBold, PiTableThin } from "react-icons/pi";
 import { TbUserShield } from "react-icons/tb";
 
 import { useSuperAdminHook } from "../hooks/useSuperAdminHook";
@@ -20,7 +20,7 @@ const SuperAdminPage = () => {
     const navItems = [
       {label: 'User Management', path: '/superadmin/usermanagement', icon: <PiUsersThreeBold size={20} />},
       {label: 'Access Control', path: '/superadmin/accesscontrol', icon: <TbUserShield size={22} />},
-      {label: 'Logs', path: '/superadmin/logs', icon: <TbUserShield size={22} />}
+      {label: 'Activity Logs', path: '/superadmin/logs', icon: <PiTableThin size={22} />}
     ]
 
     useEffect(() => {
