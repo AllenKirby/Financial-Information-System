@@ -116,18 +116,6 @@ export const useSuperAdminHook = () => {
         return () => unsubscribe()  
     }
 
-    const getLogs = async() => {
-        try{
-            const res = await axios.get(`${apiURL}/superadmin/getLogs`, {
-                withCredentials: true
-            })
-            if(res.status === 200){
-                console.log(res.data)
-            }
-        }catch(err){
-            console.log(err)
-        }
-    }
 
     const updateRequest = async(id, flag, email = '') => {
         setIsLoading(true)
@@ -153,5 +141,5 @@ export const useSuperAdminHook = () => {
         }
     }
 
-    return{ createAcc, deleteUser, disableAcc, changeAccess, getRequest, updateRequest,getLogs, isLoading, error }
+    return{ createAcc, deleteUser, disableAcc, changeAccess, getRequest, updateRequest, isLoading, error }
 }

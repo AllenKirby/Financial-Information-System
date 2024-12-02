@@ -436,7 +436,7 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
 
 const getNumberOfRecords = async (req, res) => {
   try{
-    const year = new Date().getFullYear()
+    const year = new Intl.DateTimeFormat('en-PH', {year: 'numeric'}).format(new Date())
     const docRef = db.collection('NumberOfRecords').doc(year.toString())
     const data = await docRef.get()
     if(data.exists){

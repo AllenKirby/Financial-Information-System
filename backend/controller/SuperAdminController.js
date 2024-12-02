@@ -181,46 +181,6 @@ const getAllAccounts = async (req, res) => {
     }, {merge: true})
   }
 
-  const getLogs = async (req, res) => {
-    try{
-      const loginLogs = await getLoginLogs()
-      const accessLogs = await getAccessLogs()
-      res.status(200).json({loginLogs: loginLogs, accessLogs: accessLogs})
-    }catch(err){
-      console.log('error on getlogs superadmincontroller', err)
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Error getting login logs', 
-        error: err.message 
-      });
-    }
-  }
-
-  const getLoginLogs = async () => {
-    try{
-      const loginRef = await db.collection('loginLogs').get()
-      const result = {}
-      loginRef.forEach((doc) => {
-        result[doc.id] = doc.data()
-      })
-      return result
-    }catch(err){
-      console.log('error on getloginlogs superadmincontroller', err)
-    }
-  }
-
-  const getAccessLogs = async() => {
-    try{
-      const accessLogRef = await db.collection('accessControlLogs').get()
-      const result = {}
-      accessLogRef.forEach((doc) => {
-        result[doc.id] = doc.data()
-      })
-      return result
-    }catch(err){
-      console.log('error on getaccesslogs superadmincontroller', err)
-    }
-  }
 
   const deleteRequest = async(req, res) => {
     const id = req.params.id
@@ -247,5 +207,4 @@ const getAllAccounts = async (req, res) => {
     retrieveRoles,
     changeAccess,
     deleteRequest,
-    getLogs
   };
