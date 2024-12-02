@@ -68,17 +68,19 @@ const getUsers = async (role) => {
 
 const getDateTime = () => {
     const today = new Date()
-    const dateCollection = today.toLocaleDateString("en-US", {
+    const dateCollection = today.toLocaleDateString("en-PH", {
+        timeZone: 'Asia/Manila',
         year: "numeric",
         month: "long",
         day: "2-digit"
       });
 
-    const timeCollection = today.toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true
+    const timeCollection = today.toLocaleTimeString("en-PH", {
+        timeZone: 'Asia/Manila',
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
     });
 
     return `${dateCollection} ${timeCollection}`;
