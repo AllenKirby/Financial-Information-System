@@ -18,8 +18,6 @@ const ControlBook = () => {
 
   const modal = () => setControlBookFlag(!controlBookFlag)
 
-  console.log(controlBooks)
-
   return (
     <section className="w-full h-full p-3">
       {!id ? (
@@ -44,7 +42,7 @@ const ControlBook = () => {
           <div className="relative p-2 w-full h-[88%] grid grid-cols-4 gap-2 border-2 rounded-lg">
             {controlBooks && Object.entries(controlBooks).length > 0 ? (
               Object.entries(controlBooks)
-              .filter(([key, controlBook]) => controlBook.cbStatus === CBStatus)
+              .filter(([, controlBook]) => controlBook.cbStatus === CBStatus)
               .map(([key, controlBook]) => (
                 <Folder key={key} ASANo={key} controlBook={controlBook}/>
               ))

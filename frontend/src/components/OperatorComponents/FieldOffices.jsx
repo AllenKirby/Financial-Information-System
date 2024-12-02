@@ -29,6 +29,14 @@ const FieldOffices = (props) => {
     }).format(value);
   };
 
+  const sortDate = () => {
+    if(fieldOffice && fieldOffice.dvCollection) {
+      const sortedProjects = Object.entries(fieldOffice.dvCollection).sort(([,a],[,b]) => new Date(b.date) - new Date(a.date));
+      return Object.fromEntries(sortedProjects)
+    }
+    return null
+  }
+
 
   const deleteFO = async(e) => {
     e.stopPropagation()
@@ -67,7 +75,7 @@ const FieldOffices = (props) => {
         <div className='flex items-center justify-between my-2'>
           <div className='flex items-center justify-center gap-3'>
             {dropDown? <FaAngleUp size={25}/> : <FaAngleDown size={25}/>}
-            <p className='text-xl font-bold'>{fieldOffice.projectName}</p>
+            <p className='lg:text-xl 2xl:text-2xl font-bold'>{fieldOffice.projectName}</p>
           </div>
           <div className='flex items-center justify-center gap-3'>
             <button onClick={modal}>
@@ -81,11 +89,11 @@ const FieldOffices = (props) => {
           </div>
         </div>
         <div className={`${dropDown ? ' max-h-96' : 'h-0'} w-full rounded-lg overflow-auto`}>
-          <div className=" w-full h-auto px-5 mb-5">
-            <p className="font-bold text-sm mt-1">Field Office: <span className="font-normal">{fieldOffice.fieldOffice}</span></p>
-            <p className="font-bold text-sm mt-1">ASA: <span className="font-normal">{formatToPeso(fieldOffice.ASA)}</span></p>
-            <p className="font-bold text-sm mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(fieldOffice.RO)}</span></p>
-            <p className="font-bold text-sm mt-1">Total Spending: <span className="font-normal">{formatToPeso(fieldOffice.FO)}</span></p>
+          <div className=" w-full h-auto px-5 mb-5 lg:text-sm 2xl:text-base">
+            <p className="font-bold mt-1">Field Office: <span className="font-normal">{fieldOffice.fieldOffice}</span></p>
+            <p className="font-bold mt-1">ASA: <span className="font-normal">{formatToPeso(fieldOffice.ASA)}</span></p>
+            <p className="font-bold mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(fieldOffice.RO)}</span></p>
+            <p className="font-bold mt-1">Total Spending: <span className="font-normal">{formatToPeso(fieldOffice.FO)}</span></p>
           </div>
           <div className="w-full border-2">
             <div className="bg-gray-200 grid grid-cols-6 gap-2 border-b-2 p-2">
@@ -97,8 +105,8 @@ const FieldOffices = (props) => {
               <div className="font-semibold text-center">ASA</div>
             </div>
 
-            {fieldOffice.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0 ? (
-              Object.entries(fieldOffice.dvCollection).map(([key, DV]) => (
+            {sortDate() && Object.entries(sortDate()).length > 0 ? (
+              Object.entries(sortDate()).map(([key, DV]) => (
                 <div key={key} className="grid grid-cols-6 gap-2 border-b-2 p-2 items-center">
                   <div className="text-center">{DV.date}</div>
                   <div className="text-center">{DV.DVNoCount}</div>
