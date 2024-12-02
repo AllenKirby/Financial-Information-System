@@ -92,35 +92,35 @@ const ViewControlBook = () => {
               </div>
               <div className="px-5">
                 <button 
-                  className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} text-white px-5 py-2 rounded-lg`}
+                  className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} text-white px-5 py-2 rounded-lg 2xl:text-lg`}
                   onClick={showReport}
                   >Generate Report</button>
               </div>
             </div>
-            <div className="w-full h-[89%]">
+            <div className="w-full h-[90%]">
               <div className="w-full h-1/4 flex gap-2">
                 <div className="w-1/4 h-full rounded-lg p-3 border-2">
                   <div className="w-full h-1/4">
-                    <p className="font-semibold text-sm">Available ASA Budget</p>
+                    <p className="font-semibold lg:text-sm 2xl:text-lg">Available ASA Budget</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
+                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg p-3 border-2">
                   <div className="w-full h-1/4">
-                    <p className="font-semibold text-sm">Remaining ASA Balance</p>
+                    <p className="font-semibold lg:text-sm 2xl:text-lg">Remaining ASA Balance</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.RO)}</p>
+                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.RO)}</p>
                   </div>
                 </div>
                 <div className="w-1/4 h-full rounded-lg border-2 p-3">
                   <div className="w-full h-1/4">
-                    <p className="font-semibold text-sm">Total Spending</p>
+                    <p className="font-semibold lg:text-sm 2xl:text-lg">Total Spending</p>
                   </div>
                   <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold text-2xl`}>{formatToPeso(ControlBook.data.FO)}</p>
+                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.FO)}</p>
                   </div>
                 </div>
                 <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
@@ -128,15 +128,15 @@ const ViewControlBook = () => {
                     <div className="w-full flex items-center justify-center">
                       <IoAddOutline size={40}/>
                     </div>
-                    <p className="font-semibold">New Project</p>
+                    <p className="font-semibold lg:text-lg 2xl:text-xl">New Project</p>
                 </div>
                 </button>
               </div>
               <div className="w-full h-3/4">
-                <div className="w-full h-auto my-2 px-5">
-                  <p className="font-semibold my-1">Projects({ControlBook.data.fieldOffices ? Object.entries(ControlBook.data.fieldOffices).length : 0})</p>
+                <div className="w-full h-[5%] my-2 px-5">
+                  <p className="font-semibold my-1 2xl:text-xl">Projects({ControlBook.data.fieldOffices ? Object.entries(ControlBook.data.fieldOffices).length : 0})</p>
                 </div>
-                <div className="w-full h-[310px] overflow-auto border-2 rounded-lg p-1">
+                <div className="w-full h-[90%] overflow-auto border-2 rounded-lg p-1">
                     {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                       Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
                         <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>

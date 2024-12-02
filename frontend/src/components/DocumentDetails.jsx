@@ -57,18 +57,18 @@ const DocumentDetails = ({ index, documents, type }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Approved':
-        return 'bg-green-500 text-white';
+        return 'bg-green-00 text-green-500';
       case 'For Approval':
-        return 'bg-yellow-500 text-white';
+        return 'bg-yellow-200 text-yellow-500';
       case 'Under Review':
-        return 'bg-orange-500 text-white';
+        return 'bg-orange-200 text-orange-500';
       case 'In Review':
-        return 'bg-blue-500 text-white';
+        return 'bg-blue-200 text-blue-500';
       case 'Drafting':
-        return 'bg-gray-200 text-customFontColor';
+        return 'bg-gray-200 text-gray-500';
       case 'Returned|3':
       case 'Returned|4':
-        return 'bg-red-500 text-white';
+        return 'bg-red-200 text-red-500';
       default:
         return 'bg-red-500 text-white';
     }
@@ -118,24 +118,24 @@ const DocumentDetails = ({ index, documents, type }) => {
         {docu?.payee}
       </h2>
       {/* DV No. column */}
-      <h2 className="sm:text-xs lg:text-sm 2xl:text-lg font-light text-center w-1/6">
+      <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
         {docu?.DV}
       </h2>
       {/* Status column */}
-      <h2 className="sm:text-xs lg:text-sm 2xl:text-lg font-light flex items-center justify-center w-1/6">
-        <div className={`${getStatusColor(Status)} w-auto h-auto rounded-md text-center px-2 py-1`}>
+      <div className="flex items-center justify-center w-1/6">
+        <h2 className={`${getStatusColor(Status)} sm:text-xs 2xl:text-sm font-semibold w-auto h-auto rounded-md text-center px-2 py-1`}>
           {Status}
-        </div>
-      </h2>
-      <h2 className="sm:text-xs lg:text-sm 2xl:text-lg font-light text-center w-1/6">
+        </h2>
+      </div>
+      <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
         {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
       </h2>
-      {(type === '4' || type === '3') && <h2 className="sm:text-xs lg:text-sm 2xl:text-lg font-light text-center w-1/6">
+      {(type === '4' || type === '3') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
         {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
         {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
         {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
       </h2>}
-      {type === '1' && <h2 className="sm:text-xs lg:text-sm 2xl:text-lg font-light text-center w-1/6">
+      {type === '1' && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
         {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
       </h2>}
     </div>
