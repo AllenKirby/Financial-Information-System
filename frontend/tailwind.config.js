@@ -25,7 +25,7 @@ export default {
         BOLightGreen: '#97BC62FF',
         fundingBlueGreen: '#317773',
         fundingGray: '#E2D0F9',
-        preparerPrimary: '#195190',
+        preparerPrimary: '#00674F',
         preparerSecondary: '#A2A2A1',
         coolSteel: '#FDFDFD',
         eggWhite: '#FDFDFD'
