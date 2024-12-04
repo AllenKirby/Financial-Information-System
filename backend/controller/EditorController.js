@@ -37,6 +37,19 @@ const createDV = async (req, res) => {
     const dateTimeCollection = getDateTime();
     const createdByDetails = `${createdBy} at ${dateTimeCollection}`
 
+    const payeeData = req.body.payee_data
+
+    newDvData = {
+        ...payeeData,
+        date: formatDate(date),
+        DV: finalizeDVNo,
+        DVKey: DVKey,
+        birParticular: birParticular.trim(),
+        createdAt: dateTimeCollection,
+        createdBy: createdByDetails,
+        status: 'Drafting',
+    }
+
     dvData = {
         //payee data
         payee: payee.trim(), 
@@ -70,7 +83,7 @@ const createDV = async (req, res) => {
         //open for necessary data needed
     }
     try{
-        await db.collection('records').doc(dvData.DVKey).set(dvData);
+        await db.collection('records').doc(newDvData.DVKey).set(newDvData);
 
         // addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
         // addOnClusterAmount(amount, fund, date)
