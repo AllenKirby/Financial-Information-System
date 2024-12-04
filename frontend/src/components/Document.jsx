@@ -32,6 +32,41 @@ const Document = ({document}) => {
     return parseFloat(remainingString) * 100 + '%'
   }
 
+  const DV = {
+    amount: doc.amount,
+    sumOfTaxes: tval,
+    amountDue: amount_due,
+    formula1: doc.TT_formula1,
+    formula2: doc.TT_formula2,
+  }
+
+  const gross_gsis = (parseFloat(doc.amount) || 0) + (parseFloat(doc.stamp) || 0) + (parseFloat(doc.dst) || 0) + (parseFloat(doc.vat12) || 0)
+  const amountDue_gsis = gross_gsis - (parseFloat(val1) || 0)
+  const GSIS = {
+    gross: gross_gsis,
+    amount: doc.amount,
+    tax: val1,
+    amountDue: amountDue_gsis,
+    stamp: doc.stamp,
+    dst: doc.dst,
+    vat12: doc.vat12,
+    formula1: doc.TT_formula1
+  }
+
+  const meralcoVatAndNonvat = (doc.meralcoVAT || 0) + (doc.meralcoNONVAT || 0)
+  const tax_meralco = eval(doc.meralcoVAT + doc.TT_formula1) + eval(meralcoVatAndNonvat + doc.TT_formula2)
+  const amountDue_meralco = doc.amount - tax_meralco
+  const Meralco = {
+    amount: doc.amount,
+    formula1: doc.TT_formula1,
+    formula2: doc.TT_formula2,
+    vatAndNon: meralcoVatAndNonvat,
+    vat: eval(doc.meralcoVAT + doc.TT_formula1),
+    nonvat: eval(meralcoVatAndNonvat + doc.TT_formula2),
+    tax: tax_meralco,
+    amountDue: amountDue_meralco
+  }
+
   return (
     <main id="pdf" className="w-full h-auto text-black flex flex-col items-center justify-center font-times">
       <section className='w-a4-width h-auto text-black text-xs'>
@@ -93,18 +128,54 @@ const Document = ({document}) => {
               <div className='w-72 border-r-2 border-black flex flex-col'>
                 <div className="w-full text-center border-b-2 border-black">Particulars</div>
                 <div className="w-full h-3/6 text-justify px-1 pb-2">{doc.particular}</div>
-                <div className="flex gap-3 px-3 py-1">
-                  <div>{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  <div>{doc.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
-                  <div>=</div>
-                  <div>{eval(doc.amount + doc.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                </div>
-                <div className="flex gap-3 px-3 py-1">
-                  <div>{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                  <div>{doc.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
-                  <div>=</div>
-                  <div>{eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                </div>
+                {
+                  doc.activeTab === 'DV' && (
+                    <>
+                      <div className="flex gap-3 px-3 py-1">
+                        <div>{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>{doc.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
+                        <div>=</div>
+                        <div>{eval(doc.amount + doc.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                      <div className="flex gap-3 px-3 py-1">
+                        <div>{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>{doc.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
+                        <div>=</div>
+                        <div>{eval(doc.amount + doc.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    </>
+                  )
+                }
+                {
+                  doc.activeTab === 'GSIS' && (
+                    <>
+                      <div className="flex gap-3 px-3 py-1">
+                        <div>{GSIS.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>{GSIS.formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
+                        <div>=</div>
+                        <div>{GSIS.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    </>
+                  )
+                }
+                {
+                  doc.activeTab === 'Meralco' && (
+                    <>
+                      <div className="flex gap-3 px-3 py-1">
+                        <div>{doc.meralcoVAT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>{doc.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
+                        <div>=</div>
+                        <div>{Meralco.vat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                      <div className="flex gap-3 px-3 py-1">
+                        <div>{doc.meralcoVAT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} + {doc.meralcoNONVAT.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div>{doc.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')}</div>
+                        <div>=</div>
+                        <div>{Meralco.nonvat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    </>
+                  )
+                }
                 <div className="px-2 py-1">ASA No. {doc.ASA ? doc.ASA.split('/').slice()[0].replace('|', ' ') : ''}</div>
                 <div className="w-full flex items-center justify-center font-bold pt-1">Amount Due</div>
               </div>
@@ -116,15 +187,51 @@ const Document = ({document}) => {
                 <div className="w-full text-center border-b-2 border-black">MFO/PAP</div>
                 <div className="w-full h-3/6 flex items-center justify-center p-2"></div>
               </div>
-              <div className='w-60'>
-                <div className="w-full text-center border-b-2 border-black">Amount</div>
-                <div className="w-full h-2/6 flex items-center justify-end">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                <div className="w-full h-2/6 flex items-center justify-end">{total_val}</div>
-                <div className="w-full h-1/6 mt-3 flex justify-between items-end font-bold">
-                  <div>₱</div>
-                  <div>{amount_due}</div>
-                </div>
-              </div>
+              {
+                doc.activeTab === 'DV' && (
+                  <>
+                    <div className='w-60'>
+                      <div className="w-full text-center border-b-2 border-black">Amount</div>
+                      <div className="w-full h-2/6 flex items-center justify-end">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full h-2/6 flex items-center justify-end">{total_val}</div>
+                      <div className="w-full h-1/6 mt-3 flex justify-between items-end font-bold">
+                        <div>₱</div>
+                        <div>{amount_due}</div>
+                      </div>
+                    </div>
+                  </>
+                )
+              }
+              {
+                doc.activeTab === 'GSIS' && (
+                  <>
+                    <div className='w-60'>
+                      <div className="w-full text-center border-b-2 border-black">Amount</div>
+                      <div className="w-full h-2/6 flex items-center justify-end">{GSIS.gross}</div>
+                      <div className="w-full h-2/6 flex items-center justify-end">{GSIS.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full h-1/6 mt-3 flex justify-between items-end font-bold">
+                        <div>₱</div>
+                        <div>{GSIS.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    </div>
+                  </>
+                )
+              }
+              {
+                doc.activeTab === 'Meralco' && (
+                  <>
+                    <div className='w-60'>
+                      <div className="w-full text-center border-b-2 border-black">Amount</div>
+                      <div className="w-full h-2/6 flex items-center justify-end">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full h-2/6 flex items-center justify-end">{Meralco.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      <div className="w-full h-1/6 mt-3 flex justify-between items-end font-bold">
+                        <div>₱</div>
+                        <div>{Meralco.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                      </div>
+                    </div>
+                  </>
+                )
+              }
           </div>
           <div className="w-full h-16 flex flex-col border-l-2 border-r-2 border-b-2 border-black">
               <div className="w-full flex">
@@ -138,41 +245,112 @@ const Document = ({document}) => {
               <div className="w-full border-b-2 border-black">
                   <div className="p-1 w-6 border-r-2 border-black font-bold">B.</div>
               </div>
-              <div className="w-full h-full flex">
-                  <div className="w-2/5 h-auto border-r-2 border-black">
-                      <div className="w-full text-center border-b-2 border-black">Account Title</div>
-                      {doc.accTitle.map((title, index) => (
-                        <div key={index} className="w-full pt-1 pl-5">{title}</div>
-                      ))}
-                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
-                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
-                      <div className="w-full pt-1 pl-5">Cash in Back</div>
-                  </div>
-                  <div className="w-1/5 h-auto border-r-2 border-black">
-                      <div className="w-full text-center border-b-2 border-black">UACS Code</div>
-                      {doc.accCode.map((code, index) => (
-                        <div key={index} className="w-full pt-1 text-center">{code}</div>
-                      ))}
-                      <div className="w-full pt-1 text-center">2 02 01 010</div>
-                      <div className="w-full pt-1 text-center">2 02 01 010</div>
-                      <div className="w-full pt-1 text-center">1 01 02 020</div>
-                  </div>
-                  <div className="w-1/5 h-auto border-r-2 border-black">
-                      <div className="w-full text-center border-b-2 border-black">Debit</div>
-                      {doc.optionalAmount.length > 1 ? doc.optionalAmount.map((fixamount, index) => (
-                        <div key={index} className="w-full pt-1 text-end px-2">{fixamount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-                      ))
-                      : (<div className="w-full pt-1 text-end px-2">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>)}
-                      
-                  </div>
-                  <div className="w-1/5 h-[100px] border-black">
-                      <div className="w-full text-center border-b-2 border-black">Credit</div>
-                      <div className="w-full pt-1 text-end px-2"><br/></div>
-                      <div className="w-full pt-1 text-end px-2">{val1}</div>
-                      <div className="w-full pt-1 text-end px-2">{val2}</div>
-                      <div className="w-full pt-1 text-end px-2">{amount_due}</div>
-                  </div>
-              </div>
+              {
+                doc.activeTab === 'DV' && (
+                  <div className="w-full h-full flex">
+                    <div className="w-2/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">Account Title</div>
+                        {doc.accTitle.map((title, index) => (
+                          <div key={index} className="w-full pt-1 pl-5">{title}</div>
+                        ))}
+                        <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                        <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
+                        <div className="w-full pt-1 pl-5">Cash in Back</div>
+                    </div>
+                    <div className="w-1/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">UACS Code</div>
+                        {doc.accCode.map((code, index) => (
+                          <div key={index} className="w-full pt-1 text-center">{code}</div>
+                        ))}
+                        <div className="w-full pt-1 text-center">2 02 01 010</div>
+                        <div className="w-full pt-1 text-center">2 02 01 010</div>
+                        <div className="w-full pt-1 text-center">1 01 02 020</div>
+                    </div>
+                    <div className="w-1/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">Debit</div>
+                        {doc.optionalAmount.length > 1 ? doc.optionalAmount.map((fixamount, index) => (
+                          <div key={index} className="w-full pt-1 text-end px-2">{fixamount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        ))
+                        : (<div className="w-full pt-1 text-end px-2">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>)}
+                        
+                    </div>
+                    <div className="w-1/5 h-[100px] border-black">
+                        <div className="w-full text-center border-b-2 border-black">Credit</div>
+                        <div className="w-full pt-1 text-end px-2"><br/></div>
+                        <div className="w-full pt-1 text-end px-2">{val1}</div>
+                        <div className="w-full pt-1 text-end px-2">{val2}</div>
+                        <div className="w-full pt-1 text-end px-2">{amount_due}</div>
+                    </div>
+                </div>
+                )
+              }
+              {
+                doc.activeTab === 'GSIS' && (
+                  <div className="w-full h-full flex">
+                    <div className="w-2/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">Account Title</div>
+                        {doc.accTitle.map((title, index) => (
+                          <div key={index} className="w-full pt-1 pl-5">{title}</div>
+                        ))}
+                        <div className="w-full pt-1 pl-5">Cash-in-Bank Current Account</div>
+                        <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                        <div className="w-full pt-1 pl-5">Cash in Bank</div>
+                    </div>
+                    <div className="w-1/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">UACS Code</div>
+                        
+                        <div className="w-full pt-1 text-center">1-01-02-020</div>
+                        <div className="w-full pt-1 text-center">2 02 01 010</div>
+                        <div className="w-full pt-1 text-center">1 01 02 020</div>
+                    </div>
+                    <div className="w-1/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">Debit</div>
+                        <div className="w-full pt-1 text-end px-2">{GSIS.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        
+                    </div>
+                    <div className="w-1/5 h-[100px] border-black">
+                        <div className="w-full text-center border-b-2 border-black">Credit</div>
+                        <div className="w-full pt-1 text-end px-2"><br/></div>
+                        <div className="w-full pt-1 text-end px-2">{val1}</div>
+                        <div className="w-full pt-1 text-end px-2">{GSIS.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    </div>
+                </div>
+                )
+              }
+              {
+                doc.activeTab === 'Meralco' && (
+                  <div className="w-full h-full flex">
+                    <div className="w-2/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">Account Title</div>
+                        <div className="w-full pt-1 pl-5">Cash-in-Bank Current Account</div>
+                        <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                        <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
+                        <div className="w-full pt-1 pl-5">Cash in Bank</div>
+                    </div>
+                    <div className="w-1/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">UACS Code</div>
+                        {doc.accCode.map((code, index) => (
+                          <div key={index} className="w-full pt-1 text-center">{code}</div>
+                        ))}
+                        <div className="w-full pt-1 text-center">1-01-02-020</div>
+                        <div className="w-full pt-1 text-center">2 02 01 010</div>
+                        <div className="w-full pt-1 text-center">2 02 01 010</div>
+                        <div className="w-full pt-1 text-center">1 01 02 020</div>
+                    </div>
+                    <div className="w-1/5 h-auto border-r-2 border-black">
+                        <div className="w-full text-center border-b-2 border-black">Debit</div>
+                        <div className="w-full pt-1 text-end px-2">{doc.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    </div>
+                    <div className="w-1/5 h-[100px] border-black">
+                        <div className="w-full text-center border-b-2 border-black">Credit</div>
+                        <div className="w-full pt-1 text-end px-2"><br/></div>
+                        <div className="w-full pt-1 text-end px-2">{Meralco.vat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div className="w-full pt-1 text-end px-2">{Meralco.nonvat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        <div className="w-full pt-1 text-end px-2">{Meralco.amountDue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    </div>
+                </div>
+                )
+              }
           </div>
           <div className="w-full flex h-28 border-l-2 border-b-2 border-black">
               <div className="w-1/2 border-r-2 border-black">
@@ -198,7 +376,21 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div>
-                  <div className='flex justify-center items-center h-full'>{`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} pesos`}</div> 
+                  {
+                    doc.activeTab === 'DV' && (
+                      <div className='flex justify-center items-center h-full'>{`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} pesos`}</div> 
+                    )
+                  }
+                  {
+                    doc.activeTab === 'GSIS' && (
+                      <div className='flex justify-center items-center h-full'>{`${toWords(GSIS.amountDue).charAt(0).toUpperCase() + toWords(GSIS.amountDue).slice(1)} pesos`}</div> 
+                    )
+                  }
+                  {
+                    doc.activeTab === 'Meralco' && (
+                      <div className='flex justify-center items-center h-full'>{`${toWords(Meralco.amountDue).charAt(0).toUpperCase() + toWords(Meralco.amountDue).slice(1)} pesos`}</div> 
+                    )
+                  }
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
@@ -376,14 +568,42 @@ const Document = ({document}) => {
                 <div className="w-full text-center border-b-2 border-black">MFO/PAP</div>
                 <div className="w-full h-3/6 flex items-center justify-center p-2"></div>
               </div>
-              <div className='w-60'>
-                <div className="w-full text-center border-b-2 border-black">Amount</div>
-                <div className="w-full h-3/6 flex items-center justify-end p-1">{total_val}</div>
-                <div className="w-full h-24 flex justify-between items-end font-bold">
-                  <div>₱</div>
-                  <div>{amount_due}</div>
-                </div>
-              </div>
+              {
+                doc.activeTab === 'DV' && (
+                  <div className='w-60'>
+                    <div className="w-full text-center border-b-2 border-black">Amount</div>
+                    <div className="w-full h-3/6 flex items-center justify-end p-1">{total_val}</div>
+                    <div className="w-full h-24 flex justify-between items-end font-bold">
+                      <div>₱</div>
+                      <div>{total_val}</div>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                doc.activeTab === 'GSIS' && (
+                  <div className='w-60'>
+                    <div className="w-full text-center border-b-2 border-black">Amount</div>
+                    <div className="w-full h-3/6 flex items-center justify-end p-1">{GSIS.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="w-full h-24 flex justify-between items-end font-bold">
+                      <div>₱</div>
+                      <div>{GSIS.tax}</div>
+                    </div>
+                  </div>
+                )
+              }
+              {
+                doc.activeTab === 'Meralco' && (
+                  <div className='w-60'>
+                    <div className="w-full text-center border-b-2 border-black">Amount</div>
+                    <div className="w-full h-3/6 flex items-center justify-end p-1">{Meralco.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    <div className="w-full h-24 flex justify-between items-end font-bold">
+                      <div>₱</div>
+                      <div>{Meralco.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                    </div>
+                  </div>
+                )
+              }
           </div>
           <div className="w-full h-16 flex flex-col border-l-2 border-r-2 border-b-2 border-black">
               <div className="w-full flex">
@@ -398,30 +618,93 @@ const Document = ({document}) => {
                   <div className="p-1 w-6 border-r-2 border-black font-bold">B.</div>
               </div>
               <div className="w-full h-full flex">
-                  <div className="w-2/5 h-[100px] border-r-2 border-black">
-                      <div className="w-full text-center border-b-2 border-black">Account Title</div>
-                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
-                      <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
-                      <div className="w-full pt-1 pl-5">Cash in Back</div>
-                  </div>
-                  <div className="w-1/5 h-[100px] border-r-2 border-black">
-                      <div className="w-full text-center border-b-2 border-black">UACS Code</div>
-                      <div className="w-full pt-1 text-center">2 02 01 010</div>
-                      <div className="w-full pt-1 text-center">2 02 01 010</div>
-                      <div className="w-full pt-1 text-center">1 01 02 020</div>
-                  </div>
-                  <div className="w-1/5 h-[100px] border-r-2 border-black">
-                      <div className="w-full text-center border-b-2 border-black">Debit</div>
-                      <div className="w-full pt-1 text-end px-2">{val1}</div>
-                      <div className="w-full pt-1 text-end px-2">{val2}</div>
-                      <div className="w-full pt-1 text-end px-2">-</div>
-                  </div>
-                  <div className="w-1/5 h-[100px] border-black">
-                      <div className="w-full text-center border-b-2 border-black">Credit</div>
-                      <div className="w-full pt-1 text-end px-2">-</div>
-                      <div className="w-full pt-1 text-end px-2">-</div>
-                      <div className="w-full pt-1 text-end px-2">{total_val}</div>
-                  </div>
+                  {
+                    doc.activeTab === 'DV' && (
+                      <>
+                        <div className="w-2/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">Account Title</div>
+                            <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                            <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
+                            <div className="w-full pt-1 pl-5">Cash in Back</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">UACS Code</div>
+                            <div className="w-full pt-1 text-center">2 02 01 010</div>
+                            <div className="w-full pt-1 text-center">2 02 01 010</div>
+                            <div className="w-full pt-1 text-center">1 01 02 020</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">Debit</div>
+                            <div className="w-full pt-1 text-end px-2">{val1}</div>
+                            <div className="w-full pt-1 text-end px-2">{val2}</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-black">
+                            <div className="w-full text-center border-b-2 border-black">Credit</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                            <div className="w-full pt-1 text-end px-2">{total_val}</div>
+                        </div>
+                      </>
+                    )
+                  }
+                  {
+                    doc.activeTab === 'GSIS' && (
+                      <>
+                        <div className="w-2/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">Account Title</div>
+                            <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                            <div className="w-full pt-1 pl-5">Cash in Back</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">UACS Code</div>
+                            <div className="w-full pt-1 text-center">2 02 01 010</div>
+                            <div className="w-full pt-1 text-center">1 01 02 020</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">Debit</div>
+                            <div className="w-full pt-1 text-end px-2">{val1}</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-black">
+                            <div className="w-full text-center border-b-2 border-black">Credit</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                            <div className="w-full pt-1 text-end px-2">{GSIS.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        </div>
+                      </>
+                    )
+                  }
+                  {
+                    doc.activeTab === 'Meralco' && (
+                      <>
+                        <div className="w-2/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">Account Title</div>
+                            <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula1)})</div>
+                            <div className="w-full pt-1 pl-5">Due to BIR({cutFormula(doc.TT_formula2)})</div>
+                            <div className="w-full pt-1 pl-5">Cash in Back</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">UACS Code</div>
+                            <div className="w-full pt-1 text-center">2 02 01 010</div>
+                            <div className="w-full pt-1 text-center">2 02 01 010</div>
+                            <div className="w-full pt-1 text-center">1 01 02 020</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-r-2 border-black">
+                            <div className="w-full text-center border-b-2 border-black">Debit</div>
+                            <div className="w-full pt-1 text-end px-2">{Meralco.vat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <div className="w-full pt-1 text-end px-2">{Meralco.nonvat.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                        </div>
+                        <div className="w-1/5 h-[100px] border-black">
+                            <div className="w-full text-center border-b-2 border-black">Credit</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                            <div className="w-full pt-1 text-end px-2">-</div>
+                            <div className="w-full pt-1 text-end px-2">{Meralco.tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                        </div>
+                      </>
+                    )
+                  }
               </div>
           </div>
           <div className="w-full flex h-28 border-l-2 border-b-2 border-black">
@@ -448,7 +731,21 @@ const Document = ({document}) => {
                       <div className="border-r-2 border-black p-1">D.</div>
                       <div className="flex items-center px-2">Approved for Payment</div>
                   </div> 
-                  <div className='flex justify-center items-center h-full'>{`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} pesos`}</div>
+                  {
+                    doc.activeTab === 'DV' && (
+                      <div className='flex justify-center items-center h-full'>{`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} pesos`}</div>
+                    )
+                  }
+                  {
+                    doc.activeTab === 'GSIS' && (
+                      <div className='flex justify-center items-center h-full'>{`${toWords(GSIS.tax).charAt(0).toUpperCase() + toWords(GSIS.tax).slice(1)} pesos`}</div>
+                    )
+                  }
+                  {
+                    doc.activeTab === 'Meralco' && (
+                      <div className='flex justify-center items-center h-full'>{`${toWords(Meralco.tax).charAt(0).toUpperCase() + toWords(Meralco.tax).slice(1)} pesos`}</div>
+                    )
+                  }
               </div>
           </div>
           <div className="w-full flex h-[147px] border-l-2 border-r-2 border-b-2 border-black">
