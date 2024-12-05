@@ -2,7 +2,6 @@ import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
 import html2pdf from 'html2pdf.js'
-import { PDFViewer } from '@react-pdf/renderer';
 //icons
 import { RxPaperPlane } from "react-icons/rx";
 import { FiEdit3 } from "react-icons/fi";
@@ -16,7 +15,6 @@ import DisbursementVoucher from './DisbursementVoucher';
 import FundingModal from "./FundingModal";
 import AddComment from "./AddComment";
 import Comments from "./Comments";
-import DVTemplate from "./DVTemplate";
 import Document from "./Document";
 
 //contexts
@@ -303,13 +301,13 @@ const ViewDocument = () => {
             </div>
           )}
           <div className="overflow-auto h-full w-full">
-            {/* <PDFViewer width="100%" height="100%">
+            {/* <PDFViewer width="100%" height="100%" >
               <DVTemplate data={doc} />
             </PDFViewer> */}
             <Document document={doc}/>
           </div>
         </div>
-        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 w-auto h-auto px-10 py-2 border-2 shadow-lg shadow-gray-300 flex items-center justify-center bg-white rounded-lg">
+        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 w-auto h-auto px-10 py-2 border-2 border-preparerPrimary flex items-center justify-center bg-white rounded-lg">
           <div className="flex items-center justify-center overflow-x-auto gap-2">
 
             {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
