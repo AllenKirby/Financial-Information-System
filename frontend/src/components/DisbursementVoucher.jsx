@@ -530,12 +530,14 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     if (["GSIS", "Meralco"].includes(activeTab)) {
       setPayeeData((prev) => ({ ...prev, payee: activeTab }));
     }else{
-      setPayeeData((prev) => ({ ...prev, payee: '' }));
+      setPayeeData((prev) => ({ ...prev, payee: document.payee }));
     }
   }, [activeTab]);
 
 
   const isDisabled = user.role === '3'
+
+  console.log( document.payee, payeeData )
 
   return (
     <form onSubmit={(e) => {

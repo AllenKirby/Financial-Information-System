@@ -10,7 +10,7 @@ const Comments = ({comment}) => {
                 <FaUserCircle size={40}/>
                 <div>
                     <h1 className="font-bold">{comment.dispName}</h1>
-                    <p className="text-xs">{comment.dateTimePassed.replace('|', ' ')}</p>
+                    <p className="text-xs">{comment.dateTimePassed}</p>
                 </div>
             </div>
         </div>

@@ -17,7 +17,7 @@ const updateASA_ORS = async (req, res) => {
     const { date, DVNo, payee, particulars, amount } = req.body.DV
     const previousASA = req.body.previousASA
     const {id} = req.params
-
+    console.log('sdasdsadsa', ors)
     const year = new Date().getFullYear();
     const month = new Date().getMonth() + 1
     let finalORS = '';
