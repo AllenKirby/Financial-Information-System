@@ -30,7 +30,8 @@ const FundingModal = ({modal, data}) => {
         const fetch = async () => { 
             const {bur, origBur} = await getBurNo()
             const primaryBUR = data.ORSBURS ? data.ORSBURS : bur
-            if(!data.ORSBURS){
+            console.log(bur)
+            if(!data.ORSBURS && isToggled){
                 setOperatorInput({...operatorInput, ors: primaryBUR})
             }
             setBUR(primaryBUR)
@@ -50,7 +51,6 @@ const FundingModal = ({modal, data}) => {
                 asa: await data.ASA,
                 ors: await data.ORSBURS,
             });
-            console.log(data)
         }
         getData()
     }, [data])
@@ -141,9 +141,6 @@ const FundingModal = ({modal, data}) => {
                     <select    
                         className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
                         onChange={(e) => {
-                            if(e.target.value !== operatorInput.asa){
-                                
-                            }
                             setOperatorInput({...operatorInput, asa: e.target.value})
                         }}
                         value={operatorInput.asa}

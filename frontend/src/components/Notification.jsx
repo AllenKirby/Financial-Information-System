@@ -46,12 +46,13 @@ const Notification = ({ notification, markAsRead }) => {
     }
   }
 
-  const formateDateTime = (date, time) => {
-    if (!date && !time) return null;
-    const formattedDateString = `${date} ${time}`;
+  const formateDateTime = (dateTime) => {
+    if (!dateTime) return null;
 
-    return parse(formattedDateString, 'MMMM dd, yyyy hh:mm:ss a', new Date());
+    return parse(dateTime, 'MMMM dd, yyyy hh:mm:ss a', new Date());
   }
+
+  console.log(notifData.dateTime)
   
   return (
     <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-slate-100' 

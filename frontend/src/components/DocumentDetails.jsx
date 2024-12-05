@@ -57,7 +57,7 @@ const DocumentDetails = ({ index, documents, type }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Approved':
-        return 'bg-green-00 text-green-500';
+        return 'bg-green-200 text-green-500';
       case 'For Approval':
         return 'bg-yellow-200 text-yellow-500';
       case 'Under Review':

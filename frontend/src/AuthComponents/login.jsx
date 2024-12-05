@@ -41,7 +41,9 @@ const Login = () => {
         if(error) {
             if(error === 'Firebase: Error (auth/invalid-credential).') {
                 setErrorMessage('Invalid Credentials. Please try again')
-            }
+            } else if(error === 'Please verify your email.') {
+                setErrorMessage('Please verify your email.')
+            }   
         }
     }, [error])
 

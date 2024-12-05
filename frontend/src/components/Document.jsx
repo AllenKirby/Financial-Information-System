@@ -89,19 +89,19 @@ const Document = ({document}) => {
             <div className='w-20 border-r-2 border-black flex items-center justify-center font-bold'>Mode of <br/> Payment</div>
             <div className='w-5/6 py-2 flex gap-10 px-7'>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" disabled checked={doc.modeOfPayment === 'MDS CHECK'} className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.MOP === 'MDS Check'} className='w-5 h-5'/>
                 <label>MDS Check</label>
               </div>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" disabled checked={doc.modeOfPayment === 'Commercial CHECK'} className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.MOP === 'Commercial Check'} className='w-5 h-5'/>
                 <label>Commercial Check</label>
               </div>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" disabled checked={doc.modeOfPayment === 'ADA'} className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.MOP === 'ADA'} className='w-5 h-5'/>
                 <label>ADA</label>
               </div>
               <div className='flex items-center justify-center'>
-                <input type="checkbox" disabled checked={doc.modeOfPayment === 'Others'} className='w-5 h-5'/>
+                <input type="checkbox" disabled checked={doc.MOP === 'Others'} className='w-5 h-5'/>
                 <label>Others (Please Specify) {doc.specifiedMOP}</label>
               </div>
             </div>
