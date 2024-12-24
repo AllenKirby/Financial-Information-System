@@ -1,5 +1,4 @@
 import {useState, useEffect} from 'react'
-import Loader from './Loader'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
@@ -8,6 +7,8 @@ import { collection, onSnapshot } from "firebase/firestore"
 
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
+import LargeLoader from './LargeLoader'
+
 import addressJSON from '../assets/json/region_4a_provinces_municipalities_array.json'
 
 import { useAuthContext } from '../hooks/useAuthContext'
@@ -130,7 +131,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleChangePayee = (e) => {
     const target = e.target.value.toUpperCase().trim();
-    // console.log(target)
     setPayeeData({...payeeData, payee: target})
 
     if (target) {
@@ -283,7 +283,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       tax: payeeData.TT_tax,
       cost: payeeData.TT_cost
     }
-    console.log(data)
     if(data.payee_data.accCode.length <= 1){
       if(!deepEqual(pData, payeeOptions[payeeKey])){
         savePayeeData(pData)
@@ -536,9 +535,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
 
   const isDisabled = user.role === '3'
-
-  // console.log( document.payee, payeeData )
-
+  
   return (
     <form onSubmit={(e) => {
         if(user.role === '3'){
@@ -550,28 +547,28 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         }else{
           flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
         }
-      }} action="" className="bg-white w-3/5 h-5/6 rounded-lg">
-      <div className='w-full h-1/5'>
+      }} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
+      <div className='w-full h-auto'>
         <div className='w-full h-auto px-3 py-3'>
-          <h1 className={`${user.role === '4' ? 'text-preparerPrimary' : 'text-fundingBlueGreen'} text-xl font-bold`}>{flag ? 'Update Disbursement Voucher' : 'Create New Disbursement Document'}</h1>
+          <h1 className={`${user.role === '4' ? 'text-preparerPrimary' : 'text-fundingBlueGreen'} text-xl 2xl:text-3xl font-bold`}>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
         </div>
         <div className='w-full h-auto py-1'>
           <div className='flex items-start gap-3 px-3'>
             <button type='button' 
             onClick={() => setActiveTab('DV')} 
-            className={`${activeTab === 'DV' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} w-auto h-auto py-2 text-gray-500`}
+            className={`${activeTab === 'DV' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
             disabled={flag}>
-              Disbursement Voucher
+             General
             </button>
             <button type='button' 
             onClick={() => setActiveTab('GSIS')} 
-            className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} w-auto h-auto py-2 text-gray-500`}
+            className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
             disabled={flag}>
               GSIS
             </button>
             <button type='button' 
             onClick={() => setActiveTab('Meralco')} 
-            className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} w-auto h-auto py-2 text-gray-500`}
+            className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
             disabled={flag}>
               Meralco
             </button>
@@ -579,59 +576,57 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <hr />
         </div>
       </div>
-      <div className='w-full h-3/5 overflow-y-auto bg-gray-50'>
-      <div className='w-full h-auto py-3 px-5'>
-            <h1 className="font-semibold text-lg text-gray-500">Personal/Payee Information</h1>
-            <div className="w-full h-auto mt-2">
-              <div className='w-full relative'>
-                <label className='text-gray-500'>Payee</label>
-                <input
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  disabled={ ['GSIS', 'Meralco'].includes(activeTab) || (isDisabled && !permission.data.permission)}
-                  type="text" 
-                  pattern="^[a-zA-Z\s'-]+$"
-                  value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab :payeeData.payee }
-                  minLength="2" 
-                  maxLength="50"
-                  onChange={handleChangePayee}
-                  required  />
-                  {showDropdown && (
-                    <ul className="absolute text-gray-500 w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
-                      {filteredOptions.map((option, index) => (
-                        <li
-                          key={index}
-                          onClick={() => handleSelectPayee(option)}
-                          className="p-2 cursor-pointer hover:bg-gray-200"
-                        >
-                          {option.replace(/\|/g, ' ')}
-                        </li>
-                      ))}
-                    </ul>
-                )}
+      <div className='w-full flex-1 overflow-y-auto bg-gray-50'>
+        <div className='w-full h-full py-3 px-5'>
+          <h1 className="font-semibold text-lg text-gray-500">Personal/Payee Information</h1>
+          <div className="w-full h-auto mt-2">
+            <div className='w-full relative'>
+              <label className='text-gray-500'>Payee</label>
+              <input
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                disabled={ ['GSIS', 'Meralco'].includes(activeTab) || (isDisabled && !permission.data.permission)}
+                type="text" 
+                pattern="^[a-zA-Z\s'-]+$"
+                value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab : payeeData.payee }
+                minLength="2" 
+                maxLength="50"
+                onChange={handleChangePayee}
+                required  />
+                {showDropdown && (
+                  <ul className="absolute text-gray-500 w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
+                    {filteredOptions.map((option, index) => (
+                      <li
+                        key={index}
+                        onClick={() => handleSelectPayee(option)}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {option.replace(/\|/g, ' ')}
+                      </li>
+                    ))}
+                  </ul>
+              )}
             </div>
-            {/* ADDRESS */}
-            <div className='w-full flex gap-2'>
-              <div className='w-1/2 mt-2'>
+            <div className='w-full flex flex-col sm:flex-row  gap-2'>
+              <div className='w-full sm:w-1/2 mt-2'>
                 <label className='text-gray-500'>Address</label>
-                  <select 
-                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    disabled={isDisabled && !permission.data.permission}
-                    type="text" 
-                    value={payeeData.address}
-                    onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
-                    required>
-                      <option disabled value={''}>Select Address</option>
-                      {Object.entries(addressJSON['4A'].province_list).map(([key, province]) => (
-                        <optgroup key={key} label={key}>
-                          {province.municipality_list.map((municipal, index) => (
-                            <option key={index} value={`${municipal}, ${key}`}>{municipal}</option>
-                          ))}
-                        </optgroup>
-                      ))}
-
-                    </select>
+                <select 
+                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                  disabled={isDisabled && !permission.data.permission}
+                  type="text" 
+                  value={payeeData.address}
+                  onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
+                  required>
+                    <option disabled value={''}>Select Address</option>
+                    {Object.entries(addressJSON['4A'].province_list).map(([key, province]) => (
+                      <optgroup key={key} label={key}>
+                        {province.municipality_list.map((municipal, index) => (
+                          <option key={index} value={`${municipal}, ${key}`}>{municipal}</option>
+                        ))}
+                      </optgroup>
+                    ))}
+                </select>
               </div>
-              <div className='w-1/2 mt-2'>
+              <div className='w-full sm:w-1/2 mt-2'>
                 <label className='text-gray-500'>TIN/Employee No.</label>
                 <input 
                   className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
@@ -649,12 +644,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   required  />
               </div>
             </div>
-
           </div>
           <h1 className="font-semibold text-lg mt-2 text-gray-500">Document/Transaction Information</h1>
           <div className="w-full h-auto flex flex-col py-2">
-            <div className='w-full flex gap-2'>
-              <div className="flex flex-col w-4/6">
+            <div className='w-full flex flex-col sm:flex-row gap-2'>
+              <div className="flex flex-col w-full sm:w-4/6">
                 <label className='text-gray-500'>Fund Cluster</label>
                 <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                   onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
@@ -677,7 +671,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   )}
                 </select>
               </div>
-              <div className="flex flex-col w-2/6">
+              <div className="flex flex-col w-full sm:w-2/6">
                 <label className='text-gray-500'>Date</label>
                 <input 
                   className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
@@ -702,8 +696,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     />
               </div>
             </div>
-            <div className='w-full flex gap-2'>
-              <div className='w-1/2 mt-2'>
+            <div className='w-full flex flex-col sm:flex-row gap-2'>
+              <div className='w-full sm:w-1/2 mt-2'>
                 <label className='text-gray-500'>DV No.</label>
                 <input 
                   className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
@@ -712,7 +706,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   value={payeeData.DV}
                   required  />
               </div>
-              <div className="flex flex-col w-1/2 mt-2">
+              <div className="flex flex-col w-full sm:w-1/2 mt-2">
                 <label>Responsibility Center</label>
                 <select  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                   onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
@@ -735,10 +729,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 </select>
               </div>
             </div>
-            <div className='w-full mt-2'>
+            <div className='w-full h-auto mt-2'>
                 <label className='text-gray-500'>Mode of Payment</label>
-                <div className='flex items-center justify-between px-5 py-2'>
-                  <div className='flex gap-2'>
+                <div className='w-full h-auto flex flex-col sm:flex-row itens-start sm:items-center justify-center  gap-3 p-2'>
+                  <div className='w-auto flex gap-2'>
                     <input 
                       type="radio" 
                       name="MOP"
@@ -746,7 +740,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       checked={payeeData.MOP === 'MDS Check'}
                       required
                       onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
-                    <label className='text-gray-500'>MDS Check</label>
+                    <label className='text-gray-500 text-sm'>MDS Check</label>
                   </div>
                   <div className='flex gap-2'>
                     <input 
@@ -756,7 +750,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       checked={payeeData.MOP === 'Commercial Check'}
                       required
                       onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
-                    <label className='text-gray-500'>Commercial Check</label>
+                    <label className='text-gray-500 text-sm'>Commercial Check</label>
                   </div>
                   <div className='flex gap-2'>
                     <input 
@@ -766,9 +760,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       checked={payeeData.MOP === 'ADA'}
                       required
                       onChange={(e) => setPayeeData({...payeeData, MOP: e.target.value})}/>
-                    <label className='text-gray-500'>ADA</label>
+                    <label className='text-gray-500 text-sm'>ADA</label>
                   </div>
-                  <div className='flex items-center justify-center gap-2'>
+                  <div className='flex items-center justify-start sm:justify-center gap-2'>
                     <div className='flex gap-2'>
                       <input 
                         type="radio" 
@@ -777,10 +771,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         checked={payeeData.MOP === 'Others'}
                         required
                         onChange={(e) => setPayeeData({ ...payeeData, MOP: e.target.value })}/>
-                      <label className='text-gray-500'>Others</label>
+                      <label className='text-gray-500 text-sm'>Others</label>
                     </div>
                     <div className='flex items-center justify-center gap-2'>
-                      <label className='text-gray-500'>(Please Specify)</label>
+                      <label className='text-gray-500 text-sm'>(Please Specify)</label>
                       <input 
                         type="text" 
                         disabled={payeeData.MOP === 'Others' ? false : true}
@@ -791,9 +785,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   </div>
                 </div>
             </div>
-            <div className='w-full'>
-              <div className='w-full flex gap-2'>
-                <div className="flex flex-col w-3/5">
+            <div className='w-full h-auto'>
+              <div className='w-full flex flex-col lg:flex-row gap-2'>
+                <div className="flex flex-col w-full lg:w-3/5">
                   <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Certified by</label>
                   <labe0l className="text-gray-500">Name</labe0l>
                   <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
@@ -819,267 +813,182 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     )}
                   </select>
                 </div>
-                <div className='w-2/5 flex items-end'>
+                <div className='w-full lg:w-2/5 flex items-end'>
                   <div className='flex flex-col items-start justify-center'>
-                    <label className='px-3 text-gray-500'>Office</label>
+                    <label className=' text-gray-500'>Office</label>
                     <label className='w-full px-4 py-2 border-2 border-white text-gray-500'>{payeeData.NF_office ? payeeData.NF_office : 'None'}</label>
                   </div>
                 </div>
               </div>
             </div>
-          </div>          
-        </div>
-        {activeTab === 'DV' && (
-          <div className='w-full h-auto py-3 px-5'>
-            <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
-            <div className="w-auto h-auto flex flex-col mt-2">
-              {/* Cost Categories and Amount Section */}
-              <div className="w-full flex gap-2">
-                {/* Cost Categories */}
-                <div className="w-1/2">
-                  <label className="text-gray-500">Cost Categories</label>
-                  <select
-                    className={`${
-                      user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                    } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    disabled={isDisabled && !permission.data.permission}
-                    value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ''}
-                    onChange={(e) => {
-                      const [taxCategory, type] = e.target.value.split('-');
-                      setPayeeData({
-                        ...payeeData,
-                        TT_cost: type,
-                        TT_tax: taxCategory,
-                      });
-                    }}
-                    required
-                  >
-                    <option value="" disabled>
-                      Select Cost Category
-                    </option>
-                    {Object.keys(cost).length > 0 ? (
-                      Object.entries(cost).map(([taxCategory, types]) => (
-                        <optgroup label={taxCategory} key={taxCategory}>
-                          {types.map((type) => (
-                            <option key={`${taxCategory}-${type}`} value={`${taxCategory}-${type}`}>
-                              {type}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))
-                    ) : (
+          </div>
+          {activeTab === 'DV' && (
+            <div className='w-full h-auto'>
+              <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
+              <div className="w-auto h-auto flex flex-col mt-2">
+                {/* Cost Categories and Amount Section */}
+                <div className="w-full flex flex-col sm:flex-row gap-2">
+                  {/* Cost Categories */}
+                  <div className="w-full sm:w-1/2">
+                    <label className="text-gray-500">Cost Categories</label>
+                    <select
+                      className={`${
+                        user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                      } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      disabled={isDisabled && !permission.data.permission}
+                      value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ''}
+                      onChange={(e) => {
+                        const [taxCategory, type] = e.target.value.split('-');
+                        setPayeeData({
+                          ...payeeData,
+                          TT_cost: type,
+                          TT_tax: taxCategory,
+                        });
+                      }}
+                      required
+                    >
                       <option value="" disabled>
-                        No options available
+                        Select Cost Category
                       </option>
-                    )}
-                  </select>
-                </div>
-
-                {/* Amount */}
-                <div className="w-1/2">
-                  <label className="text-gray-500">Amount</label>
-                  <input
-                    className={`${
-                      user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                    } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    type="number"
-                    step="0.01"
-                    disabled={isDisabled && !permission.data.permission}
-                    placeholder="0"
-                    value={payeeData.amount === 0 ? '' : payeeData.amount}
-                    onChange={(e) =>
-                      setPayeeData({
-                        ...payeeData,
-                        amount: parseFloat(e.target.value),
-                      })
-                    }
-                    required
-                  />
-                </div>
-              </div>
-
-              {/* Gross Values Section */}
-              <div className="w-full flex mt-4">
-                <div className="w-full flex justify-center items-center">
-                  <div className="w-1/2 flex justify-center">
-                    <label className="text-gray-500">{gross.value2 ? `Gross ${gross.value2}` : ''}</label>
-                  </div>
-                  <div className="w-1/2 flex justify-center">
-                    <label className="text-gray-500">{gross.value3 ? `Gross ${gross.value3}` : ''}</label>
-                  </div>
-                </div>
-              </div>
-
-              {/* Dynamic Form Fields for Account Titles */}
-              <div className="w-auto h-auto flex flex-col mt-4">
-                {formFields.map((field, index) => (
-                  <div key={index} className="w-full flex gap-2">
-                    {/* Account Title */}
-                    <div className="w-3/5">
-                      <label className="text-gray-500">Account Title</label>
-                      <input
-                        className={`${
-                          user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                        } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                        type="text"
-                        placeholder="Search here..."
-                        value={field.accTitle}
-                        disabled={isDisabled && !permission.data.permission}
-                        onChange={(e) => handleChangeAcc(e, index)}
-                        required
-                      />
-                      {showDropdownAcc && activeDropdownIndex === index && (
-                        <ul className="w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
-                          {Object.entries(filteredAcc[index]).length > 0 ? (
-                            Object.entries(filteredAcc[index]).map(([key, value]) => {
-                              const parts = value.split(':');
-                              const categories = `${parts[0]}|${parts[1]}`;
-                              const lastPart = parts[parts.length - 1];
-                              return (
-                                <li
-                                  key={key}
-                                  onClick={() => {
-                                    handleFieldChange(index, 'accCategory', categories);
-                                    handleFieldChange(index, 'accTitle', lastPart);
-                                    handleFieldChange(index, 'accCode', key);
-                                    setShowDropdownAcc(false);
-                                    setActiveDropdownIndex(null);
-                                  }}
-                                  className="p-2 cursor-pointer hover:bg-gray-200"
-                                >
-                                  {lastPart}
-                                </li>
-                              );
-                            })
-                          ) : (
-                            <li className="p-2">No matches found</li>
-                          )}
-                        </ul>
+                      {Object.keys(cost).length > 0 ? (
+                        Object.entries(cost).map(([taxCategory, types]) => (
+                          <optgroup label={taxCategory} key={taxCategory}>
+                            {types.map((type) => (
+                              <option key={`${taxCategory}-${type}`} value={`${taxCategory}-${type}`}>
+                                {type}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                          No options available
+                        </option>
                       )}
-                    </div>
+                    </select>
+                  </div>
+                  {/* Amount */}
+                  <div className="w-full sm:w-1/2">
+                    <label className="text-gray-500">Amount</label>
+                    <input
+                      className={`${
+                        user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                      } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      type="number"
+                      step="0.01"
+                      disabled={isDisabled && !permission.data.permission}
+                      placeholder="0"
+                      value={payeeData.amount === 0 ? '' : payeeData.amount}
+                      onChange={(e) =>
+                        setPayeeData({
+                          ...payeeData,
+                          amount: parseFloat(e.target.value),
+                        })
+                      }
+                      required
+                    />
+                  </div>
+                </div>
 
-                    {/* Amount (Optional) */}
-                    <div className="w-2/5 flex gap-2">
-                      <div className="w-4/5">
-                        <label className="text-gray-500">Amount (Optional)</label>
+                {/* Gross Values Section */}
+                <div className="w-full flex mt-2">
+                  <div className="w-full flex justify-center items-center">
+                    <div className="w-1/2 flex justify-center">
+                      <label className="text-gray-500">{gross.value2 ? `Gross ${gross.value2}` : ''}</label>
+                    </div>
+                    <div className="w-1/2 flex justify-center">
+                      <label className="text-gray-500">{gross.value3 ? `Gross ${gross.value3}` : ''}</label>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dynamic Form Fields for Account Titles */}
+                <div className="w-auto h-auto flex mt-2">
+                  {formFields.map((field, index) => (
+                    <div key={index} className="w-full flex flex-col lg:flex-row gap-2">
+                      {/* Account Title */}
+                      <div className="w-full lg:w-3/5">
+                        <label className="text-gray-500">Account Title</label>
                         <input
                           className={`${
                             user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                           } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                          type="number"
-                          disabled={(isDisabled && !permission.data.permission) || optionalAmount}
-                          placeholder="0"
-                          value={field.amount === 0 ? '' : field.amount}
-                          onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
+                          type="text"
+                          placeholder="Search here..."
+                          value={field.accTitle}
+                          disabled={isDisabled && !permission.data.permission}
+                          onChange={(e) => handleChangeAcc(e, index)}
+                          required
                         />
+                        {showDropdownAcc && activeDropdownIndex === index && (
+                          <ul className="w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
+                            {Object.entries(filteredAcc[index]).length > 0 ? (
+                              Object.entries(filteredAcc[index]).map(([key, value]) => {
+                                const parts = value.split(':');
+                                const categories = `${parts[0]}|${parts[1]}`;
+                                const lastPart = parts[parts.length - 1];
+                                return (
+                                  <li
+                                    key={key}
+                                    onClick={() => {
+                                      handleFieldChange(index, 'accCategory', categories);
+                                      handleFieldChange(index, 'accTitle', lastPart);
+                                      handleFieldChange(index, 'accCode', key);
+                                      setShowDropdownAcc(false);
+                                      setActiveDropdownIndex(null);
+                                    }}
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                  >
+                                    {lastPart}
+                                  </li>
+                                );
+                              })
+                            ) : (
+                              <li className="p-2">No matches found</li>
+                            )}
+                          </ul>
+                        )}
                       </div>
 
-                      {/* Add/Remove Button */}
-                      <div className="flex justify-center items-center gap-2 pt-7">
-                        <button
-                          className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${
-                            index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'
-                          } hover:text-white`}
-                          onClick={() => handleButtonClick(index)}
-                          type="button"
-                        >
-                          {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
-                        </button>
+                      {/* Amount (Optional) */}
+                      <div className="w-full lg:w-2/5 flex items-center justify-center gap-2">
+                        <div className="w-full lg:w-4/5">
+                          <label className="text-gray-500">Amount (Optional)</label>
+                          <div className='flex items-center justify-center'>
+                            <input
+                              className={`${
+                                user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                              } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                              type="number"
+                              disabled={(isDisabled && !permission.data.permission) || optionalAmount}
+                              placeholder="0"
+                              value={field.amount === 0 ? '' : field.amount}
+                              onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
+                            />
+                            <button
+                              className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${
+                                index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'
+                              } hover:text-white`}
+                              onClick={() => handleButtonClick(index)}
+                              type="button"
+                            >
+                              {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-  
-      {activeTab === 'GSIS' && (
-        <div className='w-full h-auto py-3 px-5'>
-          <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
-          <div className="w-auto h-auto flex flex-col mt-2">
-          <div className='w-full mt-2'>
-              <label className='text-gray-500'>PREMIUM</label>
-              <input 
-                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                type="number" 
-                step='0.01'
-                disabled={isDisabled && !permission.data.permission}
-                onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
-                placeholder='0'
-                value={payeeData.amount === 0 ? '' : payeeData.amount}
-                required  />
-            </div>
-            <div className='w-full flex gap-2 mt-2'>
-              <div className='w-1/3'>
-                <label className='text-gray-500'>DOC. STAMP - DST Premium</label>
-                <input 
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  type="number" 
-                  disabled={isDisabled && !permission.data.permission}
-                  value={gsis.stamp === 0 ? '' : gsis.stamp}
-                  onChange={(e) => setGSIS({...gsis, stamp: parseFloat(e.target.value)})}
-                  placeholder='0'
-                  required  />
-              </div>
-              <div className='w-1/3'>
-                <label className='text-gray-500'>DST (COC)</label>
-                <input 
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  type="number" 
-                  disabled={isDisabled && !permission.data.permission}
-                  value={gsis.dst === 0 ? '' : gsis.dst}
-                  onChange={(e) => setGSIS({...gsis, dst: parseFloat(e.target.value)})}
-                  placeholder='0'
-                  required  />
-              </div>
-              <div className='w-1/3'>
-                <label className='text-gray-500'>VAT 12%</label>
-                <input 
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  type="number" 
-                  disabled={isDisabled && !permission.data.permission}
-                  value={gsis.vat12 === 0 ? '' : gsis.vat12}
-                  onChange={(e) => setGSIS({...gsis, vat12: parseFloat(e.target.value)})}
-                  placeholder='0'
-                  required  />
-              </div>
-            </div>
-          </div>
-          
-        </div>
-      )} 
-      {activeTab === 'Meralco' && (
-        <div className='w-full h-auto py-3 px-5'>
-          <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
-          <div className="w-auto h-auto flex flex-col mt-2">
-                {/* TIN AND VAT */}
-                <div className='w-full flex gap-2 mt-2'>
-                  <div className='w-1/2'>
-                    <label className='text-gray-500'>VAT Sales</label>
-                    <input 
-                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number" 
-                      disabled={isDisabled && !permission.data.permission}
-                      value={meralco.meralcoVAT === 0 ? '' : meralco.meralcoVAT}
-                      onChange={(e) => setMeralco({...meralco, meralcoVAT: parseFloat(e.target.value)})}
-                      placeholder='0'
-                      required  />
-                  </div>
-                  <div className='w-1/2'>
-                    <label className='text-gray-500'>NON - VAT</label>
-                    <input 
-                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number" 
-                      disabled={isDisabled && !permission.data.permission}
-                      value={meralco.meralcoNONVAT === 0 ? '' : meralco.meralcoNONVAT}
-                      onChange={(e) => setMeralco({...meralco, meralcoNONVAT: parseFloat(e.target.value)})}
-                      placeholder='0'
-                      required  />
-                  </div>
+                  ))}
                 </div>
+              </div>
+            </div>
+          )}
+          {activeTab === 'GSIS' && (
+            <div className='w-full h-auto'>
+              <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
+              <div className="w-auto h-auto flex flex-col mt-2">
                 <div className='w-full mt-2'>
-                  <label className='text-gray-500'>Amount</label>
+                  <label className='text-gray-500'>PREMIUM</label>
                   <input 
                     className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                     type="number" 
@@ -1090,52 +999,139 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     value={payeeData.amount === 0 ? '' : payeeData.amount}
                     required  />
                 </div>
+                <div className='w-full flex flex-col lg:flex-row gap-2 mt-2'>
+                  <div className='w-full lg:w-1/3'>
+                    <label className='text-gray-500 text-sm'>DOC. STAMP - DST Premium</label>
+                    <input 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      type="number" 
+                      disabled={isDisabled && !permission.data.permission}
+                      value={gsis.stamp === 0 ? '' : gsis.stamp}
+                      onChange={(e) => setGSIS({...gsis, stamp: parseFloat(e.target.value)})}
+                      placeholder='0'
+                      required  />
+                  </div>
+                  <div className='w-full lg:w-1/3'>
+                    <label className='text-gray-500'>DST (COC)</label>
+                    <input 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      type="number" 
+                      disabled={isDisabled && !permission.data.permission}
+                      value={gsis.dst === 0 ? '' : gsis.dst}
+                      onChange={(e) => setGSIS({...gsis, dst: parseFloat(e.target.value)})}
+                      placeholder='0'
+                      required  />
+                  </div>
+                  <div className='w-full lg:w-1/3'>
+                    <label className='text-gray-500'>VAT 12%</label>
+                    <input 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      type="number" 
+                      disabled={isDisabled && !permission.data.permission}
+                      value={gsis.vat12 === 0 ? '' : gsis.vat12}
+                      onChange={(e) => setGSIS({...gsis, vat12: parseFloat(e.target.value)})}
+                      placeholder='0'
+                      required  />
+                  </div>
+                </div>
+              </div>
             </div>
-        </div>
-      )}
-        <div className='w-full h-auto py-3 px-5'>
-          <div className='w-full mt-2'>
-            <label className='text-gray-500'>Particulars</label>
-            <textarea 
-              className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
-              onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value.trimStart()})}}
-              value={payeeData.particular}
-              disabled={isDisabled && !permission.data.permission}
-              placeholder='Write details here...'
-              required
-              maxLength="500"
-            />
-          </div>
-          <h1 className="font-semibold text-lg mt-2 text-gray-500">BIR Information</h1>
-          <div className='w-full mt-2'>
-            <label className='text-gray-500'>Particulars</label>
-            <textarea 
-              className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
-              onChange={(e) => {setBirData({...birData, birParticular: e.target.value.trimStart()})}}
-              value={birData.birParticular}
-              disabled={isDisabled && !permission.data.permission}
-              placeholder='Write details here...'
-              required
-              maxLength="500"
-            />
-          </div>
+          )} 
+          {activeTab === 'Meralco' && (
+            <div className='w-full h-auto'>
+              <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
+              <div className="w-auto h-auto flex flex-col mt-2">
+                    {/* TIN AND VAT */}
+                    <div className='w-full flex gap-2 mt-2'>
+                      <div className='w-1/2'>
+                        <label className='text-gray-500'>VAT Sales</label>
+                        <input 
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                          type="number" 
+                          disabled={isDisabled && !permission.data.permission}
+                          value={meralco.meralcoVAT === 0 ? '' : meralco.meralcoVAT}
+                          onChange={(e) => setMeralco({...meralco, meralcoVAT: parseFloat(e.target.value)})}
+                          placeholder='0'
+                          required  />
+                      </div>
+                      <div className='w-1/2'>
+                        <label className='text-gray-500'>NON - VAT</label>
+                        <input 
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                          type="number" 
+                          disabled={isDisabled && !permission.data.permission}
+                          value={meralco.meralcoNONVAT === 0 ? '' : meralco.meralcoNONVAT}
+                          onChange={(e) => setMeralco({...meralco, meralcoNONVAT: parseFloat(e.target.value)})}
+                          placeholder='0'
+                          required  />
+                      </div>
+                    </div>
+                    <div className='w-full mt-2'>
+                      <label className='text-gray-500'>Amount</label>
+                      <input 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                        type="number" 
+                        step='0.01'
+                        disabled={isDisabled && !permission.data.permission}
+                        onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
+                        placeholder='0'
+                        value={payeeData.amount === 0 ? '' : payeeData.amount}
+                        required  />
+                    </div>
+                </div>
+            </div>
+          )}
+          <div className='w-full h-auto py-3'>
+            <div className='w-full h-auto'>
+              <label className='text-gray-500'>Particulars</label>
+              <textarea 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
+                onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value.trimStart()})}}
+                value={payeeData.particular}
+                disabled={isDisabled && !permission.data.permission}
+                placeholder='Write details here...'
+                required
+                maxLength="500"
+              />
+            </div>
+            <h1 className="font-semibold text-lg mt-2 text-gray-500">BIR Information</h1>
+            <div className='w-full h-auto mt-2'>
+              <label className='text-gray-500'>Particulars</label>
+              <textarea 
+                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
+                onChange={(e) => {setBirData({...birData, birParticular: e.target.value.trimStart()})}}
+                value={birData.birParticular}
+                disabled={isDisabled && !permission.data.permission}
+                placeholder='Write details here...'
+                required
+                maxLength="500"
+              />
+            </div>
+          </div>          
         </div>
       </div>
-      <div className="w-full h-1/5 flex items-center justify-end gap-2 px-3">
-        <button 
-          type="submit" 
-          disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
-          className={`py-2 px-5 rounded-md ${user.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white transition-all duration-100`}
-          >{isLoading ? <Loader /> : 'Save'}</button>
-        <button 
-          onClick={modal}
-          className="py-2 px-5 rounded-md text-gray-500 font-semibold transition-all duration-100"
-          >Back</button>
-      </div>
-      {(error ||  errorForFunding) && (
-        <div className="w-full text-center">
-          <h4 className="text-sm text-red-500">{error}</h4>
+      <div className="w-full h-auto flex items-center justify-between gap-2 px-3 py-5 border-t-2">
+        <div className='w-2/3 h-full'>
+          {(error ||  errorForFunding) && (
+            <div className="w-auto h-auto border-2 border-red-500 bg-red-200 rounded-lg px-4 py-2 text-center">
+              <h4 className="text-base 2xl:text-lg text-red-500">{error}</h4>
+            </div>
+          )}
         </div>
+        <div className='w-1/3 flex items-center justify-end px-3 gap-2'> 
+          <button 
+            type="submit" 
+            disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
+            className={`text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-md ${user.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white transition-all duration-100`}
+            >Save</button>
+          <button 
+            onClick={modal}
+            className="text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-md text-gray-500 border-2 font-semibold transition-all duration-100"
+            >Back</button>
+        </div>
+      </div>
+      {isLoading && (
+        <LargeLoader/>
       )}
     </form>
   )

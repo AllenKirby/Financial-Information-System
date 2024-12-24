@@ -1,7 +1,6 @@
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useEffect, useState } from "react";
-import html2pdf from 'html2pdf.js'
 //icons
 import { RxPaperPlane } from "react-icons/rx";
 import { FiEdit3 } from "react-icons/fi";
@@ -30,6 +29,8 @@ import { useApproverHook } from "../hooks/useApproverHook";
 //redux
 import { useSelector } from "react-redux";
 import { useAuthContext } from "../hooks/useAuthContext";
+import LargeLoader from "./LargeLoader";
+import DVTemplate from "./DVTemplate";
 
 const ViewDocument = () => {
   //states
@@ -54,7 +55,7 @@ const ViewDocument = () => {
 
   //hooks
   const { deleteDV, isLoading: isLoadingPreparer} = usePreparerHook();
-  const { approveDV, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook();
+  const { approveDV, downloadDV, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook();
 
   //redux
   const permission = useSelector((state) => state.permission) 
@@ -151,20 +152,8 @@ const ViewDocument = () => {
     }
   }, [OpDocuments, HeadDocuments, documents, idStatus, AdminDocuments]); 
 
-  if (!doc) {
-    return <div className="w-a4-width bg-gray-200 h-full animate-blink rounded-lg"></div>;
-  }
-
-  const handleDownload = () => {
-    const pdf = document.getElementById('pdf')
-    html2pdf(pdf)
-      .from(pdf)
-      .set({
-        image: { type: 'jpeg', quality: 0.98 },  // Adjust image quality
-        pagebreak: { mode: 'avoid-all' },        // Avoid breaking elements
-        jsPDF: { unit: 'in', format: 'A4', orientation: 'portrait', precision: 16 } // precision for higher quality
-      }
-    ).save();
+  const handleDownload = async() => {
+    await downloadDV(doc)
   }
 
   const delDV = async () => {
@@ -192,7 +181,6 @@ const ViewDocument = () => {
   };
 
   const approve = async() => {
-    console.log(doc)
     const data = {
       payee: doc.payee,
       amount: doc.amount,
@@ -232,180 +220,142 @@ const ViewDocument = () => {
   }
 
   return (
-    <section className="w-full h-full flex-col p-3">
-      <div className="w-full h-[10%] flex items-center justify-between px-2">
+    <section className="w-full sm:w-3/4 lg:w-2/4 h-full sm:h-5/6 flex flex-col bg-white sm:rounded-lg">
+      <div className="w-full h-auto flex items-center justify-between px-3 py-2 border-b-2">
         <button
             onClick={() => window.history.back()}
-            className='w-auto px-5 py-2 rounded-lg hover:bg-gray-200 transition-all duration-100'
+            className='w-auto px-5 py-2 rounded-lg text-gray-500 hover:bg-gray-200 transition-all duration-100'
             >
-            <IoMdArrowRoundBack className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
+            <IoMdArrowRoundBack size={20}/>
         </button>
-        {idStatus.type === '4' && (
-          <button
-            //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
-            onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
-            className={`w-auto px-5 py-2 rounded-lg bg-preparerPrimary text-white`}
-            >
-            <RxPaperPlane size={20} className="block lg:hidden"/><span className="lg:text-xl xl:text-lg 2xl:text-2xl hidden lg:block">Submit</span>
-          </button>
-        )}
-
-        {idStatus.type === '3' && (
-          <button
-            onClick={() => openModal('SubmitFunding')}
-            className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
-            >
-            <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
-          </button>
-        )}
-
-        {(idStatus.type === '2' && !permission.data.permission) && (
-          <button
-            onClick={() => openModal('SubmitBO')}
-            className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
-            >
-            <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
-          </button>
-        )}
-
-        {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission?.data?.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
-          <button
-            onClick={approve}
-            disabled={isLoadingApprover}
-            className={` w-auto px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white`}
-            >
-            <IoMdCheckmark size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Approve</span>
-          </button>
-        )}
-      </div>
-      <div className="relative w-full h-[90%] flex flex-col lg-portrait:flex-col lg-landscape:flex-row">
-        <div className='relative w-full py-3 h-full bg-white rounded-lg'>
-          {isCommentOpen && (
-            <div className={`h-[inherit] absolute overflow-hidden p-2 top-0 left-0 z-10 rounded-lg transition-all duration-500 ease-in-out bg-white border-2 ${isCommentOpen ? 'w-full' : 'w-0'}`}>
-              <div className="px-2 my-2">
-                <h1 className="text-xl font-bold">Comments({doc.comments ? doc.comments.length : 0})</h1>
-              </div>
-              <div className="px-2">
-                <hr />
-              </div>
-              <div className="w-full p-2 h-[27rem] overflow-y-auto">
-                { doc.comments ? (
-                    doc.comments.map((comment, index) => (
-                      <Comments key={index} comment={comment}/>
-                    ))
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">No Comments Found</div>
-                  )
-                }
-              </div>
-            </div>
-          )}
-          <div className="overflow-auto h-full w-full">
-            {/* <PDFViewer width="100%" height="100%" >
-              <DVTemplate data={doc} />
-            </PDFViewer> */}
-            <Document document={doc}/>
-          </div>
-        </div>
-        <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2 z-20 w-auto h-auto px-10 py-2 border-2 border-preparerPrimary flex items-center justify-center bg-white rounded-lg">
-          <div className="flex items-center justify-center overflow-x-auto gap-2">
-
-            {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
-              <button
-                onClick={modal}
-                className={`w-auto rounded-lg px-5 py-2 bg-${primaryColor} text-white`}
-                >
-                <FiEdit3 className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
-              </button>
-            )}
-            {(idStatus.type === '3' || idStatus.type === '4' && permission?.data?.permission) && (
-              <button
-                onClick={isFundingModalOpen}
-                className={`w-full px-5 rounded-lg py-2 bg-${primaryColor} text-white`}
-                >
-                <IoMdAdd className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
-              </button>
-            )}
-
-            {idStatus.status === 'Approved' && (
-              <button
+        <div className="flex items-center justify-center gap-2">
+          {idStatus.status === 'Approved' && (
+            <button
               onClick={handleDownload}
               className={`w-full px-5 rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white`}
               >
-              <MdOutlineFileDownload className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
-            </button>)}
+            <MdOutlineFileDownload className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
+          </button>)}
 
-            {idStatus.type === '3' && idStatus.status === 'In Review' && (
-              <button
-                onClick={() => openModal('ReturnDV')}
-                disabled={isLoadingPreparer}
-                className={`w-auto px-5 rounded-lg py-2 text-white ${secondaryColor} ${
-                  isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-red-500 '
-                }`}
+          {idStatus.type === '3' && idStatus.status === 'In Review' && (
+            <button
+              onClick={() => openModal('ReturnDV')}
+              disabled={isLoadingPreparer}
+              className={`w-auto px-5 rounded-lg py-2 text-white ${secondaryColor} ${
+                isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-red-500 '
+              }`}
+            >
+              <IoReturnDownBackOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
+            </button>
+          )}
+
+          {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+            <button
+              onClick={() => openModal('ReturnToFunding')}
+              className={`w-full px-5 rounded-lg text-sm py-2 text-white ${secondaryColor}`}
               >
-                <IoReturnDownBackOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
-              </button>
-            )}
+              <IoReturnDownBackOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
+            </button>
+          )}
 
-            {idStatus.type === '4' && idStatus.status === 'Drafting' && (
-              <button
-                onClick={delDV}
-                disabled={isLoadingPreparer}
-                className={`w-auto lg-landscape:w-full px-5 rounded-lg py-2 bg-red-500 ${secondaryColor} ${isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-white '}`}
-                >
-                <MdDeleteOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
-              </button>
-            )}
-
-            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-              <button
-                onClick={() => openModal('ReturnToFunding')}
-                className={`w-full px-5 rounded-lg text-sm py-2 text-white ${secondaryColor}`}
-                >
-                <IoReturnDownBackOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
-              </button>
-            )}
-
-            {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-              <button
-                onClick={() => openModal('ReturnToPreparer')}
-                className={`w-full px-5 rounded-lg text-sm py-2 text-white ${secondaryColor}`}
-                >
-                <IoReturnDownForward className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
-              </button>
-            )}
-            
-            {idStatus.status !== 'Drafting' && (
-              <button 
-                onClick={() => setIsCommentOpen(!isCommentOpen)}
-                className={`w-auto px-5 py-2 rounded-lg text-customFontColor border-2 border-customFontColor`}>
-                {isCommentOpen ? <IoCloseSharp className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/> : <LiaCommentSolid className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>}
-              </button>
-            )}
-            {/* <select 
-              className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none"
-              onChange={(e) => setUserRecord(e.target.value)}
-              value={userRecord}>
-              <option value='' disabled>Select action:</option>
+          {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+            <button
+              onClick={() => openModal('ReturnToPreparer')}
+              className={`w-full px-5 rounded-lg text-sm py-2 text-white ${secondaryColor}`}
+              >
+              <IoReturnDownForward className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
+            </button>
+          )}
           
-              {(() => {
-                const { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy } = doc;
-                const userActions = { createdBy, submittedBy, updatedBy, reviewedBy, approvedBy };
+          {idStatus.status !== 'Drafting' && (
+            <button 
+              onClick={() => setIsCommentOpen(!isCommentOpen)}
+              className={`w-auto px-5 py-2 rounded-lg text-customFontColor border-2 border-customFontColor`}>
+              {isCommentOpen ? <IoCloseSharp className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/> : <LiaCommentSolid className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>}
+            </button>
+          )}
+          {idStatus.type === '4' && idStatus.status === 'Drafting' && (
+            <button
+              onClick={delDV}
+              disabled={isLoadingPreparer}
+              className={`w-auto px-5 rounded-lg py-2 text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-white transtion-all duration-150`}
+              >
+              <MdDeleteOutline size={20}/>
+            </button>
+          )}
+          {(idStatus.type === '3' || idStatus.type === '4' && permission?.data?.permission) && (
+            <button
+              onClick={isFundingModalOpen}
+              className={`w-auto rounded-lg px-5 py-2 border-2 hover:text-white transition-all duration-150 ${user?.role === '4' ? 'border-blue-500 text-blue-500 hover:bg-blue-500': 'border-fundingBlueGreen text-fundingBlueGreen'}`}
+              >
+              <IoMdAdd size={20}/>
+            </button>
+          )}
+          {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
+            <button
+              onClick={modal}
+              className={`w-auto rounded-lg px-5 py-2 border-2 hover:text-white transition-all duration-150 ${user?.role === '4' ? 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary': 'border-fundingBlueGreen text-fundingBlueGreen'}`}
+              >
+              <FiEdit3 className="text-xl sm:text-2xl md:text-3xl lg:text-lg 2xl:text-xl"/>
+            </button>
+          )}
+          {idStatus.type === '4' && (
+            <button
+              //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
+              onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
+              className={`w-auto px-5 py-2 rounded-lg bg-preparerPrimary text-white`}
+              >
+              <RxPaperPlane size={20} className="block lg:hidden"/><span className="lg:text-xl xl:text-base 2xl:text-2xl hidden lg:block">Submit</span>
+            </button>
+          )}
 
-                return Object.keys(userActions).map((key) => {
-                  const formattedKey = key
-                    .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
-                    .trim()                      // Trim leading/trailing spaces
-                    .toLowerCase()               // Convert all to lowercase first
-                    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+          {idStatus.type === '3' && (
+            <button
+              onClick={() => openModal('SubmitFunding')}
+              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
+              >
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
+            </button>
+          )}
 
-                  return <option key={key} value={doc[key]}>{formattedKey}:</option>;
-                  });
-              })()}
-            </select> */}
-            {/* <div className="pl-5">
-              <p>{userRecord.replace(/[,|]/g, ' ')}</p>
-            </div> */}
+          {(idStatus.type === '2' && !permission.data.permission) && (
+            <button
+              onClick={() => openModal('SubmitBO')}
+              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
+              >
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
+            </button>
+          )}
+
+          {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission?.data?.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
+            <button
+              onClick={approve}
+              disabled={isLoadingApprover}
+              className={` w-auto px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white`}
+              >
+              <IoMdCheckmark size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Approve</span>
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="w-full flex-1 overflow-y-auto">
+        <DVTemplate document={doc}/>
+        <div className="w-full h-auto">
+          <div className="px-2 my-2">
+            <h1 className="text-lg font-bold">Comments({doc?.comments ? doc.comments?.length : 0})</h1>
+          </div>
+          <div className="px-2">
+            <hr />
+          </div>
+          <div className="w-full p-5 h-auto overflow-y-auto">
+            { doc?.comments && doc?.comments.length > 0 ? (
+                doc?.comments.map((comment, index) => (
+                  <Comments key={index} comment={comment}/>
+                ))
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">No Comments Found</div>
+              )
+            }
           </div>
         </div>
       </div>
@@ -422,7 +372,7 @@ const ViewDocument = () => {
           <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
           <section
             onClick={(e) => e.stopPropagation()}
-            className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+            className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-end"
             >
             <DisbursementVoucher modal={modal} document={doc} flag={true} />
             
@@ -439,6 +389,9 @@ const ViewDocument = () => {
               <FundingModal modal={isFundingModalOpen} data={doc}/>
           </section>
         </>
+      )}
+      {isLoadingApprover || isLoadingPreparer && (
+        <LargeLoader/>
       )}
     </section>
   );

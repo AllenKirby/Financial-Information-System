@@ -5,12 +5,13 @@ import { useState, useEffect } from "react";
 import bgImage from '../assets/images/NIAimg.png';
 import { MdLogout } from "react-icons/md";
 import { IoIosClose } from "react-icons/io";
+import { MdKeyboardArrowRight } from "react-icons/md";
 import Swal from "sweetalert2";
 
 import { useAuthHook } from '../hooks/useAuthHook';
 import { useAuthContext } from "../hooks/useAuthContext";
 
-const Navbar = ({ items, flag, sidebar = () => {} }) => {
+const Navbar = ({ items, flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
   const { logout } = useAuthHook();
   const { user } = useAuthContext();
   const [fontColor, setFontColor] = useState('');
@@ -40,36 +41,39 @@ const Navbar = ({ items, flag, sidebar = () => {} }) => {
 
   useEffect(() => {
     if (user && user.role === '0') {
-      setFontColor('bg-superAdminBlue'); // For the background color
+      setFontColor('bg-superAdminBlue text-white'); // For the background color
     }else if(user && user.role === '1'){
-      setFontColor('bg-customgreen')
+      setFontColor('bg-customgreen text-white')
     }else if(user && user.role === '2'){
-      setFontColor('bg-BOGreen')
+      setFontColor('bg-BOGreen text-white')
     }else if(user && user.role === '3'){
-      setFontColor('bg-fundingBlueGreen')
+      setFontColor('bg-fundingBlueGreen text-white')
     }else if(user && user.role === '4'){
-      setFontColor('bg-preparerPrimary')
+      setFontColor('bg-preparerPrimary text-white')
     }else {
-      setFontColor('bg-customFontColor')
+      setFontColor('bg-customFontColor text-white')
     }
   }, [user]);
 
   return (
-    <nav className="h-screen w-full flex flex-col justify-start bg-eggWhite border-r-2">
+    <nav className="h-screen w-full flex flex-col justify-start bg-gray-100 border-r-2">
       <div className="h-[8%] lg:h-[10%] relative w-full px-4 py-1 sm:py-3 md:py-5 xl:py-3 2xl:py-8 flex gap-2 items-center justify-start">
-          <IoIosClose onClick={sidebar} size={30} className="z-50 absolute top-1/2 right-2 transform -translate-y-1/2 block lg:hidden"/>
-          <img src={bgImage} alt="" className="w-10 sm:w-12 md:w-12 lg:w-10" />
-          <h1 className={`font-bold text-2xl sm:text-3xl md:text-3xl lg:text-xl xl:text-3xl 2xl:text-4xl text-customgreen ${hideText}`}>NIA|FIS</h1>
-        </div>
+        <IoIosClose onClick={sidebarMobile} size={30} className="z-50 absolute top-1/2 right-2 transform -translate-y-1/2 block lg:hidden"/>
+        <img src={bgImage} alt="" className="w-10 sm:w-12 md:w-12 lg:w-10 2xl:w-16" />
+        <h1 className={`font-bold text-2xl sm:text-3xl md:text-3xl lg:text-xl xl:text-2xl 2xl:text-3xl text-customgreen ${hideText}`}>NIA-FIS</h1>
+        <button onClick={sidebar} className={`${flag ? 'rotate-180' : ''} z-10 absolute -right-4 rounded-full bg-white border-2 hidden lg:block transition-all duration-150`}>
+          <MdKeyboardArrowRight size={25}/>
+        </button>
+      </div>
       <div className='flex flex-col items-start justify-between w-full h-[92%] lg:h-[90%]'>
         <div className="w-full flex flex-col p-2">
           {items.map((item) => (
             <NavLink
-              onClick={sidebar}
+              onClick={sidebarMobile}
               key={item.label}
               to={item.path}
               className={({ isActive }) =>
-                `w-full h-auto flex items-center justify-start gap-2 px-4 my-1 py-3 mt-1 text-xs sm:text-base md:text-lg lg:text-xs 2xl:text-base rounded-xl transition-all duration-150 ${isActive ? `${fontColor} text-white` : 'text-customFontColor'} text-customFontColor`
+                `w-full h-auto flex items-center justify-start gap-3 px-4 my-1 py-3 mt-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md transition-all duration-100 ${isActive ? `${fontColor}` : ''}`
               }
             >
               {item.icon}
@@ -77,12 +81,12 @@ const Navbar = ({ items, flag, sidebar = () => {} }) => {
             </NavLink>
           ))}
         </div>
-        <div className="w-full flex items-center justify-start p-2">
+        <div className="w-full flex items-center justify-center p-2">
           <button
             onClick={handleLogout}
-            className={`w-full flex items-center justify-start py-2 px-4 rounded-lg gap-2 text-sm sm:text-base md:text-xl lg:text-base xl:text-base 2xl:text-lg transition-all duration-150`}
+            className={`w-full flex items-center justify-start py-2 px-4 rounded-lg gap-2 font-semibold text-sm sm:text-base md:text-lg lg:text-base 2xl:text-lg transition-all duration-150`}
           >
-            <MdLogout size={22} />
+            <MdLogout size={20} />
             <span className={`${hideText}`}>Logout</span>
           </button>
         </div>
@@ -99,6 +103,7 @@ Navbar.propTypes = {
     })
   ).isRequired,
   flag: PropTypes.bool.isRequired,
+  sidebarMobile: PropTypes.func,
   sidebar: PropTypes.func
 };
 

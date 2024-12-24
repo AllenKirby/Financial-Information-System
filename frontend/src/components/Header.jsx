@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { IoMdNotifications } from "react-icons/io";
-import { FaUserCircle } from "react-icons/fa";
 import { GiHamburgerMenu } from "react-icons/gi";
 
 import { useState, useEffect } from "react";
@@ -11,8 +10,6 @@ import { RtDatabase } from '../config/firebase-config';
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import Notification from './Notification';
-
-
 
 const Header = ({ currentPage, sidebar}) => {
   const [showNotifications, setShowNotifications] = useState(false); // For showing notification dropdown
@@ -91,12 +88,21 @@ const Header = ({ currentPage, sidebar}) => {
     }
   },[user])
 
+  const avatar = (name) => {
+    if(name){
+      const nameSplit = name.split(' ')
+      const initial =  `${nameSplit[0].charAt(0)}${nameSplit[1].charAt(0)}`
+      return initial.toUpperCase()
+    }
+  }
+
+
   return (
-    <header className="w-full h-auto flex px-2">
+    <header className="w-full h-auto flex px-2 relative bg-white">
       <div className="w-4/6 p-3 flex items-center justify-start gap-2">
         <GiHamburgerMenu 
           size={25}
-          className='bg-white cursor-pointer'
+          className='bg-white cursor-pointer block lg:hidden'
           onClick={sidebar}/>
         <h1 className={`text-base sm:text-lg md:text-2xl lg:text-2xl xl:text-2xl 2xl:text-3xl font-bold ${fontColor}`}>{currentPage}</h1>
       </div>
@@ -119,36 +125,12 @@ const Header = ({ currentPage, sidebar}) => {
             <div className={`absolute -top-2 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
               <p className="text-[8px] font-semibold">{unreadNotifs}</p>
             </div>
-            {/* Notifications Dropdown */}
-          {showNotifications && (
-            <>
-              <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
-
-              <div className="absolute w-5 h-5 z-50 top-[41px] right-3 rounded-tl-lg border-l-[1px] border-t-[1px] bg-white rotate-45 "></div>
-              <div className="absolute top-[51px] z-40 -right-28 w-96 bg-white border-[1px] p-4 rounded-lg">
-                <h3 className='font-semibold text-xl my-2'>Notifications</h3>
-
-                  <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
-                    {notifications.length > 0 ?( 
-                          notifications.map((notification)=> (
-                            <Notification key={notification.key} notification={notification} markAsRead={markAsRead} />
-                          ))
-                        
-                       ): (
-                        <div className='w-full h-full flex items-center justify-center'>
-                          <li className='text-center'>No Notifications found</li>
-                        </div>
-                      )
-                    }
-                  </ul>
-              </div>
-            </>
-          )}
           </div>
         </div>
-
         <div className="hidden sm:hidden md:hidden lg:flex xl:flex 2xl:flex items-center gap-2">
-          <FaUserCircle className="text-customFontColor lg:text-[35px] xl:text-[40px] 2xl:text-[50px]" />
+          <div className="bg-gray-300 w-12 h-12 rounded-full flex items-center justify-center">
+            <p className='font-bold'>{avatar(user?.name)}</p>
+          </div> 
           <div className="flex flex-col justify-center">
             <p className={`font-bold text-sm lg:text-base xl:text-base 2xl:text-base truncate ${fontColor}`}>
               {user?.name || "User"}
@@ -159,9 +141,31 @@ const Header = ({ currentPage, sidebar}) => {
           </div>
         </div>
         <div className='sm:flex md:flex lg:hidden xl:hidden 2xl:hidden flex items-center justify-center'>
-          <FaUserCircle className="text-customFontColor text-[35px] sm:text-[40px] md:text-[45px]" />
+          <div className="bg-gray-300 w-10 h-10 rounded-full flex items-center justify-center">
+            <p className='font-bold text-sm'>{avatar(user?.name)}</p>
+          </div>
         </div>
       </div>
+      {/* Notifications Dropdown */}
+      {showNotifications && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
+          <div className="absolute shadow-lg shadow-gray-400 top-[60px] z-40 md:right-2 lg:right-2 w-full md:w-1/2 lg:w-1/3 bg-white border-[1px] p-4 rounded-lg">
+            <h3 className={`font-semibold text-xl my-2 ${fontColor}`}>Notifications</h3>
+              <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
+                {notifications.length > 0 ?( 
+                  notifications.map((notification)=> (
+                    <Notification key={notification.key} notification={notification} markAsRead={markAsRead} />
+                  ))): (
+                    <div className='w-full h-full flex items-center justify-center'>
+                      <li className='text-center'>No Notifications found</li>
+                    </div>
+                  )
+                }
+              </ul>
+          </div>
+        </>
+      )}
     </header>
   );
 };
