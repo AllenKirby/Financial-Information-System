@@ -23,14 +23,12 @@ const Notification = ({ notification, markAsRead }) => {
   useEffect(() => {
       const [dateTime, docName, name, DV, fund] = notification.data.split('|');
       const DV_key = `${DV}|${fund}`
-      console.log(dateTime)
       setNotifData({ dateTime, docName, name, DV_key });
       setNotifMessage({message1: notification.message1, message2: notification.message2})
     
   }, [notification]);
 
   const openNotif = (DV) =>{
-    console.log(user.role)
     if(user.role === '3'){
       const document = OpDocuments.documents[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
@@ -55,13 +53,13 @@ const Notification = ({ notification, markAsRead }) => {
   console.log(notifData.dateTime)
   
   return (
-    <li className='my-1 bg-white p-2 rounded-md cursor-pointer hover:bg-slate-100' 
+    <li className='my-1 bg-white p-2 rounded-md cursor-pointer text-gray-500 hover:bg-slate-100' 
       onClick={() => {
       markAsRead(notification.key)
       const dvNo = notifData.DV_key
       openNotif(dvNo)
       }}>
-      <p >{notifMessage.message1} <strong>{notifData.docName}</strong> {notifMessage.message2} <strong>{notifData.name.replace(',', ' ')}</strong></p>
+      <p>{notifMessage.message1} <strong>{notifData.docName}</strong> {notifMessage.message2} <strong>{notifData.name.replace(',', ' ')}</strong></p>
       <p className='text-xs mt-2 flex items-center justify-between'>{formatDistanceToNow(formateDateTime(notifData.dateTime), { addSuffix: true })} {!notification.read && <strong className='flex items-end justify-end'>Unread</strong>}</p>
     </li>
   );

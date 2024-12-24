@@ -240,6 +240,30 @@ export const useApproverHook = () => {
         })
 
         return unsubscribe 
+    } 
+
+    const downloadDV = async (data) => {
+        console.log('Click again')
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post(`${apiURL}/admin/downloadDV`, {data}, {
+                responseType: 'blob',
+                withCredentials: true
+            })
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'populated-template.xlsx'); // File name
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
+        }
     }
 
   return {
@@ -257,6 +281,7 @@ export const useApproverHook = () => {
     getTaxType,
     deleteTax,
     getRecords,
+    downloadDV,
     isLoading, 
     error
     }

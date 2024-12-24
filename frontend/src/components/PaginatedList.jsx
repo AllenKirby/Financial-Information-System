@@ -7,7 +7,7 @@ import DocumentDetails from './DocumentDetails';
 const PaginatedList = ({ items, type }) => {
 
   const [currentPage, setCurrentPage] = useState(1); 
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
 
   const itemsArray = Object.entries(items);
 
@@ -24,7 +24,7 @@ const PaginatedList = ({ items, type }) => {
 
   return (
     <div className='w-full h-full'>
-        <div className='w-full h-[85%]'>
+        <div className='w-full h-[85%] overflow-auto'>
             {Object.keys(currentItems).length > 0 ? (
                 Object.entries(currentItems).map(([key, document]) => (
                     <DocumentDetails key={key} index={key} documents={document[1]} type={type}/>
@@ -44,8 +44,8 @@ const PaginatedList = ({ items, type }) => {
                 // </div>
             )}
         </div>
-        <div className='w-full h-[15%] flex items-center justify-center'>
-            <div className='w-1/4'>
+        <div className='w-full h-[15%] bg-white flex items-center justify-center'>
+            <div className='w-auto'>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
             </div>
         </div>  

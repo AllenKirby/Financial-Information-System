@@ -109,36 +109,68 @@ const DocumentDetails = ({ index, documents, type }) => {
   }
 
   return (
-    <div
-      onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
-      className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 mb-1 text-customFontColor cursor-pointer flex items-center justify-center`}
-    >
-      {/* Payee column */}
-      <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${type === '4' || type === '3' || type === '1'? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
-        {docu?.payee}
-      </h2>
-      {/* DV No. column */}
-      <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-        {docu?.DV}
-      </h2>
-      {/* Status column */}
-      <div className="flex items-center justify-center w-1/6">
-        <h2 className={`${getStatusColor(Status)} sm:text-xs 2xl:text-sm font-semibold w-auto h-auto rounded-md text-center px-2 py-1`}>
-          {Status}
+    <>
+      <div
+        onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
+        className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 mb-1 text-customFontColor cursor-pointer hidden sm:flex items-center justify-center`}
+      >
+        {/* Payee column */}
+        <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${type === '4' || type === '3' || type === '1'? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
+          {docu?.payee}
         </h2>
+        {/* DV No. column */}
+        <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {docu?.DV}
+        </h2>
+        {/* Status column */}
+        <div className="flex items-center justify-center w-1/6">
+          <h2 className={`${getStatusColor(Status)} sm:text-xs 2xl:text-sm font-semibold w-auto h-auto rounded-md text-center px-2 py-1`}>
+            {Status}
+          </h2>
+        </div>
+        <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {/* {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}  */}
+        </h2>
+        {(type === '4' || type === '3') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
+          {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
+          {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
+        </h2>}
+        {type === '1' && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
+        </h2>}
       </div>
-      <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-        {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
-      </h2>
-      {(type === '4' || type === '3') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-        {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
-        {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
-        {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
-      </h2>}
-      {type === '1' && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-        {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
-      </h2>}
-    </div>
+      <div
+        onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
+        className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} rounded-lg w-full h-auto p-2 mb-1 text-customFontColor cursor-pointer sm:hidden`}
+      >
+        {/* Payee column */}
+        <h2 className={`font-semibold sm:text-xs lg:text-sm 2xl:text-lg ${type === '4' || type === '3' || type === '1'? 'sm:w-2/6' : 'sm:w-3/6'} flex items-center justify-start gap-2 truncate`}>
+          {docu?.payee}
+        </h2>
+        {/* DV No. column */}
+        <h2 className="sm:text-xs 2xl:text-sm font-light">
+          {docu?.DV}
+        </h2>
+        {/* Status column */}
+        <div className="flex items-center justify-start">
+          <h2 className={`${getStatusColor(Status)} sm:text-xs 2xl:text-sm font-semibold w-auto h-auto rounded-md px-2 py-1`}>
+            {Status}
+          </h2>
+        </div>
+        <h2 className="sm:text-xs 2xl:text-sm font-light">
+          {/* {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}  */}
+        </h2>
+        {(type === '4' || type === '3') && <h2 className="sm:text-xs 2xl:text-sm font-light">
+          {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
+          {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
+          {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
+        </h2>}
+        {type === '1' && <h2 className="sm:text-xs 2xl:text-sm font-light">
+          {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
+        </h2>}
+      </div>
+    </>
   );
 };
 

@@ -13,7 +13,7 @@ export default {
       fontFamily: {
         'times': ['"Times New Roman"', 'serif'],
         poppins: ['Poppins', 'sans-serif'],
-        sans: ['Montserrat', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
       },
       colors: {
         customgreen: '#009933',
@@ -27,8 +27,7 @@ export default {
         fundingGray: '#E2D0F9',
         preparerPrimary: '#00674F',
         preparerSecondary: '#A2A2A1',
-        coolSteel: '#FDFDFD',
-        eggWhite: '#FDFDFD'
+        offWhite: '#F5F5F5',
       },
       spacing: {
         'a4-width': '210mm',  // Custom A4 width
