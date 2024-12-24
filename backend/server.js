@@ -4,6 +4,9 @@ const express = require('express')
 const cors = require('cors')
 const cookieParser = require('cookie-parser');
 const {admin, db, rtdb}  = require('./config/firebase');
+const http = require('http');
+
+
 const {updateControlBook} = require('./tasks/monthlyUpdate')
 const {updateASADue} = require('./tasks/dailyUpdate')
 const {updateWeeklyRecords} = require('./tasks/weeklyUpdate')
@@ -18,12 +21,15 @@ const SuperAdminRoutes = require('./routes/SuperAdminRoutes')
 const AdminAndHeadRoutes = require('./routes/Admin_Head_routes')
 const EditorOperatorRouter = require('./routes/editorOperatorRoutes')
 
+const initializeSockets = require('./sockets/index');
 const { getUsers } = require('./controller/MultiAccess/Functions')
 
 const app = express()
+const server = http.createServer(app) //create an instance of http server
 
 app.use(cors({
   origin: 'http://localhost:5173',
+  methods: ['GET', 'POST'],
   credentials: true
 }))
 
@@ -54,7 +60,12 @@ app.use('/superadmin', SuperAdminRoutes)
 app.use('/adminhead', AdminAndHeadRoutes)
 app.use('/editoroperator', EditorOperatorRouter)
 
+initializeSockets(server);
+
 const PORT = process.env.PORT;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
+  // instead of app.listen use the server instance
+  // app is a shortcut provided by the Express
+  // serve isntance requires to bind websocket
   console.log(`Server running on port ${PORT}`);
 });

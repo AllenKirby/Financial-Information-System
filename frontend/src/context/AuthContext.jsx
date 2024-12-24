@@ -48,7 +48,7 @@ export const AuthContextProvider = ({ children }) => {
                                 role: userData.role,
                                 firstTimeLogin: userData.firstTimeLogin
                             }
-                            console.log(userData.firstTimeLogin)
+                            // console.log(userData.firstTimeLogin)
                             if(userData.firstTimeLogin){
                                 dispatchFlag(toggleChangePassFlag())
                             } else {
