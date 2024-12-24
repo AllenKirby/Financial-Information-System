@@ -10,9 +10,13 @@ import { useHeadDisbursementContext } from './useHeadDisbursementContext.jsx';
 import { getAuth, sendPasswordResetEmail, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth"; 
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { toggleChangePassFlag, resetChangePassFlag } from '../redux/ChangePasswordFlagRedux.jsx'
+
+//redux
 import { useDispatch } from "react-redux";
 import { setPermission } from "../redux/PermissionRedux.jsx"; 
-import { toggleChangePassFlag, resetChangePassFlag } from '../redux/ChangePasswordFlagRedux.jsx'
+// import { initializeSocket, disconnectSocket } from "../redux/socketRedux.jsx";
+import { initializeSocket, disconnectSocket } from "../socketService/socketService.jsx";
 
 import Cookies from 'universal-cookie';
 import { disableNetwork, getFirestore } from "firebase/firestore";
@@ -58,6 +62,11 @@ export const useAuthHook = () => {
                 role: userData.role,
                 firstTimeLogin: userData.firstTimeLogin
               }
+
+              //initialize the web socket
+              // dispatch(initializeSocket(token))
+              initializeSocket(token)
+
               if(userData.firstTimeLogin){
                 setIsLoading(false)
                 dispatch(toggleChangePassFlag())
@@ -98,6 +107,7 @@ export const useAuthHook = () => {
             dispatch(setPermission(null))
             cookies.remove('user', { path: '/' });
             navigate('/', {replace: true})
+            disconnectSocket()
           }
         }catch(error){
           console.log(`error logging out ${error}`)

@@ -1,6 +1,8 @@
 const {admin, db, rtdb}  = require('../config/firebase');
 const { doc } = require('firebase/firestore')
 
+const { encryptObj } = require('./functions');
+
 const { 
     addComments,
     setNotification,
@@ -25,6 +27,8 @@ const formatDate = (rawDate) => {
 
     return formattedDate;
   };
+
+
 const createDV = async (req, res) => {
     const {payee, TIN, address, fund, date, DV, MOP, specifiedMOP, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
     const {birParticular} = req.body.bir_data
@@ -50,40 +54,43 @@ const createDV = async (req, res) => {
         status: 'Drafting',
     }
 
-    dvData = {
-        //payee data
-        payee: payee.trim(), 
-        TIN: TIN, 
-        address: address,
-        fund: fund,
-        date: formatDate(date), 
-        DV: finalizeDVNo,
-        DVKey: DVKey, 
-        modeOfPayment: MOP,
-        specifiedMOP: specifiedMOP,
-        RC: RC,
-        NF_name: NF_name,
-        NF_office: NF_office,
-        TT_tax: TT_tax,
-        TT_formula1: TT_formula1,
-        TT_formula2: TT_formula2,
-        TT_cost: TT_cost,
-        accCategory: accCategory, 
-        accTitle: accTitle,
-        accCode: accCode,
-        optionalAmount: optionalAmount, 
-        amount: amount, 
-        particular: particular.trim(),
-        //BIR data
-        birParticular: birParticular.trim(),
-        //other data
-        createdAt: dateTimeCollection,
-        createdBy: createdByDetails,
-        status: 'Drafting',
-        //open for necessary data needed
-    }
+    const keysNotToEncrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber']
+    const encryptedDvData = encryptObj(newDvData, {keysNotToEncrypt})
+
+    // dvData = {
+    //     //payee data
+    //     payee: payee.trim(), 
+    //     TIN: TIN, 
+    //     address: address,
+    //     fund: fund,
+    //     date: formatDate(date), 
+    //     DV: finalizeDVNo,
+    //     DVKey: DVKey, 
+    //     modeOfPayment: MOP,
+    //     specifiedMOP: specifiedMOP,
+    //     RC: RC,
+    //     NF_name: NF_name,
+    //     NF_office: NF_office,
+    //     TT_tax: TT_tax,
+    //     TT_formula1: TT_formula1,
+    //     TT_formula2: TT_formula2,
+    //     TT_cost: TT_cost,
+    //     accCategory: accCategory, 
+    //     accTitle: accTitle,
+    //     accCode: accCode,
+    //     optionalAmount: optionalAmount, 
+    //     amount: amount, 
+    //     particular: particular.trim(),
+    //     //BIR data
+    //     birParticular: birParticular.trim(),
+    //     //other data
+    //     createdAt: dateTimeCollection,
+    //     createdBy: createdByDetails,
+    //     status: 'Drafting',
+    //     //open for necessary data needed
+    // }
     try{
-        await db.collection('records').doc(newDvData.DVKey).set(newDvData);
+        await db.collection('records').doc(encryptedDvData.DVKey).set(encryptedDvData);
 
         // addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
         // addOnClusterAmount(amount, fund, date)

@@ -23,6 +23,7 @@
     "googleapis": "^144.0.0",
     "jsonwebtoken": "^9.0.2",
     "node-cron": "^3.0.3",
+    "socket.io": "^4.8.1",
     "validator": "^13.12.0"
   }
 }

@@ -17,6 +17,6 @@ export const store = configureStore({
         totalexpense: TotalExpenseReducer,
         vouchers: AllVouchersReducer,
         request: ResetPasswordRequestsReducer,
-        changePass: ChangePassFlagReducer
+        changePass: ChangePassFlagReducer,
     }
 })

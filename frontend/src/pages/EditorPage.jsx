@@ -1,4 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
+import {io} from 'socket.io-client'
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
 import { useEffect, useState } from "react";
 import { firestore } from "../config/firebase-config"
@@ -16,6 +17,10 @@ import { TbLayoutDashboard} from "react-icons/tb";
 import { FiBook} from "react-icons/fi";
 import { PiFileThin, PiTableThin } from "react-icons/pi";
 
+import { getSocket, initializeSocket } from "../socketService/socketService";
+
+
+
 const EditorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
@@ -25,6 +30,7 @@ const EditorPage = () => {
   const apiURL = import.meta.env.VITE_API_URL
   const permission = useSelector((state) => state.permission)
   const { retrieveControlBooks } = useFundingHook()
+  
 
   const navItems = [
     { label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={22} /> },
@@ -58,23 +64,35 @@ const EditorPage = () => {
     }
   }, [permission]) 
 
+  // useEffect(() => {
+  //   const status = permission?.data?.permission 
+  //   ? ['Drafting', 'Returned|4', 'In Review', 'Returned|3'] 
+  //   : ['Drafting', 'Returned|4'];
+
+  //   const q = query(collection(firestore, 'records'),where('status', 'in', status ? status : ['Drafting', 'Returned|4'] ));
+  //   const unsubscribe = onSnapshot(q, (snapshot) => {
+  //     const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
+  //       acc[doc.id] = {...doc.data()}
+  //       return acc;
+  //     }, {});
+
+  //     dispatchContext({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
+  //   })
+
+  //   return () => unsubscribe()   
+  // }, [dispatchContext, permission])
+
   useEffect(() => {
-    const status = permission?.data?.permission 
-    ? ['Drafting', 'Returned|4', 'In Review', 'Returned|3'] 
-    : ['Drafting', 'Returned|4'];
-
-    const q = query(collection(firestore, 'records'),where('status', 'in', status ? status : ['Drafting', 'Returned|4'] ));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
-        acc[doc.id] = {...doc.data()}
-        return acc;
-      }, {});
-
-      dispatchContext({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
-    })
-
-    return () => unsubscribe()   
-  }, [dispatchContext, permission])
+    const {socket, isInitialized} = initializeSocket()
+    if(isInitialized){
+      socket.on('editor:firestore:update', (doc) => {
+        dispatchContext({ type: 'SET_DOCUMENTS', payload: doc });
+      })
+      return () => {
+        socket.off('editor:firestore:update');
+      };
+    }
+  }, [])
 
   useEffect(() => {
     const docRef = doc(firestore, 'Roles', 'Preparer'); 

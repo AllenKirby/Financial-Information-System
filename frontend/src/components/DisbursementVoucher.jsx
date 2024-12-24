@@ -130,7 +130,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleChangePayee = (e) => {
     const target = e.target.value.toUpperCase().trim();
-    console.log(target)
+    // console.log(target)
     setPayeeData({...payeeData, payee: target})
 
     if (target) {
@@ -537,7 +537,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const isDisabled = user.role === '3'
 
-  console.log( document.payee, payeeData )
+  // console.log( document.payee, payeeData )
 
   return (
     <form onSubmit={(e) => {
@@ -590,7 +590,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   disabled={ ['GSIS', 'Meralco'].includes(activeTab) || (isDisabled && !permission.data.permission)}
                   type="text" 
                   pattern="^[a-zA-Z\s'-]+$"
-                  value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab : payeeData.payee }
+                  value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab :payeeData.payee }
                   minLength="2" 
                   maxLength="50"
                   onChange={handleChangePayee}
