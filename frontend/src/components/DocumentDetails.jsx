@@ -112,7 +112,7 @@ const DocumentDetails = ({ index, documents, type }) => {
     <>
       <div
         onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
-        className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 mb-1 text-customFontColor cursor-pointer hidden sm:flex items-center justify-center`}
+        className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 mb-1 text-customFontColor rounded-lg cursor-pointer hidden sm:flex items-center justify-center`}
       >
         {/* Payee column */}
         <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${type === '4' || type === '3' || type === '1'? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
@@ -129,10 +129,10 @@ const DocumentDetails = ({ index, documents, type }) => {
           </h2>
         </div>
         <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-          {/* {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })}  */}
+          {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
         </h2>
         {(type === '4' || type === '3') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-          {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
+          {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'}
           {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
           {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
         </h2>}
