@@ -220,7 +220,7 @@ const ViewDocument = () => {
   }
 
   return (
-    <section className="w-full sm:w-3/4 lg:w-2/4 h-full sm:h-5/6 flex flex-col bg-white sm:rounded-lg">
+    <section className="w-full sm:w-3/4 lg:w-3/5 h-full sm:h-5/6 flex flex-col bg-white sm:rounded-lg">
       <div className="w-full h-auto flex items-center justify-between px-3 py-2 border-b-2">
         <button
             onClick={() => window.history.back()}

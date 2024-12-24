@@ -105,7 +105,7 @@ const DVTemplate = ({document}) => {
             <div className='w-2/5 h-full'>
               <p className='text-gray-500'>Mode of Payment</p>
               <p className='text-gray-500'>ORS/BURS</p>
-              <p className='text-gray-500'>Responsibility Center</p>
+              <p className='text-gray-500 truncate'>Responsibility Center</p>
               <p className='text-gray-500'>ASA No</p>
               <p className='text-gray-500'>Name</p>
               <p className='text-gray-500'>Office</p>
@@ -140,7 +140,7 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-semibold'>{document?.NF_office}</p>
               {document?.accTitle.map((title, index) => (
                 <>
-                  <li key={index} className='text-customFontColor font-semibold'>{title}</li>
+                  <li key={index} className='text-customFontColor font-semibold truncate'>{title}</li>
                 </>
               ))}
               {document?.accCode.map((code, index) => (
@@ -161,7 +161,7 @@ const DVTemplate = ({document}) => {
               <p className='text-gray-500'>Payee</p>
               <p className='text-gray-500'>Address</p>
               <p className='text-gray-500'>DV No.</p>
-              <p className='text-gray-500'>Responsibility Center</p>
+              <p className='text-gray-500 truncate'>Responsibility Center</p>
               <p className='text-gray-500'>Amount Due</p>
               <p className='text-gray-500'>Particulars</p>
             </div>
