@@ -20,7 +20,7 @@ const socketAuth = async (socket, next) => {
             email: decodedToken.email,
             role: decodedToken.role || 0,
         };
-
+        console.log(socket.user)
         next();
     }catch(err){
         console.error('Socket authentication failed:', err.message);

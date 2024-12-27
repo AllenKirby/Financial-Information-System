@@ -38,6 +38,7 @@ const ViewControlBook = () => {
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
       const selectedkey = Object.keys(controlBooks).find((key) => controlBooks[key].ASANo === id)
       if(selectedControlBook) {
+        console.log(selectedControlBook[1])
         setControlBook({key: selectedkey, data: selectedControlBook[1]})
       } else {
         console.log('No Control Book Found')
@@ -139,7 +140,7 @@ const ViewControlBook = () => {
                 <div className="w-full h-[90%] overflow-auto border-2 rounded-lg p-1">
                     {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                       Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
-                        <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>
+                        <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget}/>
                       ))
                     ) : (
                       <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>

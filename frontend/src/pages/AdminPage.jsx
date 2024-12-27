@@ -15,6 +15,8 @@ import { collection, query, where, onSnapshot } from "firebase/firestore"
 import { useApproverHook } from "../hooks/useApproverHook";
 import { useDispatch } from "react-redux";
 
+import {initializeSocket } from "../socketService/socketService";
+
 const AdminPage = () => {
     const page = useLocation()
     const [location, setLocation] = useState('')
@@ -52,18 +54,30 @@ const AdminPage = () => {
         }
     }, [page.pathname])
 
-    useEffect(() => {
-        const q = query(collection(firestore, 'records'), where('status', 'in', ['Approved', 'For Approval']));
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-        const newDocuments = snapshot.docs.reduce((acc, doc) => {
-            acc[doc.id] = {data: {...doc.data()}};
-            return acc;
-        }, {});
-            dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
-        })
+    // useEffect(() => {
+    //     const q = query(collection(firestore, 'records'), where('status', 'in', ['Approved', 'For Approval']));
+    //     const unsubscribe = onSnapshot(q, (snapshot) => {
+    //     const newDocuments = snapshot.docs.reduce((acc, doc) => {
+    //         acc[doc.id] = {data: {...doc.data()}};
+    //         return acc;
+    //     }, {});
+    //         console.log(newDocuments)
+    //         dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
+    //     })
 
-        return () => unsubscribe()
-    }, [documents, user, apiURL, dispatch])
+    //     return () => unsubscribe()
+    // }, [documents, user, apiURL, dispatch])
+    useEffect(() => {
+      const {socket, isInitialized} = initializeSocket()
+      if(isInitialized){
+        socket.on('admin:firestore:update', (doc) => {
+          dispatch({ type: 'SET_ADMINDOCUMENTS', payload: doc });
+        })
+        return () => {
+          socket.off('admin:firestore:update');
+        };
+      }
+    }, [])//[documents, user, apiURL, dispatch]
 
     const collapseSideBar = () => {
         setNavbarExpand(!navbarExpand)

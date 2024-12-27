@@ -17,7 +17,18 @@ const DVTemplate = ({document}) => {
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
-  console.log(document)
+  //GSIS computation
+  const gross_gsis = (parseFloat(document?.amount) || 0) + (parseFloat(document?.stamp) || 0) + (parseFloat(document?.dst) || 0) + (parseFloat(document?.vat12) || 0)
+  const amountDue_gsis = gross_gsis - (parseFloat(val1) || 0)
+
+  //Meralco computation
+  const meralcoVatAndNonvat = (parseFloat(document?.meralcoVAT) || 0) + (parseFloat(document?.meralcoNONVAT) || 0)
+  const meralcoTax5 = eval(document?.meralcoVAT + document?.TT_formula1)
+  const meralcoTax2 = eval(meralcoVatAndNonvat + document?.TT_formula2)
+  const meralcoGross = parseFloat(document?.meralcoVAT || 0) + parseFloat(document?.meralcoNONVAT || 0) + parseFloat(document?.amount || 0)
+  const meralcoTax = parseFloat(meralcoTax5 || 0) + parseFloat(meralcoTax2 || 0)
+  const meralcoAmountDue = meralcoGross - meralcoTax
+
   useEffect(() => {
     if(user && user.role) {
       switch(user.role) {
@@ -37,6 +48,13 @@ const DVTemplate = ({document}) => {
       }
     }
   }, [user])
+
+  const formatToPeso = (value) => {
+    return new Intl.NumberFormat("en-PH", {
+        style: "currency",
+        currency: "PHP",
+    }).format(value);
+  };
   return (
     <div className="w-full h-auto p-5 border-b-2">
       <div className='mb-2'>
@@ -79,23 +97,78 @@ const DVTemplate = ({document}) => {
           <div className='w-full py-1'>
             <h1 className='text-lg 2xl:text-xl font-semibold'>Financial Details</h1>
           </div>
-          <div className='py-1 flex flex-row px-2 text-sm sm:text-base 2xl:text-lg'>
-            <div className='w-2/5 h-full'>
-              <p className='text-gray-500'>Amount</p>
-              <p className='text-gray-500'>Total Tax Amount</p>
-              <p className='text-gray-500'>Amount Due</p>
-              <p className='text-gray-500'>Tax Type</p>
-              <p className='text-gray-500'>Tax Type Formulas</p>
-            </div>
-            <div className='w-3/5 h-full'>
-              <p className='text-customFontColor font-medium'>{`₱ ${document?.amount}`}</p>
-              <p className='text-customFontColor font-medium'>{`₱ ${floatTotal_val}`}</p>
-              <p className='text-customFontColor font-medium'>{`₱ ${floatAmountDue}`}</p>
-              <p className='text-customFontColor font-medium'>{`${document?.TT_tax} ${document?.TT_cost}`}</p>
-              <li className='text-customFontColor font-medium'>{`${document?.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${document?.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${val1}`}</li>
-              <li className='text-customFontColor font-medium'>{`${document?.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${document?.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${val2}`}</li>
-            </div>
-          </div>
+          {
+            document?.activeTab === 'DV' && (
+              <div className='py-1 flex flex-row px-2 text-sm sm:text-base 2xl:text-lg'>
+                <div className='w-2/5 h-full'>
+                  <p className='text-gray-500'>Amount</p>
+                  <p className='text-gray-500'>Total Tax Amount</p>
+                  <p className='text-gray-500'>Amount Due</p>
+                  <p className='text-gray-500'>Tax Type</p>
+                  <p className='text-gray-500'>Tax Type Formulas</p>
+                </div>
+                <div className='w-3/5 h-full'>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(floatTotal_val)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${document?.TT_tax} ${document?.TT_cost}`}</p>
+                  <li className='text-customFontColor font-medium' key={'key1'}>{`${formatToPeso(document?.amount)} ${document?.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${val1}`}</li>
+                  <li className='text-customFontColor font-medium' key={'key2'}>{`${formatToPeso(document?.amount)} ${document?.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${val2}`}</li>
+                </div>
+              </div>
+            )
+          }
+          {
+            document?.activeTab === 'GSIS' && (
+              <div className='py-1 flex flex-row px-2 text-sm sm:text-base 2xl:text-lg'>
+                <div className='w-2/5 h-full'>
+                  <p className='text-gray-500'>Premium</p>
+                  <p className='text-gray-500'>Doc. Stamp - DST Premium</p>
+                  <p className='text-gray-500'>DST (COC)</p>
+                  <p className='text-gray-500'>VAT 12%</p>
+                  <p className='text-gray-500'>Amount</p>
+                  <p className='text-gray-500'>Total Tax Amount</p>
+                  <p className='text-gray-500'>Amount Due</p>
+                  
+                </div>
+                <div className='w-3/5 h-full'>
+                <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.stamp)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.dst)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.vat12)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(gross_gsis)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.amount)} ${document?.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${val1}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(amountDue_gsis)}`}</p>
+                </div>
+              </div>
+            )
+          }
+          {
+            document?.activeTab === 'Meralco' && (
+              <div className='py-1 flex flex-row px-2 text-sm sm:text-base 2xl:text-lg'>
+                <div className='w-2/5 h-full'>
+                  <p className='text-gray-500'>Amount</p>
+                  <p className='text-gray-500'>Tax Base</p>
+                  <p className='text-gray-500'>VAT</p>
+                  <p className='text-gray-500'>NON VAT</p>
+                  <p className='text-gray-500'>Tax(5%)</p>
+                  <p className='text-gray-500'>Tax(2%)</p>
+                  <p className='text-gray-500'>Total Tax Amount</p>
+                  <p className='text-gray-500'>Amount Due</p>
+                </div>
+                <div className='w-3/5 h-full'>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(meralcoGross)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.meralcoVAT)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(document?.meralcoNONVAT)}`}</p>
+                  <p className='text-customFontColor font-medium' key={'key3'}>{`${formatToPeso(document?.meralcoVAT)} ${document?.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${formatToPeso(meralcoTax5)}`}</p>
+                  <p className='text-customFontColor font-medium' key={'key4'}>{`${formatToPeso(document?.meralcoVAT)} + ${formatToPeso(document?.meralcoNONVAT)} ${document?.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${formatToPeso(meralcoTax2)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(meralcoTax)}`}</p>
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(meralcoAmountDue)}`}</p>
+                </div>
+              </div>
+            )
+          }
         </div>
         <div className='flex flex-col'>
           <div className='w-full py-1'>
@@ -140,12 +213,12 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-semibold'>{document?.NF_office}</p>
               {document?.accTitle.map((title, index) => (
                 <>
-                  <li key={index} className='text-customFontColor font-semibold truncate'>{title}</li>
+                  <li key={`title-${index}`} className='text-customFontColor font-semibold truncate'>{title}</li>
                 </>
               ))}
               {document?.accCode.map((code, index) => (
                 <>
-                  <li key={index} className='text-customFontColor font-semibold'>{code}</li>
+                  <li key={`code-${index}`} className='text-customFontColor font-semibold'>{code}</li>
                 </>
               ))}
               <p className='text-customFontColor font-semibold text-justify'>{document?.particular}</p>
@@ -168,9 +241,18 @@ const DVTemplate = ({document}) => {
             <div className='w-3/5 h-full'>
               <p className='text-customFontColor font-medium'>BIR</p>
               <p className='text-customFontColor font-medium'>Calamba, Laguna</p>
-              <p className='text-customFontColor font-medium'>{document?.DV}</p>
+              <p className='text-customFontColor font-medium'>{document?.DVBIR}</p>
               <p className='text-customFontColor font-medium'>RO</p>
-              <p className='text-customFontColor font-medium'>{`₱ ${floatAmountDue}`}</p>
+              {
+                document?.activeTab === 'DV' && (
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>
+                )
+              }
+              {
+                document?.activeTab === 'GSIS' && (
+                  <p className='text-customFontColor font-medium'>{`${formatToPeso(val1)}`}</p>
+                )
+              }
               <p className='text-customFontColor font-medium'>{document?.birParticular}</p>
             </div>
           </div>
@@ -181,7 +263,7 @@ const DVTemplate = ({document}) => {
 }
 
 DVTemplate.propTypes = {
-    document: PropTypes.object.isRequired
+    document: PropTypes.object
 }
 
 export default DVTemplate

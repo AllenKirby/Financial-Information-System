@@ -246,11 +246,25 @@ export const useApproverHook = () => {
         console.log('Click again')
         setIsLoading(true)
         setError(null)
+        console.log(data)
         try {
-            const res = await axios.post(`${apiURL}/admin/downloadDV`, {data}, {
-                responseType: 'blob',
-                withCredentials: true
-            })
+            let res
+            if(data.activeTab === 'DV'){
+                res = await axios.post(`${apiURL}/admin/downloadDV`, {data}, {
+                    responseType: 'blob',
+                    withCredentials: true
+                })
+            }else if(data.activeTab === 'GSIS'){
+                res = await axios.post(`${apiURL}/admin/downloadGSIS`, {data}, {
+                    responseType: 'blob',
+                    withCredentials: true
+                })
+            }else if(data.activeTab === 'Meralco'){
+                res = await axios.post(`${apiURL}/admin/downloadDV`, {data}, {
+                    responseType: 'blob',
+                    withCredentials: true
+                })
+            }
             const url = window.URL.createObjectURL(new Blob([res.data]));
             const link = document.createElement('a');
             link.href = url;

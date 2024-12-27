@@ -28,6 +28,10 @@ const AddNewFieldOffice = (props) => {
     }, [flag, fieldOffice]) 
 
     useEffect(() => {
+        console.log(props)
+    }, [])
+
+    useEffect(() => {
         if(flag && !prevData.current) {
             prevData.current = {
                 RO: fieldOffice.ASA,
@@ -90,7 +94,8 @@ const AddNewFieldOffice = (props) => {
         const data = {
             data: fieldOfficeData,
             id: `${ASANo}!${fieldOfficeID}`,
-            prevData: prevData.current
+            prevData: prevData.current,
+            leftBudget: remainingASA
         }
         const res = await updateFieldOffice(data)
         if(res) {
