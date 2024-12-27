@@ -2,7 +2,8 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
-import Loader from '../Loader'
+import LargeLoader from '../LargeLoader'
+
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
 
@@ -64,8 +65,8 @@ const AddControlBook = (props) => {
         } else {
             Swal.fire({
                 title: "Error",
-                text: "Control Book is successfully updated!",
-                icon: {error},
+                text: {error},
+                icon: "error",
                 confirmButtonColor: "#009933"
                 });
         }
@@ -90,7 +91,7 @@ const AddControlBook = (props) => {
     }
 
   return (
-    <form onSubmit={flag ? handleUpdate : handleSumit} className="w-2/5 h-auto p-3 bg-white rounded-lg">
+    <form onSubmit={flag ? handleUpdate : handleSumit} className="w-full sm:w-2/5 h-auto p-3 bg-white rounded-lg text-gray-500">
         <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>Add Control Book</h1>
         <div className="w-full h-auto p-3">
             <div className=''>
@@ -125,24 +126,26 @@ const AddControlBook = (props) => {
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
             </div>
-            <div className="w-full flex flex-col mt-2">
-                <label className="font-semibold">SARO No.</label>
-                <input 
-                    type="text"
-                    value={controlBookData.SARONo}
-                    onChange={(e) => setControlBookData({...controlBookData, SARONo: e.target.value.trimStart()})}
-                    required
-                    className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
-            </div>
-            <div className="w-full flex flex-col mt-2">
-                <label className="font-semibold">Total ASA</label>
-                <input 
-                    type="number"
-                    value={controlBookData.TotalASA}
-                    onFocus={handleFocus}
-                    onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
-                    required
-                    className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
+            <div className='w-full h-auto flex items-center justify-center gap-2'>
+                <div className="w-1/2 flex flex-col mt-2">
+                    <label className="font-semibold">SARO No.</label>
+                    <input 
+                        type="text"
+                        value={controlBookData.SARONo}
+                        onChange={(e) => setControlBookData({...controlBookData, SARONo: e.target.value.trimStart()})}
+                        required
+                        className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
+                </div>
+                <div className="w-1/2 flex flex-col mt-2">
+                    <label className="font-semibold">Total ASA</label>
+                    <input 
+                        type="number"
+                        value={controlBookData.TotalASA}
+                        onFocus={handleFocus}
+                        onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
+                        required
+                        className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
+                </div>
             </div>
             <div className="w-full flex flex-col mt-2">
                 <label className="font-semibold">Description</label>
@@ -157,15 +160,18 @@ const AddControlBook = (props) => {
             <button 
                 type="submit"
                 disabled={isLoading}
-                className={`${user.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} px-5 py-2 rounded-lg text-white font-semibold`}>{isLoading ? <Loader/> : 'Save'}</button>
+                className={`${user.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary border-preparerPrimary hover:bg-white hover:text-preparerPrimary'} border-2 px-5 py-2 rounded-lg text-white font-semibold transition-all duration-150`}>Save</button>
             <button 
                 onClick={modal}
-                className="px-5 py-2 rounded-lg font-semibold">Back</button>
+                className="px-5 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150">Back</button>
         </div>
         {error && (
             <div className="w-full text-center">
             <h4 className="text-sm text-red-500">{error}</h4>
             </div>
+        )}
+        {isLoading && (
+            <LargeLoader/>
         )}
     </form>
   )

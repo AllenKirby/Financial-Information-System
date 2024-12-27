@@ -6,15 +6,14 @@ import { RxPaperPlane } from "react-icons/rx";
 import { FiEdit3 } from "react-icons/fi";
 import { MdDeleteOutline, MdOutlineFileDownload  } from "react-icons/md";
 import { IoMdArrowRoundBack, IoMdCheckmark, IoMdAdd  } from "react-icons/io";
-import { IoCloseSharp, IoReturnDownBackOutline, IoReturnDownForward  } from "react-icons/io5";
-import { LiaCommentSolid } from "react-icons/lia";
+import { IoReturnDownBackOutline, IoReturnDownForward  } from "react-icons/io5";
+import { BsArrowLeft } from "react-icons/bs";
 //components
 import DisbursementVoucher from './DisbursementVoucher';
 //import Document from "./Document";
 import FundingModal from "./FundingModal";
 import AddComment from "./AddComment";
 import Comments from "./Comments";
-import Document from "./Document";
 
 //contexts
 import { useDisbursementContext } from "../hooks/useDisbursementContext";
@@ -43,7 +42,6 @@ const ViewDocument = () => {
   const [primaryColor, setPrimaryColor] = useState('')
   const [secondaryColor, setSecondaryColor] = useState('')
   const [type, setType] = useState('')
-  const [isCommentOpen, setIsCommentOpen] = useState(false)
   const [fundingModal, setFundingModal] = useState(false)
   
   //contexts
@@ -241,11 +239,9 @@ const ViewDocument = () => {
             <button
               onClick={() => openModal('ReturnDV')}
               disabled={isLoadingPreparer}
-              className={`w-auto px-5 rounded-lg py-2 text-white ${secondaryColor} ${
-                isLoadingPreparer ? 'bg-gray-200 text-gray-500' : 'text-red-500 '
-              }`}
+              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
             >
-              <IoReturnDownBackOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
+              <BsArrowLeft/> <span className="hidden sm:block">Return to Preparer</span>
             </button>
           )}
 
@@ -267,13 +263,7 @@ const ViewDocument = () => {
             </button>
           )}
           
-          {idStatus.status !== 'Drafting' && (
-            <button 
-              onClick={() => setIsCommentOpen(!isCommentOpen)}
-              className={`w-auto px-5 py-2 rounded-lg text-customFontColor border-2 border-customFontColor`}>
-              {isCommentOpen ? <IoCloseSharp className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/> : <LiaCommentSolid className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>}
-            </button>
-          )}
+          
           {idStatus.type === '4' && idStatus.status === 'Drafting' && (
             <button
               onClick={delDV}
@@ -283,27 +273,27 @@ const ViewDocument = () => {
               <MdDeleteOutline size={20}/>
             </button>
           )}
-          {(idStatus.type === '3' || idStatus.type === '4' && permission?.data?.permission) && (
-            <button
-              onClick={isFundingModalOpen}
-              className={`w-auto rounded-lg px-5 py-2 border-2 hover:text-white transition-all duration-150 ${user?.role === '4' ? 'border-blue-500 text-blue-500 hover:bg-blue-500': 'border-fundingBlueGreen text-fundingBlueGreen'}`}
-              >
-              <IoMdAdd size={20}/>
-            </button>
-          )}
           {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
             <button
               onClick={modal}
-              className={`w-auto rounded-lg px-5 py-2 border-2 hover:text-white transition-all duration-150 ${user?.role === '4' ? 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary': 'border-fundingBlueGreen text-fundingBlueGreen'}`}
+              className={`w-auto rounded-lg px-5 py-2 border-2 transition-all duration-150 ${user?.role === '4' ? 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary hover:text-white': 'border-blue-500 bg-blue-500 text-white hover:bg-white hover:text-blue-500'}`}
               >
-              <FiEdit3 className="text-xl sm:text-2xl md:text-3xl lg:text-lg 2xl:text-xl"/>
+              <FiEdit3 size={20}/>
+            </button>
+          )}
+          {(idStatus.type === '3' || idStatus.type === '4' && permission?.data?.permission) && (
+            <button
+              onClick={isFundingModalOpen}
+              className={`w-auto rounded-lg px-5 py-2 border-2 hover:text-white transition-all duration-150 ${user?.role === '4' ? 'border-blue-500 text-blue-500 hover:bg-blue-500': 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen'}`}
+              >
+              <IoMdAdd size={20}/>
             </button>
           )}
           {idStatus.type === '4' && (
             <button
               //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
               onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
-              className={`w-auto px-5 py-2 rounded-lg bg-preparerPrimary text-white`}
+              className={`w-auto px-5 py-2 rounded-lg bg-preparerPrimary border-2 border-preparerPrimary hover:bg-white hover:text-preparerPrimary text-white transition-all duration-150`}
               >
               <RxPaperPlane size={20} className="block lg:hidden"/><span className="lg:text-xl xl:text-base 2xl:text-2xl hidden lg:block">Submit</span>
             </button>
@@ -312,7 +302,7 @@ const ViewDocument = () => {
           {idStatus.type === '3' && (
             <button
               onClick={() => openModal('SubmitFunding')}
-              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
+              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen border-2 border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen text-white transition-all duration-150`}
               >
               <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
             </button>
@@ -347,7 +337,7 @@ const ViewDocument = () => {
           <div className="px-2">
             <hr />
           </div>
-          <div className="w-full p-5 h-auto overflow-y-auto">
+          <div className="w-full p-3 h-auto overflow-y-auto">
             { doc?.comments && doc?.comments.length > 0 ? (
                 doc?.comments.map((comment, index) => (
                   <Comments key={index} comment={comment}/>

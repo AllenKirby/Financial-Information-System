@@ -1,9 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom";
-import {io} from 'socket.io-client'
+//import {io} from 'socket.io-client'
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
 import { useEffect, useState } from "react";
 import { firestore } from "../config/firebase-config"
-import { collection, query, doc, onSnapshot, where } from "firebase/firestore"
+import { doc, onSnapshot } from "firebase/firestore"
 import {useDispatch, useSelector} from 'react-redux'
 import {setPermission} from '../redux/PermissionRedux' 
 import { useFundingHook } from "../hooks/useFundingHook";
@@ -18,7 +18,7 @@ import { FiBook} from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
 import { FaRegFile } from "react-icons/fa";
 
-import { getSocket, initializeSocket } from "../socketService/socketService";
+import { initializeSocket } from "../socketService/socketService";
 
 
 

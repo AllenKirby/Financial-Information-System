@@ -26,6 +26,7 @@ const HistoryLogs = () => {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             if (snapshot.exists()) {
                 const logs = snapshot.data()
+                console.log(logs)
                 setHistoryLogs(sortDesc(logs));
                 setFilteredLogs(sortDesc(logs))
             } else {9
@@ -67,7 +68,7 @@ const HistoryLogs = () => {
                 setFilteredLogs(logs)
             }
         }
-        if(selectedDate === 'Custom text-xs lg:text-base') {
+        if(selectedDate === 'Custom') {
             filterByDateRange(dateRange.start, dateRange.end, historyLogs)
         }else {
            getPastDate(historyLogs, selectedDate)
