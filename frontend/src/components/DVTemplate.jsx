@@ -18,6 +18,7 @@ const DVTemplate = ({document}) => {
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
   console.log(document)
+
   useEffect(() => {
     if(user && user.role) {
       switch(user.role) {
@@ -135,7 +136,7 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-semibold'>{document?.MOP === 'Others' ? `${document?.MOP}(${document?.specifiedMOP})` : document?.MOP}</p>
               <p className='text-customFontColor font-semibold'>{document?.ORSBURS ? document.ORSBURS : '--'}</p>
               <p className='text-customFontColor font-semibold'>{document?.RC}</p>
-              <p className='text-customFontColor font-semibold'>{document?.ASA ? document?.ASA : '--'}</p>
+              <p className='text-customFontColor font-semibold'>{document?.ASA ? document?.ASA.split('/')[0].replace('|', ' ') : '--'}</p>
               <p className='text-customFontColor font-semibold'>{document?.NF_name}</p>
               <p className='text-customFontColor font-semibold'>{document?.NF_office}</p>
               {document?.accTitle.map((title, index) => (
@@ -172,6 +173,27 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-medium'>RO</p>
               <p className='text-customFontColor font-medium'>{`₱ ${floatAmountDue}`}</p>
               <p className='text-customFontColor font-medium'>{document?.birParticular}</p>
+            </div>
+          </div>
+        </div>
+        <div className='flex flex-col'>
+          <div className='w-full py-1'>
+            <h1 className='text-lg 2xl:text-xl font-semibold'>Action Log</h1>
+          </div>
+          <div className='py-1 flex flex-row px-2 text-sm sm:text-base 2xl:text-lg'>
+            <div className='w-2/5 h-full'>
+              <p className='text-gray-500'>Created By</p>
+              <p className='text-gray-500'>Submitted By</p>
+              <p className='text-gray-500'>Updated By</p>
+              <p className='text-gray-500'>Reviewed By</p>
+              <p className='text-gray-500'>Approved By</p>
+            </div>
+            <div className='w-3/5 h-full'>
+              <p className='text-customFontColor font-medium'>{document?.createdBy}</p>
+              <p className='text-customFontColor font-medium'>{document?.submittedBy ? document?.submittedBy.replace('|', ' on ') : '--'}</p>
+              <p className='text-customFontColor font-medium'>{document?.updatedBy ? document?.updatedBy.replace('|', ' on ') : '--'}</p>
+              <p className='text-customFontColor font-medium'>{document?.reviewedBy ? document?.reviewedBy.replace('|', ' on ') : '--'}</p>
+              <p className='text-customFontColor font-medium'>{document?.approvedBy ? document?.approvedBy.replace('|', ' on ') : '--'}</p>
             </div>
           </div>
         </div>

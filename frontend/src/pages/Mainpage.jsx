@@ -59,7 +59,7 @@ const Mainpage = () => {
           </Route>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['3']}><DashboardFunding/></PrivateRoute>}/>
           <Route path="controlbook" element={<PrivateRoute allowedRoles={['3']}><ControlBook/></PrivateRoute>}>
-            <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewControlBook/></PrivateRoute>}/>
+            <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewControlBook/></PrivateRoute>}/> 
           </Route>
           <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['3']}><HistoryLogs/></PrivateRoute>}/>
         </Route>

@@ -105,7 +105,7 @@ const AddNewFieldOffice = (props) => {
     }
 
   return (
-    <form onSubmit={flag ? handleUpdate : handleSubmit} className="w-1/4 h-auto bg-white p-3 rounded-lg">
+    <form onSubmit={flag ? handleUpdate : handleSubmit} className="w-3/4 md:w-2/4 lg:w-1/4 h-auto bg-white p-3 rounded-lg">
         <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>{flag ? 'Edit Field Office' : 'Add Field Office'}</h1>
         <div className='w-full h-auto p-3'>
             <div className="w-full mt-2">
@@ -148,13 +148,13 @@ const AddNewFieldOffice = (props) => {
         <div className='w-full h-auto flex items-center justify-end gap-2 my-2'>
             <button 
                 type='submit' 
-                disabled={isLoading} 
-                className={`${user.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} px-5 py-2 rounded-lg text-white font-semibold`}>{isLoading ? <Loader /> : 'Save'}</button>
-            <button onClick={modal} className='px-5 py-2 rounded-lg font-semibold'>Back</button>
+                disabled={isLoading}  
+                className={`${user.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary border-preparerPrimary hover:bg-white hover:text-preparerPrimary'} border-2 px-5 py-2 rounded-lg text-white font-semibold transition-all duration-150`}>{isLoading ? <Loader /> : 'Save'}</button>
+            <button onClick={modal} className='px-5 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150'>Back</button>
         </div>
         {error && (
             <div className="w-full text-center">
-            <h4 className="text-sm text-red-500">{error}</h4>
+                <h4 className="text-sm text-red-500">{error}</h4>
             </div>
         )}
     </form>

@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import ReportRows from './ReportRows';
 
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { FiDownload } from "react-icons/fi";
 
 const ControlBookReport = (props) => {
     const { showReport, reportData } = props
@@ -15,12 +16,12 @@ const ControlBookReport = (props) => {
                 className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"
                 ><IoMdArrowRoundBack size={25}/></button>
             <div>
-                <p className="font-bold text-2xl text-fundingBlueGreen">Control Book Report</p>
+                <p className="font-bold text-base sm:text-lg lg:text-2xl text-fundingBlueGreen">Control Book Report</p>
             </div>
             <div className='flex items-center justify-center gap-3'>
                 <button 
-                  className="bg-fundingBlueGreen text-white px-5 py-2 rounded-lg"
-                  >Download</button>
+                  className="bg-fundingBlueGreen text-white px-5 py-2 rounded-lg flex items-center justify-center gap-2"
+                  ><FiDownload/><span className='hidden sm:block'>Download</span></button>
             </div>
         </div>
         <div className='w-full h-[92%] p-3'>

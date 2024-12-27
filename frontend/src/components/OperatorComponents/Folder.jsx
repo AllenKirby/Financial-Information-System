@@ -71,36 +71,54 @@ const Folder = ({ASANo, controlBook}) => {
   }, [controlBook])
 
   return (
-    <div onClick={() => navigate(`${controlBook.ASANo}`)} className="h-1/2 rounded-lg p-2 hover:bg-gray-200 transition-all duration-100 cursor-pointer">
-      <div className='w-full h-[70%] flex items-center justify-center'>
-        <img 
-            src={Object.entries(controlBook.fieldOffices).length > 0 ? FolderWithItems : EmptyFolder} 
-            alt="folder" 
-            className='w-auto h-full'/>
-      </div>
-      <div className='px-4 flex items-center justify-between'>
-        <p className='font-bold'>{controlBook ? controlBook.ASANo.replace("|", " ") : ''}</p>
-        <div className="flex items-center justify-center gap-2">
-          <button onClick={modal}>
-            <MdOutlineModeEdit size={18}/>
-          </button>
-          {
-            !deletable && (
-              <button disabled={isLoading} onClick={deleteCB}>
-                <MdDeleteOutline size={20} color='red'/>
-              </button>
-            )
+    <div
+      onClick={() => navigate(`${controlBook.ASANo}`)}
+      className="h-56 rounded-lg p-1 text-gray-500 hover:bg-gray-200 transition-all duration-100 cursor-pointer"
+    >
+      <div className="w-full h-[70%] flex items-center justify-center">
+        <img
+          src={
+            Object.entries(controlBook.fieldOffices).length > 0
+              ? FolderWithItems
+              : EmptyFolder
           }
+          alt="folder"
+          className="w-1/2 h-full"
+        />
+      </div>
+      <div className='w-full h-[30%]'>
+        <div className="px-4 flex items-center justify-between">
+          <p className="font-bold">
+            {controlBook ? controlBook.ASANo.replace("|", " ") : ""}
+          </p>
+          <div className="flex items-center justify-center gap-2">
+            <button onClick={modal}>
+              <MdOutlineModeEdit size={18} />
+            </button>
+            {!deletable && (
+              <button disabled={isLoading} onClick={deleteCB}>
+                <MdDeleteOutline size={20} color="red" />
+              </button>
+            )}
+          </div>
         </div>
+        <div className="px-4">
+          <p className="text-sm">{`${subcollectionCounts()} item(s)`}</p>
         </div>
-      <div className='px-4'>
-          <p className='text-sm'>{`${subcollectionCounts()} item(s)`}</p>
       </div>
       {controlBookFlag && (
         <>
           <div className="fixed inset-0 z-40 bg-black opacity-50" />
-          <div onClick={(e) => e.stopPropagation()} className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddControlBook modal={modal} flag={true} controlBook={controlBook} ASANo={ASANo}/>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center"
+          >
+            <AddControlBook
+              modal={modal}
+              flag={true}
+              controlBook={controlBook}
+              ASANo={ASANo}
+            />
           </div>
         </>
       )}
