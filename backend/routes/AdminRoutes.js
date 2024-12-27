@@ -20,10 +20,12 @@ const {getAllLogs,
        deleteTax,
        approveDV,
        getNumberOfRecords,
-       downloadDV
+       downloadDV,
+       downloadGSIS
         } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
+adminRouter.post('/downloadGSIS', downloadGSIS)
 adminRouter.post('/downloadDV', downloadDV)
 adminRouter.get('/getAllDV', getAllLogs)
 //adminRouter.get('/approvedDV', readAdmin_records)

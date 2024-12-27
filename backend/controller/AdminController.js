@@ -536,6 +536,81 @@ const downloadDV = async(req, res) => {
   }
 }
 
+const downloadGSIS = async(req, res) => {
+  const { data } = req.body
+
+  try {
+    const templatePath = path.join(__dirname, '..', 'templates', 'GSIS.xlsx'); 
+    const workbook = await XlsxPopulate.fromFileAsync(templatePath);
+
+    const combinedAccTitle = data.accTitle.join("\n");
+    const combinedAccCode = data.accCode.join("\n");
+
+    //GSIS computation
+    const val1 = eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    const gross_gsis = (parseFloat(data.amount) || 0) + (parseFloat(data.stamp) || 0) + (parseFloat(data.dst) || 0) + (parseFloat(data.vat12) || 0)
+    const amountDue_gsis = gross_gsis - (parseFloat(val1) || 0)
+
+    //payee
+    workbook.sheet('Sheet1').cell("P2").value(data.fund)
+    workbook.sheet('Sheet1').cell("P4").value(convertDate(data.date))
+    workbook.sheet('Sheet1').cell("P6").value(data.DV)
+    workbook.sheet('Sheet1').cell("C11").value(data.payee)
+    workbook.sheet('Sheet1').cell("K12").value(`${data.TT_tax} ${data.TIN}`)
+    workbook.sheet('Sheet1').cell("P12").value(data.ORSBURS)
+    workbook.sheet('Sheet1').cell("C13").value(data.address)
+    workbook.sheet('Sheet1').cell("B17").value(data.particular)
+    workbook.sheet('Sheet1').cell("K17").value(data.RC)
+    workbook.sheet('Sheet1').cell("Q17").value(gross_gsis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    // workbook.sheet('Sheet1').cell("D37").value(data.ASA.replace('|', ' ').replace('/', ' ').replace(',', ' '))
+    workbook.sheet('Sheet1').cell("G23").value(data.amount)
+    workbook.sheet('Sheet1').cell("G24").value(data.stamp)
+    workbook.sheet('Sheet1').cell("G25").value(data.dst)
+    workbook.sheet('Sheet1').cell("G26").value(data.vat12)
+    workbook.sheet('Sheet1').cell("G27").value(gross_gsis)
+    workbook.sheet('Sheet1').cell("G30").value(val1)
+    workbook.sheet('Sheet1').cell("Q39").value(amountDue_gsis)
+    workbook.sheet('Sheet1').cell("C30").value(data.amount)
+    workbook.sheet('Sheet1').cell("A45").value(data.NF_name)
+    workbook.sheet('Sheet1').cell("A46").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("N49").value(amountDue_gsis)
+    workbook.sheet('Sheet1').cell("Q51").value(amountDue_gsis)
+    workbook.sheet('Sheet1').cell("K53").value(`${toWords(amountDue_gsis).charAt(0).toUpperCase() + toWords(amountDue_gsis).slice(1)} pesos`)
+    workbook.sheet('Sheet1').cell("B40").value(combinedAccTitle).style({
+      wrapText: true, 
+      verticalAlignment: "top",
+    });
+    workbook.sheet('Sheet1').cell("K40").value(combinedAccCode).style({
+      wrapText: true, 
+      verticalAlignment: "top",
+    });
+    // workbook.sheet('Sheet1').cell("B41").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
+    // workbook.sheet('Sheet1').cell("B42").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)
+
+    //BIR
+    // workbook.sheet('Sheet1').cell("P81").value(data.fund)
+    // workbook.sheet('Sheet1').cell("P83").value(convertDate(data.date))
+    // workbook.sheet('Sheet1').cell("P91").value(data.ORSBURS)   
+    // workbook.sheet('Sheet1').cell("A95").value(data.birParticular)   
+    // workbook.sheet('Sheet1').cell("Q96").value(amount_due)   
+    // workbook.sheet('Sheet1').cell("Q109").value(amount_due)  
+    // workbook.sheet('Sheet1').cell("N119").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    // workbook.sheet('Sheet1').cell("N120").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    // workbook.sheet('Sheet1').cell("Q121").value(amount_due)
+    // workbook.sheet('Sheet1').cell("B119").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
+    // workbook.sheet('Sheet1').cell("B120").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
+    // workbook.sheet('Sheet1').cell("A115").value(data.NF_name)
+    // workbook.sheet('Sheet1').cell("A116").value(data.NF_office)
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
+    await workbook.outputAsync({ type: "nodebuffer" }).then(buffer => res.send(buffer));
+  } catch (error) {
+    console.log('error downloading DV', error)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
 const convertDate = (dateString) => {
   const date = new Date(dateString);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -571,5 +646,6 @@ module.exports = {
   deleteTax,
   approveDV,
   getNumberOfRecords,
-  downloadDV
+  downloadDV,
+  downloadGSIS
 };

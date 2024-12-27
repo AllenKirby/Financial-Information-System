@@ -1,25 +1,25 @@
-const {db} = require('../config/firebase')
+const {db, admin} = require('../config/firebase')
 const { decryptObj } = require('../controller/functions');
 
-const editorSocket = (socket, io) => {
-    console.log('Initializing EDITOR Firestore listeners...');
-
-    const status = ['Drafting', 'Returned|4'];
+const adminSocket = (socket, io) => {
+    console.log('Initializing ADMIN Firestore listeners...');
+    const status = ['Approved', 'For Approval']
     const keysNotToDecrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber', 'iv', 'submittedBy']
     const collectionRef = db.collection('records').where('status', 'in', status);
     collectionRef.onSnapshot( (snapshot) => {
-        console.log('editor documents found');
+        console.log('admin documents found');
         const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
             const encryptedData = doc.data();
             const decryptedData = decryptObj(encryptedData, { keysNotToDecrypt });
-            acc[doc.id] = decryptedData;
+            acc[doc.id] = {data: decryptedData};
             return acc;
         }, {});
-        io.emit('editor:firestore:update', updatedDocuments);
+        io.emit('admin:firestore:update', updatedDocuments);
     },
     (err) => {
         console.error('Error in editor Firestore listener:', err);
     })
+
 }
 
-module.exports = editorSocket
+module.exports = adminSocket

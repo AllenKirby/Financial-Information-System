@@ -10,7 +10,8 @@ import AddNewFieldOffice from "./AddNewFieldOffice";
 import ViewProject from "./ViewProject";
 
 const FieldOffices = (props) => {
-  const {fieldOffice, ASANo, fieldOfficeID, flag, openModal} = props
+
+  const {fieldOffice, ASANo, fieldOfficeID, remainingASA, flag, openModal} = props
 
   const { deleteFieldOffice, isLoading, error } = useFundingHook()
   
@@ -74,7 +75,7 @@ const FieldOffices = (props) => {
           <>
             <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
             <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-              <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true}/>
+              <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA}/>
             </div>
           </>
         )}

@@ -2,12 +2,14 @@ const {Server} = require('socket.io')
 const socketAuth = require('../middleware/socketAuth')
 
 const editorSocket = require('./editorSocket');
+const adminSocket = require('./adminSocket')
+const operatorSocket = require('./operatorSocket')
 
 const initializeSockets = (server) => {
     const io = new Server(server, {
         cors: {
             origin: 'http://localhost:5173',
-            methods: ['GET', 'POST'],
+            methods: ['GET', 'POST', 'DELETE', 'PATCH'],
             credentials: true,
         },
     })
@@ -19,9 +21,23 @@ const initializeSockets = (server) => {
     io.on('connection', (socket) => {
         console.log('A user connected:', socket.id);
 
+        switch(socket.user.role){
+            case '1':
+                adminSocket(socket, io);
+                break;
+            case '2':
+                // headSocket(socket, io);
+                break;
+            case '3':
+                operatorSocket(socket, io);
+                break;
+            case '4':
+                editorSocket(socket, io);
+                break;
+        }
         // userSocket(socket, io);
         // adminSocket(socket, io);
-        editorSocket(socket, io)
+        // editorSocket(socket, io)
         // operatorSocket(socket, io);
         // headSocket(socket, io);
 

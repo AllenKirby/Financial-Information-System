@@ -707,13 +707,16 @@ const updateFieldOffice = async(req, res) => {
     const { id } = req.params
     const [ASANo, docId] = id.split('!')
     const fieldOfficeData = req.body.data
+    const LeftBudget = req.body.leftBudget
     const {RO, projectID, projectName} = req.body.prevData
 
-    const dateTimeCollection = getDateTime;
-
+    const dateTimeCollection = getDateTime();
+    // console.log(req.body)
     const data = {
         ...fieldOfficeData,
-        updatedAt: dateTimeCollection
+        updatedAt: dateTimeCollection,
+        leftBudget: fieldOfficeData.ASA,
+        RO: fieldOfficeData.ASA
     }
 
     formData = {
@@ -721,8 +724,13 @@ const updateFieldOffice = async(req, res) => {
         projectID: projectID,
         projectName: projectName
     }
-
+    // FORMULA :   newLeftBudget = LeftBudget + RO - desireUpdate
+    //             newLeftBudget = Latest + Current - update
+    const updatedLeftBudget = parseFloat(LeftBudget) + parseFloat(RO) - parseFloat(fieldOfficeData.ASA)
+    console.log(`${updatedLeftBudget} = ${LeftBudget} + ${RO} - ${fieldOfficeData.ASA}`)
     try {
+        const controlBookRef = db.collection('ControlBook').doc(ASANo)
+        controlBookRef.update({leftBudget: updatedLeftBudget})
         const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId)
         await docRef.update(data)
         const docref = db.collection('formData').doc('ControlBook')

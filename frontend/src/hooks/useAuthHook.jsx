@@ -64,7 +64,6 @@ export const useAuthHook = () => {
               }
 
               //initialize the web socket
-              // dispatch(initializeSocket(token))
               initializeSocket(token)
 
               if(userData.firstTimeLogin){

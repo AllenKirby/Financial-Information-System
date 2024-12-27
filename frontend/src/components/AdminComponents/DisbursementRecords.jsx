@@ -32,6 +32,7 @@ const DisbursementRecords = () => {
           document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
         )
       );
+      console.log(filteredResults)
       const descFilteredResults = sortTimePassedDesc(filteredResults)
       setFilteredDocuments(descFilteredResults);
     } else {
@@ -62,16 +63,17 @@ const DisbursementRecords = () => {
   }
 
   const sortTimePassedDesc = (docu) => {
-    if (docu && Object.keys(docu).length > 0) {
-      const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
-        const dateTimeA = a.data.reviewedBy.split('|').slice()[1]
-        const dateTimeB = b.data.reviewedBy.split('|').slice()[1]
-        return new Date(dateTimeB) - new Date(dateTimeA)
-      });
-      return Object.fromEntries(sortedEntries)
-    } else {
-      return {} 
-    }
+    return docu
+    // if (docu && Object.keys(docu).length > 0) {
+    //   const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
+    //     const dateTimeA = a.data.reviewedBy.split('|').slice()[1]
+    //     const dateTimeB = b.data.reviewedBy.split('|').slice()[1]
+    //     return new Date(dateTimeB) - new Date(dateTimeA)
+    //   });
+    //   return Object.fromEntries(sortedEntries)
+    // } else {
+    //   return {} 
+    // }
   }
 
   return (

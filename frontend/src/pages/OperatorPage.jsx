@@ -18,6 +18,8 @@ import { useFundingHook } from "../hooks/useFundingHook"
 import {useDispatch, useSelector} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
 
+import {initializeSocket } from "../socketService/socketService";
+
 const OperatorPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
@@ -82,23 +84,38 @@ const OperatorPage = () => {
   //   }
   // }, [permission])
 
-  useEffect(() => {
-    // if (!status.length) return;  
-    const status = permission?.data?.permission ? ['Drafting', 'In Review', 'Returned|3', 'Returned|4'] : ['In Review', 'Returned|3']
-    const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['In Review', 'Returned|3']));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
-        acc[doc.id] = {data: {...doc.data()}};
-        return acc;
-      }, {})};
+  // useEffect(() => {
+  //   // if (!status.length) return;  
+  //   const status = permission?.data?.permission ? ['Drafting', 'In Review', 'Returned|3', 'Returned|4'] : ['In Review', 'Returned|3']
+  //   const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['In Review', 'Returned|3']));
+  //   const unsubscribe = onSnapshot(q, (snapshot) => {
+  //     const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
+  //       acc[doc.id] = {data: {...doc.data()}};
+  //       return acc;
+  //     }, {})};
       
-      dispatchContext({type: 'SET_OPDOCUMENTS', payload: newDocuments})
-    })
+  //     dispatchContext({type: 'SET_OPDOCUMENTS', payload: newDocuments})
+  //   })
 
-    return () => unsubscribe()
+  //   return () => unsubscribe()
 
-  }, [user, dispatchContext, apiURL, documents, permission?.data?.permission])
+  // }, [user, dispatchContext, apiURL, documents, permission?.data?.permission])
   // permission.data.permission 
+
+
+  useEffect(() => {
+    const {socket, isInitialized} = initializeSocket()
+      if(isInitialized){
+        socket.on('operator:firestore:update', (doc) => {
+          console.log('hit')
+          console.log(doc)
+          dispatchContext({type: 'SET_OPDOCUMENTS', payload: doc})
+        })
+        return () => {
+          socket.off('operator:firestore:update');
+        };
+      }
+  }, []) //[user, dispatchContext, apiURL, documents, permission?.data?.permission]
 
   const collapseSideBar = () => {
     setNavbarExpand(!navbarExpand)

@@ -587,7 +587,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 disabled={ ['GSIS', 'Meralco'].includes(activeTab) || (isDisabled && !permission.data.permission)}
                 type="text" 
                 pattern="^[a-zA-Z\s'-]+$"
-                value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab : payeeData.payee }
+                value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab : ['GSIS', 'Meralco'].includes(payeeData.payee) ? '' : payeeData.payee }
                 minLength="2" 
                 maxLength="50"
                 onChange={handleChangePayee}
@@ -1044,7 +1044,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     {/* TIN AND VAT */}
                     <div className='w-full flex gap-2 mt-2'>
                       <div className='w-1/2'>
-                        <label className='text-gray-500'>VAT Sales</label>
+                        <label className='text-gray-500'>Tax Base</label>
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                           type="number" 
@@ -1055,7 +1055,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           required  />
                       </div>
                       <div className='w-1/2'>
-                        <label className='text-gray-500'>NON - VAT</label>
+                        <label className='text-gray-500'>NON VAT</label>
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                           type="number" 
@@ -1067,7 +1067,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       </div>
                     </div>
                     <div className='w-full mt-2'>
-                      <label className='text-gray-500'>Amount</label>
+                      <label className='text-gray-500'>VAT</label>
                       <input 
                         className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                         type="number" 

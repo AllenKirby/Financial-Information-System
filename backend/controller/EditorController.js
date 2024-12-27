@@ -46,8 +46,9 @@ const createDV = async (req, res) => {
     newDvData = {
         ...payeeData,
         date: formatDate(date),
-        DV: finalizeDVNo,
+        DV: finalizeDVNo.DV,
         DVKey: DVKey,
+        DVBIR: finalizeDVNo.BIR,
         birParticular: birParticular.trim(),
         createdAt: dateTimeCollection,
         createdBy: createdByDetails,
@@ -308,18 +309,23 @@ const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
             const data = doc.data();
             const currentNoOfCopies = data[dvno] || givenNo
 
-            let incrementedByOne;
+            let incrementedByTwo;
             if (currentNoOfCopies === givenNo) {
-                incrementedByOne = (parseInt(givenNo, 10) + 1).toString().padStart(4, '0');
+                incrementedByTwo = (parseInt(givenNo, 10) + 2).toString().padStart(4, '0');
             } else {
-                incrementedByOne = (parseInt(currentNoOfCopies, 10) + 1).toString().padStart(4, '0');
+                incrementedByTwo = (parseInt(currentNoOfCopies, 10) + 2).toString().padStart(4, '0');
             }
 
             transaction.update(docRef, {
-                [dvno]: incrementedByOne
+                [dvno]: incrementedByTwo
             });
+            const minusOne = (parseInt(input, 10) - 1).toString().padStart(4, '0');
+            const dvData = {
+                DV: `${template}${minusOne}`,
+                BIR: `${template}${incrementedByTwo}`
+            }
 
-            return `${template}${incrementedByOne}`;
+            return dvData;
         })
         
     }catch(error){
