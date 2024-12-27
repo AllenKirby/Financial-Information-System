@@ -22,6 +22,7 @@ const DisbursementRecords = () => {
   const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
   const [timeReturnedFlag, setTimeReturnedFlag] = useState(false)
   const [searchModal, setSearchModal] = useState(false)
+  const [search, setSearch] = useState('')
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -43,6 +44,12 @@ const DisbursementRecords = () => {
       setFilteredDocuments({}); 
     }
   }, [filter, documents]);
+
+  useEffect(() => {
+    if(!documents) return 
+    const filteredResults = Object.entries(documents).filter(doc => doc[1].payee.toLowerCase().includes(search.toLowerCase()) || doc[1].DV.toLowerCase().includes(search.toLowerCase()))
+    setFilteredDocuments(Object.fromEntries(filteredResults))
+  }, [search, documents])
 
   const sortAphabetically = (flag) => {
     setAlphabeticalFlag(!alphabeticalFlag)
@@ -124,6 +131,7 @@ const DisbursementRecords = () => {
             <input 
               type="search"
               placeholder='Search'
+              onChange={(e) => setSearch(e.target.value)}
               className='w-full py-2 text-sm 2xl:text-base pl-10 rounded-lg focus:outline-preparerPrimary border-2' />
           </div>
           <button onClick={() => setSearchModal(!searchModal)} className='w-1/6 py-1 flex items-center justify-center border-2 rounded-lg'>
@@ -164,6 +172,7 @@ const DisbursementRecords = () => {
             <input 
               type="search"
               placeholder='Search'
+              onChange={(e) => setSearch(e.target.value)}
               className='w-14 sm:w-auto py-2 text-sm 2xl:text-base pl-10 placeholder-transparent sm:placeholder-gray-500 rounded-lg focus:outline-none border-2' />
           </div>
           <button onClick={() => setSearchModal(!searchModal)} className='block sm:hidden'>
@@ -175,7 +184,7 @@ const DisbursementRecords = () => {
         <div className='w-full h-full rounded-lg'>
           <div className='w-full h-[8%] hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
             <div className='w-2/6 flex '>
-              <h1 className='lg:text-base 2xl:text-lg w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
+              <h1 className='lg:text-sm 2xl:text-base w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
                 Payee {alphabeticalFlag ? 
                   <BsSortAlphaDownAlt 
                     size={20} 
@@ -188,11 +197,11 @@ const DisbursementRecords = () => {
                 }
               </h1>
             </div>
-            <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>DV No.</h1>
-            <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold'>Status</h1>
-            <h1 className='lg:text-base 2xl:text-lg w-1/6 text-center font-semibold '>Time Created</h1>
+            <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
+            <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
+            <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold '>Time Created</h1>
             <div className='w-1/6 flex items-end justify-center gap-2'>
-              <h1 className='lg:text-base 2xl:text-lg w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
+              <h1 className='lg:text-sm 2xl:text-base w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
             </div>
           </div>
           <div className="w-full h-full sm:h-[92%] rounded-lg">

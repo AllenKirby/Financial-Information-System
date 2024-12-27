@@ -7,6 +7,7 @@ import { usePreparerHook } from '../hooks/usePreparerHook'
 import { useFundingHook } from "../hooks/useFundingHook";
 import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
 import { useAuthContext } from '../hooks/useAuthContext';
+import LargeLoader from './LargeLoader';
 
 const AddComment = ({idStatus, doc, modal, type, ASA}) => {
     const [comment, setComment] = useState('')
@@ -299,23 +300,26 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
     }
 
   return (
-    <form onSubmit={sortFunctions} className="w-2/4 h-auto bg-white rounded-lg p-3">
-        <h1 className={`text-2xl font-bold text-center ${color.font}`}>Add Comment(Optional)</h1>
-        <p className='my-2'>{message()}</p>
-        <textarea 
-            className="w-full h-48 p-2 rounded-lg focus:outline-none border-2 resize-none"
-            placeholder="Leave a comment..."
-            onChange={(e) => setComment(e.target.value)}></textarea>
-        <div className="flex items-center justify-end gap-2 my-2">
-            <button 
-              disabled={isLoading} 
-              type="submit"
-              className={`px-4 py-1 rounded-md text-lg text-white ${color.bg}`}>Save</button>
-            <button 
-              disabled={isLoading} 
-              onClick={modal}
-              className={`px-4 py-1 rounded-md text-lg ${color.font}`}>Back</button>
-        </div>
+    <form onSubmit={sortFunctions} className="w-3/4 sm:w-2/4 h-auto bg-white rounded-lg p-3 text-gray-500">
+      <h1 className={`text-lg sm:text-2xl font-bold text-center ${color.font}`}>Add Comment(Optional)</h1>
+      <p className='text-sm sm:text-base my-2'>{message()}</p>
+      <textarea 
+          className="w-full h-48 p-2 rounded-lg focus:outline-none border-2 resize-none"
+          placeholder="Leave a comment..."
+          onChange={(e) => setComment(e.target.value)}></textarea>
+      <div className="flex items-center justify-end gap-2 my-2">
+          <button 
+            disabled={isLoading} 
+            type="submit"
+            className={`px-4 py-2 rounded-lg font-semibold text-white ${color.bg} hover:bg-white hover:${color.font} border-2 ${color.border} transition-all duration-150`}>Save</button>
+          <button 
+            disabled={isLoading} 
+            onClick={modal}
+            className={`px-4 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150`}>Back</button>
+      </div>
+      {isLoading && (
+        <LargeLoader/>
+      )}
     </form>
   )
 }

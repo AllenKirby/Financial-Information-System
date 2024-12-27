@@ -5,6 +5,7 @@ import { useSelector } from "react-redux"
 import { IoAddOutline } from "react-icons/io5";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { GrCircleInformation } from "react-icons/gr";
+import { FiFileText } from "react-icons/fi";
 
 import AddNewFieldOffice from "./AddNewFieldOffice";
 import FieldOffices from "./FieldOffices";
@@ -20,6 +21,7 @@ const ViewControlBook = () => {
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [reportFlag, setReportFlag] = useState(false)
+  const [viewProjectFlag, setViewProjectFlag] = useState(false)
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
 
@@ -32,6 +34,9 @@ const ViewControlBook = () => {
       }).format(value);
   };
 
+  const viewProject = () => {
+    setViewProjectFlag(!viewProjectFlag)
+  }
 
   useEffect(() => {
     if(controlBooks){
@@ -66,8 +71,8 @@ const ViewControlBook = () => {
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => window.history.back()}
-                className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={25}/></button>
-              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
+                className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={20}/></button>
+              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-base sm:text-xl lg:text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
               <div className="relative w-auto h-auto">
                 <GrCircleInformation 
                   size={28} 
@@ -94,62 +99,59 @@ const ViewControlBook = () => {
                 <button 
                   className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} text-white px-5 py-2 rounded-lg 2xl:text-lg`}
                   onClick={showReport}
-                  >Generate Report</button>
+                  ><FiFileText className="block sm:hidden"/> <span className="hidden sm:block">Generate Report</span></button>
               </div>
             </div>
-            <div className="w-full h-[90%]">
-              <div className="w-full h-1/4 flex gap-2">
-                <div className="w-1/4 h-full rounded-lg p-3 border-2">
-                  <div className="w-full h-1/4">
-                    <p className="font-semibold lg:text-sm 2xl:text-lg">Available ASA Budget</p>
-                  </div>
-                  <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
-                  </div>
-                </div>
-                <div className="w-1/4 h-full rounded-lg p-3 border-2">
-                  <div className="w-full h-1/4">
-                    <p className="font-semibold lg:text-sm 2xl:text-lg">Remaining ASA Balance</p>
-                  </div>
-                  <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.RO)}</p>
-                  </div>
-                </div>
-                <div className="w-1/4 h-full rounded-lg border-2 p-3">
-                  <div className="w-full h-1/4">
-                    <p className="font-semibold lg:text-sm 2xl:text-lg">Total Spending</p>
-                  </div>
-                  <div className="w-full h-3/4 flex items-center justify-center">
-                    <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.FO)}</p>
-                  </div>
-                </div>
-                <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/4 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
-                <div className="flex flex-col">
-                    <div className="w-full flex items-center justify-center">
-                      <IoAddOutline size={40}/>
+            <div className="w-full h-[90%] flex flex-col">
+              <div className="w-full h-auto flex flex-col sm:flex-row gap-2">
+                <div className="w-full sm:w-1/2 flex gap-2">
+                  <div className="w-1/2 h-full rounded-lg p-3 border-2 flex flex-col items-center justify-center">
+                    <div className="w-full mb-2">
+                      <p className="font-semibold text-xs 2xl:text-lg">Available ASA Budget</p>
                     </div>
-                    <p className="font-semibold lg:text-lg 2xl:text-xl">New Project</p>
+                    <div className="w-full flex items-center justify-center">
+                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
+                    </div>
+                  </div>
+                  <div className="w-1/2 h-full rounded-lg p-3 border-2 flex flex-col items-center justify-center">
+                    <div className="w-full mb-2">
+                      <p className="font-semibold text-xs 2xl:text-lg">Remaining ASA Balance</p>
+                    </div>
+                    <div className="w-full flex items-center justify-center">
+                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.RO)}</p>
+                    </div>
+                  </div>
                 </div>
-                </button>
+                <div className="w-full sm:w-1/2 flex gap-2">
+                  <div className="w-1/2 h-full rounded-lg border-2 p-3">
+                    <div className="w-full mb-2">
+                      <p className="font-semibold text-xs 2xl:text-lg">Total Spending</p>
+                    </div>
+                    <div className="w-full flex items-center justify-center">
+                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.FO)}</p>
+                    </div>
+                  </div>
+                  <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/2 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
+                    <div className="flex items-center justify-center gap-2">
+                      <IoAddOutline size={30}/>
+                      <p className="font-semibold lg:text-lg 2xl:text-3xl">New Project</p>
+                    </div>
+                  </button>
+                </div>
               </div>
-              <div className="w-full h-3/4">
-                <div className="w-full h-[5%] my-2 px-5">
-                  <p className="font-semibold my-1 2xl:text-xl">Projects({ControlBook.data.fieldOffices ? Object.entries(ControlBook.data.fieldOffices).length : 0})</p>
-                </div>
-                <div className="w-full h-[90%] overflow-auto border-2 rounded-lg p-1">
-                    {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
-                      Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
-                        <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key}/>
-                      ))
-                    ) : (
-                      <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
-                    )}
-                </div>
+              <div className="w-full flex-1 flex flex-wrap p-2">
+                {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
+                  Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
+                    <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} flag={viewProjectFlag} openModal={viewProject}/>
+                  ))
+                ) : (
+                  <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
+                )}
               </div>
             </div>
             {FieldOfficeModal && (
               <>
-                <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+                <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
                   <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget}/>
                 </div>

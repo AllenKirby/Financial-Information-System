@@ -1,6 +1,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useFundingHook } from "../hooks/useFundingHook";
+import { useAuthContext } from "../hooks/useAuthContext"
 import { useInitialStateDV } from "../hooks/useInitialStateDV";
 
 import PropTypes from 'prop-types'
@@ -16,8 +17,10 @@ const FundingModal = ({modal, data}) => {
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
     const [origBUR, setOrigBUR] = useState('')
-    const [same, setSame] = useState(false)
+    //const [same, setSame] = useState(false)
     const prevASARef = useRef();
+
+    const { user } = useAuthContext()
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -104,39 +107,41 @@ const FundingModal = ({modal, data}) => {
     }
 
     return(
-        <form onSubmit={handleSubmit} className="bg-white w-2/5 h-auto p-3 rounded-lg">
-            <h1 className="px-3 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
-            <div className="flex items-center gap-2 mt-4">
-                {/* Input Field */}
-                <input
-                disabled
-                type="text"
-                placeholder={!isToggled ? 'ORS/BUR Not Required?' : ''}
-                className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
-                value={data.ORSBURS ? data.ORSBURS: isToggled ? BUR : ''}
-                />
-                
-                {/* Toggle Button */}
-                <button
-                disabled={data.ORSBURS ? true : false}
-                className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
-                type="button"
-                onClick={() => {
-                    const value = !isToggled ? BUR : ''
-                    setOperatorInput({...operatorInput, ors: value})
-                    setIsToggled(!isToggled)
-                }}
-                >
-                    <span
-                        className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
-                        isToggled ? 'translate-x-8' : 'translate-x-1'
-                        }`}
-                    ></span>
-                </button>
+        <form onSubmit={handleSubmit} className="bg-white w-2/6 h-auto p-3 rounded-lg text-gray-500">
+            <h1 className="px-3 my-2 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
+            <div className="w-full h-auto px-3">
+                <label className="font-semibold">ORS/BURS</label>
+                <div className="flex items-center gap-2">
+                    <input
+                        disabled
+                        type="text"
+                        placeholder={!isToggled ? 'ORS/BUR Not Required?' : ''}
+                        className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
+                        value={data.ORSBURS ? data.ORSBURS: isToggled ? BUR : ''}
+                        />
+                    
+                    {/* Toggle Button */}
+                    <button
+                    disabled={data.ORSBURS ? true : false}
+                    className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
+                    type="button"
+                    onClick={() => {
+                        const value = !isToggled ? BUR : ''
+                        setOperatorInput({...operatorInput, ors: value})
+                        setIsToggled(!isToggled)
+                    }}
+                    >
+                        <span
+                            className={`absolute top-1/2 left-1 transform -translate-y-1/2 w-6 h-6 bg-white rounded-full transition-transform duration-300 ease-in-out ${
+                            isToggled ? 'translate-x-8' : 'translate-x-1'
+                            }`}
+                        ></span>
+                    </button>
+                </div>
             </div>
-            <h1 className="px-3 py-4 text-2xl font-bold text-fundingBlueGreen"> Amount: {formatToPeso(data.amount)}</h1>
+            <h1 className="px-3 py-2 text-lg font-bold text-fundingBlueGreen"> Amount: {formatToPeso(data.amount)}</h1>
             <div className="px-3">
-                <div className="my-2">
+                <div>
                     <label className="font-semibold">ASA No.</label>
                     <select    
                         className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2'
@@ -170,10 +175,10 @@ const FundingModal = ({modal, data}) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="py-2 px-5 rounded-md bg-fundingBlueGreen text-white font-bold">{isLoading ? <Loader/>: 'Save'}</button>
+                    className={`py-2 px-5 rounded-lg border-2 text-white font-semibold transition-all duration-150 ${user?.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary'}`}>{isLoading ? <Loader/>: 'Save'}</button>
                 <button 
                     onClick={modal}
-                    className="py-2 px-5 rounded-md text-customFontColor font-bold"
+                    className="py-2 px-5 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150"
                     >Back
                 </button>
             </div>

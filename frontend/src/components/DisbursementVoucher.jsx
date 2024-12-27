@@ -20,7 +20,7 @@ import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', MOP: '', specifiedMOP: '',  origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'',accCategory: [], accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
+  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', MOP: 'Others', specifiedMOP: 'LCCA',  origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'',accCategory: [], accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
   const [gsis, setGSIS] = useState({stamp: 0, dst: 0, vat12: 0})
   const [meralco, setMeralco] = useState({meralcoVAT: 0, meralcoNONVAT: 0})
   //states
@@ -1122,11 +1122,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <button 
             type="submit" 
             disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
-            className={`text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-md ${user.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white transition-all duration-100`}
+            className={`text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-lg border-2 ${user.role === '4' ? 'bg-preparerPrimary text-white hover:bg-white hover:text-preparerPrimary border-preparerPrimary' : 'bg-fundingBlueGreen text-white hover:bg-white hover:text-fundingBlueGreen border-fundingBlueGreen'} transition-all duration-150`}
             >Save</button>
           <button 
             onClick={modal}
-            className="text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-md text-gray-500 border-2 font-semibold transition-all duration-100"
+            className="text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-lg text-gray-500 border-2 hover:bg-gray-200 font-semibold transition-all duration-100"
             >Back</button>
         </div>
       </div>
