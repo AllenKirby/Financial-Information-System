@@ -63,17 +63,16 @@ const DisbursementRecords = () => {
   }
 
   const sortTimePassedDesc = (docu) => {
-    return docu
-    // if (docu && Object.keys(docu).length > 0) {
-    //   const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
-    //     const dateTimeA = a.data.reviewedBy.split('|').slice()[1]
-    //     const dateTimeB = b.data.reviewedBy.split('|').slice()[1]
-    //     return new Date(dateTimeB) - new Date(dateTimeA)
-    //   });
-    //   return Object.fromEntries(sortedEntries)
-    // } else {
-    //   return {} 
-    // }
+    if (docu && Object.keys(docu).length > 0) {
+      const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
+        const dateTimeA = a.data.reviewedBy.split('|').slice()[1]
+        const dateTimeB = b.data.reviewedBy.split('|').slice()[1]
+        return new Date(dateTimeB) - new Date(dateTimeA)
+      });
+      return Object.fromEntries(sortedEntries)
+    } else {
+      return {} 
+    }
   }
 
   return (

@@ -1,8 +1,10 @@
-const {db} = require('../config/firebase')
+const {db, admin} = require('../config/firebase')
 const { decryptObj } = require('../controller/functions');
 
-const editorSocket = (socket, io) => {
-    console.log('Initializing EDITOR Firestore listeners...');
+
+const headSocket = (socket, io) => {
+    
+    console.log('Initializing HEAD Firestore listeners...');
     let collectionUnsubscribe = null;
     const permissionUnsubscribe = getPermissions((perm) => {
         const permissionRecords = {
@@ -11,8 +13,8 @@ const editorSocket = (socket, io) => {
         console.log('permission data: ',perm)
 
         const status = perm?.permission
-            ? ['Drafting', 'Returned|4', 'In Review', 'Returned|3']
-            : ['Drafting', 'Returned|4'];
+            ? ['Approved', 'Under Review', 'For Approval']
+            : ['Under Review'];
 
         if (collectionUnsubscribe) {
             console.log('Updating Firestore collection listener...');
@@ -30,39 +32,38 @@ const editorSocket = (socket, io) => {
             collectionUnsubscribe();
         }
     })
-    
 }
 
 const setupCollections = (socket, io, status, permissionRecords) =>{
     const keysNotToDecrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber', 'iv', 'submittedBy']
     const collectionRef = db.collection('records').where('status', 'in', status);
     const unsubscribe = collectionRef.onSnapshot( (snapshot) => {
-        console.log('editor documents found');
+        console.log('HEAD documents found');
         const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
             const encryptedData = doc.data();
             const decryptedData = decryptObj(encryptedData, { keysNotToDecrypt });
-            acc[doc.id] = decryptedData;
+            acc[doc.id] = {data: decryptedData};
             return acc;
         }, {});
 
-        io.emit('editor:firestore:update', updatedDocuments);
-        io.emit('editorPermission:firestore:update', permissionRecords)
+        io.emit('head:firestore:update', updatedDocuments);
+        io.emit('headPermission:firestore:update', permissionRecords)
     },
     (err) => {
-        console.error('Error in editor Firestore listener:', err);
+        console.error('Error in head Firestore listener:', err);
     });
     return unsubscribe
 }
 
 
 const getPermissions = (callback) => {
-    const docRef = db.collection('Roles').doc('Preparer');
+    const docRef = db.collection('Roles').doc('Budget Officer');
     const unsubscribe = docRef.onSnapshot(
         (doc) => {
             if (doc.exists) {
                 callback(doc.data());
             } else {
-                console.error('No document found for Editor');
+                console.error('No document found for Budget Officer');
                 callback(null);
             }
         },
@@ -75,4 +76,4 @@ const getPermissions = (callback) => {
     return unsubscribe;
 };
 
-module.exports = editorSocket
+module.exports = headSocket

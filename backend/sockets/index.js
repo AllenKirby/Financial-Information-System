@@ -4,6 +4,7 @@ const socketAuth = require('../middleware/socketAuth')
 const editorSocket = require('./editorSocket');
 const adminSocket = require('./adminSocket')
 const operatorSocket = require('./operatorSocket')
+const headSocket = require('./headSocket')
 
 const initializeSockets = (server) => {
     const io = new Server(server, {
@@ -19,14 +20,14 @@ const initializeSockets = (server) => {
     console.log('Socket.IO initialized');
 
     io.on('connection', (socket) => {
-        console.log('A user connected:', socket.id);
+        console.log('A user connected:', socket.id, 'role: ', socket.user.role);
 
         switch(socket.user.role){
             case '1':
                 adminSocket(socket, io);
                 break;
             case '2':
-                // headSocket(socket, io);
+                headSocket(socket, io);
                 break;
             case '3':
                 operatorSocket(socket, io);
