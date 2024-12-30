@@ -17,17 +17,16 @@ const Dashboard = () => {
   }
 
   return (
-    <section className="w-full h-full">
+    <section className="w-full h-full p-3">
       <div className="w-full h-1/4">
         <div className="w-full h-full">
           <div className="w-full h-full rounded-lg">
-            <div className="w-full h-2/6 flex items-center justify-start px-3">
-              <div className="border-l-2 border-customFontColor px-2">
-                <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen' } font-bold`}>Total Number of Records</h1>
-                <p className="text-sm">The overview shows total disbursement vouchers by fund cluster.</p>
+            <div className="w-full h-1/6 flex items-center justify-start">
+              <div className="px-2">
+                <p className={`text-sm font-semibold ${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'}`}>The overview shows total number of Disbursement Vouchers by Fund Cluster.</p>
               </div>
             </div>
-            <div className="w-full h-4/6 py-2">
+            <div className="w-full h-5/6 py-2">
               <NumOfRecords modal={modal}/>
             </div>
           </div>

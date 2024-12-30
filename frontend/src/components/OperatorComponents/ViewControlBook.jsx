@@ -141,7 +141,7 @@ const ViewControlBook = () => {
                 </div>
               </div>
 
-              <div className="w-full flex-1 flex flex-wrap p-2">
+              <div className="w-full flex-1 p-2">
                 {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                   Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
                     <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} flag={viewProjectFlag} openModal={viewProject} remainingASA={ControlBook.data.leftBudget}/>
@@ -149,7 +149,6 @@ const ViewControlBook = () => {
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
                 )}
-
               </div>
             </div>
             {FieldOfficeModal && (

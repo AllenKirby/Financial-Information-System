@@ -241,7 +241,7 @@ const ViewDocument = () => {
               disabled={isLoadingPreparer}
               className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
             >
-              <BsArrowLeft/> <span className="hidden sm:block">Return to Preparer</span>
+              <BsArrowLeft/> <span className="hidden sm:block ">Return to Preparer</span>
             </button>
           )}
 

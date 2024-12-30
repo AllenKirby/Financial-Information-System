@@ -135,7 +135,7 @@ const Header = ({ currentPage, sidebar}) => {
             <p className={`font-bold text-sm lg:text-base xl:text-base 2xl:text-base truncate ${fontColor}`}>
               {user?.name || "User"}
             </p>
-            <p className={`text-xs lg:text-sm xl:text-sm 2xl:text-base truncate ${fontColor}`}>
+            <p className="text-xs lg:text-sm xl:text-sm 2xl:text-base truncate text-gray-500">
               {user?.uemail || "email@gmail.com"}
             </p>
           </div>
