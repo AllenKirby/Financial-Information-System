@@ -28,10 +28,6 @@ const AddNewFieldOffice = (props) => {
     }, [flag, fieldOffice]) 
 
     useEffect(() => {
-        console.log(props)
-    }, [])
-
-    useEffect(() => {
         if(flag && !prevData.current) {
             prevData.current = {
                 RO: fieldOffice.ASA,

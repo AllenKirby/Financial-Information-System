@@ -80,11 +80,13 @@ const DisbursementRecords = () => {
     }
   }
 
+
   const getFilteredDocuments = () => {
     if (activeTabs === '') return filteredDocuments.all;
     if (activeTabs === 'For Approval') return filteredDocuments.forApproval;
     if (activeTabs === 'Approved') return filteredDocuments.approved;
     return filteredDocuments.all; 
+
   }
 
   return (

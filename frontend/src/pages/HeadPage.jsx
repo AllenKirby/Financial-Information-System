@@ -16,6 +16,7 @@ import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 
 import { useAuthContext } from "../hooks/useAuthContext"
+import {initializeSocket } from "../socketService/socketService";
 
 
 const HeadPage = () => {
@@ -39,34 +40,34 @@ const HeadPage = () => {
       { label: 'Logs', path: '/head/disbursementlogs', icon: <MdOutlineHistory size={22} /> }
     ];
 
-  useEffect(() => {
-      const getPermission = async() => {
-        try{
-          const res = await axios.get(`${apiURL}/head/getPermission`, {
-            withCredentials: true
-          })
-          if(res.status === 200){
-            const data = res.data
-            dispatch(setPermission(data))
-          }
-        } catch(error) {
-          console.log(error)
-        }
-      }
-      getPermission()
+  // useEffect(() => {
+  //     const getPermission = async() => {
+  //       try{
+  //         const res = await axios.get(`${apiURL}/head/getPermission`, {
+  //           withCredentials: true
+  //         })
+  //         if(res.status === 200){
+  //           const data = res.data
+  //           dispatch(setPermission(data))
+  //         }
+  //       } catch(error) {
+  //         console.log(error)
+  //       }
+  //     }
+  //     getPermission()
 
-      const docRef = doc(firestore, 'Roles', 'Budget Officer'); 
-      const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
-      if (docSnapshot.exists()) {
-        const documentData = { data: { ...docSnapshot.data() } };
-        dispatch(setPermission(documentData));
-      } else {
-        console.log('No such document!');
-      }
-    });
+  //     const docRef = doc(firestore, 'Roles', 'Budget Officer'); 
+  //     const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+  //     if (docSnapshot.exists()) {
+  //       const documentData = { data: { ...docSnapshot.data() } };
+  //       dispatch(setPermission(documentData));
+  //     } else {
+  //       console.log('No such document!');
+  //     }
+  //   });
 
-      return () => unsubscribe()   
-  }, [dispatch, apiURL])
+  //     return () => unsubscribe()   
+  // }, [dispatch, apiURL])
 
   useEffect(() => {
       if(page.pathname === "/head/disbursementrecords") {
@@ -86,20 +87,36 @@ const HeadPage = () => {
   //     }
   // }, [permission])
 
-  useEffect(() => {
-    // if (!status.length) return;  
-    const status = permission?.data?.permission ? ['Approved', 'Under Review', 'For Approval'] : ['Under Review']
-    const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['Under Review']));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const newDocuments = snapshot.docs.reduce((acc, doc) => {
-        acc[doc.id] = { data: { ...doc.data() } };
-        return acc;
-      }, {});
-      dispatchContext({ type: 'SET_HEADDOCUMENTS', payload: newDocuments });
-    })
+  // useEffect(() => {
+  //   // if (!status.length) return;  
+  //   const status = permission?.data?.permission ? ['Approved', 'Under Review', 'For Approval'] : ['Under Review']
+  //   const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['Under Review']));
+  //   const unsubscribe = onSnapshot(q, (snapshot) => {
+  //     const newDocuments = snapshot.docs.reduce((acc, doc) => {
+  //       acc[doc.id] = { data: { ...doc.data() } };
+  //       return acc;
+  //     }, {});
+  //     dispatchContext({ type: 'SET_HEADDOCUMENTS', payload: newDocuments });
+  //   })
 
-    return () => unsubscribe()
-  }, [user, dispatchContext, apiURL, status, documents, permission])
+  //   return () => unsubscribe()
+  // }, [user, dispatchContext, apiURL, status, documents, permission])
+
+  useEffect(() => {
+    const {socket, isInitialized} = initializeSocket()
+    if(isInitialized){
+      socket.on('head:firestore:update', (doc) => {
+        dispatchContext({ type: 'SET_HEADDOCUMENTS', payload: doc });
+      })
+      socket.on('headPermission:firestore:update', (doc) => {
+        dispatch(setPermission(doc));
+      })
+      return () => {
+        socket.off('head:firestore:update');
+        socket.off('headPermission:firestore:update');
+      };
+    }
+  }, []) //[user, dispatchContext, apiURL, status, documents, permission]
 
   const collapseSideBar = () => {
       setNavbarExpand(!navbarExpand)

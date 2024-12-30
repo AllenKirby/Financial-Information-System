@@ -58,20 +58,20 @@ const OperatorPage = () => {
     fetch()
   }, []) 
 
-  useEffect(() => {
-    const docRef = doc(firestore, 'Roles', 'Funding'); 
-    const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
-    if (docSnapshot.exists()) {
-      const documentData = { data: { ...docSnapshot.data() } };
+  // useEffect(() => {
+  //   const docRef = doc(firestore, 'Roles', 'Funding'); 
+  //   const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+  //   if (docSnapshot.exists()) {
+  //     const documentData = { data: { ...docSnapshot.data() } };
 
-      dispatch(setPermission(documentData));
-    } else {
-      console.log('No such document!');
-    }
-    });
+  //     dispatch(setPermission(documentData));
+  //   } else {
+  //     console.log('No such document!');
+  //   }
+  //   });
 
-    return () => unsubscribe()   
-  }, [dispatch])
+  //   return () => unsubscribe()   
+  // }, [dispatch])
 
   // useEffect(() => {
   //   if(permission?.data?.permission){
@@ -105,12 +105,14 @@ const OperatorPage = () => {
     const {socket, isInitialized} = initializeSocket()
       if(isInitialized){
         socket.on('operator:firestore:update', (doc) => {
-          console.log('hit')
-          console.log(doc)
           dispatchContext({type: 'SET_OPDOCUMENTS', payload: doc})
+        })
+        socket.on('operatorPermission:firestore:update', (doc) => {
+          dispatch(setPermission(doc));
         })
         return () => {
           socket.off('operator:firestore:update');
+          socket.off('operatorPermission:firestore:update');
         };
       }
   }, []) //[user, dispatchContext, apiURL, documents, permission?.data?.permission]

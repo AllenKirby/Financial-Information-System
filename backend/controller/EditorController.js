@@ -323,7 +323,7 @@ const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
                 [dvno]: incrementedByTwo
             });
             const dvData = {
-                DV:` ${template}${incrementedByOne}`,
+                DV: `${template}${incrementedByOne}`,
                 BIR: `${template}${incrementedByTwo}`
             }
 

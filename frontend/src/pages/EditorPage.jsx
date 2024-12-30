@@ -90,26 +90,30 @@ const EditorPage = () => {
       socket.on('editor:firestore:update', (doc) => {
         dispatchContext({ type: 'SET_DOCUMENTS', payload: doc });
       })
+      socket.on('editorPermission:firestore:update', (doc) => {
+        dispatch(setPermission(doc));
+      })
       return () => {
         socket.off('editor:firestore:update');
+        socket.off('editorPermission:firestore:update');
       };
     }
   }, [])
 
-  useEffect(() => {
-    const docRef = doc(firestore, 'Roles', 'Preparer'); 
-    const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
-    if (docSnapshot.exists()) {
-      const documentData = { data: { ...docSnapshot.data() } };
+  // useEffect(() => {
+  //   const docRef = doc(firestore, 'Roles', 'Preparer'); 
+  //   const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+  //   if (docSnapshot.exists()) {
+  //     const documentData = { data: { ...docSnapshot.data() } };
 
-      dispatch(setPermission(documentData));
-    } else {
-      console.log('No such document!');
-    }
-  });
+  //     dispatch(setPermission(documentData));
+  //   } else {
+  //     console.log('No such document!');
+  //   }
+  // });
 
-    return () => unsubscribe()   
-  }, [dispatch, apiURL])
+  //   return () => unsubscribe()   
+  // }, [dispatch, apiURL])
 
   const collapseSideBar = () => {
     setNavbarExpand(!navbarExpand)
