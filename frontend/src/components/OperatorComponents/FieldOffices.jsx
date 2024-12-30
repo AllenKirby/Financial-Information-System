@@ -8,6 +8,7 @@ import { useFundingHook } from '../../hooks/useFundingHook';
 
 import AddNewFieldOffice from "./AddNewFieldOffice";
 import ViewProject from "./ViewProject";
+import LargeLoader from '../LargeLoader';
 
 const FieldOffices = (props) => {
 
@@ -87,6 +88,9 @@ const FieldOffices = (props) => {
             </div>
           </>
         )}
+        {isLoading && (
+          <LargeLoader/>
+        )}
     </div>
   )
 }
@@ -96,7 +100,8 @@ FieldOffices.propTypes = {
     ASANo: PropTypes.string.isRequired,
     fieldOfficeID: PropTypes.string.isRequired,
     flag: PropTypes.bool.isRequired,
-    openModal: PropTypes.func.isRequired
+    openModal: PropTypes.func.isRequired,
+    remainingASA: PropTypes.number.isRequired 
 }
 
 export default FieldOffices

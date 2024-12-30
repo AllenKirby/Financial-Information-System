@@ -7,7 +7,7 @@ import { useInitialStateDV } from "../hooks/useInitialStateDV";
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
-import Loader from './Loader'
+import LargeLoader from './LargeLoader'
 
 const FundingModal = ({modal, data}) => {
     const {getBurNo} = useInitialStateDV()
@@ -175,13 +175,16 @@ const FundingModal = ({modal, data}) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className={`py-2 px-5 rounded-lg border-2 text-white font-semibold transition-all duration-150 ${user?.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary'}`}>{isLoading ? <Loader/>: 'Save'}</button>
+                    className={`py-2 px-5 rounded-lg border-2 text-white font-semibold transition-all duration-150 ${user?.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary'}`}>Save</button>
                 <button 
                     onClick={modal}
                     className="py-2 px-5 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150"
                     >Back
                 </button>
             </div>
+            {isLoading && (
+                <LargeLoader/>
+            )}
         </form>
     )
 }
