@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom"
 import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 import { firestore } from "../config/firebase-config"
-import { collection, doc, query, where, onSnapshot } from "firebase/firestore"
+import { doc, onSnapshot } from "firebase/firestore"
 
 import Navbar from "../components/Navbar"
 import Header from "../components/Header"
@@ -12,10 +12,9 @@ import { FiBook } from "react-icons/fi";
 import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 
-import { useAuthContext } from "../hooks/useAuthContext";
 import { useFundingHook } from "../hooks/useFundingHook"
 
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
 
 import {initializeSocket } from "../socketService/socketService";
@@ -25,13 +24,12 @@ const OperatorPage = () => {
   const [location, setLocation] = useState('')
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
-  const { user } = useAuthContext()
-  const { dispatch: dispatchContext, documents } = useOpDisbursementContext()
+  const { dispatch: dispatchContext } = useOpDisbursementContext()
   const { retrieveControlBooks } = useFundingHook()
   // const [status, setStatus] = useState([])
   const dispatch = useDispatch()
-  const permission = useSelector((state) => state.permission)
-  const apiURL = import.meta.env.VITE_API_URL
+  //const permission = useSelector((state) => state.permission)
+  //const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
     { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },

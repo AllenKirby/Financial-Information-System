@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState, useRef } from 'react'
 import Swal from 'sweetalert2'
 
-import Loader from '../Loader'
+import LargeLoader from '../LargeLoader'
 
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
@@ -150,13 +150,16 @@ const AddNewFieldOffice = (props) => {
             <button 
                 type='submit' 
                 disabled={isLoading}  
-                className={`${user.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary border-preparerPrimary hover:bg-white hover:text-preparerPrimary'} border-2 px-5 py-2 rounded-lg text-white font-semibold transition-all duration-150`}>{isLoading ? <Loader /> : 'Save'}</button>
+                className={`${user.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary border-preparerPrimary hover:bg-white hover:text-preparerPrimary'} border-2 px-5 py-2 rounded-lg text-white font-semibold transition-all duration-150`}>Save</button>
             <button onClick={modal} className='px-5 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150'>Back</button>
         </div>
         {error && (
             <div className="w-full text-center">
                 <h4 className="text-sm text-red-500">{error}</h4>
             </div>
+        )}
+        {isLoading && (
+            <LargeLoader/>
         )}
     </form>
   )

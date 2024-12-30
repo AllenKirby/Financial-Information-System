@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import Pagination from './Pagination';
 import DocumentDetails from './DocumentDetails';
 
-const PaginatedList = ({ items, type }) => {
+const PaginatedList = ({ items, type, activeTab }) => {
 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 10;
@@ -27,7 +27,7 @@ const PaginatedList = ({ items, type }) => {
         <div className='w-full h-[85%] overflow-auto'>
             {Object.keys(currentItems).length > 0 ? (
                 Object.entries(currentItems).map(([key, document]) => (
-                    <DocumentDetails key={key} index={key} documents={document[1]} type={type}/>
+                    <DocumentDetails key={key} index={key} documents={document[1]} type={type} activeTab={activeTab} />
                 ))
                 ) : (
                 <div className='w-full h-full flex items-center justify-center'>
@@ -56,6 +56,7 @@ const PaginatedList = ({ items, type }) => {
 PaginatedList.propTypes = {
     items: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,
+    activeTab: PropTypes.string.isRequired
   };
 
 export default PaginatedList

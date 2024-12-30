@@ -10,6 +10,8 @@ import Swal from 'sweetalert2';
 
 import { useFundingHook } from '../../hooks/useFundingHook';
 
+import LargeLoader from '../LargeLoader';
+
 import AddControlBook from "./AddControlBook"
 
 const Folder = ({ASANo, controlBook}) => {
@@ -121,6 +123,9 @@ const Folder = ({ASANo, controlBook}) => {
             />
           </div>
         </>
+      )}
+      {isLoading && (
+        <LargeLoader/>
       )}
     </div>
   )

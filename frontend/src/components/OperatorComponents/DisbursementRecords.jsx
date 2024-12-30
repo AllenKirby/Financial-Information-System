@@ -6,9 +6,10 @@ import { useSelector } from 'react-redux';
 import { IoSearchSharp, IoAdd } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
-import { BsSortAlphaDown, BsSortAlphaDownAlt } from "react-icons/bs";
-import { FaSort } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
+import { MdOutlineDrafts, MdKeyboardReturn } from "react-icons/md";
+import { FiLayers } from "react-icons/fi";
+import { BsClockHistory } from "react-icons/bs";
 
 import PaginatedList from '../PaginatedList';
 import DisbursementVoucher from '../DisbursementVoucher';
@@ -20,11 +21,10 @@ const DisbursementRecords = () => {
   const permission = useSelector((state) => state.permission)
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
-  const [filteredDocuments, setFilteredDocuments] = useState({})
-  const [alphabeticalFlag, setAlphabeticalFlag] = useState(false)
-  const [timeReturnedFlag, setTimeReturnedFlag] = useState(false)
+  const [filteredDocuments, setFilteredDocuments] = useState({all: {}, drafting: {}, returned: {}, inReview: {}})
   const [searchModal, setSearchModal] = useState(false)
   const [search, setSearch] = useState('')
+  const [activeTabs, setActiveTabs] = useState('')
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -35,51 +35,56 @@ const DisbursementRecords = () => {
 
   useEffect(() => {
     if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
-      const filteredResults = Object.fromEntries(
-        Object.entries(OpDocuments.documents).filter(([, document]) => 
-          document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
-        )
-      );
-      const descFilteredResults = sortTimePassedDesc(filteredResults)
-      setFilteredDocuments(descFilteredResults);
+      if(!activeTabs) {
+        const filteredResults = Object.fromEntries(
+          Object.entries(OpDocuments.documents).filter(([, document]) => 
+            document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
+          )
+        );
+        setFilteredDocuments({...filteredDocuments, all: filteredResults});
+      } else {
+        const drafts = Object.entries(OpDocuments.documents).filter(([, document]) => document.data.status.includes(activeTabs))
+        const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.fund.toLowerCase().includes(filter.toLowerCase())))
+        console.log(filteredDrafts)
+        if(activeTabs === 'Drafting') {
+          setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
+        } else if(activeTabs.includes('Returned')) {
+          setFilteredDocuments({...filteredDocuments, returned: filteredDrafts})
+        } else if(activeTabs.includes('In Review')) {
+          setFilteredDocuments({...filteredDocuments, inReview: filteredDrafts})
+        }
+      }
     } else {
       setFilteredDocuments({});
     }
-  }, [filter, OpDocuments]);
+  }, [filter, OpDocuments, activeTabs]);
 
   useEffect(() => {
     if(!OpDocuments.documents) return 
-    console.log(OpDocuments.documents)
-    const filteredResults = Object.entries(OpDocuments.documents).filter(doc => doc[1].data.payee.toLowerCase().includes(search.toLowerCase()) || doc[1].data.DV.toLowerCase().includes(search.toLowerCase()))
-    setFilteredDocuments(Object.fromEntries(filteredResults))
-  }, [search, OpDocuments.documents])
-
-  const sortAphabetically = (flag) => {
-    setAlphabeticalFlag(!alphabeticalFlag)
-    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
-      if(flag) {
-        const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
-          a.data.payee.localeCompare(b.data.payee)
-        );
-        const filteredResults = Object.fromEntries(sortedEntries);
-        setFilteredDocuments(filteredResults);
-      }
-      else {
-        const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => 
-          a.data.payee.localeCompare(b.data.payee)
-        );
-        const filteredResults = Object.fromEntries(sortedEntries.reverse());
-        setFilteredDocuments(filteredResults);
-      }
+    if(!activeTabs) {
+      const filteredResults = Object.entries(OpDocuments.documents).filter(doc => doc[1].data.payee.toLowerCase().includes(search.toLowerCase()) || doc[1].data.DV.toLowerCase().includes(search.toLowerCase()))
+      setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
     } else {
-      setFilteredDocuments({}); 
+      const drafts = Object.entries(OpDocuments.documents).filter(([, document]) => document.data.status.includes(activeTabs))
+      const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.payee.toLowerCase().includes(search.toLowerCase()) || document[1].data.DV.toLowerCase().includes(search.toLowerCase())))
+      console.log(filteredDrafts)
+      if(activeTabs === 'Drafting') {
+        setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
+      } else if(activeTabs.includes('Returned')) {
+        setFilteredDocuments({...filteredDocuments, returned: filteredDrafts})
+      } else if(activeTabs.includes('In Review')) {
+        setFilteredDocuments({...filteredDocuments, inReview: filteredDrafts})
+      }
     }
-  }
+  }, [search, OpDocuments.documents, activeTabs])
+
 
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {
       const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
-        return new Date(a.data.submittedBy) - new Date(b.data.submittedBy)
+        const parsedA = a.data.submittedBy.split('|')[1]
+        const parsedB = b.data.submittedBy.split('|')[1]
+        return new Date(parsedB) - new Date(parsedA)
       });
       return Object.fromEntries(sortedEntries)
     } else {
@@ -87,46 +92,16 @@ const DisbursementRecords = () => {
     }
   }
 
-  const sortTimeReturnedAsc = () => {
-    setTimeReturnedFlag(!timeReturnedFlag)
-    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
-      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => {
-        const [, dateA, timeA] = a.data.returnedToFunding ? a.data.returnedToFunding.split('|') : ["", "", ""];
-        const [, dateB, timeB] = b.data.returnedToFunding ? b.data.returnedToFunding.split('|') : ["", "", ""];
-        if (!a.data.returnedBy) return -1; 
-        if (!b.data.returnedBy) return 1;
-        const aDate = `${dateA} ${timeA}` 
-        const bDate = `${dateB} ${timeB}` 
-        return new Date(aDate) - new Date(bDate)
-      });
-      const filteredResults = Object.fromEntries(sortedEntries);
-      setFilteredDocuments(filteredResults);
-    } else {
-      setFilteredDocuments({}); 
-    }
-  }
-
-  const sortTimeReturnedDesc = () => {
-    setTimeReturnedFlag(!timeReturnedFlag)
-    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
-      const sortedEntries = Object.entries(OpDocuments.documents).sort(([, a], [, b]) => {
-        const [, dateA, timeA] = a.data.returnedToFunding ? a.data.returnedToFunding.split('|') : ["", "", ""];
-        const [, dateB, timeB] = b.data.returnedToFunding ? b.data.returnedToFunding.split('|') : ["", "", ""];
-        if (!a.data.returnedBy) return -1; 
-        if (!b.data.returnedBy) return 1;
-        const aDate = `${dateA} ${timeA}` 
-        const bDate = `${dateB} ${timeB}` 
-        return new Date(aDate) - new Date(bDate)
-      });
-      const filteredResults = Object.fromEntries(sortedEntries.reverse());
-      setFilteredDocuments(filteredResults);
-    } else {
-      setFilteredDocuments({}); 
-    }
+  const getFilteredDocuments = () => {
+    if (activeTabs === '') return filteredDocuments.all;
+    if (activeTabs === 'Drafting') return filteredDocuments.drafting;
+    if (activeTabs.includes('Returned')) return filteredDocuments.returned;
+    if (activeTabs === 'In Review') return filteredDocuments.inReview;
+    return filteredDocuments.all; 
   }
 
   return (
-    <section className='w-full h-full p-2 relative'>
+    <section className='w-full h-full p-2 relative flex flex-col gap-2'>
       <div className={`${searchModal ? ' block h-auto' : 'hidden'} absolute py-5 bg-white z-20 top-0 left-0 w-full block overflow-hidden sm:hidden transition-all duration-100`}>
         <div className='flex items-center justify-center gap-2 px-3'>
           <div className='w-5/6 relative'>
@@ -142,10 +117,13 @@ const DisbursementRecords = () => {
           </button>
         </div>
       </div>
-      <div className='w-full h-[10%] py-2 flex'>
+      <div className='w-full h-[10%] flex'>
         <div className="w-2/3 sm:w-1/2 flex items-end">
-          <div className='pt-3'>
-            <p className='font-semibold text-xs lg:text-base 2xl:text-lg text-preparerPrimary px-2'>Disbursement Vouchers ({Object.entries(filteredDocuments).length})</p>
+          <div className='pt-3 flex items-center justify-center'>
+            <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-fundingBlueGreen text-fundingBlueGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-fundingBlueGreen hover:font-bold hover:border-fundingBlueGreen transition-all duration-100`}><FiLayers size={20}/><span className='hidden sm:block'>All</span></button>
+            <button onClick={() => setActiveTabs('In Review')} className={`${activeTabs === 'In Review' ? 'border-b-2 border-fundingBlueGreen text-fundingBlueGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-fundingBlueGreen hover:font-bold hover:border-fundingBlueGreen transition-all duration-100`}><BsClockHistory size={20}/><span className='hidden sm:block'>In Review</span></button>
+            {permission?.data?.permission && <button onClick={() => setActiveTabs('Drafting')} className={`${activeTabs === 'Drafting' ? 'border-b-2 border-fundingBlueGreen text-fundingBlueGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-fundingBlueGreen hover:font-bold hover:border-fundingBlueGreen transition-all duration-100`}><MdOutlineDrafts size={20}/><span className='hidden sm:block'>Drafting</span></button>}
+            <button onClick={() => setActiveTabs('Returned')} className={`${activeTabs.includes('Returned') ? 'border-b-2 border-fundingBlueGreen text-fundingBlueGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-fundingBlueGreen hover:font-bold hover:border-fundingBlueGreen transition-all duration-100`}><MdKeyboardReturn size={20}/><span className='hidden sm:block'>Returned</span></button>
           </div>
         </div>
         <div className='w-1/2 flex items-end justify-end gap-2'>
@@ -188,29 +166,14 @@ const DisbursementRecords = () => {
     <div className="w-full h-[90%] rounded-lg">
       <div className='w-full h-full rounded-lg'>
         <div className='w-full h-[8%] hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
-          <div className='w-2/6 flex '>
-            <h1 className='lg:text-sm 2xl:text-base w-auto text-left px-2 font-semibold flex items-center justify-center gap-2'>
-              Payee {alphabeticalFlag ? 
-                <BsSortAlphaDownAlt 
-                  size={20} 
-                  onClick={() => sortAphabetically(true)}
-                  className='cursor-pointer'/> : 
-                <BsSortAlphaDown 
-                  size={20} 
-                  onClick={() => sortAphabetically(false)}
-                  className='cursor-pointer'/>
-              }
-            </h1>
-          </div>
+        <h1 className={`lg:text-sm 2xl:text-base ${activeTabs === '' || activeTabs.includes('Returned') ? 'w-2/6' : 'w-3/6'} text-left px-2 font-semibold`}>Payee</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Transferred</h1>
-            <div className='w-1/6 flex items-end justify-center gap-2'>
-              <h1 className='lg:text-sm 2xl:text-base w-auto text-center font-semibold flex items-center justify-center gap-2'>Time Returned <FaSort className='cursor-pointer' onClick={timeReturnedFlag ? sortTimeReturnedDesc : sortTimeReturnedAsc}/></h1>
-            </div>
+            {(activeTabs !== 'Drafting' && activeTabs !== 'In Review') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
           <div className="w-full h-full sm:h-[92%] rounded-lg">
-            <PaginatedList items={filteredDocuments} type={'3'}/>
+            <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'3'} activeTab={activeTabs}/>
           </div>
         </div>
         {isModalOpen && (
