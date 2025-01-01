@@ -62,9 +62,9 @@ const FieldOffices = (props) => {
             <p className='lg:text-lg 2xl:text-2xl font-bold'>{fieldOffice.projectName}</p>
           </div>
           <div className='flex items-center justify-center gap-3'>
-            <button onClick={modal}>
-              <MdOutlineModeEdit size={23}/>
-            </button>
+              <button onClick={modal}>
+                <MdOutlineModeEdit size={23}/>
+              </button>
             {!Object.entries(fieldOffice.dvCollection).length > 0 && (
               <button disabled={isLoading} onClick={deleteFO}>
                 <MdDeleteOutline size={25} color='red'/>

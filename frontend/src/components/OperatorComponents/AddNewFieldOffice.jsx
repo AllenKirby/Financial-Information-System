@@ -6,12 +6,15 @@ import LargeLoader from '../LargeLoader'
 
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
+import { use } from 'react'
+import FieldOffices from './FieldOffices'
 
 const AddNewFieldOffice = (props) => {
     const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0} = props
 
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
     const [errorFlag, setErrorFlag] = useState(false)
+    const [currASA, setCurrASA] = useState('')
     const prevData = useRef(null)
     const { user } = useAuthContext()
     
@@ -24,6 +27,7 @@ const AddNewFieldOffice = (props) => {
                 fieldOffice: fieldOffice.fieldOffice || '',
                 ASA: fieldOffice.ASA || 0
             })
+            setCurrASA(fieldOffice.RO)
         }
     }, [flag, fieldOffice]) 
 
@@ -41,15 +45,24 @@ const AddNewFieldOffice = (props) => {
     }, [fieldOffice])
 
     useEffect(() => {
-        if(remainingASA) {
-            const ASA = parseFloat(fieldOfficeData.ASA)
+        const ASA = parseFloat(fieldOfficeData.ASA)
+        if(flag){
+            const RO = parseFloat(fieldOffice.RO)
+            const currentASA = parseFloat(currASA)
+            console.log(`${currentASA} > (${remainingASA} + ${RO})`)
+            if(currentASA > (remainingASA + RO)) {
+                setErrorFlag(true)
+            } else {
+                setErrorFlag(false)
+            }
+        }else{
             if(ASA > remainingASA) {
                 setErrorFlag(true)
             } else {
                 setErrorFlag(false)
             }
         }
-    }, [fieldOfficeData.ASA, remainingASA])
+    }, [fieldOfficeData.ASA, remainingASA, currASA])
 
     const handleFocus = () => {
         if (fieldOfficeData.ASA === 0) {
@@ -87,21 +100,32 @@ const AddNewFieldOffice = (props) => {
 
     const handleUpdate = async (e) => {
         e.preventDefault()
+        const updatedFieldOfficeData = {...fieldOfficeData, ASA: currASA}
         const data = {
-            data: fieldOfficeData,
+            data: updatedFieldOfficeData,
             id: `${ASANo}!${fieldOfficeID}`,
             prevData: prevData.current,
             leftBudget: remainingASA
         }
-        const res = await updateFieldOffice(data)
-        if(res) {
+        
+        if(errorFlag) {
             Swal.fire({
-                title: "Saved",
-                text: "Field Office is successfully updated!",
-                icon: "success",
+                title: "Error",
+                text: "The input exceeds the remaining available ASA",
+                icon: "error",
                 confirmButtonColor: "#009933"
                 });
-            modal()
+        } else {
+            const res = await updateFieldOffice(data)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: "Field Office is successfully updated!",
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            }
         }
     }
 
@@ -136,9 +160,9 @@ const AddNewFieldOffice = (props) => {
                 <label>ASA</label>
                 <input 
                     type="number" 
-                    value={fieldOfficeData.ASA}
+                    value={flag ? currASA : fieldOfficeData.ASA}
                     onFocus={handleFocus}
-                    onChange={(e) => setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
+                    onChange={(e) => flag ? setCurrASA(e.target.value): setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
                     className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     required />
             </div>

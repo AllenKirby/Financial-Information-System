@@ -79,6 +79,8 @@ const DisbursementRecords = () => {
   }, [search, OpDocuments.documents, activeTabs])
 
 
+  //ERROR DITO pag naka true yung permission sa funding
+  //fix default time
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {
       const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {

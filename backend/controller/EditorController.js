@@ -273,7 +273,7 @@ const getNumberOfCopies = async (req, res) => {
         const day = today.getDate();
         const docRef = db.collection('NumberOfRecords').doc(year.toString());
         const doc = await docRef.get()
-        if ((month === 1 && day === 1) || !doc.exists) {
+        if (!doc.exists) {
             const data = {
                 DVno501CARP: '0000',
                 DVno501COB: '0000',
