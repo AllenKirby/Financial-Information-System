@@ -14,6 +14,7 @@ const AddControlBook = (props) => {
     const { user } = useAuthContext()
     
     const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: ''})
+    const [errorFlag, setErrorFlag] = useState(false)
 
     useEffect(() => {
         if(flag && controlBook) {
@@ -34,6 +35,18 @@ const AddControlBook = (props) => {
         }
     };
 
+    useEffect(() => {
+        const totalAsa = parseFloat(controlBookData.TotalASA)
+        const prevtotalASA= parseFloat(controlBook.TotalASA)
+        const leftBudget = parseFloat(controlBook.leftBudget)
+        // console.log(`${totalAsa} >= (${controlBook.TotalASA} - ${controlBook.leftBudget}) ${totalAsa >= (parseFloat(controlBook.TotalASA) - parseFloat(controlBook.leftBudget))} `)
+        if(totalAsa >= (prevtotalASA - leftBudget)){
+            setErrorFlag(false)
+        }else{
+            setErrorFlag(true)
+        }
+    }, [controlBookData.TotalASA])
+
     const formatDateforUpdate = (rawDate) => {
         if (typeof rawDate === 'string') {
           const date = new Date(rawDate);
@@ -48,27 +61,37 @@ const AddControlBook = (props) => {
 
     const handleUpdate = async(e) => {
         e.preventDefault()
-
+        const prevtotalASA= parseFloat(controlBook.TotalASA)
+        const leftBudget = parseFloat(controlBook.leftBudget)
         const data = {
             data: controlBookData
         }
         
-        const res = await updateControlBook(data, ASANo)
-        if(res) {
-            Swal.fire({
-                title: "Saved",
-                text: "Control Book is successfully updated!",
-                icon: "success",
-                confirmButtonColor: "#009933"
-                });
-            modal()
-        } else {
+        if(errorFlag) {
             Swal.fire({
                 title: "Error",
-                text: {error},
+                text: `Cannot update total ASA with below ${prevtotalASA - leftBudget}`,
                 icon: "error",
                 confirmButtonColor: "#009933"
                 });
+        } else {
+            const res = await updateControlBook(data, ASANo)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: "Control Book is successfully updated!",
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: {error},
+                    icon: "error",
+                    confirmButtonColor: "#009933"
+                    });
+            }
         }
     }
     const handleSumit = async(e) => {
@@ -78,15 +101,24 @@ const AddControlBook = (props) => {
             data: controlBookData
         }
         
-        const res = await AddControlBook(data)
-        if(res) {
+        if(errorFlag) {
             Swal.fire({
-                title: "Saved",
-                text: "Control Book is successfully created!",
-                icon: "success",
+                title: "Error",
+                text: "The input exceeds the remaining available ASA",
+                icon: "error",
                 confirmButtonColor: "#009933"
                 });
-            modal()
+        } else {
+            const res = await AddControlBook(data)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: "Control Book is successfully created!",
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            }
         }
     }
 
@@ -126,7 +158,7 @@ const AddControlBook = (props) => {
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
             </div>
-            <div className='w-full h-auto flex items-center justify-center gap-2'>
+            <div className='w-full h-auto flex items-center justify-center gap-2 '>
                 <div className="w-1/2 flex flex-col mt-2">
                     <label className="font-semibold">SARO No.</label>
                     <input 
@@ -144,9 +176,12 @@ const AddControlBook = (props) => {
                         onFocus={handleFocus}
                         onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
                         required
-                        className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
+                        className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
             </div>
+            {errorFlag && (
+                <p className='text-red-500 text-sm mt-2 text-right'>The input exceeds the remaining available ASA</p>
+            )}
             <div className="w-full flex flex-col mt-2">
                 <label className="font-semibold">Description</label>
                 <textarea 

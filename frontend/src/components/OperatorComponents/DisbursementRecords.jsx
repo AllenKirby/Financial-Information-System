@@ -79,12 +79,19 @@ const DisbursementRecords = () => {
   }, [search, OpDocuments.documents, activeTabs])
 
 
+  //ERROR DITO pag naka true yung permission sa funding
+  //fix default time
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {
       const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
-        const parsedA = a.data.submittedBy.split('|')[1]
-        const parsedB = b.data.submittedBy.split('|')[1]
-        return new Date(parsedB) - new Date(parsedA)
+        console.log(a, b)
+        try{
+          const parsedA = a.data.submittedBy.split('|')[1]
+          const parsedB = b.data.submittedBy.split('|')[1]
+          return new Date(parsedB) - new Date(parsedA)
+        }catch(err){
+          return new Date(b.createdAt) - new Date(a.createdAt)
+        }
       });
       return Object.fromEntries(sortedEntries)
     } else {

@@ -92,41 +92,43 @@ const updateASA_ORS = async (req, res) => {
 
                 await docRef.delete();
 
-                const ref = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
-                const project = await ref.get()
+                if(ASANo){
+                    const ref = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID)
+                    const project = await ref.get()
 
-                if(project.exists){
-                    await handleControlBook(ASANo, amount)
-                    const projectdata = project.data()
-                    const parseAmount = parseFloat(amount)
-                    const RO = parseFloat(projectdata.RO)
-                    const FO = parseFloat(projectdata.FO)
-                    const thisMonthFO = parseFloat(projectdata.thisMonthFO)
-                    const weekFO = parseFloat(projectdata.weekFO)
+                    if(project.exists){
+                        await handleControlBook(ASANo, amount)
+                        const projectdata = project.data()
+                        const parseAmount = parseFloat(amount)
+                        const RO = parseFloat(projectdata.RO)
+                        const FO = parseFloat(projectdata.FO)
+                        const thisMonthFO = parseFloat(projectdata.thisMonthFO)
+                        const weekFO = parseFloat(projectdata.weekFO)
 
-                    const updatedRO = RO - parseAmount 
-                    const updatedFO = FO + parseAmount
-                    const updatedThisMonthFO = thisMonthFO + parseAmount
-                    const updatedThisMonthRO = updatedRO
-                    const updatedWeekFO = weekFO + parseAmount
+                        const updatedRO = RO - parseAmount 
+                        const updatedFO = FO + parseAmount
+                        const updatedThisMonthFO = thisMonthFO + parseAmount
+                        const updatedThisMonthRO = updatedRO
+                        const updatedWeekFO = weekFO + parseAmount
 
-                    if(updatedRO < 0){
-                        throw Error("Insufficient amount.")
+                        if(updatedRO < 0){
+                            throw Error("Insufficient amount.")
+                        }
+                        await ref.update({
+                            RO: updatedRO,
+                            FO: updatedFO,
+                            thisMonthFO: updatedThisMonthFO, 
+                            thisMonthRO: updatedThisMonthRO,
+                            weekFO: updatedWeekFO,
+                            weekRO: updatedRO
+                        });
+                        await handleFormDataRemainingAmount_RO(ASANo, projectID, updatedRO)
                     }
-                    await ref.update({
-                        RO: updatedRO,
-                        FO: updatedFO,
-                        thisMonthFO: updatedThisMonthFO, 
-                        thisMonthRO: updatedThisMonthRO,
-                        weekFO: updatedWeekFO,
-                        weekRO: updatedRO
-                    });
-                    await handleFormDataRemainingAmount_RO(ASANo, projectID, updatedRO)
-                }
 
-                await db.collection('ControlBook').doc(ASANo)
-                    .collection('FieldOffices').doc(projectID)
-                    .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
+                    await db.collection('ControlBook').doc(ASANo)
+                        .collection('FieldOffices').doc(projectID)
+                        .collection('DV').doc(`${DVNoCount}|${amount}`).set(fieldOffice)
+                }
                 
 
             } else {
@@ -724,6 +726,13 @@ const updateFieldOffice = async(req, res) => {
         projectID: projectID,
         projectName: projectName
     }
+    console.log(fieldOfficeData)
+
+    const updatedFieldOfficeData = {
+        RO: fieldOfficeData.ASA,
+        projectID: projectID,
+        projectName: fieldOfficeData.projectName
+    }
     // FORMULA :   newLeftBudget = LeftBudget + RO - desireUpdate
     //             newLeftBudget = Latest + Current - update
     const updatedLeftBudget = parseFloat(LeftBudget) + parseFloat(RO) - parseFloat(fieldOfficeData.ASA)
@@ -738,7 +747,7 @@ const updateFieldOffice = async(req, res) => {
             [ASANo]: admin.firestore.FieldValue.arrayRemove(formData)
         })
         await docref.update({
-            [ASANo]: admin.firestore.FieldValue.arrayUnion(fieldOfficeData)
+            [ASANo]: admin.firestore.FieldValue.arrayUnion(updatedFieldOfficeData)
         })
         res.status(200).json({message: 'Field Office Successfully Updated'})
     } catch (error) {
