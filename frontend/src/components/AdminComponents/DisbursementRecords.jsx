@@ -149,11 +149,11 @@ const DisbursementRecords = () => {
       <div className="w-full h-[90%] rounded-lg">
         <div className='w-full h-full rounded-lg'>
           <div className='w-full h-[8%] hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
-            <h1 className='lg:text-sm 2xl:text-base w-2/6 text-left px-2 font-semibold'>Payee</h1>
+            <h1 className={`lg:text-sm 2xl:text-base text-left px-2 font-semibold ${activeTabs === 'For Approval' ? 'w-3/6' : 'w-2/6'}`}>Payee</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Transferred</h1>
-            <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Approved</h1>
+            {activeTabs !== 'For Approval' && (<h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Approved</h1>)}
           </div>
           <div className="w-full h-full sm:h-[92%] rounded-lg">
             <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'1'} activeTab={activeTabs}/>

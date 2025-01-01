@@ -2,10 +2,10 @@ import Navbar from "../components/Navbar"
 import Header from "../components/Header"
 
 import { Outlet, useLocation } from "react-router-dom"
-import axios from "axios"
+//import axios from "axios"
 import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext"
-import { firestore } from "../config/firebase-config"
-import { collection, query, doc, where, onSnapshot } from "firebase/firestore"
+//import { firestore } from "../config/firebase-config"
+//import { collection, query, doc, where, onSnapshot } from "firebase/firestore"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPermission } from "../redux/PermissionRedux" 
 import { useEffect, useState } from "react"
@@ -15,7 +15,7 @@ import { TbLogs, TbEdit } from "react-icons/tb";
 import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 
-import { useAuthContext } from "../hooks/useAuthContext"
+//import { useAuthContext } from "../hooks/useAuthContext"
 import {initializeSocket } from "../socketService/socketService";
 
 
@@ -24,18 +24,18 @@ const HeadPage = () => {
   const [location, setLocation] = useState('')
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
-  const { user } = useAuthContext() 
-  const { dispatch: dispatchContext, documents } = useHeadDisbursementContext()
+  //const { user } = useAuthContext() 
+  const { dispatch: dispatchContext } = useHeadDisbursementContext()
   const dispatch = useDispatch()
   const permission = useSelector((state) => state.permission)
   // const [status, setStatus] = useState([])
-  const apiURL = import.meta.env.VITE_API_URL
+  //const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
       { label: 'Dashboard', path: '/head/dashboard', icon: <TbLayoutDashboard size={22} /> },
       { label: 'Records', path: '/head/disbursementrecords', icon: <FaRegFile size={20} /> }, 
       ...(permission?.data?.permission 
-        ? [{label: 'Logs', path: '/head/historylogs', icon: <TbLogs size={22} /> } , {label: 'Edit Form', path: '/head/editform', icon: <TbEdit size={22}/>}] 
+        ? [{label: 'Edit Form', path: '/head/editform', icon: <TbEdit size={22}/>}] 
         : []),
       { label: 'Logs', path: '/head/disbursementlogs', icon: <MdOutlineHistory size={22} /> }
     ];

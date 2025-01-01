@@ -2,11 +2,13 @@ import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { parse, formatDistanceToNow } from 'date-fns';
+import { useSelector } from 'react-redux';
 
 const DocumentDetails = ({ index, documents, type, activeTab }) => {
   const navigate = useNavigate();
   const [docu, setDocu] = useState(null);
   const [Status, setStatus] = useState('');
+  const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
     if (documents && type === '4') {
@@ -110,17 +112,18 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
 
   return (
     <>
+      {/* Tablet-Laptop View */}
       <div
         onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
         className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 mb-1 text-customFontColor rounded-lg cursor-pointer hidden sm:flex items-center justify-center`}
       >
         {/* Payee column */}
-        {activeTab === 'Drafting' || activeTab === 'In Review' ? (
+        {activeTab === 'Drafting' || activeTab === 'In Review' || activeTab === 'For Approval' ? (
           <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg w-3/6 px-3 flex items-center justify-start gap-2 truncate`}>
             {docu?.payee}
           </h2>
         ) : (
-          <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${type === '4' || type === '3' || type === '1' ? 'w-2/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
+          <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${(type === '4' || type === '3' || type === '2' && permission?.data.permission && permission?.data?.roleName === 'Budget Officer' || type === '1') && !activeTab ? 'w-4/6' : 'w-3/6'} px-3 flex items-center justify-start gap-2 truncate`}>
             {docu?.payee}
           </h2>
           )}
@@ -136,25 +139,41 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
             {Status}
           </h2>
         </div>
-
-        <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+    
+        {!(activeTab.includes('Returned') || !activeTab || activeTab === 'Approved' || activeTab === 'Drafting' && permission?.data.permission && permission?.data?.roleName === 'Funding' || activeTab === 'In Review' && permission?.data.permission && permission?.data?.roleName === 'Preparer') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
           {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
-        </h2>
-
-          {(activeTab !== 'Drafting' && activeTab !== 'In Review') && (
-            (type === '4' || type === '3') && ( 
-              <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-                {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
-                {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
-                {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
-              </h2>
-            )
-          )}
-
-        {type === '1' && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
-          {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
         </h2>}
+
+        {(activeTab === 'Drafting' && permission?.data.permission && permission?.data?.roleName === 'Funding') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {formatDistanceToNow(formatDateTime(docu?.createdAt), { addSuffix: true })} 
+        </h2>}
+
+        {(activeTab === 'In Review' && permission?.data.permission && permission?.data?.roleName === 'Preparer') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {docu?.submittedBy ? formatDistanceToNow(formatDateTime(docu?.submittedBy.split('|')[1]), { addSuffix: true }) : '--'} 
+        </h2>}
+
+        {(activeTab === '' && type === '2' && !permission?.data.permission && permission?.data?.roleName === 'Budget Officer') && <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+          {docu?.submittedBy ? formatDistanceToNow(formatDateTime(docu?.submittedBy.split('|')[1]), { addSuffix: true }) : '--'} 
+        </h2>}
+
+        {(activeTab !== '' && activeTab !== 'Drafting' && activeTab !== 'In Review') && (
+          (type === '4' || type === '3') && ( 
+            <h2 className="sm:text-xs 2xl:text-sm font-light text-center w-1/6">
+              {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
+              {(type === '4' || permission?.data.permission && permission?.data?.roleName === 'Funding') && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
+              {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
+            </h2>
+          )
+        )}
+
+        {(type === '1' && activeTab !== 'For Approval' || type === '2' && activeTab === 'Approved') && (
+          <h2 className="sm:text-xs 2xl:text-sm w-1/6 text-center font-light">
+            {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
+          </h2>
+        )}
       </div>
+      
+      {/* Mobile View */}
       <div
         onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
         className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} rounded-lg w-full h-auto p-2 mb-1 text-customFontColor cursor-pointer sm:hidden`}
@@ -181,9 +200,11 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
           {type === '4' && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
           {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
         </h2>}
-        {type === '1' && <h2 className="sm:text-xs 2xl:text-sm font-light">
-          {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
-        </h2>}
+        {(type === '1' && activeTab !== 'For Approval') && (
+          <h2 className="sm:text-xs 2xl:text-sm font-light">
+            {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
+          </h2>
+        )}
       </div>
     </>
   );

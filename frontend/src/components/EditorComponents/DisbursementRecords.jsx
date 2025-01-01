@@ -159,11 +159,12 @@ const DisbursementRecords = () => {
       <div className="w-full h-[90%] rounded-lg">
         <div className='w-full h-full rounded-lg'>
           <div className='w-full h-[8%] hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
-            <h1 className={`lg:text-sm 2xl:text-base ${activeTabs === '' || activeTabs.includes('Returned') ? 'w-2/6' : 'w-3/6'} text-left px-2 font-semibold`}>Payee</h1>
+            <h1 className={`lg:text-sm 2xl:text-base ${!activeTabs ? 'w-4/6' : 'w-3/6'} text-left px-2 font-semibold`}>Payee</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
-            <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold '>Time Created</h1>
-            {(activeTabs !== 'Drafting' && activeTabs !== 'In Review') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
+            {activeTabs === 'In Review' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold '>Time Transfered</h1>}
+            {activeTabs === 'Drafting' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold '>Time Created</h1>}
+            {activeTabs.includes('Returned') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
           <div className="w-full h-full sm:h-[92%] rounded-lg">
             <PaginatedList items={sortTimeCreatedDesc(getFilteredDocuments())} type={'4'} activeTab={activeTabs}/>

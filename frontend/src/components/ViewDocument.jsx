@@ -6,7 +6,6 @@ import { RxPaperPlane } from "react-icons/rx";
 import { FiEdit3 } from "react-icons/fi";
 import { MdDeleteOutline, MdOutlineFileDownload  } from "react-icons/md";
 import { IoMdArrowRoundBack, IoMdCheckmark, IoMdAdd  } from "react-icons/io";
-import { IoReturnDownBackOutline, IoReturnDownForward  } from "react-icons/io5";
 import { BsArrowLeft } from "react-icons/bs";
 //components
 import DisbursementVoucher from './DisbursementVoucher';
@@ -39,11 +38,11 @@ const ViewDocument = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [modalComment, setModalComment] = useState(false)
   //const [userRecord, setUserRecord] = useState('')
-  const [primaryColor, setPrimaryColor] = useState('')
-  const [secondaryColor, setSecondaryColor] = useState('')
+  //const [primaryColor, setPrimaryColor] = useState('')
   const [type, setType] = useState('')
   const [fundingModal, setFundingModal] = useState(false)
-  
+  const [returnFlag, setReturnFlag] = useState(false)
+
   //contexts
   const { documents } = useDisbursementContext();
   const {OpDocuments} = useOpDisbursementContext();
@@ -73,25 +72,20 @@ const ViewDocument = () => {
     setFundingModal(!fundingModal)
   }
 
-  useEffect(() => {
-    if(user && user.role === '1'){
-      setPrimaryColor('customgreen')
-      setSecondaryColor('bg-adminBlue')
-    }else if(user && user.role === '2'){
-      setPrimaryColor('BOGreen')
-      setSecondaryColor('bg-BOLightGreen')
-    }else if(user && user.role === '3'){
-      setPrimaryColor('fundingBlueGreen')
-      setSecondaryColor('bg-fundingGray')
-    }else if(user && user.role === '4'){
-      setPrimaryColor('preparerPrimary')
-      setSecondaryColor('bg-preparerSecondary')
-    }
-    else {
-      setPrimaryColor('customgreen')
-      setSecondaryColor('bg-customFontColor')
-    }
-  },[user])
+  // useEffect(() => {
+  //   if(user && user.role === '1'){
+  //     setPrimaryColor('customgreen')
+  //   }else if(user && user.role === '2'){
+  //     setPrimaryColor('BOGreen')
+  //   }else if(user && user.role === '3'){
+  //     setPrimaryColor('fundingBlueGreen')
+  //   }else if(user && user.role === '4'){
+  //     setPrimaryColor('preparerPrimary')
+  //   }
+  //   else {
+  //     setPrimaryColor('customgreen')
+  //   }
+  // },[user])
 
   useEffect(() => {
     if(id){
@@ -230,44 +224,56 @@ const ViewDocument = () => {
           {idStatus.status === 'Approved' && (
             <button
               onClick={handleDownload}
-              className={`w-full px-5 rounded-lg py-2 border-[1px] border-${primaryColor} text-${primaryColor} bg-white`}
+              className={`w-auto px-5 py-2 rounded-lg ${permission?.data.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
               >
-            <MdOutlineFileDownload className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl"/>
+            <MdOutlineFileDownload size={20} className="block lg:hidden"/> <span className="hidden sm:block ">Download</span>
           </button>)}
 
           {idStatus.type === '3' && idStatus.status === 'In Review' && (
             <button
               onClick={() => openModal('ReturnDV')}
-              disabled={isLoadingPreparer}
-              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
+              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-red-500 bg-white border-2 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150 flex items-center justify-center gap-2"
             >
-              <BsArrowLeft/> <span className="hidden sm:block ">Return to Preparer</span>
+              <BsArrowLeft size={20}/> <span className="hidden sm:block ">Return to Preparer</span>
             </button>
           )}
 
-          {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
+          {/* {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
             <button
               onClick={() => openModal('ReturnToFunding')}
-              className={`w-full px-5 rounded-lg text-sm py-2 text-white ${secondaryColor}`}
+              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
               >
-              <IoReturnDownBackOutline className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
+              <BsArrowLeft/> <span className="hidden sm:block ">Return to Funding</span>
             </button>
           )}
 
           {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
             <button
               onClick={() => openModal('ReturnToPreparer')}
-              className={`w-full px-5 rounded-lg text-sm py-2 text-white ${secondaryColor}`}
+              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
               >
-              <IoReturnDownForward className="text-xl sm:text-2xl md:text-3xl lg:text-2xl xl:text-2xl 2xl:text-3xl" />
+              <BsArrowLeft/> <span className="hidden sm:block ">Return to Preparer</span>
             </button>
-          )}
+          )} */}
           
+          {(idStatus.type === '2' && idStatus.status !== 'Approved' && idStatus.status !== 'For Approval') && (
+            <div className="w-auto h-auto relative">
+              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-2 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150"><BsArrowLeft/> Return</button>
+              {returnFlag && (
+                <>
+                  <div className="fixed inset-0 z-0" onClick={() => setReturnFlag(!returnFlag)}/>
+                  <div className='absolute w-24 sm:w-28 md:w-32 lg:w-full bg-white right-0 top-12 z-0 p-1 border-[1px] text-xs lg:text-sm'>
+                    <div onClick={() => openModal('ReturnToPreparer')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Preparer</div>
+                    <div onClick={() => openModal('ReturnToFunding')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Funding</div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
           
           {idStatus.type === '4' && idStatus.status === 'Drafting' && (
             <button
               onClick={delDV}
-              disabled={isLoadingPreparer}
               className={`w-auto px-5 rounded-lg py-2 text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-white transtion-all duration-150`}
               >
               <MdDeleteOutline size={20}/>
@@ -311,7 +317,7 @@ const ViewDocument = () => {
           {(idStatus.type === '2' && !permission.data.permission) && (
             <button
               onClick={() => openModal('SubmitBO')}
-              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen text-white`}
+              className={`w-auto px-5 py-2 rounded-lg bg-BOGreen border-2 border-BOGreen hover:bg-white hover:text-BOGreen text-white transition-all duration-150`}
               >
               <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
             </button>
@@ -320,7 +326,6 @@ const ViewDocument = () => {
           {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission?.data?.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
             <button
               onClick={approve}
-              disabled={isLoadingApprover}
               className={` w-auto px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white`}
               >
               <IoMdCheckmark size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Approve</span>
@@ -380,7 +385,7 @@ const ViewDocument = () => {
           </section>
         </>
       )}
-      {isLoadingApprover || isLoadingPreparer && (
+      {(isLoadingApprover || isLoadingPreparer) && (
         <LargeLoader/>
       )}
     </section>
