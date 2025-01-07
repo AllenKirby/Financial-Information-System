@@ -87,11 +87,12 @@ const FundingModal = ({modal, data}) => {
             data: operatorInput,
             DV: fieldOfficeData,
             previousASA: prevASARef.current,
-            origBUR: origBUR
+            origBUR: origBUR,
+            controlBooks: CBAmount
         }
         console.log(fundingData)
         console.log(fieldOfficeData)
-        
+        console.log('hiyhiy')
         const res = await updateASA_ORS(fundingData, DVNo)
 
         if(res){
@@ -112,6 +113,69 @@ const FundingModal = ({modal, data}) => {
         }
     }
 
+    const [balances, setBalances] = useState({})
+    const [addControlBook, setAddControlBook] = useState(false)
+    const [budget, setBudget] = useState(0)
+    const [CBAmount, setCBAmount] = useState({})
+    const enoughBalance = (totalAmount, balance, key) => {
+        const totalBalance = balances.length === 0 ? 0 : Object.values(balances).reduce((val, item) => val + parseFloat(item), 0)
+        const enough = totalAmount >= totalBalance
+        if(enough){
+            console.log(`balances: ${totalBalance} amount: ${totalAmount}`)
+            setBalances({...balances, [key]: balance})
+            setAddControlBook(true)
+        }
+    }
+
+    useEffect(() => {
+        console.log(operatorInput)
+
+    }, [operatorInput])
+
+    const handleChangeBoxAmount = (checked, key, projectID, amount) => {
+        const projectKey = `${key}/${projectID}`;
+       
+        //FOR NEXT UPDATE
+        setASANo((prevState) => {
+            const updatedState = { ...prevState };
+            const projectIndex = updatedState[key]?.findIndex((proj) => proj.projectID === projectID);
+    
+            if (projectIndex !== -1) {
+                const currentRO = parseFloat(updatedState[key][projectIndex].RO || 0);
+                if (checked) {
+                    updatedState[key][projectIndex].RO = Math.max(0, currentRO - parseFloat(data.amount)); //fix this
+                } else {
+                    updatedState[key][projectIndex].RO = currentRO + parseFloat(data.amount); //fix this
+                }
+            }
+    
+            return updatedState;
+        });
+
+        if (checked) {
+            const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
+            console.log(exactAmount)
+            setOperatorInput((prev) => ({...prev,
+                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+            }));
+    
+            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
+            setBudget((prev) => prev + amount)
+        } else {
+            setOperatorInput((prev) => {
+                const updatedAsa = { ...(prev.asa || {}) };
+                delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
+                return {
+                    ...prev,
+                    asa: updatedAsa,
+                };
+            });
+    
+            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
+            setBudget((prev) => prev - amount < 0 ? 0 : prev - amount)
+        }
+
+    }
     return(
         <form onSubmit={handleSubmit} className="bg-white w-2/6 h-auto p-3 rounded-lg text-gray-500">
             <h1 className="px-3 my-2 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
@@ -149,38 +213,79 @@ const FundingModal = ({modal, data}) => {
             <div className="px-3">
                 <div>
                     <label className="font-semibold">ASA No.</label>
-                    <div className="flex items-center justify-center w-full">
-                        <select    
-                            className='focus:outline-fundingBlueGreen w-full px-4 py-2 rounded-md border-2 w-4/5'
-                            onChange={(e) => {
-                                setOperatorInput({...operatorInput, asa: e.target.value})
-                            }}
-                            value={operatorInput.asa}
-                            >
-                            <option value="" disabled>Select</option>
-                            {Object.entries(ASANo).length > 0 ? (
-                                Object.entries(ASANo).map(([key, asano]) => {
-                                    const finalASANO = key.replace('|', ' ')
-                                    return(
-                                        <optgroup key={key} label={finalASANO}>
-                                            {asano.map((project, index) =>{ 
-                                                return <option disabled={parseFloat(data.amount) > parseFloat(project.RO)} key={index} value={`${key}/${project.projectID}`}>{project.projectName} : {project.RO ? formatToPeso(project.RO) : null}</option>
-                                            })}
-                                        </optgroup>
-                                    )   
-                                })
-                            ) : (
-                                <option value="" disabled>
-                                    No options available
-                                </option>
-                            )}
-                        </select>
-                        <button
+                    <p>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
+                    <div className="flex flex-col items-center justify-center w-full">
+                        
+                    {Object.entries(ASANo).length > 0 ? (
+                            Object.entries(ASANo).map(([key, asano]) => {
+                                const finalASANO = key.replace('|', ' ');
+                                return (
+                                    <div key={key} className="border-b pb-2">
+                                        <h4 className="font-semibold text-lg mb-2">
+                                            {finalASANO}
+                                        </h4>
+                                        <div className="space-y-1">
+                                            {asano.map((project, index) => (
+                                                <label key={index} className="flex items-center gap-2">
+                                                    <input
+                                                        type="checkbox"
+                                                        value={`${key}/${project.projectID}`}
+                                                        onChange={(e) => {
+                                                            const isChecked = e.target.checked;
+                                                            const projID = e.target.value;
+                                                            const amount = parseFloat(
+                                                                project.RO || 0
+                                                            );
+                                                            handleChangeBoxAmount(isChecked,key, project.projectID, amount)
+
+                                                            // if (isChecked) {
+                                                            //     // Add the selected project
+                                                            //     const exactAmount = parseFloat(data.amount) < (amount + budget) ? amount - ((amount + budget) - parseFloat(data.amount)) : amount
+                                                            //     setOperatorInput((prev) => ({...prev, asa: {...(prev.asa || {}), [projID]: exactAmount}}));
+                                                            //     // setBudget((prev) => prev += amount)
+                                                            //     setCBAmount((prev) => ({...prev, [key]: (prev[key] || 0) + exactAmount}))
+                                                                
+                                                                
+                                                            // } else {
+                                                            //     // Remove the unselected project
+                                                            //     setOperatorInput((prev) => {
+                                                            //         const updatedAsa = { ...(prev.asa || {}) };
+                                                            //         delete updatedAsa[projID]; // Remove the projID key
+                                                            //         return {
+                                                            //             ...prev,
+                                                            //             asa: updatedAsa,
+                                                            //         };
+                                                            //     });
+                                                            //     // setBudget((prev) => prev -= amount)
+                                                            //     setCBAmount((prev) => ({...prev, [key]: (prev[key] || 0) - amount}))
+                                                            // }
+                                                        }}
+                                                        checked={Boolean(operatorInput.asa?.[`${key}/${project.projectID}`])}
+                                                        disabled={
+                                                            !Boolean(operatorInput.asa?.[`${key}/${project.projectID}`]) && 
+                                                            Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
+                                                        }
+                                                    />
+                                                    <span>
+                                                        {project.projectName} :{' '}
+                                                        {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
+                                                    </span>
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })
+                        ) : (
+                            <p>No options available</p>
+                        )}
+                        
+                        {/* <button
                         onClick={handleRemove_ASA}
                             type="button" 
                             className="w-1/5 flex justify-center items-center bg-red-500 rounded ml-1 py-1">
                             <MdRemove className="text-3xl text-white"/>
-                        </button>
+                        </button> */}
                     </div>
                 </div>
             </div>
