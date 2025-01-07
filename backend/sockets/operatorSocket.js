@@ -8,7 +8,7 @@ const operatorSocket = (socket, io) => {
         const permissionRecords = {
             data: perm
         }
-        console.log('permission data: ',perm)
+        // console.log('permission data: ',perm)
 
         const status = perm?.permission
             ? ['Drafting', 'In Review', 'Returned|3', 'Returned|4']

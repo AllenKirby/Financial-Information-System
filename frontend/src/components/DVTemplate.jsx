@@ -56,6 +56,10 @@ const DVTemplate = ({document}) => {
         currency: "PHP",
     }).format(value);
   };
+
+  useEffect(() => {
+    console.log(document)
+  }, [document])
   return (
     <div className="w-full h-auto p-5 border-b-2">
       <div className='mb-2'>
@@ -209,7 +213,21 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-semibold'>{document?.MOP === 'Others' ? `${document?.MOP}(${document?.specifiedMOP})` : document?.MOP}</p>
               <p className='text-customFontColor font-semibold'>{document?.ORSBURS ? document.ORSBURS : '--'}</p>
               <p className='text-customFontColor font-semibold'>{document?.RC}</p>
-              <p className='text-customFontColor font-semibold'>{document?.ASA ? document?.ASA.split('/')[0].replace('|', ' ') : '--'}</p>
+              
+              {
+                document?.ASA ? (
+                  <ul className="list-disc list-inside">
+                    {Object.entries(document.ASA).map(([key, value], index) => {
+                    const parts = key.split('|'); // Split the key
+                    return (
+                      <li key={index} className="text-customFontColor font-semibold">
+                        {`${parts[0].replace('|', ' ')} : ${value}`}
+                      </li>
+                    );
+                  })}
+                  </ul>
+                ) : (<p className="text-customFontColor font-semibold">--</p>)
+              }
               <p className='text-customFontColor font-semibold'>{document?.NF_name}</p>
               <p className='text-customFontColor font-semibold'>{document?.NF_office}</p>
               {document?.accTitle.map((title, index) => (
