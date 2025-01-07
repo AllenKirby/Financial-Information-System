@@ -55,22 +55,26 @@ const AccessControl = () => {
   };
 
   return (
-    <section className="w-full h-full p-3">
-      <div className="w-full h-full border rounded-lg">
-        <div className="w-full h-auto flex rounded-t-lg bg-gray-100 text-gray-500 px-1">
+    <section className="w-full h-full p-3 text-gray-500">
+      <div className="w-full h-auto p-2">
+        <p className="text-superAdminBlue text-sm font-semibold">This page allows the Super Admin to manage access control by assigning roles, permissions, and granted features with descriptions for specific tasks.</p>
+      </div>
+      <div className="w-full h-full flex flex-col">
+        <div className="w-full h-auto hidden sm:flex rounded-lg bg-gray-100 text-gray-500 px-1">
           <div className="w-full h-auto flex">
-            <h1 className="w-1/4 px-2 py-1">Role</h1>
-            <h1 className="w-1/4 px-2 py-1">Permission</h1>
-            <h1 className="w-1/4 px-2 py-1">Granted Features</h1>
-            <h1 className="w-1/4 px-2 py-1">Description</h1>
+            <h1 className="w-1/4 px-2 font-semibold text-sm py-1">Role</h1>
+            <h1 className="w-1/4 px-2 font-semibold text-sm py-1">Permission</h1>
+            <h1 className="w-1/4 px-2 font-semibold text-sm py-1">Granted Features</h1>
+            <h1 className="w-1/4 px-2 font-semibold text-sm py-1">Description</h1>
           </div>
         </div>
-        <div className="w-full h-full bg-white">
+        <div className="w-full flex-1 overflow-y-auto bg-white">
           {roles && Object.entries(roles).length > 0 ? (
             Object.entries(roles).map(([key, role], index) => (
-              <div key={key} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto flex py-2 cursor-pointer my-1`}>
-                <p className="w-1/4 px-2 font-bold">{role.roleName}</p>
-                <p className="w-1/4 px-2">
+              <div key={key} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full rounded-lg h-auto flex flex-col sm:flex-row py-2 cursor-pointer my-1`}>
+                <p className="w-full sm:w-1/4 px-2 flex gap-2 font-bold"><span className="font-bold block sm:hidden">Role:</span>{role.roleName}</p>
+                <p className="w-full sm:w-1/4 px-2 flex gap-2">
+                  <span className="font-bold block sm:hidden">Permission:</span>
                   <label
                     className="has-[:checked]:bg-green-500 bg-gray-300 relative inline-block h-7 w-14 cursor-pointer rounded-full transition [-webkit-tap-highlight-color:_transparent]"
                   >
@@ -86,8 +90,8 @@ const AccessControl = () => {
                     ></span>
                   </label>
                 </p>
-                <p className="w-1/4 px-2">{role.grantedAccess}</p>
-                <p className="w-1/4 px-2 truncate">{role.description}</p>
+                <p className="w-full sm:w-1/4 px-2 flex gap-2"><span className="font-bold block sm:hidden">Grant Access:</span>{role.grantedAccess}</p>
+                <p className="w-full sm:w-1/4 px-2 flex gap-2"><span className="font-bold block sm:hidden">Description:</span>{role.description}</p>
               </div>
             ))
           ) : (

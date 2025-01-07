@@ -7,7 +7,6 @@ import { useDispatch } from "react-redux";
 import { setExpense } from "../../../redux/TotalExpenseRedux";
 
 const LineGraph = ({ chartData, customYear }) => {
-
     const [year, setYear] = useState(customYear);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -37,9 +36,10 @@ const LineGraph = ({ chartData, customYear }) => {
             chart: {
                 height: 350,
                 type: 'line',
+                id: 'chartID',
                 toolbar: {
-                    show: false
-                }
+                    show: false, // Disable built-in toolbar if you want only custom button
+                },
             },
             stroke: { width: [3, 3], curve: 'smooth', colors: ['#546E7A', '#FF5733'] },
             xaxis: { categories: [], tickAmount: 10 },
@@ -159,34 +159,41 @@ const LineGraph = ({ chartData, customYear }) => {
         }));
     }, [chartData, year, startDate, endDate, testData]);
 
+    
+
   return (
     <div className="w-full h-full">
         <div className="h-[10%] flex items-center justify-between pl-5">
-            <div className={`border-l-2 px-1 font-bold ${user?.role === '4' ? 'border-customgreen text-customgreen' : 'border-BOGreen text-BOGreen'}`}>
+            <div className={`font-bold ${user?.role === '4' ? 'text-customgreen' : 'text-BOGreen'}`}>
                 <p>Expense Trends and Forecast</p>
             </div>
-            <select 
-                value={year} onChange={(e) => setYear(e.target.value)}
-                className={`py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}>
-                {getYear().map((year, index) => (
-                    <option key={index} value={year}>{year}</option>
-                ))}
-            </select>
-            <div className='flex gap-2'>
-                <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    placeholder="Start Date"
-                    className={`text-xs py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
-                />
-                <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    placeholder="End Date"
-                    className={`text-xs py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
-                />
+            <div className='flex items-center justify-center gap-2'>
+                {year === 'Custom' && (
+                    <div className='flex gap-2'>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            placeholder="Start Date"
+                            className={`text-xs py-2 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
+                        />
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            placeholder="End Date"
+                            className={`text-xs py-2 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
+                        />
+                    </div>
+                )}
+                <select 
+                    value={year} onChange={(e) => setYear(e.target.value)}
+                    className={`py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}>
+                    {getYear().map((year, index) => (
+                        <option key={index} value={year}>{year}</option>
+                    ))}
+                    <option value={'Custom'}>Custom Date</option>
+                </select>
             </div>
         </div>
         <div className='w-full h-[90%]'>
@@ -204,6 +211,7 @@ const LineGraph = ({ chartData, customYear }) => {
 
 LineGraph.propTypes = {
     chartData: PropTypes.object.isRequired,
+    customYear: PropTypes.string.isRequired,
 };
 
 export default LineGraph;

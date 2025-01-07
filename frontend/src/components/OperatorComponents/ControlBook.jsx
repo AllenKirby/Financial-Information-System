@@ -1,17 +1,18 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector } from 'react-redux'
 import { Outlet, useParams } from "react-router-dom"
 
 import AddControlBook from "./AddControlBook"
-import Folder from "./Folder"
 import {useAuthContext} from '../../hooks/useAuthContext'
 
 
 import { IoAdd } from "react-icons/io5";
+import PaginatedList from "../PaginatedList"
 
 const ControlBook = () => {
   const [controlBookFlag, setControlBookFlag] = useState(false)
   const [CBStatus, setCBStatus] = useState('active')
+  const [filteredCB, setFilteredCB] = useState({})
 
   const controlBooks = useSelector((state) => state.controlBook)
   const { user } = useAuthContext()
@@ -20,6 +21,15 @@ const ControlBook = () => {
   const { id } = useParams()
 
   const modal = () => setControlBookFlag(!controlBookFlag)
+
+  useEffect(() => {
+
+   if(controlBooks && Object.entries(controlBooks).length > 0) {
+    const filteredResults = Object.entries(controlBooks).filter(([, controlBook]) => controlBook.cbStatus === CBStatus)
+    console.log(controlBooks)
+    setFilteredCB(Object.fromEntries(filteredResults))
+   }
+  }, [CBStatus, controlBooks])
 
   return (
     <section className="w-full h-full p-2 flex flex-col text-gray-500">
@@ -42,18 +52,8 @@ const ControlBook = () => {
               </button>
             </div>
           </div>
-          <div className="relative p-2 w-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 border-2 rounded-lg overflow-y-auto">
-            {controlBooks && Object.entries(controlBooks).length > 0 ? (
-              Object.entries(controlBooks)
-              .filter(([, controlBook]) => controlBook.cbStatus === CBStatus)
-              .map(([key, controlBook]) => (
-                <Folder key={key} ASANo={key} controlBook={controlBook}/>
-              ))
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <p className="text-xl font-semibold">No Control Books Found</p>
-              </div>
-            )}
+          <div className="w-full flex-1 overflow-y-auto">
+            <PaginatedList items={filteredCB} paginationFor="ControlBook"/>
           </div>
           {controlBookFlag && (
             <>

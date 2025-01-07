@@ -6,6 +6,8 @@ import { IoSearchSharp } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { IoIosClose } from "react-icons/io";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
+import HistoryLogsItem from "./HistoryLogsItem";
+import PaginatedList from "./PaginatedList";
 
 const HistoryLogs = () => {
     const [historyLogs, setHistoryLogs] = useState(null)
@@ -170,29 +172,17 @@ const HistoryLogs = () => {
                     </div>
                 </div>
                 <div className="w-full h-[93%] overflow-y-auto text-gray-500">
-                    {filteredLogs && Object.entries(filteredLogs).length > 0 ? (
+                    {/* {filteredLogs && Object.entries(filteredLogs).length > 0 ? (
                         Object.entries(filteredLogs).map(([key, log], index) => (
-                            <>
-                                <div key={`sm-visible-${key}`} className={`${index % 2 == 0 ? 'bg-white' : 'bg-offWhite'} hidden sm:flex w-full py-3 rounded-lg mt-1`}>
-                                    <p className="w-1/4 text-sm text-left px-2 truncate font-semibold">{log.split('!')[0]}</p>
-                                    <p className="w-1/4 text-sm text-center px-2">{log.split('!')[1].split('|').slice()[0]}</p>
-                                    <p className="w-1/4 text-sm text-center px-2">{log.split('!')[4]}</p>
-                                    <p className="w-1/4 text-sm text-center px-2">{log.split('!')[2].replace(',', ' ')}</p>
-                                    <p className="w-1/4 text-sm text-center px-2">{`${log.split('!')[3]}`}</p>
-                                </div>
-                                <div key={`sm-hidden-${key}`} className={`${index % 2 == 0 ? 'bg-white' : 'bg-offWhite'} rounded-lg block sm:hidden w-full py-3 mt-1`}>
-                                    <p className="px-2 truncate font-semibold">{log.split('!')[0]}</p>
-                                    <p className="text-sm px-2 ">{log.split('!')[1].split('|').slice()[0]}</p>
-                                    <p className="text-sm px-2 ">{log.split('!')[4]}</p>
-                                    <p className="text-sm px-2 ">{log.split('!')[2].replace(',', ' ')}</p>
-                                    <p className="text-sm px-2 ">{`${log.split('!')[3]}`}</p>
-                                </div>
-                            </>
+                            <HistoryLogsItem key={key} log={log} index={index}/>
                         ) )
                     ) : (
                         <div className=" w-full h-full flex items-center justify-center">
                             <p className="text-center font-semibold text-lg">No Logs Found</p>
                         </div>
+                    )} */}
+                    {filteredLogs && (
+                        <PaginatedList items={filteredLogs} paginationFor="HistoryLogs"/>
                     )}
                 </div>
             </div>

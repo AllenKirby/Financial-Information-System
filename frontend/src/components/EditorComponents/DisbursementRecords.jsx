@@ -115,10 +115,10 @@ const DisbursementRecords = () => {
       <div className='w-full h-[10%] flex'>
         <div className="w-2/3 sm:w-1/2 flex items-end">
           <div className='pt-3 flex items-center justify-center'>
-            <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><FiLayers size={20}/><span className='hidden sm:block'>All</span></button>
-            <button onClick={() => setActiveTabs('Drafting')} className={`${activeTabs === 'Drafting' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><MdOutlineDrafts size={20}/><span className='hidden sm:block'>Drafting</span></button>
-            {permission?.data?.permission && <button onClick={() => setActiveTabs('In Review')} className={`${activeTabs === 'In Review' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><BsClockHistory size={20}/><span className='hidden sm:block'>In Review</span></button>}
-            <button onClick={() => setActiveTabs('Returned')} className={`${activeTabs.includes('Returned') ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><MdKeyboardReturn size={20}/><span className='hidden sm:block'>Returned</span></button>
+            <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><FiLayers size={20}/><span className='hidden lg:block'>All</span></button>
+            <button onClick={() => setActiveTabs('Drafting')} className={`${activeTabs === 'Drafting' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><MdOutlineDrafts size={20}/><span className='hidden lg:block'>Drafting</span></button>
+            {permission?.data?.permission && <button onClick={() => setActiveTabs('In Review')} className={`${activeTabs === 'In Review' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><BsClockHistory size={20}/><span className='hidden lg:block'>In Review</span></button>}
+            <button onClick={() => setActiveTabs('Returned')} className={`${activeTabs.includes('Returned') ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><MdKeyboardReturn size={20}/><span className='hidden lg:block'>Returned</span></button>
           </div>
         </div>
         <div className='w-1/3 sm:w-1/2 flex items-end justify-end gap-2'>
@@ -157,8 +157,8 @@ const DisbursementRecords = () => {
         </div>
       </div>
       <div className="w-full h-[90%] rounded-lg">
-        <div className='w-full h-full rounded-lg'>
-          <div className='w-full h-[8%] hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
+        <div className='w-full h-full flex flex-col rounded-lg'>
+          <div className='w-full h-auto hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
             <h1 className={`lg:text-sm 2xl:text-base ${!activeTabs ? 'w-4/6' : 'w-3/6'} text-left px-2 font-semibold`}>Payee</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
@@ -166,8 +166,8 @@ const DisbursementRecords = () => {
             {activeTabs === 'Drafting' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold '>Time Created</h1>}
             {activeTabs.includes('Returned') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
-          <div className="w-full h-full sm:h-[92%] rounded-lg">
-            <PaginatedList items={sortTimeCreatedDesc(getFilteredDocuments())} type={'4'} activeTab={activeTabs}/>
+          <div className="w-full flex-1 rounded-lg">
+            <PaginatedList items={sortTimeCreatedDesc(getFilteredDocuments())} type={'4'} activeTab={activeTabs} paginationFor={'DV'}/>
           </div>
         </div>
         {isModalOpen && (

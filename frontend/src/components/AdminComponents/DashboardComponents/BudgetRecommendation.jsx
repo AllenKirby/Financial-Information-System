@@ -158,18 +158,18 @@ const BudgetRecommendation = () => {
     }
 
     return (
-        <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto">
-            <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Budget Recommendation</h1>
+        <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto text-gray-500">
+            <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-xl my-2`}>Budget Recommendation</h1>
             <div className="flex items-center space-x-4 mb-4">
                 <input
                     type="number"
                     placeholder="Expense"
-                    className="border-2 rounded-md p-2 w-2/6"
+                    className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border-2 rounded-md p-2 w-2/6`}
                     value={expense === 0 ? '': expense}
                     onChange={(e) => setExpense(e.target.value)}
                 />
                 <select 
-                    className="border-2 rounded-md p-2 w-2/6"
+                    className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border-2 rounded-md p-2 w-2/6`}
                     value={selectedMonth}
                     onChange={(e) => {
                         const value = e.target.value
@@ -191,10 +191,10 @@ const BudgetRecommendation = () => {
                     ))}
                 </select>
                 <button
-                    className={`p-2 w-1/6 rounded-md text-white flex justify-center ${
+                    className={`p-2 w-1/6 rounded-md text-white flex justify-center border-2 transition-all duration-150 ${
                         selectedMonth === currentMonth2
                             ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-customgreen hover:bg-green-600"
+                            : user?.role === '1' ? 'bg-customgreen border-customgreen hover:bg-white hover:text-customgreen' : 'bg-BOGreen border-BOGreen hover:bg-white hover:text-BOGreen'
                     }`}
                     disabled={selectedMonth === currentMonth2}
                     onClick={handleTest}
@@ -202,7 +202,7 @@ const BudgetRecommendation = () => {
                     <IoMdSend />
                 </button>
                 <button
-                    className="p-2 w-1/6 rounded-md flex justify-center text-white text-lg bg-red-500 hover:bg-red-600"
+                    className="p-2 w-1/6 rounded-md flex justify-center text-white text-lg border-2 border-red-500 bg-red-500 hover:bg-white hover:text-red-500 transition-all duration-150"
                     onClick={handleReset}
                 >
                     <IoMdBackspace />

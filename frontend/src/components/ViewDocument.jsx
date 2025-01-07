@@ -224,9 +224,9 @@ const ViewDocument = () => {
           {idStatus.status === 'Approved' && (
             <button
               onClick={handleDownload}
-              className={`w-auto px-5 py-2 rounded-lg ${permission?.data.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
+              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${permission?.data.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
               >
-            <MdOutlineFileDownload size={20} className="block lg:hidden"/> <span className="hidden sm:block ">Download</span>
+            <MdOutlineFileDownload size={20} /> <span className="hidden sm:block ">Download</span>
           </button>)}
 
           {idStatus.type === '3' && idStatus.status === 'In Review' && (
@@ -326,7 +326,7 @@ const ViewDocument = () => {
           {((idStatus.type === '1' && idStatus.status !== 'Approved') || (permission?.data?.permission && idStatus.type == '2' && idStatus.status !== 'Approved')) && (
             <button
               onClick={approve}
-              className={` w-auto px-5 py-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} text-white`}
+              className={` w-auto px-5 py-2 border-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen border-customgreen hover:bg-white hover:text-customgreen' : 'bg-BOGreen border-BOGreen hover:bg-white hover:text-BOGreen'} text-white transition-all duration-150`}
               >
               <IoMdCheckmark size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Approve</span>
             </button>

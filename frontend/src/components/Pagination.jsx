@@ -1,17 +1,15 @@
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
-
-import { GrFormNext } from "react-icons/gr";
-import { GrFormPrevious } from "react-icons/gr";
+import { GrFormNext } from 'react-icons/gr';
+import { GrFormPrevious } from 'react-icons/gr';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 const Pagination = ({ totalPages, currentPage, onPageChange }) => {
-    const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
     const { user } = useAuthContext();
     const [bgColor, setBgColor] = useState('');
 
     useEffect(() => {
-        if(user && user.role){
+        if (user && user.role) {
             switch (user.role) {
                 case '4':
                     return setBgColor('bg-preparerPrimary');
@@ -29,30 +27,53 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
         }
     }, [user]);
 
+    // Calculate the page range to display
+    const getPageRange = () => {
+        const maxVisiblePages = 3;
+        const startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        // Adjust startPage if we are near the end
+        const adjustedStartPage = Math.max(1, endPage - maxVisiblePages + 1);
+
+        return Array.from(
+            { length: endPage - adjustedStartPage + 1 },
+            (_, i) => adjustedStartPage + i
+        );
+    };
+
+    const pages = getPageRange();
+
     return (
-        <div className='w-full h-full flex items-center justify-between gap-3 px-3'>
-            <button 
-                onClick={() => onPageChange(currentPage - 1)} 
-                disabled={currentPage === 1} 
-                className='w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer'
+        <div className="w-full h-full flex items-center justify-between gap-3  px-3">
+            <button
+                onClick={() => onPageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className="w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer"
             >
                 <GrFormPrevious size={30} />
             </button>
-            <div className='flex gap-1'>
+            <div className="flex gap-1">
                 {pages.map((page) => (
                     <button
                         key={page}
                         onClick={() => onPageChange(page)}
-                        className={`py-1 px-3 rounded-lg ${page === currentPage ? `${bgColor} text-white` : ' text-customFontColor border-2'}`}
+                        className={`py-1 px-3 rounded-lg ${
+                            page === currentPage
+                                ? `${bgColor} text-white`
+                                : 'text-customFontColor border-2'
+                        }`}
                     >
-                        {page} 
+                        {page}
                     </button>
                 ))}
             </div>
-            <button 
+            <button
                 onClick={() => onPageChange(currentPage + 1)}
                 disabled={currentPage >= totalPages}
-                className={`w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer ${currentPage >= totalPages ? 'text-gray-300' : 'text-customFontColor'}`}
+                className={`w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer ${
+                    currentPage >= totalPages ? 'text-gray-300' : 'text-customFontColor'
+                }`}
             >
                 <GrFormNext size={30} />
             </button>

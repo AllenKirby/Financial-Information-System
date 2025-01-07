@@ -112,10 +112,10 @@ const DisbursementRecordsHead = () => {
       <div className='w-full h-[10%] flex'>
         <div className="w-2/3 sm:w-1/2 flex items-end">
           {permission?.data?.permission && <div className='pt-3 flex items-center justify-center'>
-            <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><FiLayers size={20}/><span className='hidden sm:block'>All</span></button>
-            <button onClick={() => setActiveTabs('Under Review')} className={`${activeTabs === 'Under Review' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><LuFileSearch size={20}/><span className='hidden sm:block'>Under Review</span></button>
-            {permission?.data?.permission && <button onClick={() => setActiveTabs('For Approval')} className={`${activeTabs === 'For Approval' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><BsListTask size={20}/><span className='hidden sm:block'>For Approval</span></button>}
-            {permission?.data?.permission && <button onClick={() => setActiveTabs('Approved')} className={`${activeTabs === 'Approved' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><LuFileCheck size={20}/><span className='hidden sm:block'>Approved</span></button>}
+            <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><FiLayers size={20}/><span className='hidden lg:block'>All</span></button>
+            <button onClick={() => setActiveTabs('Under Review')} className={`${activeTabs === 'Under Review' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><LuFileSearch size={20}/><span className='hidden lg:block'>Under Review</span></button>
+            {permission?.data?.permission && <button onClick={() => setActiveTabs('For Approval')} className={`${activeTabs === 'For Approval' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><BsListTask size={20}/><span className='hidden lg:block'>For Approval</span></button>}
+            {permission?.data?.permission && <button onClick={() => setActiveTabs('Approved')} className={`${activeTabs === 'Approved' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><LuFileCheck size={20}/><span className='hidden lg:block'>Approved</span></button>}
           </div>}
         </div>
         <div className='w-1/2 flex items-end justify-end gap-2'>
@@ -151,16 +151,16 @@ const DisbursementRecordsHead = () => {
         </div>
       </div>
       <div className="w-full h-[90%] rounded-lg">
-        <div className='w-full h-full rounded-lg'>
-          <div className='w-full h-[8%] hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
+        <div className='w-full h-full flex flex-col rounded-lg'>
+          <div className='w-full h-auto hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
             <h1 className={`lg:text-sm 2xl:text-base w-3/6 text-left px-2 font-semibold ${!activeTabs && permission?.data?.permission ? 'w-4/6' : 'w-3/6' }`}>Payee</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
             {(!activeTabs && !permission?.data?.permission || activeTabs === 'Under Review' || activeTabs === 'For Approval') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Transferred </h1>}
             {activeTabs === 'Approved' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Approved</h1>}
           </div>
-          <div className="w-full h-full sm:h-[92%] rounded-lg">
-            <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'2'} activeTab={activeTabs}/>
+          <div className="w-full flex-1 rounded-lg">
+            <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'2'} activeTab={activeTabs} paginationFor={'DV'}/>
           </div>
         </div>
       </div>

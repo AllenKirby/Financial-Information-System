@@ -17,7 +17,7 @@ import AddControlBook from "./AddControlBook"
 const Folder = ({ASANo, controlBook}) => {
     const [controlBookFlag, setControlBookFlag] = useState(false)
     const [deletable, setIsDeletable] = useState(true)
-    
+    console.log(controlBook)
     const navigate = useNavigate()
     
     const { deleteControlBook, isLoading, error } = useFundingHook()
@@ -74,13 +74,13 @@ const Folder = ({ASANo, controlBook}) => {
 
   return (
     <div
-      onClick={() => navigate(`${controlBook.ASANo}`)}
+      onClick={() => navigate(`${controlBook[1].ASANo}`)}
       className="h-56 rounded-lg p-1 text-gray-500 hover:bg-gray-200 transition-all duration-100 cursor-pointer"
     >
       <div className="w-full h-[70%] flex items-center justify-center">
         <img
           src={
-            Object.entries(controlBook.fieldOffices).length > 0
+            Object.entries(controlBook[1].fieldOffices).length > 0
               ? FolderWithItems
               : EmptyFolder
           }
@@ -91,7 +91,7 @@ const Folder = ({ASANo, controlBook}) => {
       <div className='w-full h-[30%]'>
         <div className="px-4 flex items-center justify-between">
           <p className="font-bold">
-            {controlBook ? controlBook.ASANo.replace("|", " ") : ""}
+            {controlBook[1] ? controlBook[1].ASANo.replace("|", " ") : ""}
           </p>
           <div className="flex items-center justify-center gap-2">
             <button onClick={modal}>
