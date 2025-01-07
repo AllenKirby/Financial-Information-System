@@ -5,7 +5,6 @@ import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
 import { TbLayoutDashboard, TbEdit } from "react-icons/tb";
-import { BiGitCompare } from "react-icons/bi";
 import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 
@@ -33,8 +32,7 @@ const AdminPage = () => {
     { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Records', path: '/admin/disbursementrecords', icon: <FaRegFile size={20} /> },
     { label: 'Logs', path: '/admin/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
-    { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>},
-    { label: 'Comparison', path:'/admin/comparison', icon: <BiGitCompare size={22}/>}
+    { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>}
   ];
 
   useEffect(() => {
@@ -51,8 +49,6 @@ const AdminPage = () => {
           setLocation('Logs')
       }else if(page.pathname === "/admin/editform"){
           setLocation('Edit Form')
-      }else if(page.pathname === "/admin/comparison"){
-          setLocation('Comparison')
       }
   }, [page.pathname])
 

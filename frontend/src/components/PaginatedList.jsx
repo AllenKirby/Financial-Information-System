@@ -3,11 +3,17 @@ import PropTypes from 'prop-types'
 
 import Pagination from './Pagination';
 import DocumentDetails from './DocumentDetails';
+import HistoryLogsItem from './HistoryLogsItem';
+import Folder from './OperatorComponents/Folder';
+import UserLogs from './SuperAdminComponents/UserLogs';
+import AccessControlLogs from './SuperAdminComponents/AccessControlLogs';
 
-const PaginatedList = ({ items, type, activeTab }) => {
+const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
+
+    console.log(items)
 
   const [currentPage, setCurrentPage] = useState(1); 
-  const itemsPerPage = 10;
+  const itemsPerPage = 20;
 
   const itemsArray = Object.entries(items);
 
@@ -23,12 +29,16 @@ const PaginatedList = ({ items, type, activeTab }) => {
   const handlePageChange = (page) => setCurrentPage(page);
 
   return (
-    <div className='w-full h-full'>
-        <div className='w-full h-[85%] overflow-auto'>
+    <div className='w-full h-full flex flex-col'>
+        <div className={`${paginationFor === 'ControlBook' ? 'relative p-2 w-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 border-2 rounded-lg overflow-y-auto' : ' w-full flex-1 overflow-auto'}`}>
             {Object.keys(currentItems).length > 0 ? (
-                Object.entries(currentItems).map(([key, document]) => (
-                    <DocumentDetails key={key} index={key} documents={document[1]} type={type} activeTab={activeTab} />
-                ))
+                Object.entries(currentItems).map(([key, document]) => {
+                    if(paginationFor === 'DV') return <DocumentDetails key={key} index={key} documents={document[1]} type={type} activeTab={activeTab} />
+                    if(paginationFor === 'HistoryLogs') return <HistoryLogsItem key={key} log={document} index={key}/>
+                    if(paginationFor === 'ControlBook') return <Folder key={key} controlBook={document} ASANo={key}/>
+                    if(paginationFor === 'loginLogs') return <UserLogs key={key} index={key} log={document}/>
+                    if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
+                })
                 ) : (
                 <div className='w-full h-full flex items-center justify-center'>
                     <div>No Documents Found</div>
@@ -44,7 +54,7 @@ const PaginatedList = ({ items, type, activeTab }) => {
                 // </div>
             )}
         </div>
-        <div className='w-full h-[15%] bg-white flex items-center justify-center'>
+        <div className='w-full h-auto py-3 bg-white flex items-center justify-center'>
             <div className='w-auto'>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
             </div>
@@ -56,7 +66,8 @@ const PaginatedList = ({ items, type, activeTab }) => {
 PaginatedList.propTypes = {
     items: PropTypes.object.isRequired,
     type: PropTypes.string.isRequired,
-    activeTab: PropTypes.string.isRequired
+    activeTab: PropTypes.string.isRequired,
+    paginationFor: PropTypes.string.isRequired
   };
 
 export default PaginatedList

@@ -5,6 +5,8 @@ import { collection, query, onSnapshot } from "firebase/firestore"
 import { firestore } from "../../../config/firebase-config";
 import { HiArrowSmDown, HiArrowSmUp } from "react-icons/hi";
 
+import { IoIosArrowDown } from "react-icons/io";
+
 const BudgetRecommendation = () => {
 
     const monthlyData = useSelector((state) => state.totalexpense)
@@ -151,141 +153,135 @@ const BudgetRecommendation = () => {
         }).format(value);
     };
 
-    return (
-        <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto space-y-4">
-            <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg my-2`}>Summary report</h1>
-            <div className="border rounded-lg p-4">
-                <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection("TotalExpenses")}
-                >
-                    <h2 className="font-bold text-lg">Total Expenses</h2>
-                    <span>{openSections.TotalExpenses ? "▲" : "▼"}</span>
-                </div>
-                {openSections.TotalExpenses && (
-                <div className="mt-4 space-y-4">
-                    <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
-                        {
-                            Object.keys(yearlyExpense).reverse().map((year) => (
-                                <li key={year} className="flex flex-col p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
-                                    <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleYear(year)}>
-                                        <span className="font-semibold text-lg">{year}</span>
-                                        <span className="text-green-500 font-medium">{formatToPeso(yearlyExpense[year])}</span>
-                                    </div>
-
-                                    {years[year] && (
-                                        <ul className="mt-2 space-y-1 pl-4 border-t">
-                                        {Object.keys(monthlyData.monthly[year] || {}).reverse().map((month) => (
-                                            <li
-                                            key={`${year}-${month}`}
-                                            className="flex justify-between items-center text-gray-700"
-                                            >
-                                                <span>{month}</span>
-                                                <span className="text-gray-500">
-                                                    {formatToPeso(monthlyData.monthly[year][month])}
-                                                </span>
-                                            </li>
-                                        ))}
-                                        </ul>
-                                    )}
-
-                                </li>
-                            ))
-                        }
-                    </ul>
-                </div>
-                )}
-            </div>
-            <div className="border rounded-lg p-4">
-                <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection("monitoring")}
-                >
-                    <h2 className="font-bold text-lg">Variances - <span className="font-normal italic">2024</span></h2>
-                    <span>{openSections.monitoring ? "▲" : "▼"}</span>
-                </div>
-                {openSections.monitoring && (
-                <div className="mt-4">
-                <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
-                  {Object.keys(monthCategory["2024"] || {}).reverse().map((key) => {
-                    const totalExpense = calculateTotalExpenses(monthCategory, "2024", "2024-11")
-                    const forecastedValue = forecasted_data?.[key] || 0;
-                    const percentage = forecastedValue !== 0 ? calculatePercentage(totalExpense,forecastedValue) : 0;
-              
-                    return (
-                      <li
-                        key={key}
-                        className="flex flex-col p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100"
-                      >
-                        {/* Wrap the toggleMonth call inside an anonymous function */}
-                        <div className="flex justify-between cursor-pointer" onClick={() => toggleMonth(key)}>
-                          <span className="font-semibold text-lg">{key}</span>
-                          <span className={`font-medium flex items-center space-x-1 ${percentage > 0 ? "text-green-500" : "text-red-500"}`}>
-                            {forecastedValue === 0 ? "N/A" : `${percentage}%`}
-                            {forecastedValue !== 0 && (percentage >= 0 ? (
-                              <HiArrowSmUp className="w-6 h-6" />
-                            ) : (
-                              <HiArrowSmDown className="w-6 h-6" />
-                            ))}
-                            
-                          </span>
-                        </div>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-                )}
-            </div>
-            <div className="border rounded-lg p-4">
-                <div
-                className="flex justify-between items-center cursor-pointer"
-                onClick={() => toggleSection("top")}
-                >
-                    <h2 className="font-bold text-lg">Top Expenses - <span className="font-normal italic">2024</span></h2>
-                    <span>{openSections.top ? "▲" : "▼"}</span>
-                </div>
-                {openSections.top && (
-                <div className="mt-4">
-                    <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
-                    {Object.keys(monthCategory["2024"] || {}).map((monthId) => {
-                        const monthData = monthCategory["2024"][monthId];
-                        
-                        const categoryTotals = {};
-
-                        Object.entries(monthData).forEach(([category, subcategories]) => {
-                            let categoryAmount = 0;
-                            
-                            Object.values(subcategories).forEach((amount) => {
-                            categoryAmount += amount; 
-                            });
-
-                            if (categoryTotals[category]) {
-                            categoryTotals[category] += categoryAmount;
-                            } else {
-                            categoryTotals[category] = categoryAmount;
-                            }
-                        });
-
-                        const sortedCategories = Object.entries(categoryTotals)
-                            .sort(([, a], [, b]) => b - a) 
-                            .map(([category, totalAmount]) => ({ category, totalAmount }));
-
-                        return sortedCategories.map(({ category, totalAmount }) => (
-                            <li key={category} className="list-none p-2 border-b border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
-                              <div className="flex items-center justify-between">
-                                  <p className="font-semibold text-sm truncate">{category}</p>
-                                  <p className="font-medium text-gray-700">{formatToPeso(totalAmount)}</p>
-                              </div>
-                            </li>
-                        ));
-                    })}
-                    </ul>
-                </div>
-                )}
-            </div>
+  return (
+    <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto space-y-4 text-gray-500">
+      <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-xl my-2`}>Summary report</h1>
+      <div className="w-full h-auto border rounded-lg p-4 transition-all duration-300">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => toggleSection("TotalExpenses")}
+        >
+          <h2 className="font-bold text-lg">Total Expenses</h2>
+          <span className={`${openSections.TotalExpenses ? 'rotate-180' : ''} transition-all duration-300`}><IoIosArrowDown size={20}/></span>
         </div>
-    );
+        {openSections.TotalExpenses && (
+          <div className="mt-4 space-y-4">
+            <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
+              {Object.keys(yearlyExpense).reverse().map((year) => (
+                <>
+                  <li key={year} className="flex flex-col p-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
+                    <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleYear(year)}>
+                      <span className="font-semibold text-lg">{year}</span>
+                      <span className="text-green-500 font-medium">{formatToPeso(yearlyExpense[year])}</span>
+                    </div>
+                    {years[year] && (
+                      <ul className="mt-2 space-y-1 pl-4 border-t">
+                        {Object.keys(monthlyData.monthly[year] || {}).reverse().map((month) => (
+                          <li
+                            key={`${year}-${month}`}
+                            className="flex justify-between items-center text-gray-700"
+                          >
+                            <span>{month}</span>
+                            <span className="text-gray-500">
+                                {formatToPeso(monthlyData.monthly[year][month])}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                  <hr />
+                </>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      <div className="w-full h-auto border rounded-lg p-4 transition-all duration-300">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => toggleSection("monitoring")}
+        >
+          <h2 className="font-bold text-lg">Variances - <span className="font-normal italic">2024</span></h2>
+          <span className={`${openSections.monitoring ? 'rotate-180' : ''} transition-all duration-300`}><IoIosArrowDown size={20}/></span>
+        </div>
+        {openSections.monitoring && (
+          <div className="mt-4">
+            <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
+              {Object.keys(monthCategory["2024"] || {}).reverse().map((key) => {
+                const totalExpense = calculateTotalExpenses(monthCategory, "2024", "2024-11")
+                const forecastedValue = forecasted_data?.[key] || 0;
+                const percentage = forecastedValue !== 0 ? calculatePercentage(totalExpense,forecastedValue) : 0;
+                return (
+                  <>
+                    <li
+                      key={key}
+                      className="flex flex-col p-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100"
+                    >
+                      {/* Wrap the toggleMonth call inside an anonymous function */}
+                      <div className="flex justify-between cursor-pointer" onClick={() => toggleMonth(key)}>
+                        <span className="font-semibold text-lg">{key}</span>
+                        <span className={`font-medium flex items-center space-x-1 ${percentage > 0 ? "text-green-500" : "text-red-500"}`}>
+                          {forecastedValue === 0 ? "N/A" : `${percentage}%`}
+                          {forecastedValue !== 0 && (percentage >= 0 ? (
+                            <HiArrowSmUp className="w-6 h-6" />
+                          ) : (
+                            <HiArrowSmDown className="w-6 h-6" />
+                          ))}
+                        </span>
+                      </div>
+                    </li>
+                    <hr />
+                  </>
+                );
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+      <div className="w-full h-auto border rounded-lg p-4 transition-all duration-300">
+        <div
+          className="flex justify-between items-center cursor-pointer"
+          onClick={() => toggleSection("top")}
+          >
+          <h2 className="font-bold text-lg">Top Expenses - <span className="font-normal italic">2024</span></h2>
+          <span className={`${openSections.top ? 'rotate-180' : ''} transition-all duration-300`}><IoIosArrowDown size={20}/></span>
+        </div>
+        {openSections.top && (
+          <div className="mt-4">
+            <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
+              {Object.keys(monthCategory["2024"] || {}).map((monthId) => {
+                const monthData = monthCategory["2024"][monthId];
+                const categoryTotals = {};
+                Object.entries(monthData).forEach(([category, subcategories]) => {
+                  let categoryAmount = 0;
+                  Object.values(subcategories).forEach((amount) => {
+                    categoryAmount += amount; 
+                  });
+                  if (categoryTotals[category]) {
+                    categoryTotals[category] += categoryAmount;
+                  } else {
+                    categoryTotals[category] = categoryAmount;
+                  }
+                });
+                const sortedCategories = Object.entries(categoryTotals)
+                  .sort(([, a], [, b]) => b - a) 
+                  .map(([category, totalAmount]) => ({ category, totalAmount }));
+                return sortedCategories.map(({ category, totalAmount }) => (
+                  <li key={category} className="list-none p-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
+                    <div className="flex items-center justify-between text-sm">
+                      <p className="font-semibold truncate">{category}</p>
+                      <p className="font-medium">{formatToPeso(totalAmount)}</p>
+                    </div>
+                  </li>
+                ));
+              })}
+            </ul>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default BudgetRecommendation;

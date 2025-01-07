@@ -1,5 +1,6 @@
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 import { useApproverHook } from "../../../hooks/useApproverHook";
@@ -102,22 +103,22 @@ export const TaxType = () => {
       }
 
     return (
-        <div className="w-full h-full rounded-lg bg-white border-[1px]">
-            <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
-                <h1 className='w-1/3 text-center font-bold px-2'>Tax Type</h1>
-                <h1 className='w-1/3 text-center font-bold'>Cost Category</h1>
-                <h1 className='w-1/3 text-center font-bold'>Computation</h1>
+        <div className="w-full h-auto flex flex-col rounded-lg">
+            <div className="w-full h-auto flex items-center justify-between px-2 py-1 rounded-lg bg-gray-200 text-gray-500">
+                <h1 className='hidden sm:block w-[30%] text-center font-bold px-2'>Tax Type</h1>
+                <h1 className='hidden sm:block w-[30%] text-center font-bold'>Cost Category</h1>
+                <h1 className='hidden sm:block w-[30%] text-center font-bold'>Computation</h1>
                 <button 
-                className='text-white text-2xl rounded-full'
-                onClick={handleShowInput}
+                    className='w-[10%] text-2xl rounded-full flex items-center justify-center'
+                    onClick={handleShowInput}
                 ><IoAdd/></button>
             </div>
             {showInput && (
-                    <div className="px-2 py-2 bg-gray-200 flex gap-1">
+                    <div className="px-2 py-2 bg-gray-100 gap-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
                         <select
                             value={tax}
                             onChange={(e) => setTax(e.target.value)}
-                            className="border border-gray-300 p-2 rounded w-1/5"
+                            className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
                         >
                             <option value="" disabled>Select Tax Type</option>
                             <option value="VAT">VAT</option>
@@ -128,7 +129,7 @@ export const TaxType = () => {
                             value={cost}
                             onChange={(e) => setCost(capitalize(e.target.value))}
                             placeholder="e.g. Services"
-                            className="border border-gray-300 p-2 rounded w-1/5"
+                            className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
                         />
                         <input
                             type="text"
@@ -136,7 +137,7 @@ export const TaxType = () => {
                             onChange={(e) => setValue1(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="e.g. /1.12 * 0.05"
-                            className="border border-gray-300 p-2 rounded w-1/5"
+                            className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
                         />
                         <input
                             type="text"
@@ -144,25 +145,25 @@ export const TaxType = () => {
                             onChange={(e) => setValue2(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="e.g. /1.12 * 0.05"
-                            className="border border-gray-300 p-2 rounded w-1/5"
+                            className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 bg-adminBlue text-white rounded"
+                            className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} h-auto text-white rounded-lg flex items-center justify-center py-2`}
                         >
-                            Submit
+                             <FaCheck size={15} />
                         </button>
                     </div>
                 )}
-                <div className="h-80 overflow-y-auto">
-                    {Object.entries(entries).map(([key, entry]) => (
-                        <div key={key} className="flex border p-2 my-1 rounded-md">
-                            <p className="w-1/3 flex justify-center items-center">{entry.tax}</p>
-                            <p className="w-1/3 flex justify-center items-center">{entry.cost}</p>
-                            <p className="w-1/3 flex justify-center items-center">gross{entry.value1}<br />gross{entry.value2}</p>
-                            <div className="flex justify-center items-center">
+                <div className="w-full h-auto">
+                    {Object.entries(entries).map(([key, entry], index) => (
+                        <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto py-2 rounded-lg flex flex-col sm:flex-row items-center justify-center`}>
+                            <p className="w-full sm:w-[30%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">{entry.tax}</p>
+                            <p className="w-full sm:w-[30%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">{entry.cost}</p>
+                            <p className="w-full sm:w-[30%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">gross{entry.value1} and gross{entry.value2}</p>
+                            <div className="w-full sm:w-[10%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">
                                 <button
-                                    className="text-red-500 w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-500 hover:text-white"
+                                    className="text-red-500 w-auto h-full flex items-center justify-center rounded-full hover:bg-red-500 hover:text-white"
                                     onClick={() => handleRemoveEntry(key)}
                                 >
                                     <MdRemove/>
@@ -170,7 +171,6 @@ export const TaxType = () => {
                             </div>
                         </div>
                     ))}
-                    
                 </div>
             
         </div>

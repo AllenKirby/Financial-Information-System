@@ -66,8 +66,8 @@ const UserManagement = () => {
   }
 
   return (
-    <section className="w-full h-full p-3">
-      <div className="w-full h-[7%] flex items-center justify-end">
+    <section className="w-full h-full flex flex-col p-3 text-gray-500">
+      <div className="w-full h-auto flex items-center justify-end">
         <div className="flex gap-2">
           <div className='relative'>
             <IoSearchSharp size={20} className='absolute top-[12px] left-4 text-gray-400' />
@@ -75,10 +75,10 @@ const UserManagement = () => {
               type="search"
               placeholder='Search Name'
               onChange={(e) => setSearch(e.target.value)}
-              className='py-2 pr-3 pl-10 text-sm rounded-2xl focus:outline-none border-2' />
+              className='py-2 pr-3 pl-10 text-sm rounded-lg focus:outline-none border-2' />
           </div>
-          <button onClick={modal} className="flex items-center justify-center gap-1 bg-superAdminBlue text-sm text-white px-3 rounded-lg hover:scale-125 duration-150 transition-all">
-            <IoMdAdd size={20} />Add Account
+          <button onClick={modal} className="flex items-center justify-center gap-1 bg-superAdminBlue text-sm text-white px-3 rounded-lg border-2 border-superAdminBlue hover:bg-white hover:text-superAdminBlue duration-150 transition-all">
+            <IoMdAdd size={20} /> <span className="hidden sm:block">Add Account</span>
           </button>
           {isModalOpen && (
             <>
@@ -90,43 +90,38 @@ const UserManagement = () => {
           )}
         </div>
       </div>
-      <div className="w-full h-[7%] flex items-center justify-start py-2">
-        <button onClick={() => sortValue('')} className={`${roleSort === '' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>All ({numOfRole.all})</button>
-        <button onClick={() => sortValue('4')} className={`${roleSort === '4' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Preparer ({numOfRole.preparer})</button>
-        <button onClick={() => sortValue('3')} className={`${roleSort === '3' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Funding ({numOfRole.funding})</button>
-        <button onClick={() => sortValue('2')} className={`${roleSort === '2' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Budget Officer ({numOfRole.BO})</button>
-        <button onClick={() => sortValue('1')} className={`${roleSort === '1' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Approver ({numOfRole.approver})</button>
-        <button onClick={() => sortValue('0')} className={`${roleSort === '0' ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}>Super Admin ({numOfRole.superAdmin})</button>
+      <div className="w-[99%] overflow-x-auto h-auto flex items-center justify-start">
+        <button onClick={() => sortValue('')} className={`${roleSort === '' ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue transition-all duration-100`}>All ({numOfRole.all})</button>
+        <button onClick={() => sortValue('4')} className={`${roleSort === '4' ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue transition-all duration-100`}>Preparer ({numOfRole.preparer})</button>
+        <button onClick={() => sortValue('3')} className={`${roleSort === '3' ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue transition-all duration-100`}>Funding ({numOfRole.funding})</button>
+        <button onClick={() => sortValue('2')} className={`${roleSort === '2' ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue transition-all duration-100`}>Budget Officer ({numOfRole.BO})</button>
+        <button onClick={() => sortValue('1')} className={`${roleSort === '1' ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue transition-all duration-100`}>Approver ({numOfRole.approver})</button>
+        <button onClick={() => sortValue('0')} className={`${roleSort === '0' ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue' : ''} px-3 py-2 text-sm font-medium hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue transition-all duration-100`}>Super Admin ({numOfRole.superAdmin})</button>
       </div>
-      <div className="w-full h-[86%] p-3">
-        <div className="w-full h-full border-2 rounded-lg">
-          <div className="w-full h-[7%] flex rounded-t-lg bg-gray-100 px-1">
-            <div className="w-[90%] h-auto flex">
-              <h1 className="w-1/5 px-2 py-1 font-semibold text-gray-400">Fullname</h1>
-              <h1 className="w-1/5 px-2 py-1 font-semibold text-gray-400">Role</h1>
-              <h1 className="w-1/5 px-2 py-1 font-semibold text-gray-400">Email</h1>
-              <h1 className="w-1/5 px-2 py-1 text-center font-semibold text-gray-400">Status</h1>
-              <h1 className="w-1/5 px-2 py-1 text-center font-semibold text-gray-400">Email Verified</h1>
-            </div>
-            <div className="w-[10%] h-auto"></div>
-          </div>
-          <div className="w-full h-[93%] overflow-auto bg-white">
-            {filteredAccounts.length > 0 ? (
-              filteredAccounts.reverse().map((account, index) => (
-                <AccountDetails 
-                  key={index}
-                  index={index} 
-                  account={account} />
-              ))
-            ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <div>
-                  <h1 className="text-xl font-semibold">No Accounts Found</h1>
-                </div>
-              </div>
-            )}
-          </div>
+      <div className="w-full h-auto mt-2 flex rounded-lg bg-gray-200 px-1">
+        <div className="w-[90%] h-auto hidden sm:flex">
+          <h1 className="w-1/5 text-sm px-2 py-1 font-semibold text-gray-400">Fullname</h1>
+          <h1 className="w-1/5 text-sm px-2 py-1 font-semibold text-gray-400">Role</h1>
+          <h1 className="w-1/5 text-sm px-2 py-1 font-semibold text-gray-400">Email</h1>
+          <h1 className="w-1/5 text-sm px-2 py-1 text-center font-semibold text-gray-400">Status</h1>
+          <h1 className="w-1/5 text-sm px-2 py-1 text-center font-semibold text-gray-400">Email Verified</h1>
         </div>
+      </div>
+      <div className="w-full flex-1 overflow-y-auto p-2">
+          {filteredAccounts.length > 0 ? (
+            filteredAccounts.reverse().map((account, index) => (
+              <AccountDetails 
+                key={index}
+                index={index} 
+                account={account} />
+            ))
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div>
+                <h1 className="text-xl font-semibold">No Accounts Found</h1>
+              </div>
+            </div>
+          )}
       </div>
     </section>
   );

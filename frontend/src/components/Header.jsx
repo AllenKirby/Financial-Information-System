@@ -108,25 +108,27 @@ const Header = ({ currentPage, sidebar}) => {
       </div>
       <div className="h-inherit w-2/6 px-4 relative z-20 flex items-center justify-end gap-3">
         {/* Notification Icon */}
-        <div className='w-1/4'>
-          <div className="relative">
-            <div className='flex items-center justify-end gap-3'>
-              {showNotifications ? (
-                <IoMdNotifications 
-                  className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
-                  onClick={() => setShowNotifications(!showNotifications)}/>
-                )
-              :(
-                <IoMdNotificationsOutline 
-                  className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
-                  onClick={() => setShowNotifications(!showNotifications)}/>
-              )}
-            </div>
-            <div className={`absolute -top-2 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
-              <p className="text-[8px] font-semibold">{unreadNotifs}</p>
+        {user?.role !== '0' && (
+          <div className='w-1/4'>
+            <div className="relative">
+              <div className='flex items-center justify-end gap-3'>
+                {showNotifications ? (
+                  <IoMdNotifications 
+                    className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
+                    onClick={() => setShowNotifications(!showNotifications)}/>
+                  )
+                :(
+                  <IoMdNotificationsOutline 
+                    className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
+                    onClick={() => setShowNotifications(!showNotifications)}/>
+                )}
+              </div>
+              <div className={`absolute -top-2 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
+                <p className="text-[8px] font-semibold">{unreadNotifs}</p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
         <div className="hidden sm:hidden md:hidden lg:flex xl:flex 2xl:flex items-center gap-2">
           <div className="bg-gray-300 w-12 h-12 rounded-full flex items-center justify-center">
             <p className='font-bold'>{avatar(user?.name)}</p>

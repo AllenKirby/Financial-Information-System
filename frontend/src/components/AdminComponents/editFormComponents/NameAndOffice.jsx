@@ -1,5 +1,6 @@
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
+import { FaCheck } from "react-icons/fa";
 
 import { useEffect, useState } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
@@ -88,59 +89,55 @@ export const NameAndOffice = () => {
       };
 
     return (
-        <div className="w-4/5 h-72">
-            <div className="w-full h-full rounded-lg bg-white border-[1px]">
-                <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
-                    <h1 className='w-2/5 text-center font-bold px-2'>Name</h1>
-                    <h1 className='w-2/5 text-center font-bold'>Office</h1>
-                    <div className="w-1/5 flex justify-center items-center">
-                        <button 
-                            className='text-white text-2xl rounded-full'
-                            onClick={handleAddNameOffice}><IoAdd/></button>
-                    </div>
+        <div className="w-full h-auto flex flex-col rounded-lg">
+            <div className="w-full h-auto flex items-center justify-between px-2 py-1 rounded-lg bg-gray-200 text-gray-500">
+                <h1 className='hidden sm:block w-5/12 text-sm text-left font-bold px-2'>Name</h1>
+                <h1 className='hidden sm:block w-5/12 text-sm text-left font-bold px-2'>Office</h1>
+                <div className="w-2/12 flex justify-center items-center">
+                    <button 
+                        className='text-2xl rounded-full'
+                        onClick={handleAddNameOffice}><IoAdd/></button>
                 </div>
-                {showInpuTBoxA && (
-                    <div className="px-2 py-2 bg-gray-200 flex gap-1">
-                        <input
-                            type="text"
-                            value={name}
-                            onChange={handleInputChangeName}
-                            placeholder="e.g. Juan Dela Cruz"
-                            className="border border-gray-300 p-2 rounded w-2/5"
-                        />
-                        <input
-                            type="text"
-                            value={office}
-                            onChange={handleInputChangeOffice}
-                            placeholder="e.g. Division Manager A, AFD"
-                            className="border border-gray-300 p-2 rounded w-2/5"
-                        />
-                        <button
-                            onClick={handleSubmit}
-                            className="w-1/5 bg-adminBlue text-white rounded"
-                        >
-                            Submit
-                        </button>
-                    </div>
-                )}
-                <div className="h-88 overflow-y-auto">
-                    {Object.entries(entries).map(([key, entry]) => (
-                        <div key={key} className="flex border p-2 my-1 rounded-md">
-                            <p className="w-2/5 flex justify-center">{entry.name}</p>
-                            <p className="w-2/5 flex justify-center">{entry.office}</p>
-                            <div className="w-1/5 flex justify-center">
-                                <button
-                                    className="text-red-500 w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-500 hover:text-white"
-                                    onClick={() => handleRemoveEntry(key)}
-                                >
-                                    <MdRemove/>
-                                </button>
-                            </div>
+            </div>
+            {showInpuTBoxA && (
+                <div className="px-2 py-2 bg-gray-100 flex gap-1">
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={handleInputChangeName}
+                        placeholder="e.g. Juan Dela Cruz"
+                        className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
+                    />
+                    <input
+                        type="text"
+                        value={office}
+                        onChange={handleInputChangeOffice}
+                        placeholder="e.g. Division Manager A, AFD"
+                        className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
+                    />
+                    <button
+                        onClick={handleSubmit}
+                        className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-1/5 h-auto text-white rounded-lg flex items-center justify-center`}
+                    >
+                        <FaCheck size={15} />
+                    </button>
+                </div>
+            )}
+            <div className="flex-1 overflow-y-auto">
+                {Object.entries(entries).map(([key, entry], index) => (
+                    <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto rounded-lg px-4 flex flex-col sm:flex-row`}>
+                        <p className="w-full sm:w-5/12 flex justify-start">{entry.name}</p>
+                        <p className="w-full sm:w-5/12 flex justify-start sm:justify-center">{entry.office}</p>
+                        <div className="w-full sm:w-2/12 flex justify-start sm:justify-center">
+                            <button
+                                className="text-red-500 w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-500 hover:text-white"
+                                onClick={() => handleRemoveEntry(key)}
+                            >
+                                <MdRemove/>
+                            </button>
                         </div>
-                    ))}
-                    
-                </div>
-                
+                    </div>
+                ))}
             </div>
         </div>
     )

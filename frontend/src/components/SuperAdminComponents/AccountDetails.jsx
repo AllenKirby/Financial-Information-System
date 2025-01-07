@@ -6,6 +6,8 @@ import { MdDelete } from "react-icons/md";
 import { FaUserAltSlash } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 
+import LargeLoader from '../LargeLoader';
+
 import { useSuperAdminHook } from '../../hooks/useSuperAdminHook';
 
 const AccountDetails = ({index, account}) => {
@@ -95,33 +97,36 @@ const AccountDetails = ({index, account}) => {
     }
 
     return (
-        <div className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto flex py-2 cursor-pointer my-1`}>
-            <div className='w-[90%] h-auto flex'>
-                <p className="w-1/5 px-2 truncate font-semibold">{account.customClaims.dispName.replace(',', ' ')}</p>
-                <p className="w-1/5 px-2">{role}</p>
-                <p className="w-1/5 px-2 truncate text-blue-500 underline">{account.email}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.disabled ? 'text-superAdminMustard' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</p>
-                <p className={`w-1/5 px-2 text-center font-medium ${account.emailVerified ? 'text-green-500' : 'text-superAdminMustard'}`}>{account.emailVerified ? 'True' : 'False'}</p>
+        <div className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-200'} w-full h-auto rounded-lg flex flex-col sm:flex-row p-2 cursor-pointer my-1`}>
+            <div className='w-[90%] h-auto flex flex-col sm:flex-row'>
+                <p className="w-full sm:w-1/5 truncate font-semibold flex gap-2"><span className="font-bold block sm:hidden">Fullname:</span>{account.customClaims.dispName.replace(',', ' ')}</p>
+                <p className="w-full sm:w-1/5 flex gap-2"><span className="font-bold block sm:hidden">Role:</span>{role}</p>
+                <p className="w-full sm:w-1/5 truncate flex gap-2"><span className="font-bold block sm:hidden">Email:</span><span className='text-blue-500 underline'>{account.email}</span></p>
+                <p className={`w-full sm:w-1/5 font-medium flex items-center justify-start sm:justify-center gap-2`}><span className="font-bold block sm:hidden">Active:</span><span className={`${account.disabled ? 'text-superAdminMustard' : 'text-green-500'}`}>{account.disabled ? 'In Active' : 'Active'}</span></p>
+                <p className={`w-full sm:w-1/5 font-medium flex items-center justify-start sm:justify-center gap-2`}><span className="font-bold block sm:hidden">Email Verified:</span><span className={`${account.emailVerified ? 'text-green-500' : 'text-red-500'}`}>{account.emailVerified ? 'True' : 'False'}</span></p>
             </div>
-            <div className='w-[10%] h-auto flex items-center justify-end px-2 gap-2'>
+            <div className='w-[10%] h-auto flex items-center justify-end gap-2'>
                 {!account.disabled ? 
                     <FaUserAltSlash
                         disabled={isLoading} 
+                        size={23}
                         className={`text-superAdminMustard ${isLoading ? 'text-slate-100' : 'text-superAdminMustard'}`} 
-                        size={17}
                         onClick={() => disableUser(true)} /> :
                     <FaUser 
                         disabled={isLoading}
+                        size={20}
                         className={`text-superAdminMustard ${isLoading ? 'text-slate-100' : 'text-superAdminMustard'}`}
-                        size={15}
                         onClick={() => disableUser(false)}/>
                 }
                 <MdDelete 
                     onClick={deleteAcc} 
-                    size={20} 
-                    className={`text-superAdminMustard ${isLoading ? 'text-slate-100' : 'text-superAdminMustard'}`}
+                    size={20}
+                    className="text-red-500"
                     />
             </div>
+            {(isLoading) && (
+                <LargeLoader/>
+            )}
         </div>
     );
 };

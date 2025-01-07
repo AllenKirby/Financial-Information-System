@@ -1,26 +1,27 @@
-import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
-import Summary from "./ComparisonViewComponent/Summary"
-import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation"
 
-const Dashboard = () => {
+import PropTypes from "prop-types"
+
+import { IoIosClose } from "react-icons/io";
+import { useAuthContext } from "../../hooks/useAuthContext";
+
+const ComparisonView = ({modal}) => {
+    const { user }  = useAuthContext()
+
   return (
-
-    <section className="w-full h-full p-2">
-        <div className="w-full h-full flex gap-3 py-3 overflow-y-auto">
-            <div className="flex flex-col w-2/3 h-[700px] gap-3">
-                <div className="border-2 h-full rounded-lg p-2">
-                    <ChartData customYear={'2024'} />
-                </div>
-                <div className="border-2 h-full rounded-lg p-2">
-                    <ChartData customYear={'2023'} />
-                </div>
+    <section className="w-2/3 h-2/3 rounded-lg flex flex-col bg-white p-3 text-gray-500">
+        <div className="w-full h-auto flex items-center justify-between">
+            <h1 className={`${user?.role ? 'text-customgreen' : 'text-BOGreen'} font-bold text-lg`}>Comparison View</h1>
+            <button className="p-1" onClick={modal}>
+                <IoIosClose size={30}/>
+            </button>
+        </div>
+        <div className="w-full flex-1 gap-3 py-2 overflow-y-auto">
+            <div className="border-2 h-full rounded-lg p-2 mb-2">
+                <ChartData customYear={'2024'} />
             </div>
-            <div className="w-1/3">
-                <div className="border-1 rounded-lg flex flex-col gap-3">
-                    <Summary />
-                    <BudgetRecommendation/>
-                </div>
+            <div className="border-2 h-full rounded-lg p-2">
+                <ChartData customYear={'2023'} />
             </div>
         </div>
     </section>
@@ -43,4 +44,8 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+ComparisonView.propTypes = {
+    modal: PropTypes.func.isRequired,
+}
+
+export default ComparisonView

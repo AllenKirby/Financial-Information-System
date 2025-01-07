@@ -67,36 +67,36 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
     }, [])
 
     return (
-        <div className="w-full h-72 rounded-lg">
-            <div className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-full h-auto flex px-2 py-2 rounded-t-lg text-white`}>
-                <h1 className='w-4/5 text-left font-bold px-2'>Fund Cluster</h1>
-                <div className="w-1/5 flex justify-center items-center">
+        <div className="w-full h-auto flex flex-col rounded-lg">
+            <div className="w-full h-auto flex items-center justify-between px-2 py-1 rounded-lg bg-gray-200 text-gray-500">
+                <h1 className='w-5/6 text-sm text-left font-bold px-2'>Fund Cluster</h1>
+                <div className="w-1/6 flex justify-center items-center">
                     <button 
-                        className='text-white text-2xl rounded-full'
+                        className='text-2xl rounded-full'
                         onClick={handleAddString}><IoAdd/></button>
                 </div>
             </div>
             {showInput && (
-                    <div className="px-2 py-2 bg-gray-200 flex gap-1">
+                    <div className="px-2 py-2 bg-gray-100 flex gap-1">
                         <input
                             type="text"
                             value={inputValue}
                             onChange={handleInputChange}
                             placeholder="e.g. 501 COB"
-                            className="border border-gray-300 p-2 rounded w-4/5"
+                            className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
                         />
                         <button
                             onClick={handleSubmit}
-                            className="w-1/5 h-auto bg-adminBlue text-white rounded-lg flex items-center justify-center"
+                            className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-1/5 h-auto text-white rounded-lg flex items-center justify-center`}
                         >
-                            <FaCheck size={12} />
+                            <FaCheck size={15} />
                         </button>
                     </div>
                 )}
-            <div className="h-80 overflow-y-auto">
+            <div className="flex-1 overflow-y-auto">
                 {Object.keys(arrFund).length > 0 ? (
                     Object.entries(arrFund).map(([key, value], index) => (
-                        <div key={index} className="w-full h-12 rounded-md my-1 px-4 bg-white border-[1px] text-customFontGreen flex items-center justify-center hover:bg-slate-100">
+                        <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 rounded-lg px-4 flex items-center justify-center`}>
                             <span className="flex-1 text-left">{value}</span> {/* Display only the value */}
                             <button 
                                 onClick={() => handleDeleteFund(key)} // Pass the key to delete

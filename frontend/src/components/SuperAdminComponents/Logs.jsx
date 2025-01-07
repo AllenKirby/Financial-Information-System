@@ -2,6 +2,10 @@ import { collection, onSnapshot } from "firebase/firestore"
 import { firestore } from "../../config/firebase-config"
 import { useEffect, useState, useMemo } from "react"
 
+import { FiUser } from "react-icons/fi";
+import { TbUserShield } from "react-icons/tb";
+import PaginatedList from "../PaginatedList";
+
 const Logs = () => {
     const [activeTab, setActiveTab] = useState("Logins");
     const tabs = ['Logins', 'Access Control Logs']
@@ -73,21 +77,25 @@ const Logs = () => {
         setCurrDate(currentMonth)
     }, [combinedLogs])
 
+    const sortDate = (logs) => {
+        const filteredResult = Object.entries(logs).sort(([keyA], [keyB]) => new Date(keyB) - new Date(keyA))
+        return Object.fromEntries(filteredResult)
+    }
 
     return (
-        <div className="w-full h-full p-3">
+        <div className="w-full h-full p-3 text-gray-500">
             <div className="w-full h-[7%] flex gap-3 border-b border-gray-300">
                 {tabs.map((tab) => (
                     <button
                     key={tab}
                     className={`${
                         activeTab === tab
-                        ? 'text-superAdminMustard border-b-2 border-b-superAdminMustard'
+                        ? 'text-superAdminBlue border-b-2 border-b-superAdminBlue'
                         : ""
-                    } hover:border-b-2 hover:text-superAdminMustard hover:border-b-superAdminMustard transition-all duration-100`}
+                    } hover:border-b-2 hover:text-superAdminBlue hover:border-b-superAdminBlue flex items-center justify-center gap-2 transition-all duration-100`}
                     onClick={() => setActiveTab(tab)}
                     >
-                    {tab}
+                    {tab === 'Logins' ? <FiUser size={20}/> : <TbUserShield size={20}/>}<span className="hidden sm:block">{tab}</span>
                     </button>
                 ))}
                 <div className="flex items-center justify-center">
@@ -102,11 +110,11 @@ const Logs = () => {
                     </select>
                 </div>
             </div>
-                <div className="w-full h-[93%] p-2">
-                    {activeTab === "Logins" && (
-                    <div className="w-full h-full border border-gray-300 rounded-lg">
+            <div className="w-full h-[93%] p-2">
+                {activeTab === "Logins" && (
+                    <div className="w-full h-full flex flex-col">
                         {/* Header Row */}
-                        <div className="w-full h-[8%] flex text-sm text-gray-500 bg-gray-100 border-b border-gray-300 font-semibold pr-4">
+                        <div className="w-full h-auto hidden sm:flex text-sm text-gray-500 rounded-lg bg-gray-200 font-semibold pr-4">
                             <div className="w-1/6 px-4 py-2">Date</div>
                             <div className="w-1/6 px-4 py-2">Time</div>
                             <div className="w-1/6 px-4 py-2">Fullname</div>
@@ -115,8 +123,8 @@ const Logs = () => {
                             <div className="w-1/6 px-4 py-2">UID</div>
                         </div> 
                         {/* Data Rows */}
-                        <div className="w-full h-[92%] overflow-y-auto">
-                            {
+                        <div className="w-full flex-1 overflow-y-auto">
+                            {/* {
                                 combinedLogs?.[currDate]?.loginLogs ? (
                                     Object.keys(combinedLogs[currDate].loginLogs)
                                     .sort((a, b) => new Date(b) - new Date(a))
@@ -129,33 +137,36 @@ const Logs = () => {
                                                     "Preparer"
                                         const [date, time] = timestamp.split(',').map(part => part.trim());
                                         return (
-                                            <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} flex`}>
-                                                <div className="w-1/6 px-4 py-2">{date}</div>
-                                                <div className="w-1/6 px-4 py-2">{time}</div>
-                                                <div className="w-1/6 px-4 py-2 truncate">{log.name}</div>
-                                                <div className="w-1/6 px-4 py-2">{role}</div>
-                                                <div className="w-1/6 px-4 py-2 text-blue-500 underline truncate">{log.email}</div>
-                                                <div className="w-1/6 px-4 py-2 text-green-500 truncate">{log.uid}</div>
+                                            <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} flex flex-col sm:flex-row rounded-lg mt-2`}>
+                                                <div className="w-full sm:w-1/6 px-4 py-2 flex gap-2"><span className="font-bold block sm:hidden">Date: </span>{date}</div>
+                                                <div className="w-full sm:w-1/6 px-4 py-2 flex gap-2"><span className="font-bold block sm:hidden">Time:</span>{time}</div>
+                                                <div className="w-full sm:w-1/6 px-4 py-2 flex gap-2 truncate"><span className="font-bold block sm:hidden">Fullname:</span>{log.name}</div>
+                                                <div className="w-full sm:w-1/6 px-4 py-2 flex gap-2"><span className="font-bold block sm:hidden">Role:</span>{role}</div>
+                                                <div className="w-full sm:w-1/6 px-4 py-2 flex gap-2 truncate"><span className="font-bold block sm:hidden">Email:</span><span className="text-blue-500 underline">{log.email}</span></div>
+                                                <div className="w-full sm:w-1/6 px-4 py-2 flex gap-2 truncate"><span className="font-bold block sm:hidden">UID:</span><span className="text-green-500">{log.uid}</span></div>
                                             </div>
                                         )
                                     })
                                 ) : (
-                                    <div className="text-gray-500">No login logs available for the selected date.</div>
+                                    <div className="w-full h-full text-center flex items-center justify-center">No access logs available for the selected date.</div>
                                 )
-                            }
+                            } */}
+                            {combinedLogs?.[currDate]?.loginLogs && (
+                                <PaginatedList items={sortDate(combinedLogs[currDate].loginLogs)} paginationFor="loginLogs"/>
+                            )}
                         </div>
                     </div>
-                    )}
-                    {activeTab === "Access Control Logs" && (
-                    <div className="w-full h-full border border-gray-300 rounded-lg">
-                        <div className="w-full h-[8%] flex bg-gray-100 border-b border-gray-300 font-semibold pr-4">
+                )}
+                {activeTab === "Access Control Logs" && (
+                    <div className="w-full h-full flex flex-col">
+                        <div className="w-full h-auto hidden sm:flex text-sm text-gray-500 rounded-lg bg-gray-200 font-semibold pr-4">
                             <div className="w-1/5 px-4 py-2">Date</div>
                             <div className="w-1/5 px-4 py-2">Time</div>
                             <div className="w-3/5 px-4 py-2">Description</div>
                         </div> 
                         {/* Data Rows */}
-                        <div className="w-full h-[92%] overflow-y-auto">
-                            {
+                        <div className="w-full flex-1 overflow-y-auto">
+                            {/* {
                                 combinedLogs?.[currDate]?.accessLogs ? (
                                     Object.keys(combinedLogs[currDate].accessLogs)
                                     .sort((a,b) => new Date(b) - new Date(a))
@@ -163,30 +174,33 @@ const Logs = () => {
                                         const log = combinedLogs[currDate].accessLogs[timestamp]
                                         const desc = log.event ? (
                                             <>
-                                                The role <span className="font-bold">{log.role}</span> granted access feature of <span className="font-bold">{log.feature}</span>
+                                                The role {log.role} granted access feature of {log.feature}
                                             </>
                                         ) : (
                                             <>
-                                                The role <span className="font-bold">{log.role}</span> revoked access feature
+                                                The role {log.role} revoked access feature
                                             </>
                                         )
                                         const [date, time] = timestamp.split(',').map(part => part.trim());
                                         return (
-                                            <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} flex`}>
-                                                <div className="w-1/5 px-4 py-2">{date}</div>
-                                                <div className="w-1/5 px-4 py-2">{time}</div>
-                                                <div className="w-3/5 px-4 py-2">{desc}</div>
+                                            <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} flex flex-col sm:flex-row rounded-lg mt-2`}>
+                                                <div className="w-full sm:w-1/5 px-4 py-2 flex gap-2"><span className="font-bold block sm:hidden">Date:</span> {date}</div>
+                                                <div className="w-full sm:w-1/5 px-4 py-2 flex gap-2"><span className="font-bold block sm:hidden">Time:</span>{time}</div>
+                                                <div className="w-full sm:w-3/5 px-4 py-2 flex gap-2"><span className="font-bold block sm:hidden">Description:</span>{desc}</div>
                                             </div>
                                         )
                                     })
                                 ) : (
-                                    <div className="text-gray-500">No access logs available for the selected date.</div>
+                                    <div className="w-full h-full text-center flex items-center justify-center">No access logs available for the selected date.</div>
                                 )
-                            }
+                            } */}
+                            {combinedLogs?.[currDate]?.accessLogs && (
+                                <PaginatedList items={sortDate(combinedLogs[currDate].accessLogs)} paginationFor="AccessControl"/>
+                            )}
                         </div>
                     </div>
-                    )}
-                </div>
+                )}
+            </div>
         </div>
         
     )

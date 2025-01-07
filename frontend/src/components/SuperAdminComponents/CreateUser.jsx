@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
-import Loader from "../Loader"
+import LargeLoader from "../LargeLoader"
 
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
@@ -60,11 +60,11 @@ const UserManagement = ({modal, account = {}, flag}) => {
     }
   }
   return (
-    <form onSubmit={handleSubmit} className="bg-white w-2/5 rounded-lg border-[1px] mr-3 p-5">
-      <h1 className="text-center text-3xl mb-3 font-bold text-superAdminBlue">Create Account</h1>
+    <form onSubmit={handleSubmit} className="bg-white w-4/5 sm:w-3/5 lg:w-2/5 rounded-lg border-[1px] mr-3 p-3 text-gray-500">
+      <h1 className="text-center text-xl mb-3 font-bold text-superAdminBlue">Create Account</h1>
       <h1 className="mb-3 font-semibold text-lg">Personal Information</h1>
-      <div className="h-auto w-full flex gap-3">
-        <div className="flex flex-col w-1/2">
+      <div className="h-auto w-full flex flex-col sm:flex-row gap-3">
+        <div className="flex flex-col w-full sm:w-1/2">
           <label className="text-base">Firstname</label>
           <input
             className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
@@ -75,14 +75,14 @@ const UserManagement = ({modal, account = {}, flag}) => {
             onChange={(e) => setUserData({ ...userData, firstname: e.target.value })}
             required />
         </div>
-        <div>
-        <label className="text-base">Lastname</label>
+        <div className="flex flex-col w-full sm:w-1/2">
+          <label className="text-base">Lastname</label>
           <input
             className="w-full px-4 py-2 rounded-md border-2 focus:outline-none"
             type="text"
             placeholder="e.g., Dela Cruz"
             value={userData.lastname}
-            pattern="[A-Za-z]+" title="Numbers and Special Characters are not allowed"
+            pattern="^[^\d]+$" title="Numbers and Special Characters are not allowed"
             onChange={(e) => setUserData({ ...userData, lastname: e.target.value })}
             required />
         </div>
@@ -90,8 +90,8 @@ const UserManagement = ({modal, account = {}, flag}) => {
       <h1 className="py-3 font-semibold">Set up Your Account</h1>
       <div className="h-auto w-full ">
         <div className="w-full h-auto">
-          <div className="flex gap-2">
-            <div className="flex flex-col w-2/3">
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex flex-col w-full sm:w-2/3">
               <label className="text-base">Email</label>
               <input
                 className=" w-full px-4 py-2 rounded-md border-2 focus:outline-none"
@@ -101,7 +101,7 @@ const UserManagement = ({modal, account = {}, flag}) => {
                 onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                 required />
             </div>
-            <div className="w-1/3 flex flex-col">
+            <div className="w-full sm:w-1/3 flex flex-col">
               <label className="text-base">Role</label>
               <select className="w-full px-4 py-2 rounded-md border-2 focus:outline-none" 
                 required 
@@ -143,14 +143,17 @@ const UserManagement = ({modal, account = {}, flag}) => {
           </div>
         </div>
       </div>
-      <div className="w-full h-auto py-4 flex items-center justify-end gap-3">
-        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white">{isLoading ? <Loader /> : 'Save'}</button>
-        <button onClick={modal} className="px-10 py-2 rounded-lg text-superAdminBlue font-semibold">Back</button>
+      <div className="w-full h-auto py-2 flex items-center justify-end gap-3">
+        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white border-2 border-superAdminBlue font-semibold hover:bg-white hover:text-superAdminBlue transition-all duration-150">Save</button>
+        <button onClick={modal} className="px-10 py-2 rounded-lg text-superAdminBlue font-semibold border-2 hover:bg-gray-200 transition-all duration-150">Back</button>
       </div>
       {error && (
         <div className="h-auto w-full py-3 text-center">
           <h5 className="text-superAdminMustard font-semibold">{error === 'Firebase: Error (auth/email-already-in-use).' ? 'Email is already in use' : error}</h5>
         </div>
+      )}
+      {(isLoading) && (
+        <LargeLoader/>
       )}
     </form>
   )
