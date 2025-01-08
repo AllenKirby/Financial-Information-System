@@ -1,4 +1,4 @@
-import { useState } from 'react'; 
+import { useEffect, useState } from 'react'; 
 import PropTypes from 'prop-types'
 
 import Pagination from './Pagination';
@@ -9,8 +9,6 @@ import UserLogs from './SuperAdminComponents/UserLogs';
 import AccessControlLogs from './SuperAdminComponents/AccessControlLogs';
 
 const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
-
-    console.log(items)
 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 20;
@@ -24,9 +22,19 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
   const currentItems = itemsArray.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(itemsArray.length / itemsPerPage);
+
+  const [messsage, setMessage] = useState('')
   
 
   const handlePageChange = (page) => setCurrentPage(page);
+
+  useEffect(() => {
+    if(paginationFor === 'DV') return setMessage('No Disbursement Voucher Found')
+    if(paginationFor === 'HistoryLogs') return setMessage('No Logs Found')
+    if(paginationFor === 'ControlBook') return setMessage('No Control Book Found')
+    if(paginationFor === 'loginLogs') return setMessage('No Login Logs Found')
+    if(paginationFor === 'AccessControl') return setMessage('No Access Control Logs Found')
+  }, [paginationFor])
 
   return (
     <div className='w-full h-full flex flex-col'>
@@ -40,8 +48,8 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
                 })
                 ) : (
-                <div className='w-full h-full flex items-center justify-center'>
-                    <div>No Documents Found</div>
+                <div className='absolute top-0 left-0 inset-0 w-full h-full flex items-center justify-center'>
+                    <p className='font-bold'>{messsage}</p>
                 </div>
                 // <div className='w-full h-[340px] overflow-auto rounded-md bg-gray-100 px-1'>
                 //   <div className='animate-blink w-full h-12 rounded-md my-1 bg-gray-200 text-customFontGreen cursor-pointer flex items-center justify-center transition-all duration-150'></div>

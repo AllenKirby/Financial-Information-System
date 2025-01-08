@@ -21,7 +21,6 @@ const ViewControlBook = () => {
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [reportFlag, setReportFlag] = useState(false)
-  const [viewProjectFlag, setViewProjectFlag] = useState(false)
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
 
@@ -34,9 +33,6 @@ const ViewControlBook = () => {
       }).format(value);
   };
 
-  const viewProject = () => {
-    setViewProjectFlag(!viewProjectFlag)
-  }
 
   useEffect(() => {
     if(controlBooks){
@@ -135,7 +131,7 @@ const ViewControlBook = () => {
                   <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/2 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
                     <div className="flex items-center justify-center gap-2">
                       <IoAddOutline size={30}/>
-                      <p className="font-semibold lg:text-lg 2xl:text-3xl">New Project</p>
+                      <p className="font-semibold lg:text-lg 2xl:text-xl">New Project</p>
                     </div>
                   </button>
                 </div>
@@ -144,7 +140,7 @@ const ViewControlBook = () => {
               <div className="w-full flex-1 p-2">
                 {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                   Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
-                    <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} flag={viewProjectFlag} openModal={viewProject} remainingASA={ControlBook.data.leftBudget}/>
+                    <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget}/>
                   ))
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>

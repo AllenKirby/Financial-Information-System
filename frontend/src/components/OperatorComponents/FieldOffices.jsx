@@ -12,17 +12,22 @@ import LargeLoader from '../LargeLoader';
 
 const FieldOffices = (props) => {
 
-  const {fieldOffice, ASANo, fieldOfficeID, remainingASA, flag, openModal} = props
+  const {fieldOffice, ASANo, fieldOfficeID, remainingASA} = props
 
   const { deleteFieldOffice, isLoading, error } = useFundingHook()
   
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
+  const [viewProjectFlag, setViewProjectFlag] = useState(false)
+
+  console.log(fieldOffice)
 
   const modal = (e) => {
     e.stopPropagation()
     setFieldOfficeModal(!FieldOfficeModal)
   }
-
+  const viewProject = () => {
+    setViewProjectFlag(!viewProjectFlag)
+  }
   const deleteFO = async(e) => {
     e.stopPropagation()
     const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}`
@@ -56,7 +61,7 @@ const FieldOffices = (props) => {
   }
 
   return (
-    <div onClick={openModal} className={`w-full h-auto overflow-y-auto py-2 px-4 rounded-lg border-2 my-1 transition-all duration-300`}>
+    <div onClick={viewProject} className={`w-full h-auto cursor-pointer py-2 px-4 rounded-lg border-2 my-1 transition-all duration-300`}>
         <div className='flex items-center justify-between my-2'>
           <div className='flex items-center justify-center gap-3'>
             <p className='lg:text-lg 2xl:text-2xl font-bold'>{fieldOffice.projectName}</p>
@@ -80,11 +85,11 @@ const FieldOffices = (props) => {
             </div>
           </>
         )}
-        {flag && (
+        {viewProjectFlag && (
           <>
             <div className="fixed inset-0 z-20 bg-black opacity-50"/>
             <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-              <ViewProject modal={openModal} projectData={fieldOffice}/>
+              <ViewProject modal={viewProject} projectData={fieldOffice}/>
             </div>
           </>
         )}
