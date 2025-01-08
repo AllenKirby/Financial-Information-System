@@ -57,9 +57,6 @@ const DVTemplate = ({document}) => {
     }).format(value);
   };
 
-  useEffect(() => {
-    console.log(document)
-  }, [document])
   return (
     <div className="w-full h-auto p-5 border-b-2">
       <div className='mb-2'>
@@ -185,6 +182,15 @@ const DVTemplate = ({document}) => {
               <p className='text-gray-500'>ORS/BURS</p>
               <p className='text-gray-500 truncate'>Responsibility Center</p>
               <p className='text-gray-500'>ASA No</p>
+              <span>
+                {
+                  document?.ASA &&
+                  Object.entries(document?.ASA).map((_, index) => {
+                    const adjustedIndex = index - 1;
+                    return adjustedIndex >= 0 ? <br key={adjustedIndex} /> : null;
+                  })
+                }
+              </span>
               <p className='text-gray-500'>Name</p>
               <p className='text-gray-500'>Office</p>
               <p className='text-gray-500'>Account Title</p>

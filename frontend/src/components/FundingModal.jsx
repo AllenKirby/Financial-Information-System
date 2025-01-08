@@ -6,7 +6,8 @@ import { useInitialStateDV } from "../hooks/useInitialStateDV";
 
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
-import { MdRemove } from "react-icons/md";
+
+import { IoMdCheckmark } from "react-icons/io";
 
 import LargeLoader from './LargeLoader'
 
@@ -65,9 +66,9 @@ const FundingModal = ({modal, data}) => {
         }
     }, [data])
 
-    const handleRemove_ASA = () => {
-        setOperatorInput({...operatorInput, asa: ''})
-    }
+    // const handleRemove_ASA = () => {
+    //     setOperatorInput({...operatorInput, asa: ''})
+    // }
 
     const handleSubmit = async(e) => {
         e.preventDefault()
@@ -114,7 +115,7 @@ const FundingModal = ({modal, data}) => {
     }
 
     const [balances, setBalances] = useState({})
-    const [addControlBook, setAddControlBook] = useState(false)
+    const [, setAddControlBook] = useState(false)
     const [budget, setBudget] = useState(0)
     const [CBAmount, setCBAmount] = useState({})
     const enoughBalance = (totalAmount, balance, key) => {
@@ -176,8 +177,9 @@ const FundingModal = ({modal, data}) => {
         }
 
     }
+
     return(
-        <form onSubmit={handleSubmit} className="bg-white w-2/6 h-auto p-3 rounded-lg text-gray-500">
+        <form onSubmit={handleSubmit} className="bg-white w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
             <h1 className="px-3 my-2 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
             <div className="w-full h-auto px-3">
                 <label className="font-semibold">ORS/BURS</label>
@@ -210,26 +212,26 @@ const FundingModal = ({modal, data}) => {
                 </div>
             </div>
             <h1 className="px-3 py-2 text-lg font-bold text-fundingBlueGreen"> Amount: {formatToPeso(data.amount)}</h1>
-            <div className="px-3">
-                <div>
+            <div className="flex-1 overflow-y-auto">
+                <div className="w-full px-3">
                     <label className="font-semibold">ASA No.</label>
                     <p>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
-                    <div className="flex flex-col items-center justify-center w-full">
-                        
-                    {Object.entries(ASANo).length > 0 ? (
+                    <div className="flex flex-col items-center justify-center gap-2 p-2 w-full">
+                        {Object.entries(ASANo).length > 0 ? (
                             Object.entries(ASANo).map(([key, asano]) => {
                                 const finalASANO = key.replace('|', ' ');
                                 return (
-                                    <div key={key} className="border-b pb-2">
+                                    <div key={key} className="w-full h-auto border-b pb-2">
                                         <h4 className="font-semibold text-lg mb-2">
                                             {finalASANO}
                                         </h4>
-                                        <div className="space-y-1">
+                                        <div className="flex flex-wrap items-center justify-start gap-2">
                                             {asano.map((project, index) => (
-                                                <label key={index} className="flex items-center gap-2">
+                                                <label key={index} className="peer flex items-center gap-2">
                                                     <input
                                                         type="checkbox"
                                                         value={`${key}/${project.projectID}`}
+                                                        className="peer hidden"
                                                         onChange={(e) => {
                                                             const isChecked = e.target.checked;
                                                             const projID = e.target.value;
@@ -266,7 +268,8 @@ const FundingModal = ({modal, data}) => {
                                                             Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
                                                         }
                                                     />
-                                                    <span>
+                                                    <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen transition-all duration-150">
+                                                        <IoMdCheckmark size={20} className="hidden peer-checked:block"/>    
                                                         {project.projectName} :{' '}
                                                         {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
                                                     </span>
