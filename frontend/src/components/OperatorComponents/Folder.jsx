@@ -17,12 +17,13 @@ import AddControlBook from "./AddControlBook"
 const Folder = ({ASANo, controlBook}) => {
     const [controlBookFlag, setControlBookFlag] = useState(false)
     const [deletable, setIsDeletable] = useState(true)
-    console.log(controlBook)
+    console.log(controlBook[1])
+    console.log(ASANo)
     const navigate = useNavigate()
     
     const { deleteControlBook, isLoading, error } = useFundingHook()
 
-    const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
+    const subcollectionCounts = () => controlBook[1].fieldOffices ? Object.entries(controlBook[1].fieldOffices).length : 0
 
     const modal = (e) => {
       e.stopPropagation()
@@ -41,7 +42,7 @@ const Folder = ({ASANo, controlBook}) => {
             confirmButtonText: "Yes, delete it!",
           }).then(async (result) => {
             if (result.isConfirmed) {
-                const res = await deleteControlBook(ASANo)
+                const res = await deleteControlBook(controlBook[1]?.ASANo)
               if (res) {
                 Swal.fire({
                   title: "Deleted!",
@@ -60,7 +61,7 @@ const Folder = ({ASANo, controlBook}) => {
     }
 
     const isDeletable = () => {
-      const fieldOffices = controlBook?.fieldOffices ?? {};
+      const fieldOffices = controlBook[1]?.fieldOffices ?? {};
       const ans = Object.entries(fieldOffices).filter(([, fieldOffice]) =>
           fieldOffice?.dvCollection && Object.entries(fieldOffice.dvCollection).length > 0
       );

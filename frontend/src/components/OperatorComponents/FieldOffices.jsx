@@ -9,9 +9,11 @@ import { useFundingHook } from '../../hooks/useFundingHook';
 import AddNewFieldOffice from "./AddNewFieldOffice";
 import ViewProject from "./ViewProject";
 import LargeLoader from '../LargeLoader';
+import { useDispatch } from 'react-redux';
+import { deleteFolder } from '../../redux/ControlBookRedux';
 
 const FieldOffices = (props) => {
-
+  const dispatch = useDispatch()
   const {fieldOffice, ASANo, fieldOfficeID, remainingASA} = props
 
   const { deleteFieldOffice, isLoading, error } = useFundingHook()
@@ -31,7 +33,6 @@ const FieldOffices = (props) => {
   const deleteFO = async(e) => {
     e.stopPropagation()
     const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}`
-
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",

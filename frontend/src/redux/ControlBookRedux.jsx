@@ -10,9 +10,11 @@ export const ControlBookRedux = createSlice({
         deleteFolder: (state, action) => {
             const uid = action.payload;
             const newState = { ...state }; 
+            console.log(newState)
             delete newState[uid]; 
             return newState;
-        }
+        },
+    
     }
 })
 

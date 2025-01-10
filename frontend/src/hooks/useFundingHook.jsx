@@ -3,7 +3,7 @@ import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc } from "firebase/firestore"
 import { setControlBook, deleteFolder } from '../redux/ControlBookRedux'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export const useFundingHook = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -208,7 +208,8 @@ export const useFundingHook = () => {
             if (docSnapshot.exists()) {
                 const projectData = docSnapshot.data()
                 sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
-                setASANo(projectData)
+                const newData = transformData(projectData)
+                setASANo(newData)
 
             } else {
                 // Document does not exist
@@ -217,6 +218,21 @@ export const useFundingHook = () => {
 
             return unsubscribe
         })
+    }
+
+    const transformData = (projData) => {
+        const transformed = {};
+        for(const [mainKey, projArray] of Object.entries(projData)){
+            transformed[mainKey] = {};
+            projArray.forEach((project) => {
+                const projectName = project.projectName;
+                transformed[mainKey][projectName] = {
+                    RO: project.RO,
+                    projectID: project.projectID,
+                };
+            })
+        }
+        return transformed
     }
     
     const updateControlBook = async(data, id) => {
@@ -259,6 +275,7 @@ export const useFundingHook = () => {
     }
 
     const deleteFieldOffice = async(id) => {
+        
         setIsLoading(true)
         setError(null)
         try {
