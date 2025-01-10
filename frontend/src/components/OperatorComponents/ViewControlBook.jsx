@@ -35,6 +35,7 @@ const ViewControlBook = () => {
 
 
   useEffect(() => {
+    console.log(Boolean(controlBooks))
     if(controlBooks){
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
       const selectedkey = Object.keys(controlBooks).find((key) => controlBooks[key].ASANo === id)
@@ -49,6 +50,10 @@ const ViewControlBook = () => {
     }
 
   }, [controlBooks, id])
+
+  useEffect(() => {
+    console.log(controlBooks)
+  }, [controlBooks])
 
   const convertDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -137,7 +142,7 @@ const ViewControlBook = () => {
                 </div>
               </div>
 
-              <div className="w-full flex-1 p-2">
+              <div className="w-full flex-1 overflow-y-auto p-2">
                 {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                   Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
                     <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget}/>

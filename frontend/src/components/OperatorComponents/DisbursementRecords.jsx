@@ -175,7 +175,7 @@ const DisbursementRecords = () => {
             {(activeTabs !== 'Drafting' && activeTabs !== '' && activeTabs !== 'In Review') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
           <div className="w-full flex-1 rounded-lg">
-            {Object.entries(getFilteredDocuments).length > 0 ? (
+            {Object.entries(getFilteredDocuments()).length > 0 ? (
               <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'3'} activeTab={activeTabs} paginationFor={'DV'}/>
             ) : (
               <div className='w-full h-full flex items-center justify-center'>

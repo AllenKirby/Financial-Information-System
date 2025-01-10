@@ -89,11 +89,11 @@ const FundingModal = ({modal, data}) => {
             DV: fieldOfficeData,
             previousASA: prevASARef.current,
             origBUR: origBUR,
-            controlBooks: CBAmount
+            // controlBooks: CBAmount,
+            update: !Boolean(data.ORSBURS)
         }
         console.log(fundingData)
         console.log(fieldOfficeData)
-        console.log('hiyhiy')
         const res = await updateASA_ORS(fundingData, DVNo)
 
         if(res){
@@ -129,40 +129,103 @@ const FundingModal = ({modal, data}) => {
     }
 
     useEffect(() => {
-        console.log(operatorInput)
+        const newBudget = data?.ASA ? Object.values(data?.ASA).reduce((acc, val) => acc + val, 0) : 0
+        setBudget(newBudget)
+    }, [data])
 
-    }, [operatorInput])
-
-    const handleChangeBoxAmount = (checked, key, projectID, amount) => {
-        const projectKey = `${key}/${projectID}`;
-       
-        //FOR NEXT UPDATE
-        setASANo((prevState) => {
-            const updatedState = { ...prevState };
-            const projectIndex = updatedState[key]?.findIndex((proj) => proj.projectID === projectID);
-    
-            if (projectIndex !== -1) {
-                const currentRO = parseFloat(updatedState[key][projectIndex].RO || 0);
-                if (checked) {
-                    updatedState[key][projectIndex].RO = Math.max(0, currentRO - parseFloat(data.amount)); //fix this
-                } else {
-                    updatedState[key][projectIndex].RO = currentRO + parseFloat(data.amount); //fix this
-                }
-            }
-    
-            return updatedState;
-        });
-
+    //this function works for new ASA
+    const handleChangeBoxAmount = (checked, key, projectID, amount, projectName) => {
+        console.log(`${key} | ${projectID} | ${projectName} | ${amount}`)
+        const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
         if (checked) {
-            const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
-            console.log(exactAmount)
+            // console.log(Boolean(parseFloat(data.amount) < amount + budget))
+            // console.log(exactAmount)
+
+            // if(Boolean(parseFloat(data.amount) < amount + budget)){
+            //     console.log(`${amount} - (${amount} + ${budget} - parseFloat(${data.amount})) = ${amount - (amount + budget - parseFloat(data.amount))}`)
+            // }else{
+            //     console.log(amount)
+            // }
+
+            if(exactAmount <= 0){
+                return
+            }
+
             setOperatorInput((prev) => ({...prev,
                 asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
             }));
     
             setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
-            setBudget((prev) => prev + amount)
+            setBudget((prev) => prev + exactAmount)
+
+            setASANo((prev) => {
+                // const prevAmount =  ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
+
+                return{
+                    ...prev,[key] : {
+                        ...prev[key], [projectName] : {
+                            ...prev[key][projectName], RO: prev[key][projectName].RO - exactAmount
+                        }
+                    }
+                }
+            })
+
         } else {
+            // const prevAmount = parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0)
+            let unselectedAmount
+            setOperatorInput((prev) => {
+                const updatedAsa = { ...(prev.asa || {}) };
+                unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
+                console.log(unselectedAmount)
+                delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
+                return {
+                    ...prev,
+                    asa: updatedAsa,
+                };
+            });
+            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
+            setBudget((prev) => {
+                const prevAmount = operatorInput?.asa[`${key}/${projectID}`] ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
+                console.log(Boolean(operatorInput?.asa[`${key}/${projectID}`]))
+                if(Boolean(operatorInput?.asa[`${key}/${projectID}`])){
+                    console.log(parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0))
+                }else{
+                    console.log(amount)
+                }
+                const newAmount = prev - prevAmount < 0 ? 0  : prev - prevAmount
+                return newAmount
+            })
+
+            //FOR INTEREACTIVITY DIFFERENCE
+            setASANo((prev) => {
+                const prevAmount = operatorInput?.asa[`${key}/${projectID}`] ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
+                console.log(prevAmount)
+                return{
+                    ...prev,[key] : {
+                        ...prev[key], [projectName] : {
+                            ...prev[key][projectName], RO: prev[key][projectName].RO + prevAmount
+                        }
+                    }
+                }
+            })
+        }
+    }
+
+    
+    useEffect(() => {
+        console.log(operatorInput)
+        // console.log(ASANo)
+
+    }, [operatorInput])
+
+
+    const handleUpdateChangeBoxAmount = (checked) => {
+
+        if(checked){
+            setOperatorInput((prev) => ({...prev,
+                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+            }));
+        }else{
             setOperatorInput((prev) => {
                 const updatedAsa = { ...(prev.asa || {}) };
                 delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
@@ -171,7 +234,67 @@ const FundingModal = ({modal, data}) => {
                     asa: updatedAsa,
                 };
             });
+        }
+    }
+
+    const handleChangeBoxAmount_v1 = (checked, key, projectID, amount, projectName) => {
+        const projectKey = `${key}/${projectID}`;
+        const checked2 = !Boolean(operatorInput.asa?.[`${key}/${projectID}`])
+        //FOR NEXT UPDATE
+        // console.log(checked2)
+        // setASANo((prevState) => {
+        //     const updatedState = { ...prevState };
+        //     if (!updatedState[key] || !updatedState[key][projectName]) {
+        //         console.warn("Project not found for update.");
+        //         return prevState; // Return current state if no match found
+        //     }
+
+        //     const currentRO = parseFloat(updatedState[key][projectName].RO || 0);
+        //     if (checked) {
+        //         updatedState[key][projectName].RO = Math.max(0, currentRO - parseFloat(data.amount)); //fix this
+        //     } 
+        //     else {
+        //         updatedState[key][projectName].RO = currentRO + parseFloat(data.amount); //fix this
+        //     }
     
+        //     return updatedState;
+        // });
+
+        if (checked) {
+            const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
+            // console.log(exactAmount)
+            setOperatorInput((prev) => ({...prev,
+                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+            }));
+    
+            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
+            setBudget((prev) => prev + amount)
+
+        } else {
+            let unselectedAmount
+            setOperatorInput((prev) => {
+                const updatedAsa = { ...(prev.asa || {}) };
+                unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
+                console.log(unselectedAmount)
+                delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
+                return {
+                    ...prev,
+                    asa: updatedAsa,
+                };
+            });
+            //this is for differencing on update
+            // setASANo((prev) => {
+
+            //     return {
+            //         ...prev, [key]: {
+            //             ...prev[key],
+            //             [projectName]: {
+            //                 ...prev[key]?.[projectName],
+            //                 RO: parseFloat((prev[key]?.[projectName]?.RO || 0)) + unselectedAmount
+            //             }
+            //         }
+            //     }
+            // })
             setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
             setBudget((prev) => prev - amount < 0 ? 0 : prev - amount)
         }
@@ -217,7 +340,7 @@ const FundingModal = ({modal, data}) => {
                     <label className="font-semibold">ASA No.</label>
                     <p>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
                     <div className="flex flex-col items-center justify-center gap-2 p-2 w-full">
-                        {Object.entries(ASANo).length > 0 ? (
+                    {Object.entries(ASANo).length > 0 ? (
                             Object.entries(ASANo).map(([key, asano]) => {
                                 const finalASANO = key.replace('|', ' ');
                                 return (
@@ -226,8 +349,8 @@ const FundingModal = ({modal, data}) => {
                                             {finalASANO}
                                         </h4>
                                         <div className="flex flex-wrap items-center justify-start gap-2">
-                                            {asano.map((project, index) => (
-                                                <label key={index} className="peer flex items-center gap-2">
+                                            {Object.entries(asano).map(([projectName, project]) => (
+                                                <label key={projectName} className="peer flex items-center gap-2">
                                                     <input
                                                         type="checkbox"
                                                         value={`${key}/${project.projectID}`}
@@ -238,40 +361,23 @@ const FundingModal = ({modal, data}) => {
                                                             const amount = parseFloat(
                                                                 project.RO || 0
                                                             );
-                                                            handleChangeBoxAmount(isChecked,key, project.projectID, amount)
+                                                            // console.log(isChecked)
+                                                            handleChangeBoxAmount(isChecked,key, project.projectID, amount, projectName)
 
-                                                            // if (isChecked) {
-                                                            //     // Add the selected project
-                                                            //     const exactAmount = parseFloat(data.amount) < (amount + budget) ? amount - ((amount + budget) - parseFloat(data.amount)) : amount
-                                                            //     setOperatorInput((prev) => ({...prev, asa: {...(prev.asa || {}), [projID]: exactAmount}}));
-                                                            //     // setBudget((prev) => prev += amount)
-                                                            //     setCBAmount((prev) => ({...prev, [key]: (prev[key] || 0) + exactAmount}))
-                                                                
-                                                                
-                                                            // } else {
-                                                            //     // Remove the unselected project
-                                                            //     setOperatorInput((prev) => {
-                                                            //         const updatedAsa = { ...(prev.asa || {}) };
-                                                            //         delete updatedAsa[projID]; // Remove the projID key
-                                                            //         return {
-                                                            //             ...prev,
-                                                            //             asa: updatedAsa,
-                                                            //         };
-                                                            //     });
-                                                            //     // setBudget((prev) => prev -= amount)
-                                                            //     setCBAmount((prev) => ({...prev, [key]: (prev[key] || 0) - amount}))
-                                                            // }
+                                                            
                                                         }}
                                                         checked={Boolean(operatorInput.asa?.[`${key}/${project.projectID}`])}
                                                         disabled={
                                                             !Boolean(operatorInput.asa?.[`${key}/${project.projectID}`]) && 
                                                             Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
                                                         }
+                                                        
                                                     />
                                                     <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen transition-all duration-150">
                                                         <IoMdCheckmark size={20} className="hidden peer-checked:block"/>    
-                                                        {project.projectName} :{' '}
+                                                        {projectName} :{' '}
                                                         {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
+                                                        {/* {operatorInput.asa?.[`${key}/${project.projectID}`] ? formatToPeso(operatorInput.asa?.[`${key}/${project.projectID}`]) : formatToPeso(project.RO)} */}
                                                     </span>
                                                 </label>
                                             ))}
