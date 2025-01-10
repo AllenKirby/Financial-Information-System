@@ -142,7 +142,7 @@ const ViewControlBook = () => {
                 </div>
               </div>
 
-              <div className="w-full flex-1 p-2">
+              <div className="w-full flex-1 overflow-y-auto p-2">
                 {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                   Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
                     <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget}/>
