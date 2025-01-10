@@ -9,8 +9,8 @@ import {setPermission} from '../redux/PermissionRedux'
 import { useFundingHook } from "../hooks/useFundingHook";
 
 //Components
-import Navbar from "../components/Navbar"
-import Header from "../components/Header";
+import Navbar from "../components/Shared/Navbar"
+import Header from "../components/Shared/Header";
 
 //Icons
 import { TbLayoutDashboard} from "react-icons/tb";

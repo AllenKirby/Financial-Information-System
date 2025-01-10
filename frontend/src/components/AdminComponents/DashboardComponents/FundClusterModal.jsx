@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { IoIosClose, IoIosArrowRoundBack} from "react-icons/io";
 
 
-import DVTemplate from '../../DVTemplate'
+import DVTemplate from '../../Shared/DVTemplate'
 
 const FundClusterModal = ({fundCluster, modal, vouchers}) => {
     const [filteredVouchers, setFilteredVouchers] = useState({})

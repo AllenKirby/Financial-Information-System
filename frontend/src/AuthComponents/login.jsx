@@ -8,9 +8,10 @@ import { FiEye, FiEyeOff } from "react-icons/fi";
 import { IoIosArrowRoundBack } from "react-icons/io";
 
 import NIAlogo from '../assets/images/NIAimg.png' 
+import LoginBG from '../assets/images/LoginBG.jpg'
 
 import ChangePass from './ChangePass'
-import Loader from "../components/Loader";
+import Loader from "../components/Loaders/Loader";
 import Swal from 'sweetalert2'
 
 const Login = () => {
@@ -71,7 +72,7 @@ const Login = () => {
 
   return (
     <section className="w-full h-screen flex flex-col lg:flex-row  items-center justify-start bg-slate-100">
-        <div className="w-full lg:w-2/3 h-1/3 lg:h-full py-5 flex flex-col items-center justify-center gap-2 px-5 bg-customgreen">
+        <div className="w-full lg:w-2/3 h-1/3 lg:h-full py-5 flex flex-col items-center justify-center gap-2 px-5 bg-cover" style={{backgroundImage: `url(${LoginBG})`}}>
             <img className="w-28 sm:w-36 md:w-38 lg:w-48 xl:w-52 z-10" src={NIAlogo} alt="" />
             <h1 className="text-white text-center font-bold z-10 text-xl sm:text-xl md:text-3xl lg:text-4xl">Financial Information System</h1>
         </div>

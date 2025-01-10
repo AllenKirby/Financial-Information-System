@@ -272,6 +272,7 @@ export const useApproverHook = () => {
             document.body.appendChild(link);
             link.click();
             link.remove();
+            setIsLoading(false)
         } catch (error) {
             setIsLoading(false)
             const errorMessage = error.response?.data?.message || error.message || "An error occurred";

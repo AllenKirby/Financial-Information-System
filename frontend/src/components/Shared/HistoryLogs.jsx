@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react"
-import { firestore } from "../config/firebase-config";
+import { firestore } from "../../config/firebase-config";
 import { doc, onSnapshot } from "firebase/firestore";
 
 import { IoSearchSharp } from "react-icons/io5";
 import { RxCross2 } from "react-icons/rx";
 import { IoIosClose } from "react-icons/io";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
-import HistoryLogsItem from "./HistoryLogsItem";
-import PaginatedList from "./PaginatedList";
+import PaginatedList from "../Pagination/PaginatedList";
 
 const HistoryLogs = () => {
     const [historyLogs, setHistoryLogs] = useState(null)
@@ -161,8 +160,8 @@ const HistoryLogs = () => {
                     <IoSearchSharp size={38} className='border-2 rounded-lg px3 py-2 text-gray-400'/>
                 </button>
             </div>
-            <div className="w-full h-[90%] rounded-t-lg">
-                <div className="w-full h-[7%] rounded-t-lg hidden sm:block">
+            <div className="w-full h-[90%] flex flex-col rounded-t-lg">
+                <div className="w-full h-auto rounded-t-lg hidden sm:block">
                     <div className="w-full h-full text-lg bg-gray-100 rounded-lg flex ">
                         <p className="text-gray-400 text-sm font-semibold w-1/5 py-2 border-white text-left px-2">Payee</p>
                         <p className="text-gray-400 text-sm font-semibold text-center w-1/5 py-2 border-white">DV No.</p>
@@ -171,7 +170,7 @@ const HistoryLogs = () => {
                         <p className="text-gray-400 text-sm font-semibold text-center w-1/5 py-2 ">Action Time and Date</p>
                     </div>
                 </div>
-                <div className="w-full h-[93%] overflow-y-auto text-gray-500">
+                <div className="w-full flex-1 overflow-y-auto text-gray-500">
                     {/* {filteredLogs && Object.entries(filteredLogs).length > 0 ? (
                         Object.entries(filteredLogs).map(([key, log], index) => (
                             <HistoryLogsItem key={key} log={log} index={index}/>
@@ -181,8 +180,12 @@ const HistoryLogs = () => {
                             <p className="text-center font-semibold text-lg">No Logs Found</p>
                         </div>
                     )} */}
-                    {filteredLogs && (
+                    {filteredLogs ? (
                         <PaginatedList items={filteredLogs} paginationFor="HistoryLogs"/>
+                    ) : (
+                        <div className=" w-full h-full flex items-center justify-center">
+                            <p className="font-semibold">No Logs Found</p>
+                        </div>
                     )}
                 </div>
             </div>

@@ -6,7 +6,7 @@ import { MdDelete } from "react-icons/md";
 import { FaUserAltSlash } from "react-icons/fa";
 import { FaUser } from "react-icons/fa6";
 
-import LargeLoader from '../LargeLoader';
+import LargeLoader from '../Loaders/LargeLoader';
 
 import { useSuperAdminHook } from '../../hooks/useSuperAdminHook';
 

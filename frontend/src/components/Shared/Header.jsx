@@ -6,9 +6,9 @@ import { GiHamburgerMenu } from "react-icons/gi";
 
 import { useState, useEffect } from "react";
 import { ref, onValue, update } from 'firebase/database';
-import { RtDatabase } from '../config/firebase-config';
+import { RtDatabase } from '../../config/firebase-config';
 
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import Notification from './Notification';
 
 const Header = ({ currentPage, sidebar}) => {

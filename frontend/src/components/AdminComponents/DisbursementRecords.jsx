@@ -1,7 +1,7 @@
 import {useParams, Outlet} from 'react-router-dom'
 import { useState, useEffect } from 'react';
 
-import PaginatedList from '../PaginatedList'
+import PaginatedList from '../Pagination/PaginatedList';
 
 import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
 
@@ -157,7 +157,13 @@ const DisbursementRecords = () => {
             {activeTabs === 'Approved' && (<h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Approved</h1>)}
           </div>
           <div className="w-full flex-1 rounded-lg">
-            <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'1'} activeTab={activeTabs} paginationFor={'DV'}/>
+            {getFilteredDocuments() && Object.entries(getFilteredDocuments()).length > 0 ? (
+              <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'1'} activeTab={activeTabs} paginationFor={'DV'}/>
+            ) : (
+              <div className='w-full h-full flex items-center justify-center'>
+                <p className='font-bold'>No Disbursement Voucher Found</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

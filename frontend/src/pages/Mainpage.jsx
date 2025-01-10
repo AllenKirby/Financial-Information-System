@@ -1,7 +1,7 @@
 import { createBrowserRouter, Route, createRoutesFromElements, RouterProvider } from "react-router-dom";
 
 //Components and Pages
-import {AuthRole} from "../components/AuthRole";
+import {AuthRole} from "../AuthComponents/AuthRole";
 import AdminPage from "./AdminPage";
 import UserManagement from "../components/SuperAdminComponents/UserManagement"
 import Dashboard from "../components/AdminComponents/Dashboard";
@@ -9,13 +9,13 @@ import NotFound from "./NotFoundPage";
 import EditorPage from "./EditorPage";
 import DisbursementRecords from "../components/EditorComponents/DisbursementRecords";
 import PrivateRoute from '../AuthComponents/PrivateRoute';
-import ViewDocument from "../components/ViewDocument";
+import ViewDocument from "../components/Shared/ViewDocument";
 import OperatorPage from "./OperatorPage";
 import Disbursementrecords from '../components/OperatorComponents/DisbursementRecords'
 import HeadPage from "./HeadPage";
 import DisbursementRecordsHead from "../components/HeadComponents/DisbursementRecordsHead";
 import DisbursementRecordsAdmin from "../components/AdminComponents/DisbursementRecords"
-import HistoryLogs from "../components//HistoryLogs";
+import HistoryLogs from "../components/Shared/HistoryLogs";
 import ForbiddenPage from "./ForbiddenPage";
 import SuperAdminPage from "./SuperAdminPage";
 import Editform from "../components/AdminComponents/EditForm";

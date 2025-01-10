@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState, useRef } from 'react'
 import Swal from 'sweetalert2'
 
-import LargeLoader from '../LargeLoader'
+import LargeLoader from '../Loaders/LargeLoader'
 
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'

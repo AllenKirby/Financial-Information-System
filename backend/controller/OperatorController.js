@@ -930,6 +930,7 @@ const appendDataToSheet = async (req, res) => {
 
   const deleteControlBook = async(req, res) => {
     const { id } = req.params
+    console.log(id)
 
     try{
         await db.collection('ControlBook').doc(id).delete();

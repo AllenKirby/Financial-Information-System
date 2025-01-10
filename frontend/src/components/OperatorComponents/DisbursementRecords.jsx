@@ -11,8 +11,8 @@ import { MdOutlineDrafts, MdKeyboardReturn } from "react-icons/md";
 import { FiLayers } from "react-icons/fi";
 import { BsClockHistory } from "react-icons/bs";
 
-import PaginatedList from '../PaginatedList';
-import DisbursementVoucher from '../DisbursementVoucher';
+import PaginatedList from '../Pagination/PaginatedList';
+import DisbursementVoucher from '../EditorComponents/DisbursementVoucher';
 
 const DisbursementRecords = () => {
   const { OpDocuments } = useOpDisbursementContext()
@@ -67,7 +67,6 @@ const DisbursementRecords = () => {
     } else {
       const drafts = Object.entries(OpDocuments.documents).filter(([, document]) => document.data.status.includes(activeTabs))
       const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.payee.toLowerCase().includes(search.toLowerCase()) || document[1].data.DV.toLowerCase().includes(search.toLowerCase())))
-      console.log(filteredDrafts)
       if(activeTabs === 'Drafting') {
         setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
       } else if(activeTabs.includes('Returned')) {
@@ -103,7 +102,7 @@ const DisbursementRecords = () => {
   }
 
   return (
-    <section className='w-full h-full p-2 relative flex flex-col gap-2'>
+    <section className='w-full h-full p-2 relative flex flex-col gap-2 text-gray-500'>
       <div className={`${searchModal ? ' block h-auto' : 'hidden'} absolute py-5 bg-white z-20 top-0 left-0 w-full block overflow-hidden sm:hidden transition-all duration-100`}>
         <div className='flex items-center justify-center gap-2 px-3'>
           <div className='w-5/6 relative'>
@@ -176,7 +175,13 @@ const DisbursementRecords = () => {
             {(activeTabs !== 'Drafting' && activeTabs !== '' && activeTabs !== 'In Review') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
           <div className="w-full flex-1 rounded-lg">
-            <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'3'} activeTab={activeTabs} paginationFor={'DV'}/>
+            {Object.entries(getFilteredDocuments).length > 0 ? (
+              <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'3'} activeTab={activeTabs} paginationFor={'DV'}/>
+            ) : (
+              <div className='w-full h-full flex items-center justify-center'>
+                <p className='font-bold'>No Disbursement Voucher Found</p>
+              </div>
+            )}
           </div>
         </div>
         {isModalOpen && (

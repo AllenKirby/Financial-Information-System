@@ -3,11 +3,12 @@ import Swal from 'sweetalert2'
 
 import { useState, useEffect } from 'react'
 
-import { usePreparerHook } from '../hooks/usePreparerHook'
-import { useFundingHook } from "../hooks/useFundingHook";
-import { useBudgetOfficerHook } from "../hooks/useBudgetOfficerHook";
-import { useAuthContext } from '../hooks/useAuthContext';
-import LargeLoader from './LargeLoader';
+import { usePreparerHook } from '../../hooks/usePreparerHook'
+import { useFundingHook } from "../../hooks/useFundingHook";
+import { useBudgetOfficerHook } from "../../hooks/useBudgetOfficerHook";
+import { useAuthContext } from '../../hooks/useAuthContext';
+
+import LargeLoader from '../Loaders/LargeLoader';
 
 const AddComment = ({idStatus, doc, modal, type, ASA}) => {
     const [comment, setComment] = useState('')

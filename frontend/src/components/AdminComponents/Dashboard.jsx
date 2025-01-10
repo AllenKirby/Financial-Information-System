@@ -1,6 +1,6 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
 import ChartData from "./DashboardComponents/ChartData"
-import Summary from '../AdminComponents/ComparisonViewComponent/Summary'
+import Summary from './DashboardComponents/Summary'
 import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation" 
 import FundClusterModal from "./DashboardComponents/FundClusterModal"
 import ComparisonView from "./ComparisonView"

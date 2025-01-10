@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc } from "firebase/firestore"
-import { setControlBook, deleteFolder } from '../redux/ControlBookRedux'
+import { setControlBook, deleteFolder, deleteProject } from '../redux/ControlBookRedux'
 import { useDispatch } from "react-redux";
 
 export const useFundingHook = () => {
@@ -267,6 +267,7 @@ export const useFundingHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
+                dispatchFolder(deleteProject(id))
                 return true
             }
         } catch(error) {

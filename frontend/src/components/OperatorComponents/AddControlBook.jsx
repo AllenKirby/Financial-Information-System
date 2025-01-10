@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 
-import LargeLoader from '../LargeLoader'
+import LargeLoader from '../Loaders/LargeLoader'
 
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
@@ -15,6 +15,7 @@ const AddControlBook = (props) => {
     
     const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: ''})
     const [errorFlag, setErrorFlag] = useState(false)
+
 
     useEffect(() => {
         if(flag && controlBook) {
