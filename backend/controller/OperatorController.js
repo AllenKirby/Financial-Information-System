@@ -69,7 +69,7 @@ const updateASAORS = async (req, res) => {
 
         let finalORS = ''
         const dvData = {ASA: asa}
-        if(newlyASA){ //fix this
+        if(newlyASA){ 
             const ORS = await getOrigNumberOfCopiesBUR(ors)
             finalORS = `501-${year}-${month}-${ORS}`
             dvData.ORSBURS = finalORS

@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc } from "firebase/firestore"
-import { setControlBook, deleteFolder, deleteProject } from '../redux/ControlBookRedux'
+import { setControlBook, deleteFolder, deleteProject } from '../redux/ControlBookRedux' 
 import { useDispatch } from "react-redux";
 
 export const useFundingHook = () => {
@@ -202,13 +202,31 @@ export const useFundingHook = () => {
       
       
 
+    // const retrieveProjectName = async (setASANo) => {
+    //     const docRef = doc(firestore,'formData', 'ControlBook');
+    //     const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+    //         if (docSnapshot.exists()) {
+    //             const projectData = docSnapshot.data()
+    //             sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
+    //             setASANo(projectData)
+
+    //         } else {
+    //             // Document does not exist
+    //             console.log("Document not found");
+    //         }
+
+    //         return unsubscribe
+    //     })
+    // }
+
     const retrieveProjectName = async (setASANo) => {
         const docRef = doc(firestore,'formData', 'ControlBook');
         const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
             if (docSnapshot.exists()) {
                 const projectData = docSnapshot.data()
                 sessionStorage.setItem('ProjectName', JSON.stringify(projectData))
-                setASANo(projectData)
+                const newData = transformData(projectData)
+                setASANo(newData)
 
             } else {
                 // Document does not exist
@@ -217,6 +235,21 @@ export const useFundingHook = () => {
 
             return unsubscribe
         })
+    }
+
+    const transformData = (projData) => {
+        const transformed = {};
+        for(const [mainKey, projArray] of Object.entries(projData)){
+            transformed[mainKey] = {};
+            projArray.forEach((project) => {
+                const projectName = project.projectName;
+                transformed[mainKey][projectName] = {
+                    RO: project.RO,
+                    projectID: project.projectID,
+                };
+            })
+        }
+        return transformed
     }
     
     const updateControlBook = async(data, id) => {

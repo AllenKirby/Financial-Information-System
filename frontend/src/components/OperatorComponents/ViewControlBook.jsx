@@ -35,6 +35,7 @@ const ViewControlBook = () => {
 
 
   useEffect(() => {
+    console.log(Boolean(controlBooks))
     if(controlBooks){
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
       const selectedkey = Object.keys(controlBooks).find((key) => controlBooks[key].ASANo === id)
@@ -49,6 +50,10 @@ const ViewControlBook = () => {
     }
 
   }, [controlBooks, id])
+
+  useEffect(() => {
+    console.log(controlBooks)
+  }, [controlBooks])
 
   const convertDate = (dateStr) => {
     const date = new Date(dateStr);

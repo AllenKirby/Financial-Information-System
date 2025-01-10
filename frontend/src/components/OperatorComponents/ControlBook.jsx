@@ -28,6 +28,8 @@ const ControlBook = () => {
     const filteredResults = Object.entries(controlBooks).filter(([, controlBook]) => controlBook.cbStatus === CBStatus)
     console.log(controlBooks)
     setFilteredCB(Object.fromEntries(filteredResults))
+   }else{
+    setFilteredCB({})
    }
   }, [CBStatus, controlBooks])
 

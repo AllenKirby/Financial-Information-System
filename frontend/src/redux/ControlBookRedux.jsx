@@ -14,11 +14,18 @@ export const ControlBookRedux = createSlice({
             return newState;
         },
         deleteProject: (state, action) => {
-            const ASANo = action.payload.split('!')[0]
-            const projectID = action.payload.split('!')[1]
-            const newState = { ...state };
-            delete newState[ASANo].fieldOffices[projectID]
-            return newState;
+            const [ASANo, projectID] = action.payload.split('!');
+            return {
+                ...state,
+                [ASANo]: {
+                    ...state[ASANo],
+                    fieldOffices: Object.fromEntries(
+                        Object.entries(state[ASANo]?.fieldOffices || {}).filter(
+                            ([key]) => key !== projectID
+                        )
+                    ),
+                },
+            };
         }
     }
 })

@@ -98,7 +98,7 @@ const Folder = ({ASANo, controlBook}) => {
             <BsThreeDotsVertical onClick={(e) => {e.stopPropagation(); setOptions(!options);}}   size={20}/>
             {options && (
               <>
-                <div className="fixed inset-0 z-40" onClick={(e) => {e.stopPropagation(); setOptions(!options);}}/>
+                <div className="fixed inset-0 z-0" onClick={(e) => {e.stopPropagation(); setOptions(!options);}}/>
                 <div className="absolute right-0 w-24 h-auto  bg-white rounded-md border-2">
                   <button className='w-full py-1 px-2 flex items-center justify-start gap-2' onClick={modal}>
                     <MdOutlineModeEdit size={20} /> Edit
