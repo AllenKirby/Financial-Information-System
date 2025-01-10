@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useAuthHook } from "../hooks/useAuthHook"
 
 import { FiEye, FiEyeOff } from "react-icons/fi";
-import Loader from "../components/Loader";
+import Loader from "../components/Loaders/Loader";
 
 const ChangePass = () => {
   const { ChangePassword, isLoading, error } = useAuthHook()

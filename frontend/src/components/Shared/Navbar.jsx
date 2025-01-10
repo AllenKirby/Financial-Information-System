@@ -2,14 +2,14 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { useState, useEffect } from "react";
 
-import bgImage from '../assets/images/NIAimg.png';
+import bgImage from '../../assets/images/NIAimg.png';
 import { MdLogout } from "react-icons/md";
 import { IoIosClose } from "react-icons/io";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import Swal from "sweetalert2";
 
-import { useAuthHook } from '../hooks/useAuthHook';
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useAuthHook } from '../../hooks/useAuthHook';
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const Navbar = ({ items, flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
   const { logout } = useAuthHook();

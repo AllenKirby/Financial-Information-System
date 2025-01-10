@@ -5,6 +5,7 @@ import { FaCheck } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
 import { useAuthContext } from '../../../hooks/useAuthContext'
+
 export const NameAndOffice = () => {
     const { user } = useAuthContext()
     const [showInpuTBoxA, setShowInputBoxA] = useState(false);

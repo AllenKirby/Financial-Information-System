@@ -2,19 +2,19 @@ import {useState, useEffect} from 'react'
 import axios from 'axios'
 import PropTypes from 'prop-types'
 import Swal from "sweetalert2"
-import { firestore } from "../config/firebase-config"
+import { firestore } from "../../config/firebase-config"
 import { collection, onSnapshot } from "firebase/firestore"
 
 import { IoAdd } from "react-icons/io5";
 import { MdRemove } from "react-icons/md";
-import LargeLoader from './LargeLoader'
+import LargeLoader from '../Loaders/LargeLoader'
 
-import addressJSON from '../assets/json/region_4a_provinces_municipalities_array.json'
+import addressJSON from '../../assets/json/region_4a_provinces_municipalities_array.json'
 
-import { useAuthContext } from '../hooks/useAuthContext'
-import { usePreparerHook } from '../hooks/usePreparerHook'
-import { useFundingHook } from '../hooks/useFundingHook'
-import { useInitialStateDV } from '../hooks/useInitialStateDV'
+import { useAuthContext } from '../../hooks/useAuthContext'
+import { usePreparerHook } from '../../hooks/usePreparerHook'
+import { useFundingHook } from '../../hooks/useFundingHook'
+import { useInitialStateDV } from '../../hooks/useInitialStateDV'
 
 import {useSelector} from 'react-redux'
 

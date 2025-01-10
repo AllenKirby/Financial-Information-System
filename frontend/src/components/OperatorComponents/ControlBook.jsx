@@ -7,7 +7,7 @@ import {useAuthContext} from '../../hooks/useAuthContext'
 
 
 import { IoAdd } from "react-icons/io5";
-import PaginatedList from "../PaginatedList"
+import PaginatedList from "../Pagination/PaginatedList"
 
 const ControlBook = () => {
   const [controlBookFlag, setControlBookFlag] = useState(false)
@@ -53,7 +53,14 @@ const ControlBook = () => {
             </div>
           </div>
           <div className="w-full flex-1 overflow-y-auto">
-            <PaginatedList items={filteredCB} paginationFor="ControlBook"/>
+            {Object.entries(filteredCB).length > 0 ? (
+              <PaginatedList items={filteredCB} paginationFor="ControlBook"/>
+              ) : (
+                <div className='w-full h-full flex items-center justify-center'>
+                  <p className='font-bold'>No Control Book Found</p>
+                </div>
+              )
+            }
           </div>
           {controlBookFlag && (
             <>

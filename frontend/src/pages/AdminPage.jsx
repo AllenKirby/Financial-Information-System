@@ -1,8 +1,8 @@
 import { Outlet,  useLocation  } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-import Header from "../components/Header";
-import Navbar from "../components/Navbar";
+import Header from "../components/Shared/Header";
+import Navbar from "../components/Shared/Navbar";
 
 import { TbLayoutDashboard, TbEdit } from "react-icons/tb";
 import { FaRegFile } from "react-icons/fa";

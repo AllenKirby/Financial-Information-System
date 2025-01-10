@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Swal from "sweetalert2"
-import LargeLoader from "../LargeLoader"
+import LargeLoader from "../Loaders/LargeLoader"
 
 import { FiEye, FiEyeOff } from "react-icons/fi";
 

@@ -1,15 +1,15 @@
 
 import { useEffect, useState, useRef } from "react";
-import { useFundingHook } from "../hooks/useFundingHook";
-import { useAuthContext } from "../hooks/useAuthContext"
-import { useInitialStateDV } from "../hooks/useInitialStateDV";
+import { useFundingHook } from "../../hooks/useFundingHook";
+import { useAuthContext } from "../../hooks/useAuthContext"
+import { useInitialStateDV } from "../../hooks/useInitialStateDV";
 
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
 import { IoMdCheckmark } from "react-icons/io";
 
-import LargeLoader from './LargeLoader'
+import LargeLoader from '../Loaders/LargeLoader'
 
 const FundingModal = ({modal, data}) => {
     const {getBurNo} = useInitialStateDV()

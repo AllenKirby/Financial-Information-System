@@ -11,8 +11,8 @@ import { MdOutlineDrafts, MdKeyboardReturn } from "react-icons/md";
 import { FiLayers } from "react-icons/fi";
 import { BsClockHistory } from "react-icons/bs";
 
-import DisbursementVoucher from '../DisbursementVoucher';
-import PaginatedList from '../PaginatedList';
+import DisbursementVoucher from './DisbursementVoucher';
+import PaginatedList from '../Pagination/PaginatedList';
 
 const DisbursementRecords = () => {
   const { documents } = useDisbursementContext()
@@ -54,25 +54,38 @@ const DisbursementRecords = () => {
         }
       } 
     } else {
-      setFilteredDocuments({}); 
+      setFilteredDocuments({
+        all: {},
+        drafting: {},
+        returned: {},
+        inReview: {},
+      }); 
     }
   }, [filter, documents, activeTabs]);
 
   useEffect(() => {
-    if(!documents) return 
-    if(!activeTabs) {
-      const filteredResults = Object.entries(documents).filter(doc => doc[1].payee.toLowerCase().includes(search.toLowerCase()) || doc[1].DV.toLowerCase().includes(search.toLowerCase()))
-      setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
-    } else {
-      const drafts = Object.entries(documents).filter(([, document]) => document.status.includes(activeTabs))
-      const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].payee.toLowerCase().includes(search.toLowerCase()) || document[1].DV.toLowerCase().includes(search.toLowerCase())))
-      if(activeTabs === 'Drafting') {
-        setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
-      } else if(activeTabs.includes('Returned')) {
-        setFilteredDocuments({...filteredDocuments, returned: filteredDrafts})
-      } else if(activeTabs.includes('In Review')) {
-        setFilteredDocuments({...filteredDocuments, inReview: filteredDrafts})
+    if(documents && Object.entries(documents).length > 0) {
+      if(!activeTabs) {
+        const filteredResults = Object.entries(documents).filter(doc => doc[1].payee.toLowerCase().includes(search.toLowerCase()) || doc[1].DV.toLowerCase().includes(search.toLowerCase()))
+        setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
+      } else {
+        const drafts = Object.entries(documents).filter(([, document]) => document.status.includes(activeTabs))
+        const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].payee.toLowerCase().includes(search.toLowerCase()) || document[1].DV.toLowerCase().includes(search.toLowerCase())))
+        if(activeTabs === 'Drafting') {
+          setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
+        } else if(activeTabs.includes('Returned')) {
+          setFilteredDocuments({...filteredDocuments, returned: filteredDrafts})
+        } else if(activeTabs.includes('In Review')) {
+          setFilteredDocuments({...filteredDocuments, inReview: filteredDrafts})
+        }
       }
+    } else {
+      setFilteredDocuments({
+        all: {},
+        drafting: {},
+        returned: {},
+        inReview: {}
+      })
     }
   }, [search, documents, activeTabs])
 
@@ -88,15 +101,15 @@ const DisbursementRecords = () => {
   }
 
   const getFilteredDocuments = () => {
-    if (activeTabs === '') return filteredDocuments.all;
-    if (activeTabs === 'Drafting') return filteredDocuments.drafting;
-    if (activeTabs.includes('Returned')) return filteredDocuments.returned;
-    if (activeTabs === 'In Review') return filteredDocuments.inReview;
-    return filteredDocuments.all; 
+    if (!activeTabs) return filteredDocuments.all || {};
+    if (activeTabs === 'Drafting') return filteredDocuments.drafting || {};
+    if (activeTabs.includes('Returned')) return filteredDocuments.returned || {};
+    if (activeTabs === 'In Review') return filteredDocuments.inReview || {};
+    return {}; 
   }
 
   return (
-    <section className='w-full h-full p-2 relative flex flex-col gap-2'>
+    <section className='w-full h-full p-2 relative flex flex-col gap-2 text-gray-500'>
       <div className={`${searchModal ? ' block h-auto' : 'hidden'} absolute py-5 bg-white z-20 top-0 left-0 w-full block overflow-hidden sm:hidden transition-all duration-100`}>
         <div className='flex items-center justify-center gap-2 px-3'>
           <div className='w-5/6 relative'>
@@ -115,7 +128,7 @@ const DisbursementRecords = () => {
       <div className='w-full h-[10%] flex'>
         <div className="w-2/3 sm:w-1/2 flex items-end">
           <div className='pt-3 flex items-center justify-center'>
-            <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><FiLayers size={20}/><span className='hidden lg:block'>All</span></button>
+            <button onClick={() => setActiveTabs('')} className={`${!activeTabs ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><FiLayers size={20}/><span className='hidden lg:block'>All</span></button>
             <button onClick={() => setActiveTabs('Drafting')} className={`${activeTabs === 'Drafting' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><MdOutlineDrafts size={20}/><span className='hidden lg:block'>Drafting</span></button>
             {permission?.data?.permission && <button onClick={() => setActiveTabs('In Review')} className={`${activeTabs === 'In Review' ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><BsClockHistory size={20}/><span className='hidden lg:block'>In Review</span></button>}
             <button onClick={() => setActiveTabs('Returned')} className={`${activeTabs.includes('Returned') ? 'border-b-2 border-preparerPrimary text-preparerPrimary font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-preparerPrimary hover:font-bold hover:border-preparerPrimary transition-all duration-100`}><MdKeyboardReturn size={20}/><span className='hidden lg:block'>Returned</span></button>
@@ -167,7 +180,13 @@ const DisbursementRecords = () => {
             {activeTabs.includes('Returned') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
           <div className="w-full flex-1 rounded-lg">
-            <PaginatedList items={sortTimeCreatedDesc(getFilteredDocuments())} type={'4'} activeTab={activeTabs} paginationFor={'DV'}/>
+            {Object.entries(getFilteredDocuments()).length > 0 ? (
+              <PaginatedList items={sortTimeCreatedDesc(getFilteredDocuments())} type={'4'} activeTab={activeTabs} paginationFor={'DV'}/>
+            ) : (
+              <div className='w-full h-full flex items-center justify-center'>
+                <p className='font-bold'>No Disbursement Voucher Found</p>
+              </div>
+            )}
           </div>
         </div>
         {isModalOpen && (

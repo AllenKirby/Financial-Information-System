@@ -45,7 +45,7 @@ const ComparisonView = ({modal}) => {
 }
 
 ComparisonView.propTypes = {
-    modal: PropTypes.func.isRequired,
+    modal: PropTypes.func,
 }
 
 export default ComparisonView

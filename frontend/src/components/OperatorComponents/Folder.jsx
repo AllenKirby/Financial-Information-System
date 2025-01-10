@@ -10,16 +10,17 @@ import Swal from 'sweetalert2';
 
 import { useFundingHook } from '../../hooks/useFundingHook';
 
-import LargeLoader from '../LargeLoader';
+import LargeLoader from '../Loaders/LargeLoader';
 
 import AddControlBook from "./AddControlBook"
+
+import { BsThreeDotsVertical } from "react-icons/bs";
 
 const Folder = ({ASANo, controlBook}) => {
     const [controlBookFlag, setControlBookFlag] = useState(false)
     const [deletable, setIsDeletable] = useState(true)
-    console.log(controlBook)
     const navigate = useNavigate()
-    
+    const [options, setOptions] = useState(false)
     const { deleteControlBook, isLoading, error } = useFundingHook()
 
     const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
@@ -74,13 +75,13 @@ const Folder = ({ASANo, controlBook}) => {
 
   return (
     <div
-      onClick={() => navigate(`${controlBook[1].ASANo}`)}
+      onClick={() => navigate(`${controlBook.ASANo}`)}
       className="h-56 rounded-lg p-1 text-gray-500 hover:bg-gray-200 transition-all duration-100 cursor-pointer"
     >
       <div className="w-full h-[70%] flex items-center justify-center">
         <img
           src={
-            Object.entries(controlBook[1].fieldOffices).length > 0
+            Object.entries(controlBook.fieldOffices).length > 0
               ? FolderWithItems
               : EmptyFolder
           }
@@ -91,16 +92,24 @@ const Folder = ({ASANo, controlBook}) => {
       <div className='w-full h-[30%]'>
         <div className="px-4 flex items-center justify-between">
           <p className="font-bold">
-            {controlBook[1] ? controlBook[1].ASANo.replace("|", " ") : ""}
+            {controlBook ? controlBook.ASANo.replace("|", " ") : ""}
           </p>
-          <div className="flex items-center justify-center gap-2">
-            <button onClick={modal}>
-              <MdOutlineModeEdit size={18} />
-            </button>
-            {!deletable && (
-              <button disabled={isLoading} onClick={deleteCB}>
-                <MdDeleteOutline size={20} color="red" />
-              </button>
+          <div className="relative w-auto h-auto">
+            <BsThreeDotsVertical onClick={(e) => {e.stopPropagation(); setOptions(!options);}}   size={20}/>
+            {options && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={(e) => {e.stopPropagation(); setOptions(!options);}}/>
+                <div className="absolute right-0 w-24 h-auto  bg-white rounded-md border-2">
+                  <button className='w-full py-1 px-2 flex items-center justify-start gap-2' onClick={modal}>
+                    <MdOutlineModeEdit size={20} /> Edit
+                  </button>
+                  {!deletable && (
+                    <button className='w-full py-1 px-2 flex items-center justify-start gap-2' disabled={isLoading} onClick={deleteCB}>
+                      <MdDeleteOutline size={20} color="red" />Delete
+                    </button>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </div>

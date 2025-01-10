@@ -3,8 +3,8 @@ import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 import { firestore } from "../config/firebase-config"
 import { doc, onSnapshot } from "firebase/firestore"
 
-import Navbar from "../components/Navbar"
-import Header from "../components/Header"
+import Navbar from "../components/Shared/Navbar"
+import Header from "../components/Shared/Header"
 
 import { TbLayoutDashboard } from "react-icons/tb";
 import { useState, useEffect } from "react"

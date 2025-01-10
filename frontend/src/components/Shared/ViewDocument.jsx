@@ -8,27 +8,26 @@ import { MdDeleteOutline, MdOutlineFileDownload  } from "react-icons/md";
 import { IoMdArrowRoundBack, IoMdCheckmark, IoMdAdd  } from "react-icons/io";
 import { BsArrowLeft } from "react-icons/bs";
 //components
-import DisbursementVoucher from './DisbursementVoucher';
-//import Document from "./Document";
-import FundingModal from "./FundingModal";
+import DisbursementVoucher from '../EditorComponents/DisbursementVoucher';
+import LargeLoader from "../Loaders/LargeLoader";
+import DVTemplate from "./DVTemplate";
+import FundingModal from "../OperatorComponents/FundingModal";
 import AddComment from "./AddComment";
 import Comments from "./Comments";
 
 //contexts
-import { useDisbursementContext } from "../hooks/useDisbursementContext";
-import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext";
-import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
-import { useOpDisbursementContext } from "../hooks/useOpDisbursementContext";
+import { useDisbursementContext } from "../../hooks/useDisbursementContext";
+import { useHeadDisbursementContext } from "../../hooks/useHeadDisbursementContext";
+import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
+import { useOpDisbursementContext } from "../../hooks/useOpDisbursementContext";
 
 //hooks
-import { usePreparerHook } from "../hooks/usePreparerHook";
-import { useApproverHook } from "../hooks/useApproverHook";
+import { usePreparerHook } from "../../hooks/usePreparerHook";
+import { useApproverHook } from "../../hooks/useApproverHook";
 
 //redux
 import { useSelector } from "react-redux";
-import { useAuthContext } from "../hooks/useAuthContext";
-import LargeLoader from "./LargeLoader";
-import DVTemplate from "./DVTemplate";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const ViewDocument = () => {
   //states

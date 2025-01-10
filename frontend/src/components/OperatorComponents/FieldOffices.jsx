@@ -8,7 +8,7 @@ import { useFundingHook } from '../../hooks/useFundingHook';
 
 import AddNewFieldOffice from "./AddNewFieldOffice";
 import ViewProject from "./ViewProject";
-import LargeLoader from '../LargeLoader';
+import LargeLoader from '../Loaders/LargeLoader';
 
 const FieldOffices = (props) => {
 
@@ -19,7 +19,7 @@ const FieldOffices = (props) => {
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [viewProjectFlag, setViewProjectFlag] = useState(false)
 
-  console.log(fieldOffice)
+  console.log(fieldOfficeID)
 
   const modal = (e) => {
     e.stopPropagation()

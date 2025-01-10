@@ -1,5 +1,5 @@
-import Navbar from "../components/Navbar"
-import Header from "../components/Header"
+import Navbar from "../components/Shared/Navbar"
+import Header from "../components/Shared/Header"
 
 import { Outlet, useLocation } from "react-router-dom"
 //import axios from "axios"

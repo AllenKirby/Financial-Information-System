@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react"
 
 import { FiUser } from "react-icons/fi";
 import { TbUserShield } from "react-icons/tb";
-import PaginatedList from "../PaginatedList";
+import PaginatedList from "../Pagination/PaginatedList";
 
 const Logs = () => {
     const [activeTab, setActiveTab] = useState("Logins");
@@ -151,8 +151,12 @@ const Logs = () => {
                                     <div className="w-full h-full text-center flex items-center justify-center">No access logs available for the selected date.</div>
                                 )
                             } */}
-                            {combinedLogs?.[currDate]?.loginLogs && (
+                            {combinedLogs?.[currDate]?.loginLogs ? (
                                 <PaginatedList items={sortDate(combinedLogs[currDate].loginLogs)} paginationFor="loginLogs"/>
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <p className="font-bold">No Login Log Found</p>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -194,8 +198,12 @@ const Logs = () => {
                                     <div className="w-full h-full text-center flex items-center justify-center">No access logs available for the selected date.</div>
                                 )
                             } */}
-                            {combinedLogs?.[currDate]?.accessLogs && (
+                            {combinedLogs?.[currDate]?.accessLogs ? (
                                 <PaginatedList items={sortDate(combinedLogs[currDate].accessLogs)} paginationFor="AccessControl"/>
+                            ): (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <p className="font-bold">No Access Control Log Found</p>
+                                </div>
                             )}
                         </div>
                     </div>
