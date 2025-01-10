@@ -15,80 +15,108 @@ const { parse } = require('dotenv');
 const updateASAORS = async (req, res) => {
     try{
         console.log(req.body)
-        // const previousASA = req.body.previousASA
-        // const {id} = req.params
-        // const year = new Date().getFullYear();
-        // const month = new Date().getMonth() + 1
+        const newlyASA = req.body.update
+        const previousASA_test = req.body.previousASA
+        const {id} = req.params
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1
 
-        // //handle control books new amount per control book
+        
+
+        //handle control books new amount per control book
         // const ASA_amount = req.body.controlBooks
-        // // batch_HandleControlBook
+        // batch_HandleControlBook
 
-        // const asa = req.body.data.asa
-        // const asaEntries = Object.entries(asa).map(([key, amount]) => {
-        //     // console.log(key)
-        //     const [ASANo, projectID] = key.split('/');
+        const asa_test = req.body.data.asa
+        const {obj1: asa, obj2: previousASA} = theDifference(asa_test, previousASA_test)
+        console.log(`asa:`, asa)
+        console.log(`previousASA: `, previousASA)
+        const ASA_amount = Object.entries(asa).reduce((acc, [key, value]) => {
+            const newKey = key.split('/')[0];
+            acc[newKey] = (acc[newKey] || 0) + value;
+            return acc
+        }, {})
+        console.log(Boolean(previousASA))
+        if((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)){
+            console.log('asa and prevASA is same')
+            return res.status(200).json({ message: "No need to update" });
+        }
+        const asaEntries = Object.entries(asa).map(([key, amount]) => {
+            // console.log(key)
+            const [ASANo, projectID] = key.split('/');
 
-        //     return {
-        //         ASANo,
-        //         projectID,
-        //         amount
-        //     }
-        // })
+            return {
+                ASANo,
+                projectID,
+                amount
+            }
+        })
 
-        // const prevAsaEntries = Object.entries(previousASA).map(([key, amount]) => {
-        //     // console.log(key)
-        //     const [ASANo, projectID] = key.split('/');
+        
+        const ors = req.body?.data?.ors ? req.body.data.ors.split('-') : [];
+        const DV = req.body.DV
+        const DVNoKey = DV?.DVNo ? DV.DVNo.split('-') : [];
+        const fieldOfficeData = {
+            date: DV.date,
+            DVNoCount: DVNoKey,
+            orsData: ors.length > 0 ? [ors.length - 1] : '',
+            payee: DV.payee,
+            particulars: DV.particulars,
+            //amount
+        }
+        // console.log(asaEntries)
+        //batch_handlefieldOffices
 
-        //     return {
-        //         ASANo,
-        //         projectID,
-        //         amount
-        //     }
-        // })
+        let finalORS = ''
+        const dvData = {ASA: asa}
+        if(newlyASA){ //fix this
+            const ORS = await getOrigNumberOfCopiesBUR(ors)
+            finalORS = `501-${year}-${month}-${ORS}`
+            dvData.ORSBURS = finalORS
+        }
 
-        // const ors = req.body.data.ors.split('-')
-        // const DV = req.body.DV
-        // const DVNoKey = DV.DVNo.split('-')
-        // const fieldOfficeData = {
-        //     date: DV.date,
-        //     DVNoCount: DVNoKey,
-        //     orsData: ors[ors.length - 1],
-        //     payee: DV.payee,
-        //     particulars: DV.particulars,
-        //     //amount
-        // }
-        // // console.log(asaEntries)
-        // //batch_handlefieldOffices
+        if(!newlyASA){
 
-        // let finalORS = ''
-        // if(ors){
-        //     const ORS = await getOrigNumberOfCopiesBUR(ors)
-        //     finalORS = `501-${year}-${month}-${ORS}`
-        // }
+            const previousASA_amount = Object.entries(previousASA).reduce((acc, [key, value]) => {
+                const newKey = key.split('/')[0];
+                acc[newKey] = value;
+                return acc
+            }, {})
 
-        // const dvData = {
-        //     ORSBURS: finalORS,
-        //     ASA: asa
-        // }
+            const prevAsaEntries = Object.entries(previousASA).map(([key, amount]) => {
+                // console.log(key)
+                const [ASANo, projectID] = key.split('/');
+    
+                return {
+                    ASANo,
+                    projectID,
+                    amount
+                }
+            })
 
-        // if(previousASA){
-        //     //precious ASA
-        //     await batch_HandleControlBook(ASA_amount, 'subtract')
-        //     await batch_handlefieldOffices(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData, 'subtract');
+            //previous ASA
+            await batch_HandleControlBook(previousASA_amount, 'subtract')
+            await batch_handlefieldOffices(prevAsaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData, 'subtract');
 
-        //     //updated ASA
-        //     await batch_HandleControlBook(ASA_amount)
-        //     await batch_handlefieldOffices(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData);
-        // }else{
-        //     //new ASA
-        //     await batch_HandleControlBook(ASA_amount) //comment this first
-        //     await batch_handlefieldOffices(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData);
-        // }
+            //updated ASA
+            await batch_HandleControlBook(ASA_amount)
+            await batch_handlefieldOffices(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData);
+        }else{
+            //new ASA
+            
+            const ASA_amount = Object.entries(asa).reduce((acc, [key, value]) => {
+                const newKey = key.split('/')[0];
+                acc[newKey] = (acc[newKey] || 0) + value;
+                return acc
+            }, {})
 
-        // const docref = db.collection('records').doc(id)
-        // await docref.update(dvData)
-        // res.status(200).json('Successfully Updated')
+            await batch_HandleControlBook(ASA_amount) //comment this first
+            await batch_handlefieldOffices(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData);
+        }
+
+        const docref = db.collection('records').doc(id)
+        await docref.update(dvData)
+        res.status(200).json('Successfully Updated')
     }catch(err){
         res.status(500)
         console.log(`error on new updateASAORS (operator controller): ${err}`)
@@ -481,6 +509,7 @@ const batch_handleFormDataRemainingAmount_RO = async (batch, controBookID, proje
 
 const batch_HandleControlBook = async (updates, operation='add') => {
     const batch = db.batch();
+    console.log(updates, operation)
     for (const [ASANo, amount] of Object.entries(updates)) {
         const controlBookRef = db.collection('ControlBook').doc(ASANo);
         const controlBook = await controlBookRef.get();
@@ -930,8 +959,7 @@ const appendDataToSheet = async (req, res) => {
 
   const deleteControlBook = async(req, res) => {
     const { id } = req.params
-    console.log(id)
-
+    console.log(`deleting id: ${id}`)
     try{
         await db.collection('ControlBook').doc(id).delete();
         await db.collection('formData').doc('ControlBook').update({
@@ -1001,7 +1029,6 @@ const updateFieldOffice = async(req, res) => {
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
     const [ASANo, docId, projectName, RO, totalASA] = id.split('!')
-
     const data = {
         RO: RO,
         projectID: docId,
@@ -1088,6 +1115,30 @@ const getWeek = () => {
 
     return `week${weekNum}`;
 
+}
+
+const theDifference = (obj1 = {}, obj2 = {}) => {
+    const diff1 = {};
+    const diff2 = {};
+
+    if(Object.keys(obj1).length === 0 || Object.keys(obj2).length === 0){
+        return {obj1: obj1, obj2: obj2}
+    }
+
+    const allKeys = new Set([...Object.keys(obj1), ...Object.keys(obj2)]);
+
+    allKeys.forEach(key => {
+        if (obj1[key] !== obj2[key]) {
+            if (key in obj1) {
+                diff1[key] = obj1[key];
+            }
+            if (key in obj2) {
+                diff2[key] = obj2[key];
+            }
+        }
+    });
+
+    return { obj1: diff1, obj2: diff2 };
 }
 
 module.exports = {
