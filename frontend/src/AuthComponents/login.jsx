@@ -32,7 +32,11 @@ const Login = () => {
 
     const handleLogin = async(e) => {
         e.preventDefault()
-        await login(email, password)
+        if(import.meta.env.VITE_STATUS_DEVELOPMENT === 'true'){
+            await login(email, password)
+        }else{
+            setErrorMessage('Under Development...')
+        }
     }
 
     // const handleGoogleLogin = async(e) => {
@@ -53,20 +57,24 @@ const Login = () => {
     const forgotPassword = async(e) => {
         e.preventDefault()
         setErrorMessage(null)
-        const res = await resetPassword(recoveryEmail)
-        if(res){
-            Swal.fire({
-                title: "Sent!",
-                text: "Your password reset request has been successfully sent. Please wait for further instructions in your email.",
-                icon: "success",
-            });
-            openForgotPass()
-        } else {
-            Swal.fire({
-                title: "Error",
-                text: {error},
-                icon: "error",
-            });
+        if(import.meta.env.VITE_STATUS_DEVELOPMENT === 'true'){
+            const res = await resetPassword(recoveryEmail)
+            if(res){
+                Swal.fire({
+                    title: "Sent!",
+                    text: "Your password reset request has been successfully sent. Please wait for further instructions in your email.",
+                    icon: "success",
+                });
+                openForgotPass()
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: {error},
+                    icon: "error",
+                });
+            }
+        }else{
+            setErrorMessage('Under Development...')
         }
     }
 

@@ -17,7 +17,7 @@ export const initializeSocket = (token) => {
     return {socket, isInitialized};
   }
 
-  socket = io("http://localhost:4000", {
+  socket = io(import.meta.env.VITE_API_URL, {
     auth: token ? { token } : {},
     withCredentials: true,
   });

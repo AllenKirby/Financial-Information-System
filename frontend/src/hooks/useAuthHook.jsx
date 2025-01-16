@@ -98,13 +98,15 @@ export const useAuthHook = () => {
             withCredentials: true
           });
           if(response.status === 200){
+            console.log('logouted')
             dispatch(resetChangePassFlag())
             dispatchAuth({type: 'LOGOUT', payload: null})
             dispatchDocuments({type: 'SET_DOCUMENTS', payload: null })
             dispatchOpDocuments({type: 'SET_OPDOCUMENTS', payload: null })
             dispatchHeadDocuments({type: 'SET_HEADDOCUMENTS', payload: null })
             dispatch(setPermission(null))
-            cookies.remove('user', { path: '/' });
+            cookies.remove('user', { path: '/', secure: true, sameSite: 'Strict' });
+            cookies.remove('token', { path: '/', secure: true, sameSite: 'Strict' });
             navigate('/', {replace: true})
             disconnectSocket()
           }
