@@ -10,6 +10,7 @@ import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
 import { IoIosClose } from "react-icons/io";
 import { LuFileSearch, LuFileCheck } from "react-icons/lu";
+import { MdKeyboardReturn } from "react-icons/md";
 import { FiLayers } from "react-icons/fi";
 import { BsListTask } from "react-icons/bs";
 
@@ -18,7 +19,7 @@ const DisbursementRecordsHead = () => {
   const { HeadDocuments } = useHeadDisbursementContext()
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
-  const [filteredDocuments, setFilteredDocuments] = useState({all: {}, underReview: {}, approved: {}, forApproval: {}})
+  const [filteredDocuments, setFilteredDocuments] = useState({all: {}, underReview: {}, approved: {}, forApproval: {}, returned: {}})
   const [searchModal, setSearchModal] = useState(false)
   const [search, setSearch] = useState('')
   const [activeTabs, setActiveTabs] = useState('')
@@ -45,6 +46,8 @@ const DisbursementRecordsHead = () => {
           setFilteredDocuments({...filteredDocuments, underReview: filteredDrafts})
         } else if(activeTabs === 'Approved') {
           setFilteredDocuments({...filteredDocuments, approved: filteredDrafts})
+        } else if(activeTabs === 'Returned') {
+          setFilteredDocuments({...filteredDocuments, returned: filteredDrafts})
         } 
       }
     } else {
@@ -63,10 +66,12 @@ const DisbursementRecordsHead = () => {
       console.log(filteredDrafts)
       if(activeTabs === 'Approved') {
         setFilteredDocuments({...filteredDocuments, approved: filteredDrafts})
-      } else if(activeTabs.includes('Under Review')) {
+      } else if(activeTabs === 'Under Review') {
         setFilteredDocuments({...filteredDocuments, underReview: filteredDrafts})
-      } else if(activeTabs.includes('For Approval')) {
+      } else if(activeTabs === 'For Approval') {
         setFilteredDocuments({...filteredDocuments, forApproval: filteredDrafts})
+      } else if(activeTabs === 'Returned') {
+        setFilteredDocuments({...filteredDocuments, returned: filteredDrafts})
       }
     }
   }, [search, HeadDocuments, activeTabs])
@@ -89,6 +94,7 @@ const DisbursementRecordsHead = () => {
     if (activeTabs === 'Under Review') return filteredDocuments.underReview;
     if (activeTabs === 'For Approval') return filteredDocuments.forApproval;
     if (activeTabs === 'Approved') return filteredDocuments.approved;
+    if (activeTabs === 'Returned') return filteredDocuments.returned;
     return filteredDocuments.all; 
   }
     
@@ -110,15 +116,16 @@ const DisbursementRecordsHead = () => {
         </div>
       </div>
       <div className='w-full h-[10%] flex'>
-        <div className="w-2/3 sm:w-1/2 flex items-end">
-          {permission?.data?.permission && <div className='pt-3 flex items-center justify-center'>
+        <div className="w-2/3 sm:w-3/5 flex items-end">
+          <div className='pt-3 flex items-center justify-center'>
             <button onClick={() => setActiveTabs('')} className={`${activeTabs === '' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><FiLayers size={20}/><span className='hidden lg:block'>All</span></button>
             <button onClick={() => setActiveTabs('Under Review')} className={`${activeTabs === 'Under Review' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><LuFileSearch size={20}/><span className='hidden lg:block'>Under Review</span></button>
             {permission?.data?.permission && <button onClick={() => setActiveTabs('For Approval')} className={`${activeTabs === 'For Approval' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><BsListTask size={20}/><span className='hidden lg:block'>For Approval</span></button>}
             {permission?.data?.permission && <button onClick={() => setActiveTabs('Approved')} className={`${activeTabs === 'Approved' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><LuFileCheck size={20}/><span className='hidden lg:block'>Approved</span></button>}
-          </div>}
+            <button onClick={() => setActiveTabs('Returned')} className={`${activeTabs === 'Returned' ? 'border-b-2 border-BOGreen text-BOGreen font-bold' : ''} flex items-center justify-center gap-2 px-3 py-2 text-gray-500 hover:border-b-2 hover:text-BOGreen hover:font-bold hover:border-BOGreen transition-all duration-100`}><MdKeyboardReturn size={20}/><span className='hidden lg:block'>Returned</span></button>
+          </div>
         </div>
-        <div className='w-1/2 flex items-end justify-end gap-2'>
+        <div className='w-2/5 flex items-end justify-end gap-2'>
           <div className='relative'>
             <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm 2xl:text-base'>
               <HiAdjustmentsHorizontal 
@@ -153,13 +160,14 @@ const DisbursementRecordsHead = () => {
       <div className="w-full h-[90%] rounded-lg">
         <div className='w-full h-full flex flex-col rounded-lg'>
           <div className='w-full h-auto hidden sm:flex items-center justify-center px-2 py-2 rounded-lg bg-gray-100 text-gray-400 text-sm'>
-            <h1 className={`lg:text-sm 2xl:text-base w-3/6 text-left px-2 font-semibold ${!activeTabs && permission?.data?.permission ? 'w-4/6' : 'w-3/6' }`}>Payee</h1>
+            <h1 className={`lg:text-sm 2xl:text-base w-3/6 text-left px-2 font-semibold ${!activeTabs ? 'w-4/6' : 'w-3/6' }`}>Payee</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>DV No.</h1>
             <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Status</h1>
-            {(!activeTabs && !permission?.data?.permission || activeTabs === 'Under Review' || activeTabs === 'For Approval') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Transferred </h1>}
+            {(activeTabs === 'Under Review' || activeTabs === 'For Approval') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Transferred </h1>}
             {activeTabs === 'Approved' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Approved</h1>}
+            {activeTabs === 'Returned' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
-          <div className="w-full flex-1 rounded-lg">
+          <div className="w-full flex-1 overflow-y-auto rounded-lg">
             {Object.entries(getFilteredDocuments()).length > 0 ? (
               <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'2'} activeTab={activeTabs} paginationFor={'DV'}/>
             )  : (

@@ -7,6 +7,7 @@ import { usePreparerHook } from '../../hooks/usePreparerHook'
 import { useFundingHook } from "../../hooks/useFundingHook";
 import { useBudgetOfficerHook } from "../../hooks/useBudgetOfficerHook";
 import { useAuthContext } from '../../hooks/useAuthContext';
+import { useApproverHook } from '../../hooks/useApproverHook';
 
 import LargeLoader from '../Loaders/LargeLoader';
 
@@ -17,10 +18,11 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
     const { submitDoc, isLoading: isLoadingPreparer, error: errorPreparer } = usePreparerHook();
     const { returnDoc, transferToHead, isLoading: isLoadingFunding, error: errorFunding } = useFundingHook();
     const { submitToAdmin, returnDocFromHeader, isLoading: isLoadingBO, error: errorBO } = useBudgetOfficerHook();
+    const { returnDocFromAdmin, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook();
 
     const { user } = useAuthContext()
 
-    const isLoading = isLoadingPreparer || isLoadingFunding || isLoadingBO;
+    const isLoading = isLoadingPreparer || isLoadingFunding || isLoadingBO || isLoadingApprover;
 
 
 
@@ -227,6 +229,54 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
         });
     }
 
+    const handleReturnFromAdmin = (backToRole) => {
+      const data = {
+        DV: idStatus.id,
+        payee: doc.payee,
+        returnTo: backToRole,
+        remarks: comment
+      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#009933",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Return it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          let res;
+          switch(backToRole) {
+            case '4':
+              res = returnDocFromAdmin(data)
+              break
+            case '3':
+              res = returnDocFromAdmin(data)
+              break
+            case '2':
+              res = returnDocFromAdmin(data)
+              break
+          }
+          if (res) {
+            Swal.fire({
+              title: "Returned!",
+              text: "Your document has been returned.",
+              icon: "success",
+            });
+            window.history.back()
+          }
+          else{
+            Swal.fire({
+              title: "Error!",
+              text: {errorApprover},
+              icon: "error",
+            });
+          }
+        }
+      });
+  }
+
     const handleSubmitForHead = async() => {
         const data = {
           DV: idStatus.id,
@@ -284,6 +334,15 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
           break;
         case 'ReturnToFunding':
           handleReturn('3');
+          break;
+        case 'ReturnToPreparerFromAdmin':
+          handleReturnFromAdmin('4');
+          break;
+        case 'ReturnToFundingFromAdmin':
+          handleReturnFromAdmin('3');
+          break;
+        case 'ReturnToBOFromAdmin':
+          handleReturnFromAdmin('2');
           break;
         default:
           return console.log('Cannot specify the function')

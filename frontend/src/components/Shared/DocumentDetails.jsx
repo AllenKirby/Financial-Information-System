@@ -51,6 +51,8 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
         return 'Returned';
       case 'Returned|4':
         return 'Returned';
+      case 'Returned|2':
+        return 'Returned';
       default:
         return 'Unknown';
     }
@@ -70,6 +72,7 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
         return 'bg-gray-200 text-gray-500';
       case 'Returned|3':
       case 'Returned|4':
+      case 'Returned|2':
         return 'bg-red-200 text-red-500';
       default:
         return 'bg-red-500 text-white';
@@ -121,7 +124,7 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
           <span className="font-bold block sm:hidden">Payee</span>{docu?.payee}
         </h2>
       ) : (
-        <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${(type === '4' || type === '3' || type === '2' && permission?.data.permission && permission?.data?.roleName === 'Budget Officer' || type === '1') && !activeTab ? 'w-full sm:w-4/6' : 'w-full sm:w-3/6'} p-0 sm:px-3 flex items-center justify-start gap-2 truncate`}>
+        <h2 className={`font-semibold text-left sm:text-xs lg:text-sm 2xl:text-lg ${(type === '4' || type === '3' || type === '2' || type === '1') && !activeTab ? 'w-full sm:w-4/6' : 'w-full sm:w-3/6'} p-0 sm:px-3 flex items-center justify-start gap-2 truncate`}>
           <span className="font-bold block sm:hidden">Payee:</span>{docu?.payee}
         </h2>
         )}
@@ -152,21 +155,18 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
         <span className="font-bold block sm:hidden">Time Transferred:</span>{docu?.submittedBy ? formatDistanceToNow(formatDateTime(docu?.submittedBy.split('|')[1]), { addSuffix: true }) : '--'} 
       </h2>}
 
-      {(activeTab === '' && type === '2' && !permission?.data.permission && permission?.data?.roleName === 'Budget Officer') && <h2 className="sm:text-xs 2xl:text-sm font-light flex items-center justify-start sm:justify-center gap-2 w-full sm:w-1/6">
-        <span className="font-bold block sm:hidden">Time Transferred:</span>{docu?.updatedBy ? formatDistanceToNow(formatDateTime(docu?.updatedBy.split('|')[1]), { addSuffix: true }) : '--'} 
-      </h2>}
-
       {(activeTab === 'For Approval' && type === '2' ) && <h2 className="sm:text-xs 2xl:text-sm font-light flex items-center justify-start sm:justify-center  gap-2 w-full sm:w-1/6">
         <span className="font-bold block sm:hidden">Time Transferred:</span>{docu?.reviewedBy ? formatDistanceToNow(formatDateTime(docu?.reviewedBy.split('|')[1]), { addSuffix: true }) : '--'} 
       </h2>}
 
-      {(activeTab !== '' && activeTab !== 'Drafting' && activeTab !== 'In Review') && (
-        (type === '4' || type === '3') && ( 
+      {(activeTab !== '' && activeTab === 'Returned') && (
+        (type === '4' || type === '3' || type === '2') && ( 
           <h2 className="sm:text-xs 2xl:text-sm font-light flex items-center justify-start sm:justify-center gap-2 w-full sm:w-1/6">
             {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
             <span className="font-bold block sm:hidden">Time Transferred:</span>
             {(type === '4' || permission?.data.permission && permission?.data?.roleName === 'Funding') && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
-            {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) } 
+            {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) }
+            {type === '2' && docu?.returnedToBO && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToBO)), { addSuffix: true }) }  
           </h2>
         )
       )}
