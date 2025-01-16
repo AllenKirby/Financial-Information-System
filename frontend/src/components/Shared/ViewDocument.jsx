@@ -269,6 +269,22 @@ const ViewDocument = () => {
               )}
             </div>
           )}
+
+          {(idStatus.type === '1' && idStatus.status === 'For Approval') && (
+            <div className="w-auto h-auto relative">
+              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-2 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150"><BsArrowLeft/> Return</button>
+              {returnFlag && (
+                <>
+                  <div className="fixed inset-0 z-0" onClick={() => setReturnFlag(!returnFlag)}/>
+                  <div className='absolute w-24 sm:w-28 md:w-32 lg:w-full bg-white right-0 top-12 z-0 p-1 border-[1px] text-xs lg:text-sm'>
+                    <div onClick={() => openModal('ReturnToPreparerFromAdmin')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Preparer</div>
+                    <div onClick={() => openModal('ReturnToFundingFromAdmin')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Funding</div>
+                    <div onClick={() => openModal('ReturnToBOFromAdmin')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Budget Officer</div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
           
           {idStatus.type === '4' && idStatus.status === 'Drafting' && (
             <button
@@ -357,7 +373,7 @@ const ViewDocument = () => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50" />
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type} ASA={doc.ASA} permission={permission.data.permission}/>
+            <AddComment idStatus={idStatus} doc={doc} modal={closeCommentModal} type={type} ASA={doc.ASA} permission={permission?.data?.permission}/>
           </div>
         </>
       )}

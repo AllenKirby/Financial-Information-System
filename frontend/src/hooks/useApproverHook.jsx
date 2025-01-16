@@ -280,6 +280,25 @@ export const useApproverHook = () => {
             console.log(errorMessage)
         }
     }
+    
+    const returnDocFromAdmin = async (data) => {
+        setError(null)
+        setIsLoading(true)
+        try{
+            const res = await axios.post(`${apiURL}/admin/returnRecords`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        }catch(error){
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error passing the document";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
 
   return {
     approveDV, 
@@ -297,6 +316,7 @@ export const useApproverHook = () => {
     deleteTax,
     getRecords,
     downloadDV,
+    returnDocFromAdmin,
     isLoading, 
     error
     }
