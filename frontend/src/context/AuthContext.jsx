@@ -57,15 +57,15 @@ export const AuthContextProvider = ({ children }) => {
                             }
                         }
                     }catch(error){
-                        cookies.remove('token')
-                        cookies.remove('user')
+                        cookies.remove('token', { path: '/', secure: true, sameSite: 'Strict' });
+                        cookies.remove('user', { path: '/', secure: true, sameSite: 'Strict' });
                         dispatch({type: 'LOGOUT'})
                         console.log(error)
                     }
                 }
             }else{
-                cookies.remove("token");
-                cookies.remove("user");
+                cookies.remove('token', { path: '/', secure: true, sameSite: 'Strict' });
+                cookies.remove('user', { path: '/', secure: true, sameSite: 'Strict' });
                 dispatch({ type: "LOGOUT" });
             }
         })
