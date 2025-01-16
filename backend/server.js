@@ -28,8 +28,9 @@ const app = express()
 const server = http.createServer(app) //create an instance of http server
 
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: process.env.CLIENT_URL,
   methods: ['GET', 'POST', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 }))
 
@@ -39,10 +40,25 @@ app.use((req, res, next) => {
    next() 
 })
 
+app.options('*', cors());
+
 app.get('/logout', (req, res) => {
-  res.clearCookie('token', { path: '/' });
+  res.clearCookie('token', { 
+    path: '/', 
+    httpOnly: true, 
+    secure: true, 
+    sameSite: 'None'
+   });
   res.status(200).json({message: "cleared"})
 })
+
+app.get('/status', (req, res) => {
+  res.status(200).json({
+      status: 'success',
+      message: 'Service is up and running!',
+      timestamp: new Date().toISOString()
+  });
+});
 
 updateControlBook()
 updateASADue()
