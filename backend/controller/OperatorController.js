@@ -932,7 +932,22 @@ const appendDataToSheet = async (req, res) => {
     }
   }
 
-  const updateControlBook = async(req, res) => {
+const addTab = async(req, res) => {
+    const tabs = req.body
+    const {id} = req.params
+    try{
+        const controlBookRef = db.collection('ControlBook').doc(id)
+        await controlBookRef.update({
+            tabs: tabs
+        })
+        return res.status(200).json({ message: 'Tab added successfully' });
+    }catch(err){
+        console.log(`error on adding tab in operator controller ${err}`)
+        return res.status(500).json({ error: 'Failed to add tab. Please try again later.' });
+    }
+}
+
+const updateControlBook = async(req, res) => {
     const { id } = req.params
     const { ASANo, date, SARONo, TotalASA, description } = req.body.data
 
@@ -956,7 +971,7 @@ const appendDataToSheet = async (req, res) => {
         console.log(`Error book: ${error}`)
         res.status(500).json({ success: false, error: error.message });
     }
-  }
+}
 
   const deleteControlBook = async(req, res) => {
     const { id } = req.params
@@ -1155,5 +1170,6 @@ module.exports = {
     deleteFieldOffice,
     updateASA_ORS,
     getBUR,
-    updateASAORS
+    updateASAORS,
+    addTab
 }
