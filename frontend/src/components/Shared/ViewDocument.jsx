@@ -223,7 +223,7 @@ const ViewDocument = () => {
           {idStatus.status === 'Approved' && (
             <button
               onClick={handleDownload}
-              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${permission?.data.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
+              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
               >
             <MdOutlineFileDownload size={20} /> <span className="hidden sm:block ">Download</span>
           </button>)}

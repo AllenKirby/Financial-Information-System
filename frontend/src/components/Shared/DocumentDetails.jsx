@@ -141,7 +141,7 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
         </h2>
       </div>
   
-      {!(activeTab.includes('Returned') || !activeTab || activeTab === 'Approved' || activeTab === 'Drafting' && permission?.data.permission && permission?.data?.roleName === 'Funding' || activeTab === 'In Review' && permission?.data.permission && permission?.data?.roleName === 'Preparer'|| type === '2' && activeTab === 'For Approval') && 
+      {!(activeTab === 'Returned' || !activeTab || activeTab === 'Approved' || activeTab === 'Drafting' && permission?.data.permission && permission?.data?.roleName === 'Funding' || activeTab === 'In Review' && permission?.data.permission && permission?.data?.roleName === 'Preparer'|| type === '2' && activeTab === 'For Approval') && 
         <h2 className="sm:text-xs 2xl:text-sm font-light flex items-center justify-start sm:justify-center gap-2 w-full sm:w-1/6">
           <span className="font-bold block sm:hidden">Time Transferred:</span> {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
         </h2>
@@ -172,8 +172,8 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
       )}
 
       {(type === '1' && activeTab === 'Approved' || type === '2' && activeTab === 'Approved') && (
-        <h2 className="sm:text-xs 2xl:text-sm w-1/6 text-center font-light">
-          <span className="font-bold block sm:hidden">Time Approved:</span>{formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
+        <h2 className="sm:text-xs 2xl:text-sm w-full sm:w-1/6 flex items-center justify-start sm:justify-center font-light">
+          <span className="font-bold block sm:hidden">Time Approved:</span> {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
         </h2>
       )}
     </div>
