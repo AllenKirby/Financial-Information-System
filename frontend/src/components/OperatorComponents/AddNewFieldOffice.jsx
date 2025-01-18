@@ -8,9 +8,9 @@ import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
 
 const AddNewFieldOffice = (props) => {
-    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0} = props
+    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], test} = props
 
-    const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0})
+    const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0, tabStatus: ''})
     const [errorFlag, setErrorFlag] = useState(false)
     const [currASA, setCurrASA] = useState('')
     const prevData = useRef(null)
@@ -23,11 +23,16 @@ const AddNewFieldOffice = (props) => {
             setFieldOfficeData({
                 projectName: fieldOffice.projectName || '', 
                 fieldOffice: fieldOffice.fieldOffice || '',
-                ASA: fieldOffice.ASA || 0
+                ASA: fieldOffice.ASA || 0,
+                tabStatus: fieldOffice.tabStatus || ''
             })
             setCurrASA(fieldOffice.RO)
         }
     }, [flag, fieldOffice]) 
+
+    useEffect(() => {
+        console.log(test)
+    }, [test])
 
     useEffect(() => {
         if(flag && !prevData.current) {
@@ -152,6 +157,28 @@ const AddNewFieldOffice = (props) => {
                     <option value="Cavite-Batangas">Cavite-Batangas IMO</option>
                     <option value="Laguna-Rizal">Laguna-Rizal</option>
                     <option value="Quezon">Quezon IMO</option>
+                </select>
+            </div>
+            <div className="w-full mt-2">
+                <label>Select Tab</label>
+                <select 
+                    required
+                    value={fieldOfficeData.tabStatus}
+                    onChange={(e) => setFieldOfficeData({...fieldOfficeData, tabStatus: e.target.value})}
+                    className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
+                    >
+                    <option value="" disabled>Select</option>
+                    {tabs.length > 0 ? (
+                        tabs.map((tab, index) => (
+                        <option key={index} value={tab.title}>
+                            {tab.title}
+                        </option>
+                        ))
+                    ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                    )}
                 </select>
             </div>
             <div className="w-full mt-2">

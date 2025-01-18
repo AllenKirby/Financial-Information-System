@@ -329,6 +329,19 @@ export const useFundingHook = () => {
             console.log(error)
         }
     }
+
+    const addingTab = async(tab, ASANo) => {
+        try{
+            const res = await axios.post(`${apiURL}/operator/addTab/${ASANo}`, tab, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                return true
+            }
+        }catch(err){
+            console.log(err)
+        }
+    }
       
     return {
         returnDoc, 
@@ -344,6 +357,7 @@ export const useFundingHook = () => {
         updateFieldOffice,
         retrieveProjectName,
         updateASA_ORS,
+        addingTab,
         isLoading, 
         error
     }

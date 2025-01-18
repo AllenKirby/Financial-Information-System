@@ -10,6 +10,7 @@ import { FiFileText } from "react-icons/fi";
 import AddNewFieldOffice from "./AddNewFieldOffice";
 import FieldOffices from "./FieldOffices";
 import ControlBookReport from "./ControlBookReport";
+import AddTab from "./AddTab"
 
 import {useAuthContext} from '../../hooks/useAuthContext'
 
@@ -19,10 +20,12 @@ const ViewControlBook = () => {
   const {user} = useAuthContext()   
   const [ControlBook, setControlBook] = useState({key: '', data: {}})
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
+  const [modalTab, setModalTab] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [reportFlag, setReportFlag] = useState(false)
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
+  const tabModal = () => setModalTab(!modalTab)
 
   const showReport = () => setReportFlag(!reportFlag)
 
@@ -139,6 +142,14 @@ const ViewControlBook = () => {
                       <p className="font-semibold lg:text-lg 2xl:text-xl">New Project</p>
                     </div>
                   </button>
+
+                  <button onClick={tabModal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/2 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
+                    <div className="flex items-center justify-center gap-2">
+                      <IoAddOutline size={30}/>
+                      <p className="font-semibold lg:text-lg 2xl:text-xl">Add Tab</p>
+                    </div>
+                  </button>
+
                 </div>
               </div>
 
@@ -156,7 +167,15 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} test={ControlBook}/>
+                </div>
+              </>
+            )}
+            {modalTab && (
+              <>
+                <div className="fixed inset-0 z-20 bg-black opacity-50 border-2 px-5 py-2 rounded-lg text-white font-semibold transition-all duration-150"/>
+                <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                  <AddTab modal={tabModal} ASANo={ControlBook.key} currTabs={ControlBook.data.tabs} remainingASA={ControlBook.data.TotalASA}/>
                 </div>
               </>
             )}
