@@ -1120,14 +1120,14 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         </div>
         <div className='w-1/3 flex items-center justify-end px-3 gap-2'> 
           <button 
+            onClick={modal}
+            className="text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-lg text-gray-500 border-2 hover:bg-gray-200 font-semibold transition-all duration-100"
+            >Back</button>
+          <button 
             type="submit" 
             disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
             className={`text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-lg border-2 ${user.role === '4' ? 'bg-preparerPrimary text-white hover:bg-white hover:text-preparerPrimary border-preparerPrimary' : 'bg-fundingBlueGreen text-white hover:bg-white hover:text-fundingBlueGreen border-fundingBlueGreen'} transition-all duration-150`}
             >Save</button>
-          <button 
-            onClick={modal}
-            className="text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-lg text-gray-500 border-2 hover:bg-gray-200 font-semibold transition-all duration-100"
-            >Back</button>
         </div>
       </div>
       {isLoading && (

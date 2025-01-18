@@ -8,10 +8,8 @@ import TemplateModal from "./TemplateModal";
 
 const Templates = () => {
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [templateFor, setTemplateFor] = useState('')
 
-    const modal = (template) => {
-        setTemplateFor(template)
+    const modal = () => {
         setIsModalOpen(!isModalOpen)
     }
   return (
@@ -40,9 +38,9 @@ const Templates = () => {
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <section 
                     onClick={(e) => e.stopPropagation()} 
-                    className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-end"
+                    className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
                 >
-                    <TemplateModal templateFor={templateFor}/>
+                    <TemplateModal/>
                 
                 </section>
             </>

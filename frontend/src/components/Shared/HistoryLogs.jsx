@@ -171,15 +171,6 @@ const HistoryLogs = () => {
                     </div>
                 </div>
                 <div className="w-full flex-1 overflow-y-auto text-gray-500">
-                    {/* {filteredLogs && Object.entries(filteredLogs).length > 0 ? (
-                        Object.entries(filteredLogs).map(([key, log], index) => (
-                            <HistoryLogsItem key={key} log={log} index={index}/>
-                        ) )
-                    ) : (
-                        <div className=" w-full h-full flex items-center justify-center">
-                            <p className="text-center font-semibold text-lg">No Logs Found</p>
-                        </div>
-                    )} */}
                     {filteredLogs ? (
                         <PaginatedList items={filteredLogs} paginationFor="HistoryLogs"/>
                     ) : (

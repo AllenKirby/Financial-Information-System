@@ -6,8 +6,6 @@ import LargeLoader from '../Loaders/LargeLoader'
 
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
-import { use } from 'react'
-import FieldOffices from './FieldOffices'
 
 const AddNewFieldOffice = (props) => {
     const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0} = props
@@ -172,10 +170,12 @@ const AddNewFieldOffice = (props) => {
         </div>
         <div className='w-full h-auto flex items-center justify-end gap-2 my-2'>
             <button 
+                onClick={modal} 
+                className='px-5 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150'>Back</button>
+            <button 
                 type='submit' 
                 disabled={isLoading}  
                 className={`${user.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary border-preparerPrimary hover:bg-white hover:text-preparerPrimary'} border-2 px-5 py-2 rounded-lg text-white font-semibold transition-all duration-150`}>Save</button>
-            <button onClick={modal} className='px-5 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150'>Back</button>
         </div>
         {error && (
             <div className="w-full text-center">

@@ -144,8 +144,8 @@ const UserManagement = ({modal, account = {}, flag}) => {
         </div>
       </div>
       <div className="w-full h-auto py-2 flex items-center justify-end gap-3">
-        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white border-2 border-superAdminBlue font-semibold hover:bg-white hover:text-superAdminBlue transition-all duration-150">Save</button>
         <button onClick={modal} className="px-10 py-2 rounded-lg text-superAdminBlue font-semibold border-2 hover:bg-gray-200 transition-all duration-150">Back</button>
+        <button disabled={isLoading} type="submit" className="px-10 py-2 bg-superAdminBlue rounded-lg text-white border-2 border-superAdminBlue font-semibold hover:bg-white hover:text-superAdminBlue transition-all duration-150">Save</button>
       </div>
       {error && (
         <div className="h-auto w-full py-3 text-center">
