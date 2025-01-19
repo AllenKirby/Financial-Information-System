@@ -810,16 +810,17 @@ const appendDataToSheet = async (req, res) => {
   }
 
   const addControlBook = async(req, res) => {
-    const { ASANo, date, SARONo, TotalASA, description, endDate } = req.body.data
+    const { ASANo, date, SARONo, TotalASA, fundCluster, description, endDate } = req.body.data
 
     const dateTimeCollection = getDateTime();
-    const finalASANo = `${ASANo}|${createAcronym(description)}`
+    const finalASANo = `${ASANo}|${createAcronym(description)}?${fundCluster}`
 
     const data = {
         ASANo: finalASANo,
         DateOfAsa: date,
         SARONo: SARONo,
         TotalASA: TotalASA,
+        FundCluster: fundCluster,
         description: description,
         createdAt: dateTimeCollection,
         RO: TotalASA,
@@ -949,7 +950,7 @@ const addTab = async(req, res) => {
 
 const updateControlBook = async(req, res) => {
     const { id } = req.params
-    const { ASANo, date, SARONo, TotalASA, description } = req.body.data
+    const { ASANo, date, SARONo, TotalASA, fundCluster,description } = req.body.data
 
     const dateTimeCollection = getDateTime();
     const finalASANo = `${ASANo}|${createAcronym(description)}`
@@ -959,6 +960,7 @@ const updateControlBook = async(req, res) => {
         DateOfAsa: date,
         SARONo: SARONo,
         TotalASA: TotalASA,
+        FundCluster: fundCluster,
         description: description,
         updatedAt: dateTimeCollection
     }
