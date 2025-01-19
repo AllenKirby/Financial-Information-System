@@ -12,14 +12,13 @@ import LargeLoader from '../Loaders/LargeLoader';
 
 const FieldOffices = (props) => {
 
-  const {fieldOffice, ASANo, fieldOfficeID, remainingASA} = props
+  const {fieldOffice, ASANo, fieldOfficeID, remainingASA, test, tabs} = props
 
   const { deleteFieldOffice, isLoading, error } = useFundingHook()
   
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [viewProjectFlag, setViewProjectFlag] = useState(false)
 
-  console.log(fieldOfficeID)
 
   const modal = (e) => {
     e.stopPropagation()
@@ -81,7 +80,7 @@ const FieldOffices = (props) => {
           <>
             <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
             <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-              <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA}/>
+              <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA} test={test} tabs={tabs}/>
             </div>
           </>
         )}

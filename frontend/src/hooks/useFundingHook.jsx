@@ -161,7 +161,7 @@ export const useFundingHook = () => {
             const unsubscribeSubcollection = onSnapshot(subcollectionQuery, (subSnapshot) => {
               const fieldOfficesData = {};
               const updatedControlBooks = JSON.parse(JSON.stringify(controlBooks));
-              dispatch(setControlBook(updatedControlBooks));
+            //   dispatch(setControlBook(updatedControlBooks));
               // For each FieldOffices document
               subSnapshot.docs.forEach((subDoc) => {
                 const fieldOfficeData = { ...subDoc.data(), dvCollection: {} };
