@@ -39,6 +39,7 @@ const AddTab = (props) => {
 
     const addRow = (index) => {
         if(index < tabs.length - 1){
+            //deleting
             setTabs((prevTabs) => {
                 const copy = [...prevTabs]
                 copy.splice(index, 1)
@@ -56,16 +57,16 @@ const AddTab = (props) => {
             alert('sobra naman po')
         }else{
             console.log(tabs)
-            // const res = await addingTab(tabs, ASANo)
-            // if(res) {
-            //     Swal.fire({
-            //         title: "Saved",
-            //         text: `Added New Tab/s successfully!`,
-            //         icon: "success",
-            //         confirmButtonColor: "#009933"
-            //         });
-            //     modal()
-            // }
+            const res = await addingTab(tabs, ASANo)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: `Added New Tab/s successfully!`,
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            }
         }
     };
 

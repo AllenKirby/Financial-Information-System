@@ -37,6 +37,7 @@ const ViewControlBook = () => {
   };
 
 
+
   useEffect(() => {
     console.log(Boolean(controlBooks))
     if(controlBooks){
@@ -55,8 +56,10 @@ const ViewControlBook = () => {
   }, [controlBooks, id])
 
   useEffect(() => {
-    console.log(controlBooks)
-  }, [controlBooks])
+    console.log(ControlBook)
+    
+
+  }, [ControlBook])
 
   const convertDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -156,7 +159,7 @@ const ViewControlBook = () => {
               <div className="w-full flex-1 overflow-y-auto p-2">
                 {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
                   Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
-                    <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget}/>
+                    <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
                   ))
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
@@ -167,7 +170,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} test={ControlBook}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={ControlBook.data.fieldOffices}/>
                 </div>
               </>
             )}

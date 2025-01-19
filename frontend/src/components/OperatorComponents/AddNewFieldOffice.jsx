@@ -8,13 +8,16 @@ import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
 
 const AddNewFieldOffice = (props) => {
-    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], test} = props
+    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], cbFO = 0, test} = props
 
-    const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0, tabStatus: ''})
+    const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0, tabStatus: '', tabAmount: 0})
     const [errorFlag, setErrorFlag] = useState(false)
     const [currASA, setCurrASA] = useState('')
     const prevData = useRef(null)
     const { user } = useAuthContext()
+    const [usedAmountPerTab, setUsedAmountPerTab] = useState({})
+    const [allowInput, setAllowInput] =useState(true)
+    const [selection, setSelection] = useState([])
     
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
 
@@ -24,15 +27,29 @@ const AddNewFieldOffice = (props) => {
                 projectName: fieldOffice.projectName || '', 
                 fieldOffice: fieldOffice.fieldOffice || '',
                 ASA: fieldOffice.ASA || 0,
-                tabStatus: fieldOffice.tabStatus || ''
+                tabStatus: fieldOffice.tabStatus || '',
+
             })
             setCurrASA(fieldOffice.RO)
         }
     }, [flag, fieldOffice]) 
 
     useEffect(() => {
+        //getting all of the used amount per project then organized by their respective tab status
         console.log(test)
-    }, [test])
+        const arrOne = Object.entries(test)
+        let data = {}
+        for(let i = 0; i < arrOne.length; i++){
+            if(arrOne[i][1].tabStatus in data){
+                data[arrOne[i][1].tabStatus] += parseFloat(arrOne[i][1].ASA)
+            }else{
+                data[arrOne[i][1].tabStatus] = parseFloat(arrOne[i][1].ASA)
+            }
+        }
+        setUsedAmountPerTab(data)
+        console.log(data)
+        console.log(tabs)
+        }, [test])
 
     useEffect(() => {
         if(flag && !prevData.current) {
@@ -48,24 +65,58 @@ const AddNewFieldOffice = (props) => {
     }, [fieldOffice])
 
     useEffect(() => {
-        const ASA = parseFloat(fieldOfficeData.ASA)
+        // const ASA = parseFloat(fieldOfficeData.ASA)
+        // if(flag){
+        //     const RO = parseFloat(fieldOffice.RO)
+        //     const currentASA = parseFloat(currASA)
+        //     console.log(`${currentASA} > (${remainingASA} + ${RO})`)
+        //     if(currentASA > (remainingASA + RO)) {
+        //         setErrorFlag(true)
+        //     } else {
+        //         setErrorFlag(false)
+        //     }
+        // }else{
+        //     if(ASA > remainingASA) {
+        //         setErrorFlag(true)
+        //     } else {
+        //         setErrorFlag(false)
+        //     }
+        // }
+    }, [fieldOfficeData.ASA, remainingASA, currASA])
+
+    const handleLimitASA = (e) => {
+        const value = e.target.value
+        console.log(value)
         if(flag){
-            const RO = parseFloat(fieldOffice.RO)
-            const currentASA = parseFloat(currASA)
-            console.log(`${currentASA} > (${remainingASA} + ${RO})`)
-            if(currentASA > (remainingASA + RO)) {
-                setErrorFlag(true)
-            } else {
-                setErrorFlag(false)
-            }
+            //not yet fixed
+            //need to add validation on inputs
+            // const title = fieldOfficeData.tabStatus
+            // const totalAmount = fieldOfficeData.tabAmount
+            // const usedAmount = parseFloat(usedAmountPerTab[title])
+            // const unused = totalAmount - usedAmount
+            // if(value > unused){
+            //     console.log('greater')
+            //     setErrorFlag(true)
+            // }else{
+            //     console.log('lesser', value, unused, totalAmount,usedAmount)
+            //     setErrorFlag(false)
+            // }
+            setCurrASA(value)
         }else{
-            if(ASA > remainingASA) {
+            const title = fieldOfficeData.tabStatus
+            const totalAmount = fieldOfficeData.tabAmount
+            const usedAmount = parseFloat(usedAmountPerTab[title])
+            const unused = totalAmount - usedAmount
+            if(value > unused){
+                console.log('greater')
                 setErrorFlag(true)
-            } else {
+            }else{
+                console.log('lesser', value, unused)
+                setFieldOfficeData({...fieldOfficeData, ASA: value})
                 setErrorFlag(false)
             }
         }
-    }, [fieldOfficeData.ASA, remainingASA, currASA])
+    }
 
     const handleFocus = () => {
         if (fieldOfficeData.ASA === 0) {
@@ -88,16 +139,23 @@ const AddNewFieldOffice = (props) => {
                 confirmButtonColor: "#009933"
                 });
         } else {
-            const res = await AddFieldOffice(data)
-            if(res) {
-                Swal.fire({
-                    title: "Saved",
-                    text: "Field Office is successfully created!",
-                    icon: "success",
-                    confirmButtonColor: "#009933"
-                    });
-                modal()
-            }
+            // const res = await AddFieldOffice(data)
+            // if(res) {
+            //     Swal.fire({
+            //         title: "Saved",
+            //         text: "Field Office is successfully created!",
+            //         icon: "success",
+            //         confirmButtonColor: "#009933"
+            //         });
+            //     modal()
+            // }
+            Swal.fire({
+                title: "Saved",
+                text: "Field Office is successfully created!",
+                icon: "success",
+                confirmButtonColor: "#009933"
+                });
+            modal()
         }
     }
 
@@ -164,14 +222,19 @@ const AddNewFieldOffice = (props) => {
                 <select 
                     required
                     value={fieldOfficeData.tabStatus}
-                    onChange={(e) => setFieldOfficeData({...fieldOfficeData, tabStatus: e.target.value})}
+                    onChange={(e) => {
+                        const selectedOption = e.target.options[e.target.selectedIndex]
+                        const amount = selectedOption.getAttribute('amount')
+                        setFieldOfficeData({...fieldOfficeData, tabStatus: e.target.value, tabAmount: amount})
+                        setAllowInput(false)
+                    }}
                     className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     >
                     <option value="" disabled>Select</option>
                     {tabs.length > 0 ? (
                         tabs.map((tab, index) => (
-                        <option key={index} value={tab.title}>
-                            {tab.title}
+                        <option key={index} value={tab.title} amount={tab.amount} disabled={(parseFloat(tab.amount) - parseFloat(usedAmountPerTab[tab.title] || 0)) === 0}>
+                            {tab.title} {parseFloat(tab.amount) - parseFloat(usedAmountPerTab[tab.title] || 0)}  
                         </option>
                         ))
                     ) : (
@@ -184,10 +247,11 @@ const AddNewFieldOffice = (props) => {
             <div className="w-full mt-2">
                 <label>ASA</label>
                 <input 
+                    disabled={flag ? false : allowInput}
                     type="number" 
                     value={flag ? currASA : fieldOfficeData.ASA}
                     onFocus={handleFocus}
-                    onChange={(e) => flag ? setCurrASA(e.target.value): setFieldOfficeData({...fieldOfficeData, ASA: e.target.value})} 
+                    onChange={(e) => handleLimitASA(e)} 
                     className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     required />
             </div>

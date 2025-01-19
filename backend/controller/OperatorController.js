@@ -863,7 +863,7 @@ const appendDataToSheet = async (req, res) => {
   }
 
   const addNewFieldOffice = async(req, res) => {
-    const { projectName, fieldOffice, ASA } = req.body.data
+    const { projectName, fieldOffice, ASA, tabStatus } = req.body.data
     const  projectID  = req.body.projectID
     const { id } = req.params
 
@@ -893,7 +893,7 @@ const appendDataToSheet = async (req, res) => {
         week3RO: 0,
         week4RO: 0,
         week5RO: 0,
-        tabStatus: '',
+        tabStatus: tabStatus,
     }
 
     const formData = {
