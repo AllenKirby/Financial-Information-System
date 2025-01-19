@@ -11,7 +11,7 @@ import { IoMdCheckmark } from "react-icons/io";
 
 import LargeLoader from '../Loaders/LargeLoader'
 
-const FundingModal = ({modal, data}) => {
+const FundingModal = ({modal, data, fundCluster}) => {
     const {getBurNo} = useInitialStateDV()
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
@@ -211,98 +211,101 @@ const FundingModal = ({modal, data}) => {
         }
     }
 
-    
-    useEffect(() => {
-        console.log(operatorInput)
-        // console.log(ASANo)
 
-    }, [operatorInput])
-
-
-    const handleUpdateChangeBoxAmount = (checked) => {
-
-        if(checked){
-            setOperatorInput((prev) => ({...prev,
-                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
-            }));
-        }else{
-            setOperatorInput((prev) => {
-                const updatedAsa = { ...(prev.asa || {}) };
-                delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
-                return {
-                    ...prev,
-                    asa: updatedAsa,
-                };
-            });
-        }
-    }
-
-    const handleChangeBoxAmount_v1 = (checked, key, projectID, amount, projectName) => {
-        const projectKey = `${key}/${projectID}`;
-        const checked2 = !Boolean(operatorInput.asa?.[`${key}/${projectID}`])
-        //FOR NEXT UPDATE
-        // console.log(checked2)
-        // setASANo((prevState) => {
-        //     const updatedState = { ...prevState };
-        //     if (!updatedState[key] || !updatedState[key][projectName]) {
-        //         console.warn("Project not found for update.");
-        //         return prevState; // Return current state if no match found
-        //     }
-
-        //     const currentRO = parseFloat(updatedState[key][projectName].RO || 0);
-        //     if (checked) {
-        //         updatedState[key][projectName].RO = Math.max(0, currentRO - parseFloat(data.amount)); //fix this
-        //     } 
-        //     else {
-        //         updatedState[key][projectName].RO = currentRO + parseFloat(data.amount); //fix this
-        //     }
-    
-        //     return updatedState;
-        // });
-
-        if (checked) {
-            const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
-            // console.log(exactAmount)
-            setOperatorInput((prev) => ({...prev,
-                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
-            }));
-    
-            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
-            setBudget((prev) => prev + amount)
-
+    const filterFundCluster = (controlBook) => {
+        if(controlBook && Object.entries(controlBook).length > 0) {
+            return Object.fromEntries(Object.entries(controlBook).filter(([ASA,]) => 
+                ASA.split("?")[1] === fundCluster
+            ))
         } else {
-            let unselectedAmount
-            setOperatorInput((prev) => {
-                const updatedAsa = { ...(prev.asa || {}) };
-                unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
-                console.log(unselectedAmount)
-                delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
-                return {
-                    ...prev,
-                    asa: updatedAsa,
-                };
-            });
-            //this is for differencing on update
-            // setASANo((prev) => {
-
-            //     return {
-            //         ...prev, [key]: {
-            //             ...prev[key],
-            //             [projectName]: {
-            //                 ...prev[key]?.[projectName],
-            //                 RO: parseFloat((prev[key]?.[projectName]?.RO || 0)) + unselectedAmount
-            //             }
-            //         }
-            //     }
-            // })
-            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
-            setBudget((prev) => prev - amount < 0 ? 0 : prev - amount)
+            return {}
         }
-
     }
+
+    // const handleUpdateChangeBoxAmount = (checked) => {
+
+    //     if(checked){
+    //         setOperatorInput((prev) => ({...prev,
+    //             asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+    //         }));
+    //     }else{
+    //         setOperatorInput((prev) => {
+    //             const updatedAsa = { ...(prev.asa || {}) };
+    //             delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
+    //             return {
+    //                 ...prev,
+    //                 asa: updatedAsa,
+    //             };
+    //         });
+    //     }
+    // }
+
+    // const handleChangeBoxAmount_v1 = (checked, key, projectID, amount, projectName) => {
+    //     const projectKey = `${key}/${projectID}`;
+    //     const checked2 = !Boolean(operatorInput.asa?.[`${key}/${projectID}`])
+    //     //FOR NEXT UPDATE
+    //     // console.log(checked2)
+    //     // setASANo((prevState) => {
+    //     //     const updatedState = { ...prevState };
+    //     //     if (!updatedState[key] || !updatedState[key][projectName]) {
+    //     //         console.warn("Project not found for update.");
+    //     //         return prevState; // Return current state if no match found
+    //     //     }
+
+    //     //     const currentRO = parseFloat(updatedState[key][projectName].RO || 0);
+    //     //     if (checked) {
+    //     //         updatedState[key][projectName].RO = Math.max(0, currentRO - parseFloat(data.amount)); //fix this
+    //     //     } 
+    //     //     else {
+    //     //         updatedState[key][projectName].RO = currentRO + parseFloat(data.amount); //fix this
+    //     //     }
+    
+    //     //     return updatedState;
+    //     // });
+
+    //     if (checked) {
+    //         const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
+    //         // console.log(exactAmount)
+    //         setOperatorInput((prev) => ({...prev,
+    //             asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+    //         }));
+    
+    //         setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
+    //         setBudget((prev) => prev + amount)
+
+    //     } else {
+    //         let unselectedAmount
+    //         setOperatorInput((prev) => {
+    //             const updatedAsa = { ...(prev.asa || {}) };
+    //             unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
+    //             console.log(unselectedAmount)
+    //             delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
+    //             return {
+    //                 ...prev,
+    //                 asa: updatedAsa,
+    //             };
+    //         });
+    //         //this is for differencing on update
+    //         // setASANo((prev) => {
+
+    //         //     return {
+    //         //         ...prev, [key]: {
+    //         //             ...prev[key],
+    //         //             [projectName]: {
+    //         //                 ...prev[key]?.[projectName],
+    //         //                 RO: parseFloat((prev[key]?.[projectName]?.RO || 0)) + unselectedAmount
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // })
+    //         setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
+    //         setBudget((prev) => prev - amount < 0 ? 0 : prev - amount)
+    //     }
+
+    // }
 
     return(
-        <form onSubmit={handleSubmit} className="bg-white w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
+        <form onSubmit={handleSubmit} className="bg-white w-full sm:w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
             <h1 className="px-3 my-2 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
             <div className="w-full h-auto px-3">
                 <label className="font-semibold">ORS/BURS</label>
@@ -340,9 +343,9 @@ const FundingModal = ({modal, data}) => {
                     <label className="font-semibold">ASA No.</label>
                     <p>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
                     <div className="flex flex-col items-center justify-center gap-2 p-2 w-full">
-                    {Object.entries(ASANo).length > 0 ? (
-                            Object.entries(ASANo).map(([key, asano]) => {
-                                const finalASANO = key.replace('|', ' ');
+                    {Object.entries(filterFundCluster(ASANo)).length > 0 ? (
+                            Object.entries(filterFundCluster(ASANo)).map(([key, asano]) => {
+                                const finalASANO = key.replace('|', ' ').split('?')[0];
                                 return (
                                     <div key={key} className="w-full h-auto border-b pb-2">
                                         <h4 className="font-semibold text-lg mb-2">
@@ -399,15 +402,15 @@ const FundingModal = ({modal, data}) => {
                 </div>
             </div>
             <div className="flex items-center justify-end gap-3 my-2">
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`py-2 px-5 rounded-lg border-2 text-white font-semibold transition-all duration-150 ${user?.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary'}`}>Save</button>
                 <button 
                     onClick={modal}
                     className="py-2 px-5 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150"
                     >Back
                 </button>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className={`py-2 px-5 rounded-lg border-2 text-white font-semibold transition-all duration-150 ${user?.role === '3' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen' : 'bg-preparerPrimary'}`}>Save</button>
             </div>
             {isLoading && (
                 <LargeLoader/>
@@ -418,7 +421,8 @@ const FundingModal = ({modal, data}) => {
 
 FundingModal.propTypes = {
     modal: PropTypes.func.isRequired,
-    data: PropTypes.object.isRequired
+    data: PropTypes.object.isRequired,
+    fundCluster: PropTypes.string.isRequired
 }
 
 export default FundingModal;

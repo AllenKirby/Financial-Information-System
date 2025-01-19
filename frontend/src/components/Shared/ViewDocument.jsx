@@ -396,7 +396,7 @@ const ViewDocument = () => {
             onClick={(e) => e.stopPropagation()}
             className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
             >
-              <FundingModal modal={isFundingModalOpen} data={doc}/>
+              <FundingModal modal={isFundingModalOpen} data={doc} fundCluster={doc.fund}/>
           </section>
         </>
       )}

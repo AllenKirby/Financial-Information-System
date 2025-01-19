@@ -13,7 +13,7 @@ const AddControlBook = (props) => {
     const { AddControlBook, updateControlBook, isLoading, error } = useFundingHook()
     const { user } = useAuthContext()
     
-    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: ''})
+    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', fundCluster: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: ''})
     const [errorFlag, setErrorFlag] = useState(false)
 
 
@@ -24,6 +24,7 @@ const AddControlBook = (props) => {
                 date: formatDateforUpdate(controlBook.DateOfAsa) || '',
                 SARONo: controlBook.SARONo || '',
                 TotalASA: controlBook.TotalASA || 0,
+                fundCluster: controlBook.FundCluster || '',
                 description: controlBook.description || '',
                 endDate: formatDateforUpdate(controlBook.endDate) || ''
             })
@@ -160,7 +161,7 @@ const AddControlBook = (props) => {
                 </div>
             </div>
             <div className='w-full h-auto flex items-center justify-center gap-2 '>
-                <div className="w-1/2 flex flex-col mt-2">
+                <div className="w-1/3 flex flex-col mt-2">
                     <label className="font-semibold">SARO No.</label>
                     <input 
                         type="text"
@@ -169,7 +170,7 @@ const AddControlBook = (props) => {
                         required
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
-                <div className="w-1/2 flex flex-col mt-2">
+                <div className="w-1/3 flex flex-col mt-2">
                     <label className="font-semibold">Total ASA</label>
                     <input 
                         type="number"
@@ -178,6 +179,20 @@ const AddControlBook = (props) => {
                         onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
                         required
                         className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
+                </div>
+                <div className="w-1/3 flex flex-col mt-2">
+                    <label className="font-semibold">Fund Cluster</label>
+                    <select 
+                        value={controlBookData.fundCluster}
+                        onChange={(e) => setControlBookData({...controlBookData, fundCluster: e.target.value})}
+                        required
+                        className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}>
+                            <option disabled value="">Select</option>
+                            <option value="501 COB">501 COB</option>
+                            <option value="501 CARP">501 CARP</option>
+                            <option value="501 LFP">501 LFP</option>
+                            <option value="Contract Farming">Contract Farming</option>
+                    </select>
                 </div>
             </div>
             {errorFlag && (

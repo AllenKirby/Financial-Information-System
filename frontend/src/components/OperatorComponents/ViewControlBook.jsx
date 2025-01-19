@@ -92,6 +92,7 @@ const ViewControlBook = () => {
                         <div className="w-full h-full p-3">
                           <p className="font-bold text-sm mt-1">Amount: <span className="font-normal">{formatToPeso(ControlBook.data.TotalASA)}</span></p>
                           <p className="font-bold text-sm mt-1">SARO No: <span className="font-normal">{ControlBook.data.SARONo}</span></p>
+                          <p className="font-bold text-sm mt-1">Fund Cluster: <span className="font-normal">{ControlBook.data.FundCluster || '--' }</span></p>
                           <p className="font-bold text-sm mt-1">Date of ASA: <span className="font-normal">{convertDate(ControlBook.data.DateOfAsa)}</span></p>
                           <p className="font-bold text-sm mt-1">Description: <span className="font-normal">{ControlBook.data.description}</span></p>
                         </div>
