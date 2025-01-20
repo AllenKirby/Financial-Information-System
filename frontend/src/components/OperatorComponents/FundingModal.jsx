@@ -215,7 +215,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
     const filterFundCluster = (controlBook) => {
         if(controlBook && Object.entries(controlBook).length > 0) {
             return Object.fromEntries(Object.entries(controlBook).filter(([ASA,]) => 
-                ASA.split("?")[1] === fundCluster
+                ASA.split("!")[1] === fundCluster
             ))
         } else {
             return {}

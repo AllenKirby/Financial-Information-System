@@ -25,6 +25,8 @@ const Folder = ({ASANo, controlBook}) => {
 
     const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
 
+    console.log(ASANo)
+
     const modal = (e) => {
       e.stopPropagation()
       setControlBookFlag(!controlBookFlag)
@@ -94,7 +96,7 @@ const Folder = ({ASANo, controlBook}) => {
       <div className='w-full h-[30%]'>
         <div className="px-4 flex items-center justify-between">
           <p className="font-bold">
-            {controlBook ? controlBook.ASANo.replace("|", " ").split('?')[0] : ""}
+            {controlBook ? controlBook.ASANo.replace("|", " ").split('!')[0] : ""}
           </p>
           <div className="relative w-auto h-auto">
             <BsThreeDotsVertical onClick={(e) => {e.stopPropagation(); setOptions(!options);}}   size={20}/>

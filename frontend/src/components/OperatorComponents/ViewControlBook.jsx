@@ -79,7 +79,7 @@ const ViewControlBook = () => {
               <button 
                 onClick={() => window.history.back()}
                 className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={20}/></button>
-              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-base sm:text-xl lg:text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ") : ''}</p>
+              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-base sm:text-xl lg:text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ").split('!')[0] : ''}</p>
               <div className="relative w-auto h-auto">
                 <GrCircleInformation 
                   size={28} 
@@ -131,7 +131,7 @@ const ViewControlBook = () => {
                   </div>
                 </div>
                 <div className="w-full sm:w-1/2 flex gap-2">
-                  <div className="w-1/2 h-full rounded-lg border-2 p-3">
+                  <div className="w-1/3 h-full rounded-lg border-2 p-3">
                     <div className="w-full mb-2">
                       <p className="font-semibold text-xs 2xl:text-lg">Total Spending</p>
                     </div>
@@ -139,15 +139,15 @@ const ViewControlBook = () => {
                       <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.FO)}</p>
                     </div>
                   </div>
-                  <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/2 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
-                    <div className="flex items-center justify-center gap-2">
+                  <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/3 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
                       <IoAddOutline size={30}/>
                       <p className="font-semibold lg:text-lg 2xl:text-xl">New Project</p>
                     </div>
                   </button>
 
-                  <button onClick={tabModal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/2 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
-                    <div className="flex items-center justify-center gap-2">
+                  <button onClick={tabModal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/3 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
                       <IoAddOutline size={30}/>
                       <p className="font-semibold lg:text-lg 2xl:text-xl">Add Tab</p>
                     </div>
