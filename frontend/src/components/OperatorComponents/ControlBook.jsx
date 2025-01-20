@@ -16,7 +16,7 @@ const ControlBook = () => {
   const [CBStatus, setCBStatus] = useState('active')
   const [filteredCB, setFilteredCB] = useState({})
   const [filterFlag, setFilterFlag] = useState(false)
-  const [filter, setFilter] = useState('501 COB')
+  const [filter, setFilter] = useState('')
 
   const controlBooks = useSelector((state) => state.controlBook)
   const { user } = useAuthContext()
