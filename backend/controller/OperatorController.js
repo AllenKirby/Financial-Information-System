@@ -21,14 +21,13 @@ const updateASAORS = async (req, res) => {
         const year = new Date().getFullYear();
         const month = new Date().getMonth() + 1
 
-        
 
         //handle control books new amount per control book
         // const ASA_amount = req.body.controlBooks
         // batch_HandleControlBook
 
         const asa_test = req.body.data.asa
-        const {obj1: asa, obj2: previousASA} = theDifference(asa_test, previousASA_test)
+        const {obj1: asa, obj2: previousASA} = theDifference(asa_test, previousASA_test, newlyASA)
         console.log(`asa:`, asa)
         console.log(`previousASA: `, previousASA)
         const ASA_amount = Object.entries(asa).reduce((acc, [key, value]) => {
@@ -37,7 +36,7 @@ const updateASAORS = async (req, res) => {
             return acc
         }, {})
         console.log(Boolean(previousASA))
-        if((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)){
+        if(((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)) && !newlyASA){
             console.log('asa and prevASA is same')
             return res.status(200).json({ message: "No need to update" });
         }
@@ -66,7 +65,7 @@ const updateASAORS = async (req, res) => {
         }
         // console.log(asaEntries)
         //batch_handlefieldOffices
-
+        
         let finalORS = ''
         const dvData = {ASA: asa}
         if(newlyASA){ 
@@ -1135,11 +1134,15 @@ const getWeek = () => {
 
 }
 
-const theDifference = (obj1 = {}, obj2 = {}) => {
+const theDifference = (obj1 = {}, obj2 = {}, needed=false) => {
     const diff1 = {};
     const diff2 = {};
 
     if(Object.keys(obj1).length === 0 || Object.keys(obj2).length === 0){
+        return {obj1: obj1, obj2: obj2}
+    }
+
+    if(needed){
         return {obj1: obj1, obj2: obj2}
     }
 
