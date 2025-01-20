@@ -17,7 +17,8 @@ const AddNewFieldOffice = (props) => {
     const { user } = useAuthContext()
     const [usedAmountPerTab, setUsedAmountPerTab] = useState({})
     const [allowInput, setAllowInput] =useState(true)
-    const [selection, setSelection] = useState([])
+    const [recordedASA, setRecordedASA] = useState(0)
+    
     
     const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
 
@@ -31,6 +32,8 @@ const AddNewFieldOffice = (props) => {
 
             })
             setCurrASA(fieldOffice.RO)
+            setRecordedASA(fieldOffice.RO)
+
         }
     }, [flag, fieldOffice]) 
 
@@ -64,44 +67,30 @@ const AddNewFieldOffice = (props) => {
         }
     }, [fieldOffice])
 
-    useEffect(() => {
-        // const ASA = parseFloat(fieldOfficeData.ASA)
-        // if(flag){
-        //     const RO = parseFloat(fieldOffice.RO)
-        //     const currentASA = parseFloat(currASA)
-        //     console.log(`${currentASA} > (${remainingASA} + ${RO})`)
-        //     if(currentASA > (remainingASA + RO)) {
-        //         setErrorFlag(true)
-        //     } else {
-        //         setErrorFlag(false)
-        //     }
-        // }else{
-        //     if(ASA > remainingASA) {
-        //         setErrorFlag(true)
-        //     } else {
-        //         setErrorFlag(false)
-        //     }
-        // }
-    }, [fieldOfficeData.ASA, remainingASA, currASA])
-
     const handleLimitASA = (e) => {
         const value = e.target.value
         console.log(value)
         if(flag){
-            //not yet fixed
-            //need to add validation on inputs
-            // const title = fieldOfficeData.tabStatus
-            // const totalAmount = fieldOfficeData.tabAmount
-            // const usedAmount = parseFloat(usedAmountPerTab[title])
-            // const unused = totalAmount - usedAmount
-            // if(value > unused){
-            //     console.log('greater')
-            //     setErrorFlag(true)
-            // }else{
-            //     console.log('lesser', value, unused, totalAmount,usedAmount)
-            //     setErrorFlag(false)
-            // }
+            const title = fieldOfficeData.tabStatus
+            const usedAmount = parseFloat(usedAmountPerTab[title])
+            const result = tabs.find(item => item.title === title)
+            const totalAmount = parseFloat(result.amount)
+
+            //formula:
+            //avaialable =  usedamount - previous amount
+            // limit = totalAmount - avaialable
+            const available = usedAmount - parseFloat(recordedASA)
+            const limit = totalAmount - available
+            console.log(usedAmount, totalAmount, currASA, available)
+            if(value > limit){
+                console.log('greater')
+                setErrorFlag(true)
+            }else{
+                console.log('lesser', value, totalAmount,usedAmount)
+                setErrorFlag(false)
+            }
             setCurrASA(value)
+            
         }else{
             const title = fieldOfficeData.tabStatus
             const totalAmount = fieldOfficeData.tabAmount
@@ -139,16 +128,16 @@ const AddNewFieldOffice = (props) => {
                 confirmButtonColor: "#009933"
                 });
         } else {
-            // const res = await AddFieldOffice(data)
-            // if(res) {
-            //     Swal.fire({
-            //         title: "Saved",
-            //         text: "Field Office is successfully created!",
-            //         icon: "success",
-            //         confirmButtonColor: "#009933"
-            //         });
-            //     modal()
-            // }
+            const res = await AddFieldOffice(data)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: "Field Office is successfully created!",
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            }
             Swal.fire({
                 title: "Saved",
                 text: "Field Office is successfully created!",
