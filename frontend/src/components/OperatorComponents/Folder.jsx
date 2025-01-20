@@ -73,6 +73,8 @@ const Folder = ({ASANo, controlBook}) => {
     isDeletable()
   }, [controlBook])
 
+  console.log(controlBook.ASANo)
+
   return (
     <div
       onClick={() => navigate(`${controlBook.ASANo}`)}

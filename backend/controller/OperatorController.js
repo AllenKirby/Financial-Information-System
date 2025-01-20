@@ -813,7 +813,7 @@ const appendDataToSheet = async (req, res) => {
     const { ASANo, date, SARONo, TotalASA, fundCluster, description, endDate } = req.body.data
 
     const dateTimeCollection = getDateTime();
-    const finalASANo = `${ASANo}|${createAcronym(description)}?${fundCluster}`
+    const finalASANo = `${ASANo}|${createAcronym(description)}!${fundCluster}`
 
     const data = {
         ASANo: finalASANo,
@@ -953,7 +953,7 @@ const updateControlBook = async(req, res) => {
     const { ASANo, date, SARONo, TotalASA, fundCluster,description } = req.body.data
 
     const dateTimeCollection = getDateTime();
-    const finalASANo = `${ASANo}|${createAcronym(description)}`
+    const finalASANo = `${ASANo}|${createAcronym(description)}!${fundCluster}`
 
     const data = {
         ASANo: finalASANo,
