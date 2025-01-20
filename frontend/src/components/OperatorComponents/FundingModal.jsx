@@ -90,12 +90,12 @@ const FundingModal = ({modal, data, fundCluster}) => {
             previousASA: prevASARef.current,
             origBUR: origBUR,
             // controlBooks: CBAmount,
-            update: !Boolean(data.ORSBURS)
+            update: isToggled
         }
         console.log(fundingData)
         console.log(fieldOfficeData)
         const res = await updateASA_ORS(fundingData, DVNo)
-
+        // const res = true
         if(res){
             Swal.fire({
                 title: "Saved",
@@ -345,7 +345,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                     <div className="flex flex-col items-center justify-center gap-2 p-2 w-full">
                     {Object.entries(filterFundCluster(ASANo)).length > 0 ? (
                             Object.entries(filterFundCluster(ASANo)).map(([key, asano]) => {
-                                const finalASANO = key.replace('|', ' ').split('?')[0];
+                                const finalASANO = key.replace('|', ' ').split('!')[0];
                                 return (
                                     <div key={key} className="w-full h-auto border-b pb-2">
                                         <h4 className="font-semibold text-lg mb-2">
@@ -356,6 +356,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                 <label key={projectName} className="peer flex items-center gap-2">
                                                     <input
                                                         type="checkbox"
+                                                        required
                                                         value={`${key}/${project.projectID}`}
                                                         className="peer hidden"
                                                         onChange={(e) => {
