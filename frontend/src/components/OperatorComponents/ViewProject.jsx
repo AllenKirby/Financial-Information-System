@@ -38,28 +38,28 @@ const ViewProject = (props) => {
             </button>
         </div>
         <div className="w-full rounded-lg overflow-x-auto">
-          <div className="w-full h-auto px-5 py-3 text-xs lg:text-sm 2xl:text-base">
-            <p className="font-bold mt-1">Field Office: <span className="font-normal">{projectData.fieldOffice}</span></p>
-            <p className="font-bold mt-1">ASA: <span className="font-normal">{formatToPeso(projectData.ASA)}</span></p>
-            <p className="font-bold mt-1">Remaining ASA Balance: <span className="font-normal">{formatToPeso(projectData.RO)}</span></p>
-            <p className="font-bold mt-1">Total Spending: <span className="font-normal">{formatToPeso(projectData.FO)}</span></p>
-          </div>
           <div className='overflow-x-auto p-3'>
-            <table className="min-w-[1500px] border-2 text-xs lg:text-sm 2xl:text-base">
-              <thead className="bg-gray-200 border-b-2">
+            <table className="min-w-[1500px] text-xs lg:text-sm 2xl:text-base">
+              <thead className="bg-gray-100 rounded-lg">
                 <tr>
-                  <th className="font-semibold text-center w-[10%]">Date</th>
-                  <th className="font-semibold text-center w-[10%]">DV No.</th>
-                  <th className="font-semibold text-center w-[10%]">BUR No.</th>
-                  <th className="font-semibold text-left w-[20%]">Payee</th>
-                  <th className="font-semibold text-left w-[30%]">Particulars</th>
-                  <th className="font-semibold text-center w-[10%]">ASA</th>
+                  <th className="font-semibold text-center w-[10%]" colSpan={2}>BUR</th>
+                  <th className="font-semibold text-center w-[10%]" colSpan={2}>DV</th>
+                  <th className="font-semibold text-center w-[10%]" rowSpan={2}>Payee</th>
+                  <th className="font-semibold text-center w-[20%]" rowSpan={2}>Particulars</th>
+                  <th className="font-semibold text-center w-[30%]" rowSpan={2}>ASA</th>
+                  <th className="font-semibold text-center w-[10%]" rowSpan={2}>Cash</th>
+                </tr>
+                <tr>
+                  <th className="font-semibold">Date</th>
+                  <th className="font-semibold">No.</th>
+                  <th className="font-semibold">Date</th>
+                  <th className="font-semibold">No.</th>
                 </tr>
               </thead>
               <tbody>
                 {sortDate() && Object.entries(sortDate()).length > 0 ? (
-                  Object.entries(sortDate()).map(([key, DV]) => (
-                    <tr key={key} className="border-b-2 p-2">
+                  Object.entries(sortDate()).map(([key, DV], index) => (
+                    <tr key={key} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
                       <td className="text-center">{DV.date}</td>
                       <td className="text-center">{DV.DVNoCount}</td>
                       <td className="text-center">{DV.orsData}</td>
@@ -69,7 +69,7 @@ const ViewProject = (props) => {
                     </tr>
                   ))
                 ) : (
-                  <td className="text-center font-semibold p-4" colSpan={6}>No Disbursement Voucher Found</td>
+                  <td className="text-center font-semibold p-4" colSpan={12}>No Disbursement Voucher Found</td>
                 )}
               </tbody>
             </table>

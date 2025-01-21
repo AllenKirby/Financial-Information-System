@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Swal from 'sweetalert2';
 
 import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
+import { SlOptionsVertical } from "react-icons/sl";
 
 import { useFundingHook } from '../../hooks/useFundingHook';
 
@@ -12,13 +13,13 @@ import LargeLoader from '../Loaders/LargeLoader';
 
 const FieldOffices = (props) => {
 
-  const {fieldOffice, ASANo, fieldOfficeID, remainingASA, test, tabs} = props
+  const {fieldOffice, index, ASANo, fieldOfficeID, remainingASA, test, tabs} = props
 
   const { deleteFieldOffice, isLoading, error } = useFundingHook()
   
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [viewProjectFlag, setViewProjectFlag] = useState(false)
-
+  const [optionsFlag, setOptionsFlag] = useState(false)
 
   const modal = (e) => {
     e.stopPropagation()
@@ -60,26 +61,69 @@ const FieldOffices = (props) => {
   }
 
   return (
-    <div onClick={viewProject} className={`w-full h-auto cursor-pointer py-2 px-4 rounded-lg border-2 my-1 transition-all duration-300`}>
-        <div className='flex items-center justify-between my-2'>
-          <div className='flex items-center justify-center gap-3'>
-            <p className='lg:text-lg 2xl:text-2xl font-bold'>{fieldOffice.projectName}</p>
+    <div onClick={viewProject} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto cursor-pointer p-2 text-sm rounded-lg flex my-1 transition-all duration-300`}>
+        <div className='w-[95%] flex items-center justify-center'>
+          <div className='w-1/4 flex items-center justify-center gap-3'>
+            <p className='font-bold'>{fieldOffice.fieldOffice}</p>
           </div>
-          <div className='flex items-center justify-center gap-3'>
-              <button onClick={modal}>
-                <MdOutlineModeEdit size={23}/>
-              </button>
-            {!Object.entries(fieldOffice.dvCollection).length > 0 && (
-              <button disabled={isLoading} onClick={deleteFO}>
-                <MdDeleteOutline size={25} color='red'/>
-              </button>
-            )}
+          <div className='w-1/4 flex items-center justify-center gap-3'>
+            <p className='font-bold truncate'>{fieldOffice.projectName}</p>
           </div>
+          <div className='w-1/4 flex items-center justify-center gap-3'>
+            <div className='w-1/3 text-center'>
+              <p>0</p>
+            </div>
+            <div className='w-1/3 text-center'>
+              <p>0</p>
+            </div>
+            <div className='w-1/3 text-center'>
+              <p>0</p>
+            </div>
+          </div>
+          <div className='w-1/4 flex items-center justify-center gap-3'>
+            <div className='w-1/3 text-center'>
+              <p>0</p>
+            </div>
+            <div className='w-1/3 text-center'>
+              <p>0</p>
+            </div>
+            <div className='w-1/3 text-center'>
+              <p>0</p>
+            </div>
+          </div>
+        </div>
+        <div className='w-[5%] relative flex items-center justify-end gap-3'>
+          {/* <button onClick={modal}>
+            <MdOutlineModeEdit size={23}/>
+          </button>
+          {!Object.entries(fieldOffice.dvCollection).length > 0 && (
+            <button disabled={isLoading} onClick={deleteFO}>
+              <MdDeleteOutline size={25} color='red'/>
+            </button>
+          )} */}
+          <button onClick={(e) => {e.stopPropagation(); setOptionsFlag(!optionsFlag)}}>
+            <SlOptionsVertical size={17}/>
+          </button>
+          {optionsFlag && (
+            <>
+              <div className="fixed inset-0 z-20" onClick={(e) => {e.stopPropagation(); setOptionsFlag(!optionsFlag)}} />
+              <div onClick={(e) => e.stopPropagation()} className='absolute -bottom-16 right-0 p-2 z-30 shadow-md shadow-gray-200 bg-white w-auto h-auto rounded-lg flex flex-col gap-2'>
+                <button className='flex items-center justify-start gap-2' onClick={modal}>
+                  <MdOutlineModeEdit size={20}/> Edit
+                </button>
+                {!Object.entries(fieldOffice.dvCollection).length > 0 && (
+                  <button className='flex items-center justify-start gap-2' disabled={isLoading} onClick={deleteFO}>
+                    <MdDeleteOutline size={20} color='red'/> Delete
+                  </button>
+                )}
+              </div>
+            </>
+          )}
         </div>
         {FieldOfficeModal && (
           <>
-            <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
-            <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+            <div className="fixed inset-0 z-40 bg-black opacity-50" onClick={modal} />
+            <div className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center">
               <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA} test={test} tabs={tabs}/>
             </div>
           </>
