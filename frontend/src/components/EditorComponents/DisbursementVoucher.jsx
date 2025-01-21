@@ -534,7 +534,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   }, [activeTab]);
 
 
-  const isDisabled = user.role === '3'
+  const isDisabled = user?.role === '3'
   
   return (
     <form onSubmit={(e) => {
@@ -555,22 +555,28 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         <div className='w-full h-auto py-1'>
           <div className='flex items-start gap-3 px-3'>
             <button type='button' 
-            onClick={() => setActiveTab('DV')} 
-            className={`${activeTab === 'DV' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-            disabled={flag}>
-             General
+              onClick={() => setActiveTab('DV')} 
+              className={`${activeTab === 'DV' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+              disabled={flag}>
+              General
             </button>
             <button type='button' 
-            onClick={() => setActiveTab('GSIS')} 
-            className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-            disabled={flag}>
-              GSIS
+              onClick={() => setActiveTab('GSIS')} 
+              className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+              disabled={flag}>
+                GSIS
             </button>
             <button type='button' 
-            onClick={() => setActiveTab('Meralco')} 
-            className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-            disabled={flag}>
-              Meralco
+              onClick={() => setActiveTab('Meralco')} 
+              className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+              disabled={flag}>
+                Meralco
+            </button>
+            <button type='button' 
+              onClick={() => setActiveTab('Others')} 
+              className={`${activeTab === 'Others' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+              disabled={flag}>
+                Others
             </button>
           </div>
           <hr />
@@ -822,71 +828,86 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               </div>
             </div>
           </div>
-          {activeTab === 'DV' && (
+          {(activeTab === 'DV' || activeTab === 'Others') && (
             <div className='w-full h-auto'>
               <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
-              <div className="w-auto h-auto flex flex-col mt-2">
+              <div className="w-full h-auto flex flex-col mt-2">
                 {/* Cost Categories and Amount Section */}
                 <div className="w-full flex flex-col sm:flex-row gap-2">
                   {/* Cost Categories */}
-                  <div className="w-full sm:w-1/2">
-                    <label className="text-gray-500">Cost Categories</label>
-                    <select
-                      className={`${
-                        user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                      } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      disabled={isDisabled && !permission.data.permission}
-                      value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ''}
-                      onChange={(e) => {
-                        const [taxCategory, type] = e.target.value.split('-');
-                        setPayeeData({
-                          ...payeeData,
-                          TT_cost: type,
-                          TT_tax: taxCategory,
-                        });
-                      }}
-                      required
-                    >
-                      <option value="" disabled>
-                        Select Cost Category
-                      </option>
-                      {Object.keys(cost).length > 0 ? (
-                        Object.entries(cost).map(([taxCategory, types]) => (
-                          <optgroup label={taxCategory} key={taxCategory}>
-                            {types.map((type) => (
-                              <option key={`${taxCategory}-${type}`} value={`${taxCategory}-${type}`}>
-                                {type}
-                              </option>
-                            ))}
-                          </optgroup>
-                        ))
-                      ) : (
-                        <option value="" disabled>
-                          No options available
-                        </option>
-                      )}
-                    </select>
-                  </div>
+                  {activeTab !== 'Others' && (
+                    <>
+                      <div className="w-full sm:w-1/2">
+                        <label className="text-gray-500">Cost Categories</label>
+                        <select
+                          className={`${
+                            user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                          } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                          disabled={isDisabled && !permission.data.permission}
+                          value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ''}
+                          onChange={(e) => {
+                            const [taxCategory, type] = e.target.value.split('-');
+                            setPayeeData({
+                              ...payeeData,
+                              TT_cost: type,
+                              TT_tax: taxCategory,
+                            });
+                          }}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select Cost Category
+                          </option>
+                          {Object.keys(cost).length > 0 ? (
+                            Object.entries(cost).map(([taxCategory, types]) => (
+                              <optgroup label={taxCategory} key={taxCategory}>
+                                {types.map((type) => (
+                                  <option key={`${taxCategory}-${type}`} value={`${taxCategory}-${type}`}>
+                                    {type}
+                                  </option>
+                                ))}
+                              </optgroup>
+                            ))
+                          ) : (
+                            <option value="" disabled>
+                              No options available
+                            </option>
+                          )}
+                        </select>
+                      </div>
+                    </>
+                  )}
                   {/* Amount */}
-                  <div className="w-full sm:w-1/2">
-                    <label className="text-gray-500">Amount</label>
-                    <input
-                      className={`${
-                        user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                      } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number"
-                      step="0.01"
-                      disabled={isDisabled && !permission.data.permission}
-                      placeholder="0"
-                      value={payeeData.amount === 0 ? '' : payeeData.amount}
-                      onChange={(e) =>
-                        setPayeeData({
-                          ...payeeData,
-                          amount: parseFloat(e.target.value),
-                        })
-                      }
-                      required
-                    />
+                  <div className={`${activeTab === 'Others' ? 'w-full' : 'w-full sm:w-1/2'} flex flex-col sm:flex-row items-center justify-center gap-2`}>
+                    <div className="w-full sm:w-1/2">
+                      <label className="text-gray-500">Amount</label>
+                      <input
+                        className={`${
+                          user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                        } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                        type="number"
+                        step="0.01"
+                        disabled={isDisabled && !permission.data.permission}
+                        placeholder="0"
+                        value={payeeData.amount === 0 ? '' : payeeData.amount}
+                        onChange={(e) =>
+                          setPayeeData({
+                            ...payeeData,
+                            amount: parseFloat(e.target.value),
+                          })
+                        }
+                        required
+                      />
+                    </div>
+                    <div className='w-full sm:w-1/2 flex flex-col'>
+                      <label className="text-gray-500">Account Entry</label>
+                      <select 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                        >
+                        <option value="Debit">Debit</option>
+                        <option value="Credit">Credit</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
 
@@ -903,11 +924,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 </div>
 
                 {/* Dynamic Form Fields for Account Titles */}
-                <div className="w-auto h-auto flex mt-2">
+                <div className="w-full h-auto flex flex-col mt-2">
                   {formFields.map((field, index) => (
-                    <div key={index} className="w-full flex flex-col lg:flex-row gap-2">
+                    <div key={index} className="w-full flex flex-col gap-2">
                       {/* Account Title */}
-                      <div className="w-full lg:w-3/5">
+                      <div className="w-full">
                         <label className="text-gray-500">Account Title</label>
                         <input
                           className={`${
@@ -949,31 +970,42 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           </ul>
                         )}
                       </div>
+                      <div className='w-full h-auto mt-2 flex flex-col sm:flex-row items-center justify-center gap-2'>
+                        <div className='w-full sm:w-1/2'>
+                          <label>Account Code</label>
+                          <input
+                            className={`${
+                              user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                            } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                            type="text"
 
-                      {/* Amount (Optional) */}
-                      <div className="w-full lg:w-2/5 flex items-center justify-center gap-2">
-                        <div className="w-full lg:w-4/5">
-                          <label className="text-gray-500">Amount (Optional)</label>
-                          <div className='flex items-center justify-center'>
-                            <input
-                              className={`${
-                                user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                              } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                              type="number"
-                              disabled={(isDisabled && !permission.data.permission) || optionalAmount}
-                              placeholder="0"
-                              value={field.amount === 0 ? '' : field.amount}
-                              onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
-                            />
-                            <button
-                              className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${
-                                index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'
-                              } hover:text-white`}
-                              onClick={() => handleButtonClick(index)}
-                              type="button"
-                            >
-                              {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
-                            </button>
+                          />
+                        </div>
+                        {/* Amount (Optional) */}
+                        <div className="w-full lg:w-1/2">
+                          <div className="w-full">
+                            <label className="text-gray-500">Amount (Optional)</label>
+                            <div className='flex items-center justify-center'>
+                              <input
+                                className={`${
+                                  user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                                } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                                type="number"
+                                disabled={(isDisabled && !permission.data.permission) || optionalAmount}
+                                placeholder="0"
+                                value={field.amount === 0 ? '' : field.amount}
+                                onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
+                              />
+                              <button
+                                className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${
+                                  index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'
+                                } hover:text-white`}
+                                onClick={() => handleButtonClick(index)}
+                                type="button"
+                              >
+                                {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -987,17 +1019,28 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <div className='w-full h-auto'>
               <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
               <div className="w-auto h-auto flex flex-col mt-2">
-                <div className='w-full mt-2'>
-                  <label className='text-gray-500'>PREMIUM</label>
-                  <input 
-                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    type="number" 
-                    step='0.01'
-                    disabled={isDisabled && !permission.data.permission}
-                    onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
-                    placeholder='0'
-                    value={payeeData.amount === 0 ? '' : payeeData.amount}
-                    required  />
+                <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2'>
+                  <div className='w-full sm:w-1/2 mt-2'>
+                    <label className='text-gray-500'>PREMIUM</label>
+                    <input 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      type="number" 
+                      step='0.01'
+                      disabled={isDisabled && !permission.data.permission}
+                      onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
+                      placeholder='0'
+                      value={payeeData.amount === 0 ? '' : payeeData.amount}
+                      required  />
+                  </div>
+                  <div className='w-full sm:w-1/2 flex flex-col'>
+                    <label className="text-gray-500">Account Entry</label>
+                    <select 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      >
+                      <option value="Debit">Debit</option>
+                      <option value="Credit">Credit</option>
+                    </select>
+                  </div>
                 </div>
                 <div className='w-full flex flex-col lg:flex-row gap-2 mt-2'>
                   <div className='w-full lg:w-1/3'>
@@ -1054,6 +1097,29 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           placeholder='0'
                           required  />
                       </div>
+                      <div className='w-full sm:w-1/2 flex flex-col'>
+                        <label className="text-gray-500">Account Entry</label>
+                        <select 
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                          >
+                          <option value="Debit">Debit</option>
+                          <option value="Credit">Credit</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div className='w-full flex gap-2 mt-2'>
+                      <div className='w-1/2'>
+                        <label className='text-gray-500'>VAT</label>
+                        <input 
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                          type="number" 
+                          step='0.01'
+                          disabled={isDisabled && !permission.data.permission}
+                          onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
+                          placeholder='0'
+                          value={payeeData.amount === 0 ? '' : payeeData.amount}
+                          required  />
+                      </div>
                       <div className='w-1/2'>
                         <label className='text-gray-500'>NON VAT</label>
                         <input 
@@ -1065,18 +1131,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           placeholder='0'
                           required  />
                       </div>
-                    </div>
-                    <div className='w-full mt-2'>
-                      <label className='text-gray-500'>VAT</label>
-                      <input 
-                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                        type="number" 
-                        step='0.01'
-                        disabled={isDisabled && !permission.data.permission}
-                        onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
-                        placeholder='0'
-                        value={payeeData.amount === 0 ? '' : payeeData.amount}
-                        required  />
                     </div>
                 </div>
             </div>

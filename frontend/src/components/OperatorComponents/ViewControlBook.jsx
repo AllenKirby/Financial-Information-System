@@ -55,10 +55,21 @@ const ViewControlBook = () => {
   }, [controlBooks, id])
 
   useEffect(() => {
-    console.log(ControlBook.data.SARONo)
-    
-
+    console.log(ControlBook.data.fieldOffices)
   }, [ControlBook])
+  
+  const sortTimePassedDesc = (docu) => {
+    if (docu && Object.keys(docu).length > 0) {
+      const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => {
+        const parsedA = a.createdAt ? a.createdAt : null;
+        const parsedB = b.createdAt ? b.createdAt : null;
+        return new Date(parsedB) - new Date(parsedA)
+      });
+      return Object.fromEntries(sortedEntries)
+    } else {
+      return {} 
+    }
+  }
 
   const convertDate = (dateStr) => {
     const date = new Date(dateStr);
@@ -79,7 +90,7 @@ const ViewControlBook = () => {
               <button 
                 onClick={() => window.history.back()}
                 className="px-5 py-2 rounded-lg font-semibold hover:bg-gray-200 transition-all duration-100"><IoMdArrowRoundBack size={20}/></button>
-              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-base sm:text-xl lg:text-3xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ").split('!')[0] : ''}</p>
+              <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold text-base sm:text-xl lg:text-2xl text-fundingBlueGreen`}>{ControlBook.data.ASANo ? ControlBook.data.ASANo.replace("|", " ").split('!')[0] : ''}</p>
               <div className="relative w-auto h-auto">
                 <GrCircleInformation 
                   size={28} 
@@ -155,11 +166,53 @@ const ViewControlBook = () => {
 
                 </div>
               </div>
-
-              <div className="w-full flex-1 overflow-y-auto p-2">
+              <div className="w-full h-auto bg-gray-100 rounded-lg mt-2 py-1 pr-6 flex items-center justify-center">
+                <div className="w-[95%] text-sm h-full flex items-center justify-center">
+                  <div className="w-1/4 h-full py-1 flex items-center justify-center">
+                    <p className="font-semibold">Field Office</p>
+                  </div>
+                  <div className="w-1/4 h-full py-1 flex items-center justify-center">
+                    <p className="font-semibold">Project Name</p>
+                  </div>
+                  <div className="w-1/4 h-auto py-1 flex flex-col">
+                    <div className="w-full h-auto text-center">
+                      <p className="font-semibold">ASA</p>
+                    </div>
+                    <div className="w-full h-auto flex items-center justify-center">
+                      <div className="w-1/3 text-center ">
+                        <p className="font-semibold">Beginning</p>
+                      </div>
+                      <div className="w-1/3 text-center ">
+                        <p className="font-semibold">Utilized</p>
+                      </div>
+                      <div className="w-1/3 text-center">
+                        <p className="font-semibold">Balance</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="w-1/4 h-auto py-1 flex flex-col">
+                    <div className="w-full h-auto text-center">
+                      <p className="font-semibold">Cash</p>
+                    </div>
+                    <div className="w-full h-auto flex items-center justify-center">
+                      <div className="w-1/3 text-center">
+                        <p className="font-semibold">Beginning</p>
+                      </div>
+                      <div className="w-1/3 text-center">
+                        <p className="font-semibold">Disbursed</p>
+                      </div>
+                      <div className="w-1/3 text-center">
+                        <p className="font-semibold">Balance</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="w-[5%] h-full"></div>
+              </div>
+              <div className="w-full flex-1 overflow-y-auto py-2">
                 {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
-                  Object.entries(ControlBook.data.fieldOffices).map(([key,fieldOffice]) => (
-                    <FieldOffices key={key} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
+                  Object.entries(sortTimePassedDesc(ControlBook.data.fieldOffices)).map(([key,fieldOffice], index) => (
+                    <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
                   ))
                 ) : (
                   <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
