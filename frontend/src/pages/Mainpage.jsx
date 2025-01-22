@@ -26,7 +26,7 @@ import ControlBook from "../components/OperatorComponents/ControlBook";
 import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 import ComparisonView from "../components/AdminComponents/ComparisonView"
 import Logs from "../components/SuperAdminComponents/Logs";
-
+import DVRegister from "../components/EditorComponents/DVRegister";
 
 const Mainpage = () => {
 
@@ -52,6 +52,7 @@ const Mainpage = () => {
           </Route>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['4']}><DashboardPreparer/></PrivateRoute>}/>
           <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['4']}><HistoryLogs/></PrivateRoute>}/>
+          <Route path="dvregister" element={<PrivateRoute allowedRoles={['4']}><DVRegister/></PrivateRoute>}/>
         </Route>
         <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
