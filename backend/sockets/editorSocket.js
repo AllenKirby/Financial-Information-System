@@ -1,6 +1,7 @@
 const {db} = require('../config/firebase')
 const { decryptObj } = require('../controller/functions');
 
+
 const editorSocket = (socket, io) => {
     console.log('Initializing EDITOR Firestore listeners...');
     let collectionUnsubscribe = null;
@@ -22,12 +23,69 @@ const editorSocket = (socket, io) => {
 
     })
     
+    const PAGE_SIZE = 10;
+    let unsubscribeRecord = null;
+    let lastVisible = null;
+
+    const fetchDocuments = (callback) => {
+        const collectionRef = db.collection('records');
+        const keysNotToDecrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber', 'iv', 'submittedBy']
+        let query = collectionRef.orderBy('createdAt', 'desc').limit(PAGE_SIZE);
+        if (lastVisible) {
+            query = query.startAfter(lastVisible);
+        }
+    
+        unsubscribeRecord = query.onSnapshot(
+            (snapshot) => {
+                if (!snapshot.empty) {
+                    // console.log('Last visible document:', lastVisible.id);
+                    const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
+                        const encryptedData = doc.data();
+                        const decryptedData = decryptObj(encryptedData, { keysNotToDecrypt });
+                        acc[doc.id] = { data: decryptedData };
+                        return acc;
+                    }, {});
+                    lastVisible = snapshot.docs[snapshot.docs.length - 1];
+                    // io.emit('editor:firestore:records', updatedDocuments);
+                    // setTimeout(fetchDocuments, 1000);
+                    callback(null, updatedDocuments);
+                } else {
+                    callback(null, {});
+                    console.log('No more documents to fetch.');
+                }
+            },
+            (err) => {
+                console.error('Error in Firestore real-time listener:', err);
+            }
+        );
+    
+    }
+
+    socket.on('editor:fetch:initial', (callback) => {
+        console.log('Fetching initial records...');
+        lastVisible = null; // Reset pagination
+        fetchDocuments(callback);
+    });
+
+    socket.on('editor:fetch:next', (callback) => {
+        console.log('Fetching next batch of records...');
+        if(lastVisible){
+            fetchDocuments(callback);
+        }else{
+            console.log('wala')
+        }
+    });
+
+    // fetchDocuments();
 
     socket.on('disconnect', () => {
         console.log('Client disconnected, removing Firestore listener.');
         permissionUnsubscribe();
         if (collectionUnsubscribe) {
             collectionUnsubscribe();
+        }
+        if(unsubscribeRecord){
+            unsubscribeRecord();
         }
     })
     
