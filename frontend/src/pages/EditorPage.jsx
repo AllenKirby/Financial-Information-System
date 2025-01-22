@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from "react-router-dom";
 //import {io} from 'socket.io-client'
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
-import { useEffect, useState } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { firestore } from "../config/firebase-config"
 import { doc, onSnapshot } from "firebase/firestore"
 import {useDispatch, useSelector} from 'react-redux'
@@ -97,34 +97,35 @@ const EditorPage = () => {
       socket.on('editorPermission:firestore:update', (doc) => {
         dispatch(setPermission(doc));
       })
-      // socket.on('editor:firestore:records', (doc) => {
-      //   console.log(doc)
-      // })
+      socket.on('editor:firestore:records', (doc) => {
+        console.log(doc)
+      })
 
-      const fetchInitialDocuments = () => {
-        socket.emit('editor:fetch:initial', (err, documents) => {
-          if (err) {
-            console.error('Error fetching initial documents:', err);
-          } else {
-            console.log('Fetched initial documents:', documents);
+      // const fetchInitialDocuments = () => {
+      //   socket.emit('editor:fetch:initial', (err, documents) => {
+      //     if (err) {
+      //       console.error('Error fetching initial documents:', err);
+      //     } else {
+      //       console.log('Fetched initial documents:', documents);
             
-          }
-        });
-      };
+      //     }
+      //   });
+      // };
 
-      const fetchNextDocuments = () => {
-        socket.emit('editor:fetch:next', (err, documents) => {
-          if (err) {
-            console.error('Error fetching next documents:', err);
-          } else {
-            console.log('Fetched next documents:', documents);
+      // const fetchNextDocuments = () => {
+      //   socket.emit('editor:fetch:next', (err, documents) => {
+      //     if (err) {
+      //       console.error('Error fetching next documents:', err);
+      //     } else {
+      //       console.log('Fetched next documents:', documents);
             
-          }
-        });
-      };
+            
+      //     }
+      //   });
+      // };
 
-      fetchInitialDocuments()
-      fetchNextDocuments()
+      // fetchInitialDocuments()
+      // fetchNextDocuments()
       return () => {
         socket.off('editor:firestore:update');
         socket.off('editorPermission:firestore:update');
