@@ -978,7 +978,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                               user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                             } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                             type="text"
-
+                            value={payeeData.accCode}
                           />
                         </div>
                         {/* Amount (Optional) */}

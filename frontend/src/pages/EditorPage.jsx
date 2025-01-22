@@ -17,6 +17,7 @@ import { TbLayoutDashboard} from "react-icons/tb";
 import { FiBook} from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
 import { FaRegFile } from "react-icons/fa";
+import { LuFiles } from "react-icons/lu";
 
 import { initializeSocket } from "../socketService/socketService";
 
@@ -40,7 +41,8 @@ const EditorPage = () => {
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
       : []),
-    { label: 'Logs', path: '/editor/disbursementlogs', icon: <MdOutlineHistory size={22} /> }
+    { label: 'DV Register', path: '/editor/dvregister', icon: <LuFiles size={22} /> },
+    { label: 'Logs', path: '/editor/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
   ];
 
   useEffect(() => {
@@ -52,6 +54,8 @@ const EditorPage = () => {
       setLocation('Control Book')
     } else if(page.pathname === "/editor/disbursementlogs"){
       setLocation('Logs')
+    } else if(page.pathname === "/editor/dvregister"){
+      setLocation('DV Register')
     }
   }, [page.pathname])
 
