@@ -15,7 +15,7 @@ const { parse } = require('dotenv');
 const updateASAORS = async (req, res) => {
     try{
         console.log(req.body)
-        const newlyASA = req.body.update
+        const needBUR = req.body.update
         const previousASA_test = req.body.previousASA
         const {id} = req.params
         const year = new Date().getFullYear();
@@ -27,7 +27,7 @@ const updateASAORS = async (req, res) => {
         // batch_HandleControlBook
 
         const asa_test = req.body.data.asa
-        const {obj1: asa, obj2: previousASA} = theDifference(asa_test, previousASA_test, newlyASA)
+        const {obj1: asa, obj2: previousASA} = theDifference(asa_test, previousASA_test)
         console.log(`asa:`, asa)
         console.log(`previousASA: `, previousASA)
         const ASA_amount = Object.entries(asa).reduce((acc, [key, value]) => {
@@ -35,11 +35,7 @@ const updateASAORS = async (req, res) => {
             acc[newKey] = (acc[newKey] || 0) + value;
             return acc
         }, {})
-        console.log(Boolean(previousASA))
-        if(((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)) && !newlyASA){
-            console.log('asa and prevASA is same')
-            return res.status(200).json({ message: "No need to update" });
-        }
+
         const asaEntries = Object.entries(asa).map(([key, amount]) => {
             // console.log(key)
             const [ASANo, projectID] = key.split('/');
@@ -51,6 +47,33 @@ const updateASAORS = async (req, res) => {
             }
         })
 
+        if((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)){
+            if(needBUR){
+
+                const asaForBur = Object.entries(asa_test).map(([key, amount]) => {
+                    // console.log(key)
+                    const [ASANo, projectID] = key.split('/');
+        
+                    return {
+                        ASANo,
+                        projectID,
+                        amount
+                    }
+                })
+
+                const orsForBUR = req.body?.data?.ors
+                const DV = req.body.DV
+                const DVNoKey = DV?.DVNo ? DV.DVNo.split('-') : [];
+                await addBUR(orsForBUR, asaForBur, DVNoKey[DVNoKey.length - 1], id)
+
+                console.log('asa and prevASA is same but added BUR')
+                return res.status(200).json({ message: "No need to update" });
+            }else{
+                console.log('asa and prevASA is same')
+                return res.status(200).json({ message: "No need to update" });
+            }
+        }
+
         
         const ors = req.body?.data?.ors ? req.body.data.ors.split('-') : [];
         const DV = req.body.DV
@@ -58,7 +81,7 @@ const updateASAORS = async (req, res) => {
         const fieldOfficeData = {
             date: DV.date,
             DVNoCount: DVNoKey,
-            orsData: ors.length > 0 ? [ors.length - 1] : '',
+            orsData: ors.length > 0 ? ors[ors.length - 1] : '',
             payee: DV.payee,
             particulars: DV.particulars,
             //amount
@@ -68,13 +91,13 @@ const updateASAORS = async (req, res) => {
         
         let finalORS = ''
         const dvData = {ASA: asa}
-        if(newlyASA){ 
+        if(needBUR){ 
             const ORS = await getOrigNumberOfCopiesBUR(ors)
             finalORS = `501-${year}-${month}-${ORS}`
             dvData.ORSBURS = finalORS
         }
 
-        if(!newlyASA){
+        if(!needBUR){
 
             const previousASA_amount = Object.entries(previousASA).reduce((acc, [key, value]) => {
                 const newKey = key.split('/')[0];
@@ -294,6 +317,39 @@ const updateASA_ORS = async (req, res) => {
         console.log('error on updatingASA_ORS: (OPERATORCONTROLLER)', error)
     }
 
+}
+
+const addBUR = async (orsForBUR, updates, DVNoCount, id) => {
+    const orsData = orsForBUR ? orsForBUR.split('-') : [];
+    const ors = orsData.length > 0 ? orsData[orsData.length - 1] : ''
+    const batch = db.batch();
+    try{
+        for (const { ASANo, projectID, amount } of updates) {
+            const DVDocRef = db.collection('ControlBook')
+                .doc(ASANo)
+                .collection('FieldOffices')
+                .doc(projectID)
+                .collection('DV')
+                .doc(`${DVNoCount}|${amount}`);
+            
+            const fieldOfficed = {
+                orsData: ors
+            }
+            const docSnapshot = await DVDocRef.get();
+            if (docSnapshot.exists) {
+                batch.update(DVDocRef, fieldOfficed);
+            } else {
+                console.warn(`Document does not exist for ASANo: ${ASANo}, projectID: ${projectID}`);
+            }
+            
+        }
+        await batch.commit()
+
+        const docref = db.collection('records').doc(id)
+        await docref.update({ORSBURS: orsForBUR})
+    }catch(err){
+        console.error('error on operating controller addBUR function.')
+    }
 }
 
 const batch_handlefieldOffices = async (updates, DVNoCount, fieldOfficeData, operation='add') => {
@@ -1134,15 +1190,11 @@ const getWeek = () => {
 
 }
 
-const theDifference = (obj1 = {}, obj2 = {}, needed=false) => {
+const theDifference = (obj1 = {}, obj2 = {}) => {
     const diff1 = {};
     const diff2 = {};
 
     if(Object.keys(obj1).length === 0 || Object.keys(obj2).length === 0){
-        return {obj1: obj1, obj2: obj2}
-    }
-
-    if(needed){
         return {obj1: obj1, obj2: obj2}
     }
 

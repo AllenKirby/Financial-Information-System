@@ -16,28 +16,28 @@ const NumOfRecords = ({modal, downloadPNG, comparison}) => {
     const recordx = useSelector((state) => state.records)
 
     useEffect(() => {
-        const getRecords = async () => {
-            try{
-                const storedRecords = sessionStorage.getItem('records')
-                if(storedRecords){
-                    const recordData = JSON.parse(storedRecords)
-                    dispatch(setRecords(recordData))
+        // const getRecords = async () => {
+        //     try{
+        //         const storedRecords = sessionStorage.getItem('records')
+        //         if(storedRecords){
+        //             const recordData = JSON.parse(storedRecords)
+        //             dispatch(setRecords(recordData))
                     
-                }else{
-                    const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getNumberOfRecords`, {
-                    withCredentials: true
-                    })
-                    if(res.status === 200){
-                        const rec = res.data.records
-                        sessionStorage.setItem('records', JSON.stringify(rec))
-                        dispatch(setRecords(rec))
-                    }
-                }
-            }catch(error){
-                console.log("Error on numofrecords (admin)", error)
-            }
-        }
-        getRecords()
+        //         }else{
+        //             const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/getNumberOfRecords`, {
+        //             withCredentials: true
+        //             })
+        //             if(res.status === 200){
+        //                 const rec = res.data.records
+        //                 sessionStorage.setItem('records', JSON.stringify(rec))
+        //                 dispatch(setRecords(rec))
+        //             }
+        //         }
+        //     }catch(error){
+        //         console.log("Error on numofrecords (admin)", error)
+        //     }
+        // }
+        // getRecords()
         const year = new Date().getFullYear()
         const numberRecordsCollection = doc(firestore, 'NumberOfRecords', year.toString())
         const unsubscribe = onSnapshot(numberRecordsCollection, (snapshot) => {

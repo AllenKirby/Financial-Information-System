@@ -13,7 +13,8 @@ import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContex
 // import { firestore } from "../config/firebase-config"
 // import { collection, query, where, onSnapshot } from "firebase/firestore"
 import { useApproverHook } from "../hooks/useApproverHook";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setVouchers } from "../redux/AllVouchersRedux";
 
 import {initializeSocket } from "../socketService/socketService";
 
@@ -23,10 +24,10 @@ const AdminPage = () => {
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
   //const { user } = useAuthContext()
-  const { dispatch } = useAdminDisbursementContext()
+  const { dispatch: contextDispatch  } = useAdminDisbursementContext()
   //const apiURL = import.meta.env.VITE_API_URL
   const { getRecords } = useApproverHook()
-  const dispatchVouchers = useDispatch() 
+  const dispatch = useDispatch() 
 
   const navItems = [
     { label: 'Dashboard', path: '/admin/dashboard', icon: <TbLayoutDashboard size={22} /> },
@@ -35,10 +36,10 @@ const AdminPage = () => {
     { label: 'Edit Form', path: '/admin/editform', icon: <TbEdit size={22}/>}
   ];
 
-  useEffect(() => {
-      const unsubscribe = getRecords(dispatchVouchers)
-      return () => unsubscribe
-  })
+  // useEffect(() => {
+  //     const unsubscribe = getRecords(dispatch)
+  //     return () => unsubscribe
+  // })
 
   useEffect(() => {
       if(page.pathname === "/admin/dashboard"){
@@ -52,30 +53,28 @@ const AdminPage = () => {
       }
   }, [page.pathname])
 
-    // useEffect(() => {
-    //     const q = query(collection(firestore, 'records'), where('status', 'in', ['Approved', 'For Approval']));
-    //     const unsubscribe = onSnapshot(q, (snapshot) => {
-    //     const newDocuments = snapshot.docs.reduce((acc, doc) => {
-    //         acc[doc.id] = {data: {...doc.data()}};
-    //         return acc;
-    //     }, {});
-    //         console.log(newDocuments)
-    //         dispatch({ type: 'SET_ADMINDOCUMENTS', payload: newDocuments });
-    //     })
-
-    //     return () => unsubscribe()
-    // }, [documents, user, apiURL, dispatch])
+  const [documents, setDocuments] = useState({})
   useEffect(() => {
     const {socket, isInitialized} = initializeSocket()
     if(isInitialized){
       socket.on('admin:firestore:update', (doc) => {
-        dispatch({ type: 'SET_ADMINDOCUMENTS', payload: doc });
+        console.log(doc)
+        const updatedDocuments = {...documents, ...doc};
+        const filteredDV = filterApproverDocu(updatedDocuments)
+        dispatch(setVouchers(doc))
+        contextDispatch({ type: 'SET_ADMINDOCUMENTS', payload: filteredDV });
+        setDocuments(updatedDocuments);
       })
       return () => {
         socket.off('admin:firestore:update');
       };
     }
-  }, [])//[documents, user, apiURL, dispatch]
+  }, [documents])//[documents, user, apiURL, dispatch]
+
+  const filterApproverDocu = (doc) => {
+    const filteredData = Object.entries(doc).filter(([key, value]) => ['Approved', 'For Approval'].includes(value.data.status))
+    return Object.fromEntries(filteredData)
+  }
 
   const collapseSideBar = () => {
     setNavbarExpand(!navbarExpand)
