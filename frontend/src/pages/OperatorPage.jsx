@@ -1,12 +1,9 @@
 import { Outlet, useLocation } from "react-router-dom"
 import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
-import { firestore } from "../config/firebase-config"
-import { doc, onSnapshot } from "firebase/firestore"
 
 import Navbar from "../components/Shared/Navbar"
 import Header from "../components/Shared/Header"
 
-import { TbLayoutDashboard } from "react-icons/tb";
 import { useState, useEffect } from "react"
 import { FiBook } from "react-icons/fi";
 import { FaRegFile } from "react-icons/fa";
@@ -32,7 +29,6 @@ const OperatorPage = () => {
   //const apiURL = import.meta.env.VITE_API_URL
 
   const navItems = [
-    { label: 'Dashboard', path: '/operator/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Records', path: '/operator/disbursementrecords', icon: <FaRegFile size={20} /> },
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
     { label: 'Logs', path: '/operator/disbursementlogs', icon: <MdOutlineHistory size={22} /> }

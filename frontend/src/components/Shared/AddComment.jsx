@@ -370,12 +370,12 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
       <div className="flex items-center justify-end gap-2 my-2">
           <button 
             disabled={isLoading} 
-            type="submit"
-            className={`px-4 py-2 rounded-lg font-semibold text-white ${color.bg} hover:bg-white hover:${color.font} border-2 ${color.border} transition-all duration-150`}>Save</button>
-          <button 
-            disabled={isLoading} 
             onClick={modal}
             className={`px-4 py-2 rounded-lg font-semibold border-2 hover:bg-gray-200 transition-all duration-150`}>Back</button>
+          <button 
+            disabled={isLoading} 
+            type="submit"
+            className={`px-4 py-2 rounded-lg font-semibold text-white ${color.bg} hover:bg-white hover:${color.font} border-2 ${color.border} transition-all duration-150`}>Save</button>
       </div>
       {isLoading && (
         <LargeLoader/>

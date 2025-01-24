@@ -129,7 +129,7 @@ const DisbursementRecords = () => {
                   <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
                   <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
                   <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
-                  <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Contract Farming</div>
+                  <div onClick={() => filterModal('Farming Support Services Program')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Farming Support Services Program</div>
                 </div>
               </>
             )}
@@ -156,7 +156,7 @@ const DisbursementRecords = () => {
             {activeTabs === 'For Approval' && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Transferred</h1>}
             {activeTabs === 'Approved' && (<h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Approved</h1>)}
           </div>
-          <div className="w-full flex-1 rounded-lg">
+          <div className="w-full flex-1 overflow-y-auto rounded-lg">
             {getFilteredDocuments() && Object.entries(getFilteredDocuments()).length > 0 ? (
               <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'1'} activeTab={activeTabs} paginationFor={'DV'}/>
             ) : (

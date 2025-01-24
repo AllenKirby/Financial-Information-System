@@ -99,7 +99,7 @@ const DisbursementRecordsHead = () => {
   }
     
   return (
-    <section className="w-full h-full p-2 relative flex flex-col gap-2">
+    <section className="w-full h-full p-2 relative flex flex-col gap-2 text-gray-500">
       <div className={`${searchModal ? ' block h-auto' : 'hidden'} absolute py-5 bg-white z-20 top-0 left-0 w-full block overflow-hidden sm:hidden transition-all duration-100`}>
         <div className='flex items-center justify-center gap-2 px-3'>
           <div className='w-5/6 relative'>
@@ -139,7 +139,7 @@ const DisbursementRecordsHead = () => {
                   <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
                   <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
                   <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
-                  <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Contract Farming</div>
+                  <div onClick={() => filterModal('Farming Support Services Program')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Farming Support Services Program</div>
                 </div>
               </>
             )}
