@@ -110,6 +110,9 @@ const OperatorPage = () => {
         socket.on('operatorPermission:firestore:update', (doc) => {
           dispatch(setPermission(doc));
         })
+        socket.on('operator:firestore:records', (doc) => {
+          console.log(doc)
+        })
         return () => {
           socket.off('operator:firestore:update');
           socket.off('operatorPermission:firestore:update');

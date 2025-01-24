@@ -129,6 +129,12 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     return 
   };
 
+  useEffect(() => {
+    const date = new Date()
+    const today = date.toISOString().split('T')[0]
+    setPayeeData({...payeeData, date: today})
+  }, [])
+
   const handleChangePayee = (e) => {
     const target = e.target.value.toUpperCase().trim();
     setPayeeData({...payeeData, payee: target})
@@ -536,6 +542,18 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const isDisabled = user?.role === '3'
   
+  const [isOtherSelected, setIsOtherSelected] = useState(false);
+  const handleChangeAddress = (e) => {
+    const value = e.target.value
+    if(value === 'other'){
+      setIsOtherSelected(true);
+      setPayeeData({ ...payeeData, address: '' });
+    }else{
+      setIsOtherSelected(false);
+      setPayeeData({ ...payeeData, address: value });
+    }
+  }
+
   return (
     <form onSubmit={(e) => {
         if(user.role === '3'){
@@ -615,22 +633,43 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             <div className='w-full flex flex-col sm:flex-row  gap-2'>
               <div className='w-full sm:w-1/2 mt-2'>
                 <label className='text-gray-500'>Address</label>
-                <select 
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  disabled={isDisabled && !permission.data.permission}
-                  type="text" 
-                  value={payeeData.address}
-                  onChange={(e) => setPayeeData({...payeeData, address: e.target.value})} 
-                  required>
-                    <option disabled value={''}>Select Address</option>
-                    {Object.entries(addressJSON['4A'].province_list).map(([key, province]) => (
-                      <optgroup key={key} label={key}>
-                        {province.municipality_list.map((municipal, index) => (
-                          <option key={index} value={`${municipal}, ${key}`}>{municipal}</option>
-                        ))}
-                      </optgroup>
-                    ))}
-                </select>
+                {isOtherSelected ? (
+                  <div className="flex items-center border-2 rounded-md px-2">
+                    <input
+                      className="flex-grow text-gray-500 px-2 py-2 focus:outline-none"
+                      type="text"
+                      value={payeeData.address}
+                      onChange={(e) => setPayeeData({ ...payeeData, address: e.target.value })}
+                      placeholder="Type your address"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="ml-2 px-3 py-1 bg-gray-200 text-gray-600 rounded hover:bg-gray-300"
+                      onClick={() => setIsOtherSelected(false)}
+                    >
+                      ↩
+                    </button>
+                  </div>
+                ) : (
+                  <select 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    disabled={isDisabled && !permission.data.permission}
+                    type="text" 
+                    value={payeeData.address}
+                    onChange={handleChangeAddress} 
+                    required>
+                      <option disabled value={''}>Select Address</option>
+                      <option value={'other'}>Other...</option>
+                      {Object.entries(addressJSON['4A'].province_list).map(([key, province]) => (
+                        <optgroup key={key} label={key}>
+                          {province.municipality_list.map((municipal, index) => (
+                            <option key={index} value={`${municipal}, ${key}`}>{municipal}</option>
+                          ))}
+                        </optgroup>
+                      ))}
+                  </select>
+                )}
               </div>
               <div className='w-full sm:w-1/2 mt-2'>
                 <label className='text-gray-500'>TIN/Employee No.</label>
