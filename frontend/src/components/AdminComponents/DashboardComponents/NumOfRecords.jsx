@@ -1,4 +1,3 @@
-    import axios from "axios";
 import { useEffect } from "react";
 import { firestore } from "../../../config/firebase-config";
 import { doc, onSnapshot } from "firebase/firestore"
@@ -68,8 +67,8 @@ const NumOfRecords = ({modal, downloadPNG, comparison}) => {
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 CARP</div>
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501CARP !== '0000' ? recordx?.DVno501CARP?.replace(/^0+/, '') : '0'}</div>
             </button>
-            <button onClick={() => modal('Contract Farming')} className="text-left rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>Contract Farming</div>
+            <button onClick={() => modal('Farming Support Services Program')} className="text-left rounded-lg overflow-hidden border-2 py-2 px-4">
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>Farming Support Services Program</div>
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVnoContractFarming !== '0000' ? recordx?.DVnoContractFarming?.replace(/^0+/, '') : '0'}</div>
             </button>
             <div className="rounded-lg flex flex-col gap-2 overflow-hidden p-2">

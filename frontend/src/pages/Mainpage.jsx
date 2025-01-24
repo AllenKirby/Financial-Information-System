@@ -20,8 +20,6 @@ import ForbiddenPage from "./ForbiddenPage";
 import SuperAdminPage from "./SuperAdminPage";
 import Editform from "../components/AdminComponents/EditForm";
 import AccessControl from "../components/SuperAdminComponents/AccessControl";
-import DashboardFunding from "../components/OperatorComponents/Dashboard"
-import DashboardPreparer from "../components/EditorComponents/Dashboard"
 import ControlBook from "../components/OperatorComponents/ControlBook";
 import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 import ComparisonView from "../components/AdminComponents/ComparisonView"
@@ -50,7 +48,6 @@ const Mainpage = () => {
           <Route path="controlbook" element={<PrivateRoute allowedRoles={['4']}><ControlBook/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewControlBook/></PrivateRoute>}/>
           </Route>
-          <Route path="dashboard" element={<PrivateRoute allowedRoles={['4']}><DashboardPreparer/></PrivateRoute>}/>
           <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['4']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="dvregister" element={<PrivateRoute allowedRoles={['4']}><DVRegister/></PrivateRoute>}/>
         </Route>
@@ -58,7 +55,6 @@ const Mainpage = () => {
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-          <Route path="dashboard" element={<PrivateRoute allowedRoles={['3']}><DashboardFunding/></PrivateRoute>}/>
           <Route path="controlbook" element={<PrivateRoute allowedRoles={['3']}><ControlBook/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewControlBook/></PrivateRoute>}/> 
           </Route>

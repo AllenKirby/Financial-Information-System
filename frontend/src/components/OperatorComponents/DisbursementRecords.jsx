@@ -128,11 +128,9 @@ const DisbursementRecords = () => {
           </div>
         </div>
         <div className='w-1/2 flex items-end justify-end gap-2'>
-          {(permission && permission?.data?.permission) && (
-            <button onClick={modal} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm 2xl:text-base bg-preparerPrimary text-white ">
-              <IoAdd size={20} className='font-bold'/> <span className='hidden lg:block'>New</span>
-            </button>
-          )}
+          <button onClick={modal} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm 2xl:text-base bg-fundingBlueGreen text-white">
+            <IoAdd size={20} className='font-bold'/> <span className='hidden lg:block'>New</span>
+          </button>
           <div className='relative'>
             <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm 2xl:text-base'>
               <HiAdjustmentsHorizontal 
@@ -146,7 +144,7 @@ const DisbursementRecords = () => {
                   <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
                   <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
                   <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
-                  <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Contract Farming</div>
+                  <div onClick={() => filterModal('Farming Support Services Program')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Farming Support Services Program</div>
                 </div>
               </>
             )}
@@ -174,7 +172,7 @@ const DisbursementRecords = () => {
             {(activeTabs === 'Drafting' && permission?.data?.permission && permission?.data?.roleName === 'Funding') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Created</h1>}
             {(activeTabs !== 'Drafting' && activeTabs !== '' && activeTabs !== 'In Review') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
-          <div className="w-full flex-1 rounded-lg">
+          <div className="w-full flex-1 overflow-y-auto rounded-lg">
             {Object.entries(getFilteredDocuments()).length > 0 ? (
               <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'3'} activeTab={activeTabs} paginationFor={'DV'}/>
             ) : (

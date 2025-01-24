@@ -15,6 +15,7 @@ const HistoryLogsItem = React.lazy(() => import('../Shared/HistoryLogsItem'));
 const Folder = React.lazy(() => import('../OperatorComponents/Folder'));
 const UserLogs = React.lazy(() => import('../SuperAdminComponents/UserLogs'));
 const AccessControlLogs = React.lazy(() => import('../SuperAdminComponents/AccessControlLogs'));
+const DVRegisterItems = React.lazy(() => import('../EditorComponents/DVRegisterItems'));
 
 const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
 
@@ -38,7 +39,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
 
   return (
     <div className='w-full h-full flex flex-col'>
-        <div className={`${paginationFor === 'ControlBook' ? 'relative p-2 w-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 border-2 rounded-lg overflow-y-auto' : ' w-full flex-1 overflow-auto'}`}>
+        <div className={`${paginationFor === 'ControlBook' ? 'relative p-2 w-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 border-2 rounded-lg overflow-y-auto' : ' w-full flex-1 overflow-y-auto'}`}>
             <Suspense fallback={paginationFor === 'ControlBook' ? <LoadingForControlBook/> : <Loading/>}>
                 {Object.entries(currentItems).map(([key, document]) => {
                     if(paginationFor === 'DV') return <DocumentDetails key={key} index={key} documents={document[1]} type={type} activeTab={activeTab} />
@@ -46,6 +47,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
                     if(paginationFor === 'ControlBook') return <Folder key={key} controlBook={document[1]} ASANo={document[0]}/>
                     if(paginationFor === 'loginLogs') return <UserLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
+                    if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document}/>
                 })}
             </Suspense>
         </div>

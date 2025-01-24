@@ -1,11 +1,10 @@
 import { Outlet, useLocation } from "react-router-dom";
 //import {io} from 'socket.io-client'
 import { useDisbursementContext } from '../hooks/useDisbursementContext'
-import { useDeferredValue, useEffect, useState } from "react";
-import { firestore } from "../config/firebase-config"
-import { doc, onSnapshot } from "firebase/firestore"
+import { useEffect, useState } from "react";
 import {useDispatch, useSelector} from 'react-redux'
-import {setPermission} from '../redux/PermissionRedux' 
+import {setPermission} from '../redux/PermissionRedux'
+import {setVouchers} from '../redux/AllVouchersRedux' 
 import { useFundingHook } from "../hooks/useFundingHook";
 
 //Components
@@ -13,7 +12,6 @@ import Navbar from "../components/Shared/Navbar"
 import Header from "../components/Shared/Header";
 
 //Icons
-import { TbLayoutDashboard} from "react-icons/tb";
 import { FiBook} from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
 import { FaRegFile } from "react-icons/fa";
@@ -30,13 +28,12 @@ const EditorPage = () => {
   const [mobileSidebar, setMobileSidebar] = useState(false)
   const { dispatch: dispatchContext } = useDisbursementContext()
   const dispatch = useDispatch()
-  const apiURL = import.meta.env.VITE_API_URL
+  //const apiURL = import.meta.env.VITE_API_URL
   const permission = useSelector((state) => state.permission)
   const { retrieveControlBooks } = useFundingHook()
   
 
   const navItems = [
-    { label: 'Dashboard', path: '/editor/dashboard', icon: <TbLayoutDashboard size={22} /> },
     { label: 'Records', path: '/editor/disbursementrecords', icon: <FaRegFile size={20} /> } ,
     ...(permission?.data?.permission 
       ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
@@ -98,7 +95,7 @@ const EditorPage = () => {
         dispatch(setPermission(doc));
       })
       socket.on('editor:firestore:records', (doc) => {
-        console.log(doc)
+        dispatch(setVouchers(doc))
       })
 
       // const fetchInitialDocuments = () => {

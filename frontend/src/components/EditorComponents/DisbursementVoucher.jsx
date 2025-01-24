@@ -967,47 +967,57 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   {formFields.map((field, index) => (
                     <div key={index} className="w-full flex flex-col gap-2">
                       {/* Account Title */}
-                      <div className="w-full">
-                        <label className="text-gray-500">Account Title</label>
-                        <input
-                          className={`${
-                            user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
-                          } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                          type="text"
-                          placeholder="Search here..."
-                          value={field.accTitle}
-                          disabled={isDisabled && !permission.data.permission}
-                          onChange={(e) => handleChangeAcc(e, index)}
-                          required
-                        />
-                        {showDropdownAcc && activeDropdownIndex === index && (
-                          <ul className="w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
-                            {Object.entries(filteredAcc[index]).length > 0 ? (
-                              Object.entries(filteredAcc[index]).map(([key, value]) => {
-                                const parts = value.split(':');
-                                const categories = `${parts[0]}|${parts[1]}`;
-                                const lastPart = parts[parts.length - 1];
-                                return (
-                                  <li
-                                    key={key}
-                                    onClick={() => {
-                                      handleFieldChange(index, 'accCategory', categories);
-                                      handleFieldChange(index, 'accTitle', lastPart);
-                                      handleFieldChange(index, 'accCode', key);
-                                      setShowDropdownAcc(false);
-                                      setActiveDropdownIndex(null);
-                                    }}
-                                    className="p-2 cursor-pointer hover:bg-gray-200"
-                                  >
-                                    {lastPart}
-                                  </li>
-                                );
-                              })
-                            ) : (
-                              <li className="p-2">No matches found</li>
-                            )}
-                          </ul>
-                        )}
+                      <div className='w-full h-auto mt-2 flex flex-col sm:flex-row items-center justify-center gap-2'>
+                        <div className="w-full sm:w-2/3">
+                          <label className="text-gray-500">Account Title</label>
+                          <input
+                            className={`${
+                              user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                            } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                            type="text"
+                            placeholder="Search here..."
+                            value={field.accTitle}
+                            disabled={isDisabled && !permission.data.permission}
+                            onChange={(e) => handleChangeAcc(e, index)}
+                            required
+                          />
+                          {showDropdownAcc && activeDropdownIndex === index && (
+                            <ul className="w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
+                              {Object.entries(filteredAcc[index]).length > 0 ? (
+                                Object.entries(filteredAcc[index]).map(([key, value]) => {
+                                  const parts = value.split(':');
+                                  const categories = `${parts[0]}|${parts[1]}`;
+                                  const lastPart = parts[parts.length - 1];
+                                  return (
+                                    <li
+                                      key={key}
+                                      onClick={() => {
+                                        handleFieldChange(index, 'accCategory', categories);
+                                        handleFieldChange(index, 'accTitle', lastPart);
+                                        handleFieldChange(index, 'accCode', key);
+                                        setShowDropdownAcc(false);
+                                        setActiveDropdownIndex(null);
+                                      }}
+                                      className="p-2 cursor-pointer hover:bg-gray-200"
+                                    >
+                                      {lastPart}
+                                    </li>
+                                  );
+                                })
+                              ) : (
+                                <li className="p-2">No matches found</li>
+                              )}
+                            </ul>
+                          )}
+                        </div>
+                        <div className='w-full sm:w-1/3'>
+                          <label className="text-gray-500">Account Title(Optional)</label>
+                          <input 
+                            type="text" 
+                            className={`${
+                              user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                            } text-gray-500 w-full px-4 py-2 rounded-md border-2`}/>
+                        </div>
                       </div>
                       <div className='w-full h-auto mt-2 flex flex-col sm:flex-row items-center justify-center gap-2'>
                         <div className='w-full sm:w-1/2'>
