@@ -68,6 +68,9 @@ const operatorSocket = (socket, io) => {
         if (collectionUnsubscribe) {
             collectionUnsubscribe();
         }
+        if(unsubscribeRecord){
+            unsubscribeRecord();
+        }
     })
 
 }
