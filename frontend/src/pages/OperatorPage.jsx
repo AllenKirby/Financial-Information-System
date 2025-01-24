@@ -112,6 +112,8 @@ const OperatorPage = () => {
         return () => {
           socket.off('operator:firestore:update');
           socket.off('operatorPermission:firestore:update');
+          socket.off('operator:firestore:records')
+          
         };
       }
   }, []) //[user, dispatchContext, apiURL, documents, permission?.data?.permission]
