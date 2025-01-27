@@ -13,19 +13,40 @@ import addressJSON from '../../assets/json/region_4a_provinces_municipalities_ar
 
 import { useAuthContext } from '../../hooks/useAuthContext'
 import { usePreparerHook } from '../../hooks/usePreparerHook'
-import { useFundingHook } from '../../hooks/useFundingHook'
 import { useInitialStateDV } from '../../hooks/useInitialStateDV'
 
-import {useSelector} from 'react-redux'
+//import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
-  const [payeeData, setPayeeData] = useState({ payee: '', TIN: '', address: '',fund: '', date: '', DV: '', MOP: 'Others', specifiedMOP: 'LCCA',  origNumber: '', template: '', RC: '', NF_name: '', NF_office: '', TT_tax:'', TT_formula1:'', TT_formula2: '',TT_cost:'',accCategory: [], accTitle: [], accCode: [], optionalAmount:[], amount: 0, particular: ''})
+  const [payeeData, setPayeeData] = useState({ 
+    payee: '', 
+    TIN: '', 
+    address: '',
+    fund: '', date: '', 
+    DV: '', 
+    MOP: 'Others', 
+    specifiedMOP: 'LCCA',  
+    origNumber: '', 
+    template: '', 
+    RC: '', 
+    NF_name: '', 
+    NF_office: '', 
+    TT_tax:'', 
+    TT_formula1:'', 
+    TT_formula2: '',
+    TT_cost:'',
+    accCategory: [], 
+    accTitle: [], 
+    accCode: [], 
+    optionalAmount:[], 
+    amount: 0, 
+    particular: ''})
   const [gsis, setGSIS] = useState({stamp: 0, dst: 0, vat12: 0})
   const [meralco, setMeralco] = useState({meralcoVAT: 0, meralcoNONVAT: 0})
   //states
   const [birData, setBirData] = useState({ birParticular: ''})
-  const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
+  //const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
   const [activeTab, setActiveTab] = useState('DV')
@@ -53,46 +74,47 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   
   //hooks
   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
-  const {inputOperator, isLoading: isLoadingForFunding, error: errorForFunding}= useFundingHook()
   const {getDVno} = useInitialStateDV()
   const { user } = useAuthContext() 
   
   //redux
-  const permission = useSelector((state) => state.permission)
+  //const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
+
     if (flag && document) {
-      setPayeeData({
-        payee: document.payee || '',
-        TIN: document.TIN || '',
-        address: document.address || '',
-        fund: document.fund || '',
-        NF_name: document.NF_name || '',
-        MOP: document.MOP || '',
-        specifiedMOP: document.specifiedMOP || '',
-        NF_office: document.NF_office || '',
-        TT_tax: document.TT_tax || '',
-        TT_formula1: document.TT_formula1 || '',
-        TT_formula2: document.TT_formula2 || '',
-        TT_cost: document.TT_cost || '',
-        date: formatDateforUpdate(document.date) || '',
-        DV: document.DV || '',
-        DVKey: document.DVKey || '',
-        RC: document.RC || '',
-        // accCategory: document.accCategory || '',
-        // accTitle: document.accTitle[0] || '',
-        // optionalAmount: document.optionalAmount || '',
-        // accCode: document.accCode || '',
-        amount: document.amount || 0,
-        particular: document.particular || '',
+      setPayeeData((prevData) => {
+        const updatedData = {
+          ...prevData,
+          payee: document.payee || '',
+          TIN: document.TIN || '',
+          address: document.address || '',
+          fund: document.fund || '',
+          NF_name: document.NF_name || '',
+          MOP: document.MOP || '',
+          specifiedMOP: document.specifiedMOP || '',
+          NF_office: document.NF_office || '',
+          TT_tax: document.TT_tax || '',
+          TT_formula1: document.TT_formula1 || '',
+          TT_formula2: document.TT_formula2 || '',
+          TT_cost: document.TT_cost || '',
+          date: formatDateforUpdate(document.date) || '',
+          DV: document.DV || '',
+          DVKey: document.DVKey || '',
+          RC: document.RC || '',
+          amount: document.amount || 0,
+          particular: document.particular || '',
+        };
+        console.log("Updated payeeData:", updatedData);
+        return updatedData;
       });
       setBirData({
         birParticular: document.birParticular || '',
       });
-      setOperatorInput({
-        ors: document.ORSBURS || '',
-        asa: document.ASA || ''
-      })
+      // setOperatorInput({
+      //   ors: document.ORSBURS || '',
+      //   asa: document.ASA || ''
+      // })
 
       if (document.activeTab === 'DV'){
         const initialFormFields = (document.accTitle || []).map((title, index) => ({
@@ -301,8 +323,15 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           icon: "success",
           confirmButtonColor: "#009933"
         });
+        modal()
+      } else {
+        Swal.fire({
+          title: "Error",
+          text: {error},
+          icon: "error",
+          confirmButtonColor: "#FF0000"
+        });
       }
-      modal()
     }else{
       const sum = eval(data.payee_data.optionalAmount.join('+'))
       if(Number(data.payee_data.amount) === sum){
@@ -317,8 +346,15 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             icon: "success",
             confirmButtonColor: "#009933"
           });
+          modal()
+        } else {
+          Swal.fire({
+            title: "Error",
+            text: {error},
+            icon: "error",
+            confirmButtonColor: "#FF0000"
+          });
         }
-        modal()
       }else{
         Swal.fire({
           title: "Error",
@@ -440,36 +476,43 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         confirmButtonColor: "#009933"
       });
       modal()
-    }
-  }
-
-  const handleOpInput = async(e) => {
-    e.preventDefault()
-    const fieldOfficeData = {
-      date: payeeData.date,
-      DVNo: payeeData.DV,
-      BUR: operatorInput.ors,
-      payee: payeeData.payee,
-      particulars: payeeData.particular,
-      amount: payeeData.amount
-    }
-
-    const data = {
-      fundingData: operatorInput,
-      fieldOfficeData: fieldOfficeData
-    }
-
-    const res = await inputOperator(data, payeeData.DVKey)
-    if(res){
+    } else {
       Swal.fire({
-        title: "Saved",
-        text: "Disbursement Voucher is successfully save!",
-        icon: "success",
-        confirmButtonColor: "#009933"
+        title: "Error",
+        text: {error},
+        icon: "error",
+        confirmButtonColor: "#FF0000"
       });
-      modal()
     }
   }
+
+  // const handleOpInput = async(e) => {
+  //   e.preventDefault()
+  //   const fieldOfficeData = {
+  //     date: payeeData.date,
+  //     DVNo: payeeData.DV,
+  //     BUR: operatorInput.ors,
+  //     payee: payeeData.payee,
+  //     particulars: payeeData.particular,
+  //     amount: payeeData.amount
+  //   }
+
+  //   const data = {
+  //     fundingData: operatorInput,
+  //     fieldOfficeData: fieldOfficeData
+  //   }
+
+  //   const res = await inputOperator(data, payeeData.DVKey)
+  //   if(res){
+  //     Swal.fire({
+  //       title: "Saved",
+  //       text: "Disbursement Voucher is successfully save!",
+  //       icon: "success",
+  //       confirmButtonColor: "#009933"
+  //     });
+  //     modal()
+  //   }
+  // }
 
   const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '' }]);
 
@@ -539,8 +582,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }, [activeTab]);
 
-
-  const isDisabled = user?.role === '3'
   
   const [isOtherSelected, setIsOtherSelected] = useState(false);
   const handleChangeAddress = (e) => {
@@ -555,17 +596,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   }
 
   return (
-    <form onSubmit={(e) => {
-        if(user.role === '3'){
-          if (permission.data.permission) {
-            handleSubmit(e);
-          }else{
-            handleOpInput(e)
-          }
-        }else{
-          flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)
-        }
-      }} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
+    <form onSubmit={(e) => flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
       <div className='w-full h-auto'>
         <div className='w-full h-auto px-3 py-3'>
           <h1 className={`${user.role === '4' ? 'text-preparerPrimary' : 'text-fundingBlueGreen'} text-xl 2xl:text-3xl font-bold`}>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
@@ -608,7 +639,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <label className='text-gray-500'>Payee</label>
               <input
                 className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                disabled={ ['GSIS', 'Meralco'].includes(activeTab) || (isDisabled && !permission.data.permission)}
+                disabled={ ['GSIS', 'Meralco'].includes(activeTab)}
                 type="text" 
                 pattern="^[a-zA-Z\s'-]+$"
                 value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab : ['GSIS', 'Meralco'].includes(payeeData.payee) ? '' : payeeData.payee }
@@ -654,7 +685,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 ) : (
                   <select 
                     className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    disabled={isDisabled && !permission.data.permission}
+                    ///disabled={isDisabled && !permission.data.permission}
                     type="text" 
                     value={payeeData.address}
                     onChange={handleChangeAddress} 
@@ -675,7 +706,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <label className='text-gray-500'>TIN/Employee No.</label>
                 <input 
                   className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  disabled={isDisabled && !permission.data.permission}
+                  //disabled={isDisabled && !permission.data.permission}
                   type="text" 
                   value={payeeData.TIN}
                   placeholder='123-456-789-000'
@@ -698,7 +729,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                   onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
                   value={payeeData.fund}
-                  disabled={isDisabled && !permission.data.permission}
+                  //disabled={isDisabled && !permission.data.permission}
                   required
                   //value
                 >
@@ -721,7 +752,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <input 
                   className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                   type="date" 
-                  disabled={isDisabled && !permission.data.permission}
+                  //disabled={isDisabled && !permission.data.permission}
                   value={payeeData.date}
                   placeholder="Date"
                   onChange={(e) => setPayeeData({...payeeData, date: e.target.value})}
@@ -756,7 +787,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <select  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                   onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
                   value={payeeData.RC}
-                  disabled={isDisabled && !permission.data.permission}
+                  //disabled={isDisabled && !permission.data.permission}
                   required
                 >
                   <option value="" disabled>Select </option>
@@ -841,7 +872,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       setPayeeData({...payeeData, NF_name: e.target.value, NF_office: selectedOption.getAttribute('office')})
                     }}
                     value={payeeData.NF_name}
-                    disabled={isDisabled && !permission.data.permission}
+                    //disabled={isDisabled && !permission.data.permission}
                     required
                   >
                     <option value="" disabled>Select</option>
@@ -882,7 +913,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           className={`${
                             user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                           } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                          disabled={isDisabled && !permission.data.permission}
+                          //disabled={isDisabled && !permission.data.permission}
                           value={payeeData.TT_tax && payeeData.TT_cost ? `${payeeData.TT_tax}-${payeeData.TT_cost}` : ''}
                           onChange={(e) => {
                             const [taxCategory, type] = e.target.value.split('-');
@@ -926,7 +957,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                         type="number"
                         step="0.01"
-                        disabled={isDisabled && !permission.data.permission}
+                        //disabled={isDisabled && !permission.data.permission}
                         placeholder="0"
                         value={payeeData.amount === 0 ? '' : payeeData.amount}
                         onChange={(e) =>
@@ -977,7 +1008,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                             type="text"
                             placeholder="Search here..."
                             value={field.accTitle}
-                            disabled={isDisabled && !permission.data.permission}
+                            //disabled={isDisabled && !permission.data.permission}
                             onChange={(e) => handleChangeAcc(e, index)}
                             required
                           />
@@ -1040,7 +1071,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                                   user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                                 } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                                 type="number"
-                                disabled={(isDisabled && !permission.data.permission) || optionalAmount}
+                                //disabled={(isDisabled && !permission.data.permission) || optionalAmount}
                                 placeholder="0"
                                 value={field.amount === 0 ? '' : field.amount}
                                 onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
@@ -1075,7 +1106,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                       type="number" 
                       step='0.01'
-                      disabled={isDisabled && !permission.data.permission}
+                      //disabled={isDisabled && !permission.data.permission}
                       onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
                       placeholder='0'
                       value={payeeData.amount === 0 ? '' : payeeData.amount}
@@ -1097,7 +1128,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                       type="number" 
-                      disabled={isDisabled && !permission.data.permission}
+                      //disabled={isDisabled && !permission.data.permission}
                       value={gsis.stamp === 0 ? '' : gsis.stamp}
                       onChange={(e) => setGSIS({...gsis, stamp: parseFloat(e.target.value)})}
                       placeholder='0'
@@ -1108,7 +1139,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                       type="number" 
-                      disabled={isDisabled && !permission.data.permission}
+                      //disabled={isDisabled && !permission.data.permission}
                       value={gsis.dst === 0 ? '' : gsis.dst}
                       onChange={(e) => setGSIS({...gsis, dst: parseFloat(e.target.value)})}
                       placeholder='0'
@@ -1119,7 +1150,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                       type="number" 
-                      disabled={isDisabled && !permission.data.permission}
+                      //disabled={isDisabled && !permission.data.permission}
                       value={gsis.vat12 === 0 ? '' : gsis.vat12}
                       onChange={(e) => setGSIS({...gsis, vat12: parseFloat(e.target.value)})}
                       placeholder='0'
@@ -1140,7 +1171,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                           type="number" 
-                          disabled={isDisabled && !permission.data.permission}
+                          //disabled={isDisabled && !permission.data.permission}
                           value={meralco.meralcoVAT === 0 ? '' : meralco.meralcoVAT}
                           onChange={(e) => setMeralco({...meralco, meralcoVAT: parseFloat(e.target.value)})}
                           placeholder='0'
@@ -1163,7 +1194,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                           type="number" 
                           step='0.01'
-                          disabled={isDisabled && !permission.data.permission}
+                          //disabled={isDisabled && !permission.data.permission}
                           onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
                           placeholder='0'
                           value={payeeData.amount === 0 ? '' : payeeData.amount}
@@ -1174,7 +1205,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                           type="number" 
-                          disabled={isDisabled && !permission.data.permission}
+                          //disabled={isDisabled && !permission.data.permission}
                           value={meralco.meralcoNONVAT === 0 ? '' : meralco.meralcoNONVAT}
                           onChange={(e) => setMeralco({...meralco, meralcoNONVAT: parseFloat(e.target.value)})}
                           placeholder='0'
@@ -1191,7 +1222,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
                 onChange={(e) => {setPayeeData({...payeeData, particular: e.target.value.trimStart()})}}
                 value={payeeData.particular}
-                disabled={isDisabled && !permission.data.permission}
+                //disabled={isDisabled && !permission.data.permission}
                 placeholder='Write details here...'
                 required
                 maxLength="500"
@@ -1204,7 +1235,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
                 onChange={(e) => {setBirData({...birData, birParticular: e.target.value.trimStart()})}}
                 value={birData.birParticular}
-                disabled={isDisabled && !permission.data.permission}
+                //disabled={isDisabled && !permission.data.permission}
                 placeholder='Write details here...'
                 required
                 maxLength="500"
@@ -1213,14 +1244,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           </div>          
         </div>
       </div>
-      <div className="w-full h-auto flex items-center justify-between gap-2 px-3 py-5 border-t-2">
-        <div className='w-2/3 h-full'>
-          {(error ||  errorForFunding) && (
-            <div className="w-auto h-auto border-2 border-red-500 bg-red-200 rounded-lg px-4 py-2 text-center">
-              <h4 className="text-base 2xl:text-lg text-red-500">{error}</h4>
-            </div>
-          )}
-        </div>
+      <div className="w-full h-auto flex items-center justify-end gap-2 px-3 py-5 border-t-2">
         <div className='w-1/3 flex items-center justify-end px-3 gap-2'> 
           <button 
             onClick={modal}
@@ -1228,7 +1252,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             >Back</button>
           <button 
             type="submit" 
-            disabled={user.role === '3' ? isLoadingForFunding : isLoading} 
+            disabled={isLoading} 
             className={`text-base 2xltext-base 2xl:text-lg :text-lg py-2 px-5 rounded-lg border-2 ${user.role === '4' ? 'bg-preparerPrimary text-white hover:bg-white hover:text-preparerPrimary border-preparerPrimary' : 'bg-fundingBlueGreen text-white hover:bg-white hover:text-fundingBlueGreen border-fundingBlueGreen'} transition-all duration-150`}
             >Save</button>
         </div>

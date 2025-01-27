@@ -3,10 +3,13 @@ import { useState, useEffect } from 'react'
 import { useFundingHook } from '../../hooks/useFundingHook'
 
 import Swal from 'sweetalert2'
+
+import LargeLoader from '../Loaders/LargeLoader'
+
 const AddTab = (props) => {
     const {modal, ASANo, currTabs, remainingASA} = props
     const { user } = useAuthContext()
-    const {addingTab} = useFundingHook()
+    const {addingTab, isLoading, error} = useFundingHook()
 
     const [tabs, setTabs] = useState([{title: "", amount: 0}])
     const [tabsAmount, setTabsAmount] = useState(0)
@@ -54,7 +57,12 @@ const AddTab = (props) => {
         e.preventDefault();
         const larger = sumAmountTabs(tabs)
         if(larger){
-            alert('sobra naman po')
+            Swal.fire({
+                title: "Error",
+                text: `Amount is too large!`,
+                icon: "error",
+                confirmButtonColor: "#009933"
+            });
         }else{
             console.log(tabs)
             const res = await addingTab(tabs, ASANo)
@@ -66,6 +74,13 @@ const AddTab = (props) => {
                     confirmButtonColor: "#009933"
                     });
                 modal()
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: `${error}`,
+                    icon: "error",
+                    confirmButtonColor: "#009933"
+                });
             }
         }
     };
@@ -106,6 +121,9 @@ const AddTab = (props) => {
                     type='submit'
                     >Save</button>
             </div>
+            {isLoading && (
+                <LargeLoader/>
+            )}
         </form>
     )
 }

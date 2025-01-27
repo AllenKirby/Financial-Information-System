@@ -30,25 +30,6 @@ export const useFundingHook = () => {
         }
     }
 
-    const inputOperator = async(data, DV) => {
-        setIsLoading(true)
-        setError(null)
-        try {
-            const res = await axios.patch(`${apiURL}/operator/update_records/${DV}`, data, {
-                withCredentials: true
-            })
-            if(res.status === 200){
-                setIsLoading(false) 
-                return true
-            }
-        } catch (error) {
-            setIsLoading(false)
-            const errorMessage = error.response?.data?.message || error.message || "Error updating the document: operator";
-            setError(errorMessage);
-            console.log(error)
-        }
-    }
-
     const updateASA_ORS = async(data, DV) => {
         setIsLoading(true)
         setError(null)
@@ -123,6 +104,7 @@ export const useFundingHook = () => {
             const errorMessage = error.response?.data?.message || error.message || "An error occurred";
             setError(errorMessage);
             console.log(error)
+            return false
         }
     }
 
@@ -327,25 +309,32 @@ export const useFundingHook = () => {
             const errorMessage = error.response?.data?.message || error.message || "An error occurred";
             setError(errorMessage);
             console.log(error)
+            return false
         }
     }
 
     const addingTab = async(tab, ASANo) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const res = await axios.post(`${apiURL}/operator/addTab/${ASANo}`, tab, {
                 withCredentials: true
             })
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
-        }catch(err){
-            console.log(err)
+        }catch(error){
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+            return false
         }
     }
       
     return {
         returnDoc, 
-        inputOperator, 
         transferToHead, 
         appendDataToSheet, 
         AddControlBook,

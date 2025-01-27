@@ -246,7 +246,7 @@ const DVTemplate = ({document}) => {
                   <li key={`code-${index}`} className='text-customFontColor font-semibold'>{code}</li>
                 </>
               ))}
-              <p className='text-customFontColor font-semibold text-justify'>{document?.particular}</p>
+              <p className='text-customFontColor font-semibold break-words'>{document?.particular}</p>
             </div>
           </div>
         </div>
@@ -278,7 +278,7 @@ const DVTemplate = ({document}) => {
                   <p className='text-customFontColor font-medium'>{`${formatToPeso(val1)}`}</p>
                 )
               }
-              <p className='text-customFontColor font-medium'>{document?.birParticular}</p>
+              <p className='text-customFontColor font-medium break-words'>{document?.birParticular}</p>
             </div>
           </div>
         </div>

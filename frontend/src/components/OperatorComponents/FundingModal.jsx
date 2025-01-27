@@ -7,8 +7,6 @@ import { useInitialStateDV } from "../../hooks/useInitialStateDV";
 import PropTypes from 'prop-types'
 import Swal from 'sweetalert2'
 
-import { IoMdCheckmark } from "react-icons/io";
-
 import LargeLoader from '../Loaders/LargeLoader'
 
 const FundingModal = ({modal, data, fundCluster}) => {
@@ -19,6 +17,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
     const [origBUR, setOrigBUR] = useState('')
+    const [selectedASANo, setSelectedASANo] = useState('')
+    const [filterDocuments, setFilteredDocuments]= useState({})
     //const [same, setSame] = useState(false)
     const prevASARef = useRef();
 
@@ -222,6 +222,20 @@ const FundingModal = ({modal, data, fundCluster}) => {
         }
     }
 
+    const filterSelectedASA = (controlBook) => {
+        if(controlBook && Object.entries(controlBook).length > 0) {
+            if(selectedASANo) {
+                return Object.fromEntries(Object.entries(controlBook).filter(([ASA,]) => 
+                    ASA === selectedASANo
+                ))
+            } else {
+                return controlBook
+            }
+        } else {
+            return {}
+        }
+    }
+
     // const handleUpdateChangeBoxAmount = (checked) => {
 
     //     if(checked){
@@ -304,6 +318,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     // }
 
+    console.log(filterSelectedASA(filterFundCluster(ASANo)))
+
     return(
         <form onSubmit={handleSubmit} className="bg-white w-full sm:w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
             <h1 className="px-3 my-2 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
@@ -337,68 +353,84 @@ const FundingModal = ({modal, data, fundCluster}) => {
                     </button>
                 </div>
             </div>
-            <h1 className="px-3 py-2 text-lg font-bold text-fundingBlueGreen"> Amount: {formatToPeso(data.amount)}</h1>
-            <div className="flex-1 overflow-y-auto">
-                <div className="w-full px-3">
-                    <label className="font-semibold">ASA No.</label>
-                    <p>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
-                    <div className="flex flex-col items-center justify-center gap-2 p-2 w-full">
-                    {Object.entries(filterFundCluster(ASANo)).length > 0 ? (
-                            Object.entries(filterFundCluster(ASANo)).map(([key, asano]) => {
-                                const finalASANO = key.replace('|', ' ').split('!')[0];
-                                return (
-                                    <div key={key} className="w-full h-auto border-b pb-2">
-                                        <h4 className="font-semibold text-lg mb-2">
-                                            {finalASANO}
-                                        </h4>
-                                        <div className="flex flex-wrap items-center justify-start gap-2">
-                                            {Object.entries(asano).map(([projectName, project]) => (
-                                                <label key={projectName} className="peer flex items-center gap-2">
-                                                    <input
-                                                        type="checkbox"
-                                                        required
-                                                        value={`${key}/${project.projectID}`}
-                                                        className="peer hidden"
-                                                        onChange={(e) => {
-                                                            const isChecked = e.target.checked;
-                                                            const projID = e.target.value;
-                                                            const amount = parseFloat(
-                                                                project.RO || 0
-                                                            );
-                                                            // console.log(isChecked)
-                                                            handleChangeBoxAmount(isChecked,key, project.projectID, amount, projectName)
-
+            <div className="flex-1 overflow-y-auto mt-2">
+                <div className="w-full h-full flex flex-col px-3">
+                    <div className="w-full h-auto flex items-center justify-between">
+                        <label className="font-semibold">ASA No.</label>
+                        <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold`}>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
+                    </div>
+                    <div className="w-full h-auto">
+                        <select 
+                            className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
+                            onChange={(e) => setSelectedASANo(e.target.value)}
+                            value={selectedASANo}>
+                            <option disabled value="">Select ASA No.</option>
+                            {Object.keys(filterFundCluster(ASANo)).length > 0 ? 
+                                Object.keys(filterFundCluster(ASANo)).map((asano, index) => { 
+                                    const ASA = asano.split('!')[0]
+                                    const finalASA = ASA.replace('|', " ")
+                                    return <option key={index} value={asano}>{finalASA}</option>
+                                }
+                            ) : 
+                                <option disabled value="">No ASA No. Found</option>
+                            }
+                        </select>
+                    </div>
+                    <div className="flex-1 overflow-y-auto gap-2 p-2 w-full">
+                        {selectedASANo && 
+                            Object.entries(filterSelectedASA(filterFundCluster(ASANo))).length > 0 ? (
+                                Object.entries(filterSelectedASA(filterFundCluster(ASANo))).map(([key, asano]) => {
+                                    const finalASANO = key.replace('|', ' ').split('!')[0];
+                                    console.log(asano)
+                                    return (
+                                        <div key={key} className="w-full h-auto border-b pb-2">
+                                            <h4 className="font-semibold text-lg mb-2">
+                                                {finalASANO}
+                                            </h4>
+                                            <div className="flex flex-wrap items-center justify-start gap-2">
+                                                {Object.entries(asano).map(([projectName, project]) => (
+                                                    <label key={projectName} className="peer flex items-center gap-2">
+                                                        <input
+                                                            type="checkbox"
+                                                            required
+                                                            value={`${key}/${project.projectID}`}
+                                                            className="peer hidden"
+                                                            onChange={(e) => {
+                                                                const isChecked = e.target.checked;
+                                                                const projID = e.target.value;
+                                                                const amount = parseFloat(
+                                                                    project.RO || 0
+                                                                );
+                                                                // console.log(isChecked)
+                                                                handleChangeBoxAmount(isChecked,key, project.projectID, amount, projectName)
+    
+                                                                
+                                                            }}
+                                                            checked={Boolean(operatorInput.asa?.[`${key}/${project.projectID}`])}
+                                                            disabled={
+                                                                !Boolean(operatorInput.asa?.[`${key}/${project.projectID}`]) && 
+                                                                Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
+                                                            }
                                                             
-                                                        }}
-                                                        checked={Boolean(operatorInput.asa?.[`${key}/${project.projectID}`])}
-                                                        disabled={
-                                                            !Boolean(operatorInput.asa?.[`${key}/${project.projectID}`]) && 
-                                                            Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
-                                                        }
-                                                        
-                                                    />
-                                                    <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen transition-all duration-150">
-                                                        <IoMdCheckmark size={20} className="hidden peer-checked:block"/>    
-                                                        {projectName} :{' '}
-                                                        {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
-                                                        {/* {operatorInput.asa?.[`${key}/${project.projectID}`] ? formatToPeso(operatorInput.asa?.[`${key}/${project.projectID}`]) : formatToPeso(project.RO)} */}
-                                                    </span>
-                                                </label>
-                                            ))}
+                                                        />
+                                                        <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen transition-all duration-150">  
+                                                            {projectName} :{' '}
+                                                            {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
+                                                            {/* {operatorInput.asa?.[`${key}/${project.projectID}`] ? formatToPeso(operatorInput.asa?.[`${key}/${project.projectID}`]) : formatToPeso(project.RO)} */}
+                                                        </span>
+                                                    </label>
+                                                ))}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })
-                        ) : (
-                            <p>No options available</p>
-                        )}
-                        
-                        {/* <button
-                        onClick={handleRemove_ASA}
-                            type="button" 
-                            className="w-1/5 flex justify-center items-center bg-red-500 rounded ml-1 py-1">
-                            <MdRemove className="text-3xl text-white"/>
-                        </button> */}
+                                    );
+                                })
+                            ) : (
+                                
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <p className="font-semibold">No options available</p>
+                                </div>
+                            )
+                        }
                     </div>
                 </div>
             </div>
