@@ -25,6 +25,7 @@ export const usePreparerHook = () => {
             const errorMessage = error.response?.data?.message || error.message || "An error occurred";
             setError(errorMessage);
             console.log(errorMessage)
+            return false
         }
     }
 
@@ -101,6 +102,7 @@ export const usePreparerHook = () => {
             const errorMessage = error.response?.data?.message || error.message || "An error occurred";
             setError(errorMessage);
             console.log(errorMessage)
+            return false
         }
 
     }

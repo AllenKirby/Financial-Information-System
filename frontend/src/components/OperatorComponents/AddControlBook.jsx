@@ -120,6 +120,13 @@ const AddControlBook = (props) => {
                     confirmButtonColor: "#009933"
                     });
                 modal()
+            } else {
+                Swal.fire({
+                    title: "Error",
+                    text: error,
+                    icon: "error",
+                    confirmButtonColor: "#009933"
+                });
             }
         }
     }
@@ -191,7 +198,7 @@ const AddControlBook = (props) => {
                             <option value="501 COB">501 COB</option>
                             <option value="501 CARP">501 CARP</option>
                             <option value="501 LFP">501 LFP</option>
-                            <option value="Contract Farming">Farming Support Services Program</option>
+                            <option value="Farming Support Services Program">Farming Support Services Program</option>
                     </select>
                 </div>
             </div>
