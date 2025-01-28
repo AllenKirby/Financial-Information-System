@@ -139,10 +139,10 @@ const DisbursementRecords = () => {
             <IoAdd size={20} className='font-bold'/> <span className='hidden lg:block'>New</span>
           </button>
           <div className='relative'>
-            <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm 2xl:text-base'>
+            <button onClick={() => setFilterFlag(!filterFlag)} className='flex relative truncate bg-white z-10 w-fit items-center justify-center gap-2 px-2 py-2 border-2 rounded-lg text-sm 2xl:text-base'>
               <HiAdjustmentsHorizontal 
                 size={18}/>
-                {filter ? <>{filter} <RxCross2 onClick={() => setFilter('')}/></> : <span className='hidden sm:hidden md:hidden lg:hidden xl:block'>Filter by Fund Cluster</span>}
+                {filter ? <> <span className='hidden sm:block'>{filter}</span> <RxCross2 onClick={() => setFilter('')}/></> : <span className='hidden sm:hidden md:hidden lg:hidden xl:block'>Filter by Fund Cluster</span>}
             </button>
             {filterFlag && (
               <>

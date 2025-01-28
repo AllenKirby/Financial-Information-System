@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react"
 
+import PropTypes from 'prop-types'
+
 const ReportRows = ({reportData}) => {
   const [data, setData] = useState({
     previousRO: 0,
@@ -46,8 +48,6 @@ const ReportRows = ({reportData}) => {
         previousFO: computePreviousFO(),
         previousTotal: previousTOTAL()
     })
-
-    console.log(reportData)
   }, [])
 
   const add = (firstNum, secondNum) => {
@@ -172,6 +172,10 @@ const ReportRows = ({reportData}) => {
         }
     </tbody>
   )
+}
+
+ReportRows.propTypes = {
+  reportData: PropTypes.object.isRequired
 }
 
 export default ReportRows

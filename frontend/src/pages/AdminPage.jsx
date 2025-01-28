@@ -72,7 +72,7 @@ const AdminPage = () => {
   }, [documents])//[documents, user, apiURL, dispatch]
 
   const filterApproverDocu = (doc) => {
-    const filteredData = Object.entries(doc).filter(([key, value]) => ['Approved', 'For Approval'].includes(value.data.status))
+    const filteredData = Object.entries(doc).filter(([, value]) => ['Approved', 'For Approval'].includes(value.data.status))
     return Object.fromEntries(filteredData)
   }
 

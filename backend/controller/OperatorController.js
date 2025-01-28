@@ -1030,21 +1030,41 @@ const updateControlBook = async(req, res) => {
     }
 }
 
-  const deleteControlBook = async(req, res) => {
-    const { id } = req.params
-    console.log(`deleting id: ${id}`)
-    try{
-        await db.collection('ControlBook').doc(id).delete();
+const deleteSubcollections = async (docRef) => {
+    const subcollections = await docRef.listCollections();
+    for (const subcollection of subcollections) {
+        const subcollectionPath = `${docRef.path}/${subcollection.id}`;
+        const subcollectionRef = db.collection(subcollectionPath);
+        const snapshot = await subcollectionRef.get();
+
+        for (const doc of snapshot.docs) {
+            await deleteSubcollections(doc.ref);
+            await doc.ref.delete();
+        }
+    }
+};
+
+const deleteControlBook = async (req, res) => {
+    const { id } = req.params;
+    console.log(`Deleting ControlBook with id: ${id}`);
+  
+    try {
+        const docRef = db.collection('ControlBook').doc(id);
+
+        await deleteSubcollections(docRef);
+
+        await docRef.delete();
+
         await db.collection('formData').doc('ControlBook').update({
             [id]: admin.firestore.FieldValue.delete()
-        })
-        res.status(200).json({ message: 'Control Book successfully deleted' })
-    }
-    catch(error){
-        console.error("Error deleting control book: ", error);
+        });
+
+        res.status(200).json({ message: 'Control Book and its subcollections successfully deleted' });
+    } catch (error) {
+        console.error("Error deleting ControlBook: ", error);
         res.status(500).json({ success: false, error: error.message });
     }
-}
+};
 
 const updateFieldOffice = async(req, res) => {
     const { id } = req.params

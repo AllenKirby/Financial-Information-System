@@ -25,8 +25,6 @@ const Folder = ({ASANo, controlBook}) => {
 
     const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
 
-    console.log(ASANo)
-
     const modal = (e) => {
       e.stopPropagation()
       setControlBookFlag(!controlBookFlag)
@@ -75,8 +73,6 @@ const Folder = ({ASANo, controlBook}) => {
     isDeletable()
   }, [controlBook])
 
-  console.log(controlBook.ASANo)
-
   return (
     <div
       onClick={() => navigate(`${controlBook.ASANo}`)}
@@ -90,7 +86,7 @@ const Folder = ({ASANo, controlBook}) => {
               : EmptyFolder
           }
           alt="folder"
-          className="w-1/2 h-full"
+          className="w-auto h-full"
         />
       </div>
       <div className='w-full h-[30%]'>
