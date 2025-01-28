@@ -39,7 +39,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     accCategory: [], 
     accTitle: [], 
     accCode: [], 
-    optionalAmount:[], 
+    optionalAmount:[],
+    additionalLabels: [],
+    additionalCode: [], 
     amount: 0, 
     particular: ''})
   const [gsis, setGSIS] = useState({stamp: 0, dst: 0, vat12: 0})
@@ -81,7 +83,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
-
     if (flag && document) {
       setPayeeData((prevData) => {
         const updatedData = {
@@ -152,9 +153,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   };
 
   useEffect(() => {
-    const date = new Date()
-    const today = date.toISOString().split('T')[0]
-    setPayeeData({...payeeData, date: today})
+    if(!flag){
+      const date = new Date()
+      const today = date.toISOString().split('T')[0]
+      setPayeeData({...payeeData, date: today})
+    }
   }, [])
 
   const handleChangePayee = (e) => {
@@ -241,6 +244,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       accTitle: formFields.map(arr => Object.values(arr)[1]),
       accCode: formFields.map(arr => Object.values(arr)[2]),
       optionalAmount: formFields.map(arr => Object.values(arr)[3]),
+      additionalLabels: formFields.map(arr => Object.values(arr)[4]),
       activeTab: activeTab
       
     };
@@ -311,6 +315,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       tax: payeeData.TT_tax,
       cost: payeeData.TT_cost
     }
+    // console.log(data)
     if(data.payee_data.accCode.length <= 1){
       if(!deepEqual(pData, payeeOptions[payeeKey])){
         savePayeeData(pData)
@@ -390,6 +395,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       const storedFormData = sessionStorage.getItem('FormData');
       let form = storedFormData ? JSON.parse(storedFormData) : await getFormData()
       
+      console.log(form.fundCluster)
 
       setFundCluster(Object.values(form.fundCluster))
       setRc(Object.values(form.ResponsibilityCenter))
@@ -514,10 +520,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //   }
   // }
 
-  const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '' }]);
+  const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '', labels: '' }]);
 
   const addNewField = () => {
-    setFormFields([...formFields, { accCategory:'',accTitle: '', accCode: '', amount: '' }]);
+    setFormFields([...formFields, { accCategory:'',accTitle: '', accCode: '', amount: '', labels: '' }]);
   };
 
   const removeField = (index) => {
@@ -737,7 +743,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   {fundCluster.length > 0 ? (
                       fundCluster.map((fund, index) => (
                           <option key={index} value={fund}>
-                              {fund}
+                              {fund === 'Contract Farming' ? 'Farming Support Service Program' : fund }
                           </option>
                       ))
                   ) : (
@@ -1042,9 +1048,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           )}
                         </div>
                         <div className='w-full sm:w-1/3'>
-                          <label className="text-gray-500">Account Title(Optional)</label>
-                          <input 
-                            type="text" 
+                          <label className="text-gray-500">Additional Label(Optional)</label>
+                          <input
+                            value={formFields[index].labels} 
+                            type="text"
+                            onChange={(e) => {
+                              handleFieldChange(index, 'labels', e.target.value)
+                            }} 
                             className={`${
                               user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                             } text-gray-500 w-full px-4 py-2 rounded-md border-2`}/>
@@ -1058,7 +1068,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                               user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                             } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                             type="text"
-                            value={formFields[0].accCode}
+                            value={formFields[index].accCode}
                           />
                         </div>
                         {/* Amount (Optional) */}

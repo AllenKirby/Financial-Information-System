@@ -28,6 +28,13 @@ const FieldOffices = (props) => {
   const viewProject = () => {
     setViewProjectFlag(!viewProjectFlag)
   }
+
+  const formatToPeso = (value) => {
+    return new Intl.NumberFormat('en-PH', {
+        style: 'currency',
+        currency: 'PHP',
+    }).format(value);
+};
   const deleteFO = async(e) => {
     e.stopPropagation()
     const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}`
@@ -71,13 +78,13 @@ const FieldOffices = (props) => {
           </div>
           <div className='w-1/4 flex items-center justify-center gap-3'>
             <div className='w-1/3 text-center'>
-              <p>0</p>
+              <p>{formatToPeso(fieldOffice.ASA)}</p>
             </div>
             <div className='w-1/3 text-center'>
-              <p>0</p>
+              <p>{formatToPeso(fieldOffice.FO)}</p>
             </div>
             <div className='w-1/3 text-center'>
-              <p>0</p>
+              <p>{formatToPeso(fieldOffice.RO)}</p>
             </div>
           </div>
           <div className='w-1/4 flex items-center justify-center gap-3'>

@@ -90,7 +90,7 @@ const DVTemplate = ({document}) => {
             </div>
             <div className='w-3/5 h-full'>
               <p className='text-customFontColor font-medium'>{document?.date}</p>
-              <p className='text-customFontColor font-medium'>{document?.fund}</p>
+              <p className='text-customFontColor font-medium'>{document?.fund === 'Contract Farming' ? 'Farming Support Service Program' : document?.fund}</p>
               <p className='text-customFontColor font-medium'>{document?.DV}</p>
             </div>
           </div>
