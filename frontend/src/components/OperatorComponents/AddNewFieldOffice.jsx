@@ -87,14 +87,15 @@ const AddNewFieldOffice = (props) => {
         }else{
             const title = fieldOfficeData.tabStatus
             const totalAmount = fieldOfficeData.tabAmount
-            const usedAmount = parseFloat(usedAmountPerTab[title])
+            const usedAmount = parseFloat(usedAmountPerTab[title] || 0)
             const unused = totalAmount - usedAmount
+            
             if(value > unused){
                 setErrorFlag(true)
             }else{
-                setFieldOfficeData({...fieldOfficeData, ASA: value})
                 setErrorFlag(false)
             }
+            setFieldOfficeData({...fieldOfficeData, ASA: value})
         }
     }
 

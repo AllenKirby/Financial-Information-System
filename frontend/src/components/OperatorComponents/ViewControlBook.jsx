@@ -119,7 +119,7 @@ const ViewControlBook = () => {
                 <div className="w-full sm:w-1/2 flex gap-2">
                   <div className="w-1/2 h-full rounded-lg p-3 border-2 ">
                     <div className="w-full mb-2">
-                      <p className="font-semibold text-xs 2xl:text-lg">IMO Budget</p>
+                      <p className="font-semibold text-xs 2xl:text-lg">IMO Balance</p>
                     </div>
                     <div className="w-full flex items-center justify-center">
                       <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
@@ -127,10 +127,12 @@ const ViewControlBook = () => {
                   </div>
                   <div className="w-1/2 h-full rounded-lg p-3 border-2">
                     <div className="w-full mb-2">
-                      <p className="font-semibold text-xs 2xl:text-lg">FO Balance</p>
+
+                      <p className="font-semibold text-xs 2xl:text-lg">RO Balance</p>
+
                     </div>
                     <div className="w-full flex items-center justify-center">
-                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.RO)}</p>
+                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso((parseFloat(ControlBook.data.TotalASA) - parseFloat(ControlBook.data.leftBudget)) - parseFloat(ControlBook.data.FO))}</p>
                     </div>
                   </div>
                 </div>

@@ -48,6 +48,10 @@ const FundingModal = ({modal, data, fundCluster}) => {
         
     }, [])
 
+    useEffect(() => {
+        const firstASA = Object.entries(data.ASA)
+        console.log(data)
+    }, [data])
 
     useEffect(() => {
         const getData = async() => {
