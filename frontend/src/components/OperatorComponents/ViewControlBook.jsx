@@ -36,14 +36,11 @@ const ViewControlBook = () => {
       }).format(value);
   };
 
-  console.log(decodeURI(id))
-
   useEffect(() => {
     if(controlBooks){
       const selectedControlBook = Object.entries(controlBooks).find(([, controlBook]) => controlBook.ASANo === id)
       const selectedkey = Object.keys(controlBooks).find((key) => controlBooks[key].ASANo === id)
       if(selectedControlBook) {
-        console.log(selectedControlBook[1])
         setControlBook({key: selectedkey, data: selectedControlBook[1]})
       } else {
         console.log('No Control Book Found')
@@ -53,10 +50,6 @@ const ViewControlBook = () => {
     }
 
   }, [controlBooks, id])
-
-  useEffect(() => {
-    console.log(ControlBook.data.fieldOffices)
-  }, [ControlBook])
   
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {
@@ -116,7 +109,7 @@ const ViewControlBook = () => {
               </div>
               <div className="px-5">
                 <button 
-                  className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} text-white px-5 py-2 rounded-lg 2xl:text-lg`}
+                  className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} text-white px-5 py-2 rounded-lg 2xl:text-lg border-2 hover:bg-white transition-all duration-150`}
                   onClick={showReport}
                   ><FiFileText className="block sm:hidden"/> <span className="hidden sm:block">Generate Report</span></button>
               </div>
@@ -124,7 +117,7 @@ const ViewControlBook = () => {
             <div className="w-full h-[90%] flex flex-col">
               <div className="w-full h-auto flex flex-col sm:flex-row gap-2">
                 <div className="w-full sm:w-1/2 flex gap-2">
-                  <div className="w-1/2 h-full rounded-lg p-3 border-2 flex flex-col items-center justify-center">
+                  <div className="w-1/2 h-full rounded-lg p-3 border-2 ">
                     <div className="w-full mb-2">
                       <p className="font-semibold text-xs 2xl:text-lg">IMO Balance</p>
                     </div>
@@ -132,41 +125,43 @@ const ViewControlBook = () => {
                       <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
                     </div>
                   </div>
-                  <div className="w-1/2 h-full rounded-lg p-3 border-2 flex flex-col items-center justify-center">
+                  <div className="w-1/2 h-full rounded-lg p-3 border-2">
                     <div className="w-full mb-2">
+
                       <p className="font-semibold text-xs 2xl:text-lg">RO Balance</p>
+
                     </div>
                     <div className="w-full flex items-center justify-center">
                       <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso((parseFloat(ControlBook.data.TotalASA) - parseFloat(ControlBook.data.leftBudget)) - parseFloat(ControlBook.data.FO))}</p>
                     </div>
                   </div>
                 </div>
-                <div className="w-full sm:w-1/2 flex gap-2">
-                  <div className="w-1/3 h-full rounded-lg border-2 p-3">
-                    <div className="w-full mb-2">
+                <div className="w-full sm:w-1/2 flex flex-col sm:flex-row gap-2">
+                  <div className="w-full sm:w-1/2 h-full rounded-lg border-2 p-3">
+                    <div className="w-1/2 mb-2">
                       <p className="font-semibold text-xs 2xl:text-lg">Total Spending</p>
                     </div>
                     <div className="w-full flex items-center justify-center">
                       <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.FO)}</p>
                     </div>
                   </div>
-                  <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/3 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                      <IoAddOutline size={30}/>
-                      <p className="font-semibold lg:text-lg 2xl:text-xl">New Project</p>
-                    </div>
-                  </button>
-
-                  <button onClick={tabModal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} w-1/3 h-full rounded-lg p-2 flex items-center justify-center text-white`}>
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2">
-                      <IoAddOutline size={30}/>
-                      <p className="font-semibold lg:text-lg 2xl:text-xl">Add Tab</p>
-                    </div>
-                  </button>
-
+                  <div className="w-full sm:w-1/2 h-auto flex flex-row md:flex-col gap-2">
+                    <button onClick={modal} className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
+                      <div className="flex flex-row items-center justify-center gap-2">
+                        <IoAddOutline size={30}/>
+                        <p className="font-semibold lg:text-base 2xl:text-lg">New Project</p>
+                      </div>
+                    </button>
+                    <button onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
+                      <div className="flex flex-row items-center justify-center gap-2">
+                        <IoAddOutline size={30}/>
+                        <p className="font-semibold lg:text-base 2xl:text-lg">Add Tab</p>
+                      </div>
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="w-full h-auto bg-gray-100 rounded-lg mt-2 py-1 pr-6 flex items-center justify-center">
+              <div className="w-full h-auto bg-gray-100 rounded-lg mt-2 py-1 pr-6 hidden lg:flex items-center justify-center">
                 <div className="w-[95%] text-sm h-full flex items-center justify-center">
                   <div className="w-1/4 h-full py-1 flex items-center justify-center">
                     <p className="font-semibold">Field Office</p>
@@ -215,7 +210,7 @@ const ViewControlBook = () => {
                     <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
                   ))
                 ) : (
-                  <div className="flex items-center justify-center w-full h-full text-xl font-semibold">No Field Offices Found</div>
+                  <div className="flex items-center justify-center w-full h-full font-semibold">No Field Offices Found</div>
                 )}
               </div>
             </div>

@@ -27,7 +27,6 @@ const HistoryLogs = () => {
         const unsubscribe = onSnapshot(q, (snapshot) => {
             if (snapshot.exists()) {
                 const logs = snapshot.data()
-                console.log(logs)
                 setHistoryLogs(sortDesc(logs));
                 setFilteredLogs(sortDesc(logs))
             } else {9
@@ -171,7 +170,7 @@ const HistoryLogs = () => {
                     </div>
                 </div>
                 <div className="w-full flex-1 overflow-y-auto text-gray-500">
-                    {filteredLogs ? (
+                    {filteredLogs && Object.entries(filteredLogs).length > 0 ? (
                         <PaginatedList items={filteredLogs} paginationFor="HistoryLogs"/>
                     ) : (
                         <div className=" w-full h-full flex items-center justify-center">

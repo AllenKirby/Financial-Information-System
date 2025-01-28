@@ -35,7 +35,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
         const fetch = async () => { 
             const {bur, origBur} = await getBurNo()
             const primaryBUR = data.ORSBURS ? data.ORSBURS : bur
-            console.log(bur)
             if(!data.ORSBURS && isToggled){
                 setOperatorInput({...operatorInput, ors: primaryBUR})
             }
@@ -96,8 +95,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
             // controlBooks: CBAmount,
             update: isToggled
         }
-        console.log(fundingData)
-        console.log(fieldOfficeData)
         const res = await updateASA_ORS(fundingData, DVNo)
         // const res = true
         if(res){
@@ -126,7 +123,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
         const totalBalance = balances.length === 0 ? 0 : Object.values(balances).reduce((val, item) => val + parseFloat(item), 0)
         const enough = totalAmount >= totalBalance
         if(enough){
-            console.log(`balances: ${totalBalance} amount: ${totalAmount}`)
             setBalances({...balances, [key]: balance})
             setAddControlBook(true)
         }
@@ -139,7 +135,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     //this function works for new ASA
     const handleChangeBoxAmount = (checked, key, projectID, amount, projectName) => {
-        console.log(`${key} | ${projectID} | ${projectName} | ${amount}`)
         const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
         if (checked) {
             // console.log(Boolean(parseFloat(data.amount) < amount + budget))
@@ -180,7 +175,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
             setOperatorInput((prev) => {
                 const updatedAsa = { ...(prev.asa || {}) };
                 unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
-                console.log(unselectedAmount)
                 delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
                 return {
                     ...prev,
@@ -190,7 +184,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
             setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
             setBudget((prev) => {
                 const prevAmount = operatorInput?.asa[`${key}/${projectID}`] ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
-                console.log(Boolean(operatorInput?.asa[`${key}/${projectID}`]))
+             
                 if(Boolean(operatorInput?.asa[`${key}/${projectID}`])){
                     console.log(parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0))
                 }else{
@@ -203,7 +197,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
             //FOR INTEREACTIVITY DIFFERENCE
             setASANo((prev) => {
                 const prevAmount = operatorInput?.asa[`${key}/${projectID}`] ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
-                console.log(prevAmount)
+              
                 return{
                     ...prev,[key] : {
                         ...prev[key], [projectName] : {
@@ -322,8 +316,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     // }
 
-    console.log(filterSelectedASA(filterFundCluster(ASANo)))
-
     return(
         <form onSubmit={handleSubmit} className="bg-white w-full sm:w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
             <h1 className="px-3 my-2 text-2xl font-bold text-fundingBlueGreen">Add ASA No. and ORS/BURS</h1>
@@ -385,7 +377,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
                             Object.entries(filterSelectedASA(filterFundCluster(ASANo))).length > 0 ? (
                                 Object.entries(filterSelectedASA(filterFundCluster(ASANo))).map(([key, asano]) => {
                                     const finalASANO = key.replace('|', ' ').split('!')[0];
-                                    console.log(asano)
                                     return (
                                         <div key={key} className="w-full h-auto border-b pb-2">
                                             <h4 className="font-semibold text-lg mb-2">
@@ -405,7 +396,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                                 const amount = parseFloat(
                                                                     project.RO || 0
                                                                 );
-                                                                // console.log(isChecked)
                                                                 handleChangeBoxAmount(isChecked,key, project.projectID, amount, projectName)
     
                                                                 

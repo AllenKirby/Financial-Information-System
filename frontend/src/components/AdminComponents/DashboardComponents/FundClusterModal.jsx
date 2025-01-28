@@ -10,13 +10,17 @@ const FundClusterModal = ({fundCluster, modal, vouchers}) => {
     const [filteredVouchers, setFilteredVouchers] = useState({})
     const [selectedVoucher, setSelectedVoucher] = useState(null)
 
+    console.log(vouchers)
+
     useEffect(() => {
-        const result = Object.entries(vouchers).filter(([key,voucher]) => voucher.data.fund === fundCluster)
-        console.log(result)
-        if(result.length !== 0) {
-            setFilteredVouchers(result)
-        } else {
-            console.log(`${fundCluster} voucher(s) is empty`)
+        if(vouchers && Object.entries(vouchers).length > 0) {
+            const result = Object.entries(vouchers).filter(([,voucher]) => console.log(voucher))
+            console.log(result)
+            if(result.length !== 0) {
+                setFilteredVouchers(Object.fromEntries(result))
+            } else {
+                console.log(`${fundCluster} voucher(s) is empty`)
+            }
         }
     }, [vouchers, fundCluster])
 
@@ -54,7 +58,7 @@ const FundClusterModal = ({fundCluster, modal, vouchers}) => {
         </div>
         <div className='w-full flex-1 flex flex-col overflow-y-auto rounded-lg'>
             {!selectedVoucher && (
-                <div className='w-full h-auto p-3 hidden sm:flex items-center rounded-lg py-2 text-sm justify-center bg-gray-200'>
+                <div className='w-full h-auto p-3 hidden sm:flex items-center rounded-lg py-2 text-sm justify-center text-gray-400 bg-gray-100'>
                     <p className='w-2/4 px-3 font-bold'>Payee</p>
                     <p className='w-1/4 text-center font-bold'>DV No</p>
                     <p className='w-1/4 text-center font-bold'>Status</p>

@@ -49,8 +49,6 @@ const Notification = ({ notification, markAsRead }) => {
 
     return parse(dateTime, 'MMMM dd, yyyy hh:mm:ss a', new Date());
   }
-
-  console.log(notifData.dateTime)
   
   return (
     <li className='my-1 bg-white p-2 rounded-md cursor-pointer text-gray-500 hover:bg-slate-100' 

@@ -50,8 +50,6 @@ const AddNewFieldOffice = (props) => {
             }
         }
         setUsedAmountPerTab(data)
-        console.log(data)
-        console.log(tabs)
         }, [test])
 
     useEffect(() => {
@@ -61,7 +59,6 @@ const AddNewFieldOffice = (props) => {
                 projectID: `${ASANo},${fieldOffice.projectName}`,
                 projectName: fieldOffice.projectName
             }
-            console.log('ref', prevData.current)
         } else {
             prevData.current = null
         }
@@ -69,7 +66,6 @@ const AddNewFieldOffice = (props) => {
 
     const handleLimitASA = (e) => {
         const value = e.target.value
-        console.log(value)
         if(flag){
             const title = fieldOfficeData.tabStatus
             const usedAmount = parseFloat(usedAmountPerTab[title])
@@ -81,12 +77,9 @@ const AddNewFieldOffice = (props) => {
             // limit = totalAmount - avaialable
             const available = usedAmount - parseFloat(recordedASA)
             const limit = totalAmount - available
-            console.log(usedAmount, totalAmount, currASA, available)
             if(value > limit){
-                console.log('greater')
                 setErrorFlag(true)
             }else{
-                console.log('lesser', value, totalAmount,usedAmount)
                 setErrorFlag(false)
             }
             setCurrASA(value)
@@ -98,10 +91,8 @@ const AddNewFieldOffice = (props) => {
             const unused = totalAmount - usedAmount
             
             if(value > unused){
-                // console.log('greater')
                 setErrorFlag(true)
             }else{
-                // console.log('lesser', value, unused)
                 setErrorFlag(false)
             }
             setFieldOfficeData({...fieldOfficeData, ASA: value})

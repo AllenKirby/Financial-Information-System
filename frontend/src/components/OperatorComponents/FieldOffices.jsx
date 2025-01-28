@@ -68,84 +68,96 @@ const FieldOffices = (props) => {
   }
 
   return (
-    <div onClick={viewProject} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto cursor-pointer p-2 text-sm rounded-lg flex my-1 transition-all duration-300`}>
-        <div className='w-[95%] flex items-center justify-center'>
-          <div className='w-1/4 flex items-center justify-center gap-3'>
-            <p className='font-bold'>{fieldOffice.fieldOffice}</p>
+    <div onClick={viewProject} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto cursor-pointer p-2 text-sm rounded-lg flex flex-row gap-2 my-1 transition-all duration-300`}>
+      <div className='w-full lg:w-[95%] flex flex-col lg:flex-row items-center justify-start lg:justify-center'>
+        <div className='w-full lg:w-1/4 flex items-center justify-start lg:justify-center gap-2'>
+          <span className='block lg:hidden'>Project Name:</span><p className='font-bold'>{fieldOffice.fieldOffice}</p>
+        </div>
+        <div className='w-full lg:w-1/4 flex items-center justify-start lg:justify-center gap-2'>
+          <span className='block lg:hidden'>Field Office:</span><p className='font-bold truncate'>{fieldOffice.projectName}</p>
+        </div>
+        <div className='w-full lg:w-1/4 flex flex-row items-center justify-start lg:justify-center gap-2'>
+          <div className='w-1/4 h-full flex lg:hidden items-center justify-center'>
+            <p>ASA</p>
           </div>
-          <div className='w-1/4 flex items-center justify-center gap-3'>
-            <p className='font-bold truncate'>{fieldOffice.projectName}</p>
-          </div>
-          <div className='w-1/4 flex items-center justify-center gap-3'>
-            <div className='w-1/3 text-center'>
-              <p>{formatToPeso(fieldOffice.ASA)}</p>
+
+          <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.ASA)}</p>
             </div>
-            <div className='w-1/3 text-center'>
-              <p>{formatToPeso(fieldOffice.FO)}</p>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Utilized:</span><p className='font-semibold'>{formatToPeso(fieldOffice.FO)}</p>
             </div>
-            <div className='w-1/3 text-center'>
-              <p>{formatToPeso(fieldOffice.RO)}</p>
-            </div>
-          </div>
-          <div className='w-1/4 flex items-center justify-center gap-3'>
-            <div className='w-1/3 text-center'>
-              <p>0</p>
-            </div>
-            <div className='w-1/3 text-center'>
-              <p>0</p>
-            </div>
-            <div className='w-1/3 text-center'>
-              <p>0</p>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>{formatToPeso(fieldOffice.RO)}</p>
+
             </div>
           </div>
         </div>
-        <div className='w-[5%] relative flex items-center justify-end gap-3'>
-          {/* <button onClick={modal}>
-            <MdOutlineModeEdit size={23}/>
+        <div className='w-full lg:w-1/4 flex flex-row items-center justify-start lg:justify-center gap-2'>
+          <div className='w-1/4 h-full flex lg:hidden items-center justify-center'>
+            <p>Cash</p>
+          </div>
+          <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>0</p>
+            </div>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>0</p>
+            </div>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className='w-[5%] relative flex items-center justify-end gap-3'>
+        {/* <button onClick={modal}>
+          <MdOutlineModeEdit size={23}/>
+        </button>
+        {!Object.entries(fieldOffice.dvCollection).length > 0 && (
+          <button disabled={isLoading} onClick={deleteFO}>
+            <MdDeleteOutline size={25} color='red'/>
           </button>
-          {!Object.entries(fieldOffice.dvCollection).length > 0 && (
-            <button disabled={isLoading} onClick={deleteFO}>
-              <MdDeleteOutline size={25} color='red'/>
-            </button>
-          )} */}
-          <button onClick={(e) => {e.stopPropagation(); setOptionsFlag(!optionsFlag)}}>
-            <SlOptionsVertical size={17}/>
-          </button>
-          {optionsFlag && (
-            <>
-              <div className="fixed inset-0 z-20" onClick={(e) => {e.stopPropagation(); setOptionsFlag(!optionsFlag)}} />
-              <div onClick={(e) => e.stopPropagation()} className='absolute -bottom-16 right-0 p-2 z-30 shadow-md shadow-gray-200 bg-white w-auto h-auto rounded-lg flex flex-col gap-2'>
-                <button className='flex items-center justify-start gap-2' onClick={modal}>
-                  <MdOutlineModeEdit size={20}/> Edit
+        )} */}
+        <button onClick={(e) => {e.stopPropagation(); setOptionsFlag(!optionsFlag)}}>
+          <SlOptionsVertical size={17}/>
+        </button>
+        {optionsFlag && (
+          <>
+            <div className="fixed inset-0 z-20" onClick={(e) => {e.stopPropagation(); setOptionsFlag(!optionsFlag)}} />
+            <div onClick={(e) => e.stopPropagation()} className='absolute -bottom-16 right-0 p-2 z-30 shadow-md shadow-gray-200 bg-white w-auto h-auto rounded-lg flex flex-col gap-2'>
+              <button className='flex items-center justify-start gap-2' onClick={modal}>
+                <MdOutlineModeEdit size={20}/> Edit
+              </button>
+              {!Object.entries(fieldOffice.dvCollection).length > 0 && (
+                <button className='flex items-center justify-start gap-2' disabled={isLoading} onClick={deleteFO}>
+                  <MdDeleteOutline size={20} color='red'/> Delete
                 </button>
-                {!Object.entries(fieldOffice.dvCollection).length > 0 && (
-                  <button className='flex items-center justify-start gap-2' disabled={isLoading} onClick={deleteFO}>
-                    <MdDeleteOutline size={20} color='red'/> Delete
-                  </button>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-        {FieldOfficeModal && (
-          <>
-            <div className="fixed inset-0 z-40 bg-black opacity-50" onClick={modal} />
-            <div className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center">
-              <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA} test={test} tabs={tabs}/>
+              )}
             </div>
           </>
         )}
-        {viewProjectFlag && (
-          <>
-            <div className="fixed inset-0 z-20 bg-black opacity-50"/>
-            <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-              <ViewProject modal={viewProject} projectData={fieldOffice}/>
-            </div>
-          </>
-        )}
-        {isLoading && (
-          <LargeLoader/>
-        )}
+      </div>
+      {FieldOfficeModal && (
+        <>
+          <div className="fixed inset-0 z-40 bg-black opacity-50" onClick={modal} />
+          <div className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center">
+            <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA} test={test} tabs={tabs}/>
+          </div>
+        </>
+      )}
+      {viewProjectFlag && (
+        <>
+          <div className="fixed inset-0 z-20 bg-black opacity-50"/>
+          <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+            <ViewProject modal={viewProject} projectData={fieldOffice}/>
+          </div>
+        </>
+      )}
+      {isLoading && (
+        <LargeLoader/>
+      )}
     </div>
   )
 }

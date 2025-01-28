@@ -41,7 +41,6 @@ const AddControlBook = (props) => {
         const totalAsa = parseFloat(controlBookData.TotalASA)
         const prevtotalASA= parseFloat(controlBook.TotalASA)
         const leftBudget = parseFloat(controlBook.leftBudget)
-        console.log(`${totalAsa} >= (${controlBook.TotalASA} - ${controlBook.leftBudget}) ${totalAsa >= (parseFloat(controlBook.TotalASA) - parseFloat(controlBook.leftBudget))} `)
         if(totalAsa >= (prevtotalASA - leftBudget) || (!prevtotalASA || !leftBudget)){
             setErrorFlag(false)
         }else{

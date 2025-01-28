@@ -15,7 +15,6 @@ const AddTab = (props) => {
     const [tabsAmount, setTabsAmount] = useState(0)
 
     useEffect(() => {
-        console.log("cb: ", remainingASA )
         if(currTabs){
             setTabs(currTabs)
         }
@@ -64,7 +63,6 @@ const AddTab = (props) => {
                 confirmButtonColor: "#009933"
             });
         }else{
-            console.log(tabs)
             const res = await addingTab(tabs, ASANo)
             if(res) {
                 Swal.fire({
