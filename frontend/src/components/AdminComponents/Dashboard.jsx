@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [fundCluster, setFundCluster] = useState('')
   const [comparison, setComparison] =  useState(false)
   const vouchers = useSelector(state => state.vouchers)
+  console.log(vouchers)
 
   const modal = (FC) => {
     setFundCluster(FC)

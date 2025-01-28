@@ -9,8 +9,6 @@ const ViewProject = (props) => {
     const { modal, projectData } = props 
     const { user } = useAuthContext()
 
-    console.log(projectData)
-
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
             style: 'currency',

@@ -105,7 +105,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           amount: document.amount || 0,
           particular: document.particular || '',
         };
-        console.log("Updated payeeData:", updatedData);
         return updatedData;
       });
       setBirData({

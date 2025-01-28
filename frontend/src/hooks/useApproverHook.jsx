@@ -28,6 +28,8 @@ export const useApproverHook = () => {
         }
     }
     const addNewFundCluster = async (newFundCluster, randKey) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const data = {
                 cluster: newFundCluster,
@@ -39,10 +41,14 @@ export const useApproverHook = () => {
             })
 
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
         }catch(error){
-            console.log(`There's an error on adding new cluster fund ${error}`)
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
         }
     }
 
@@ -62,17 +68,21 @@ export const useApproverHook = () => {
     }
 
     const deleteFundCluster = async (field_key) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const res = await axios.delete(`${apiURL}/admin/deleteFundCluster/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
-            return false
         }catch(error){
-            console.log(`There's an error on fetching cluster fund ${error}`)
-            return false
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
         }
     }
 
@@ -301,6 +311,26 @@ export const useApproverHook = () => {
         }
     }
 
+    const updateFundCluster = async(key, updatedFundCluster) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/admin/updateFundCluster/${key}`,{ updatedFundCluster}, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error updating fund cluster";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
   return {
     approveDV, 
     addNewFundCluster, 
@@ -318,6 +348,7 @@ export const useApproverHook = () => {
     getRecords,
     downloadDV,
     returnDocFromAdmin,
+    updateFundCluster,
     isLoading, 
     error
     }

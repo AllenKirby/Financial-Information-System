@@ -1,10 +1,12 @@
 import { IoAdd } from "react-icons/io5";
-import { MdRemove } from "react-icons/md";
+import { MdOutlineEdit, MdRemove } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
+import { IoIosClose } from "react-icons/io";
  
 import { useState, useEffect } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
 import { useAuthContext } from '../../../hooks/useAuthContext'
+import LargeLoader from '../../Loaders/LargeLoader'
  
  export const FundCluster = () => {
     const { user } = useAuthContext()
@@ -12,10 +14,26 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
     const [showInput, setShowInput] = useState(false); // State to toggle input visibility
     const [inputValue, setInputValue] = useState("");
     const [arrFund, setArrFund] = useState({})
-    const {addNewFundCluster, getFundCluster, deleteFundCluster} = useApproverHook()
+    const {addNewFundCluster, getFundCluster, deleteFundCluster, updateFundCluster, isLoading} = useApproverHook()
+    const [updateFlag, setUpdateFlag] = useState(false)
+    const [key, setKey] = useState('')
+
+    useEffect(() => {
+        console.log(updateFlag)
+        if(!showInput) {
+            setInputValue('')
+        }
+    }, [inputValue, showInput, updateFlag])
 
     // Fund Cluster 
-    const handleAddString = () => {
+    const handleAddString = (flag, fundCluster = '', key = '') => {
+        if(flag) { 
+            setInputValue(fundCluster)
+            setKey(key)
+            setUpdateFlag(!updateFlag)
+        } else {
+            setUpdateFlag(!updateFlag)
+        }
         setShowInput(!showInput);
     };
 
@@ -38,6 +56,21 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
             sessionStorage.removeItem('FundClusterData');
         }
     };
+
+    const handleUpdate = async() => {
+        if(inputValue.trim() !== "") {
+            await updateFundCluster(key, inputValue)
+            setInputValue(""); // Clear input after submission
+            setUpdateFlag(false)
+            setShowInput(false); // Hide input after submission
+            setArrFund(prev => {
+                const newObj = { ...prev };
+                newObj[key] = inputValue;
+                return newObj;
+            });
+            sessionStorage.removeItem('FundClusterData');
+        }
+    }
 
     const handleDeleteFund = (key) => {
         const deletingFund = async () => {
@@ -73,7 +106,7 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
                 <div className="w-1/6 flex justify-center items-center">
                     <button 
                         className='text-2xl rounded-full'
-                        onClick={handleAddString}><IoAdd/></button>
+                        onClick={() => handleAddString(false)}>{showInput ? <IoIosClose />: <IoAdd/>}</button>
                 </div>
             </div>
             {showInput && (
@@ -86,7 +119,7 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
                         />
                         <button
-                            onClick={handleSubmit}
+                            onClick={updateFlag ? handleUpdate : handleSubmit}
                             className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-1/5 h-auto text-white rounded-lg flex items-center justify-center`}
                         >
                             <FaCheck size={15} />
@@ -98,6 +131,12 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
                     Object.entries(arrFund).map(([key, value], index) => (
                         <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-12 rounded-lg px-4 flex items-center justify-center`}>
                             <span className="flex-1 text-left">{value}</span> {/* Display only the value */}
+                            <button 
+                                onClick={() => handleAddString(true, value, key)}
+                                className="px-1 py-1 rounded-full"
+                            >
+                                <MdOutlineEdit />
+                            </button>
                             <button 
                                 onClick={() => handleDeleteFund(key)} // Pass the key to delete
                                 className="text-red-500 px-1 py-1 rounded-full hover:bg-red-500 hover:text-white"
@@ -111,6 +150,9 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
                 )}
                 
             </div>
+            {isLoading && (
+                <LargeLoader/>
+            )}
         </div>
     )
  }

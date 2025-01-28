@@ -22,8 +22,6 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 20;
 
-  console.log(items)
-
   const itemsArray = Object.entries(items);
 
   const indexOfLastItem = currentPage * itemsPerPage;

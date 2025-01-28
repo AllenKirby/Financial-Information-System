@@ -699,6 +699,26 @@ const updateStatus = async (DV, dTPassed, returnToRole) => {
   }
 }
 
+const updateFundCluster = async(req, res) => {
+  const {updatedFundCluster} = req.body
+  const { id } = req.params
+
+  console.log(id, updatedFundCluster)
+
+  try {
+    const docref = db.collection('formData').doc('fundCluster')
+
+    await docref.update({
+      [id]: updatedFundCluster
+    })
+
+    res.status(200).json({message: 'Fund Cluster has been updated'})
+  } catch (error) {
+    console.log(`Error updating fund cluster: ${error}`);
+      res.status(500).json({ message: "Internal Error" });
+  }
+}
+
 module.exports = {
   getAllLogs,
   //readAdmin_records,
@@ -718,5 +738,6 @@ module.exports = {
   getNumberOfRecords,
   downloadDV,
   downloadGSIS,
-  returnRecordTo
+  returnRecordTo,
+  updateFundCluster
 };

@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 
 const HistoryLogsItem = ({log, index}) => {
-    console.log(log)
   return (
     <div className={`${index % 2 == 0 ? 'bg-white' : 'bg-offWhite'} flex flex-col sm:flex-row w-full py-3 rounded-lg mt-1`}>
         <p className="w-full sm:w-1/4 text-sm text-left px-2 truncate font-semibold flex gap-2"><span className="font-bold block sm:hidden">Payee:</span>{log[1].split('!')[0]}</p>
