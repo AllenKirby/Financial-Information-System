@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
-import { collection, query, onSnapshot, doc } from "firebase/firestore"
+import { collection, query, onSnapshot, doc, getDocs } from "firebase/firestore"
 import { setControlBook, deleteFolder, deleteProject } from '../redux/ControlBookRedux' 
 import { useDispatch } from "react-redux";
 
@@ -127,9 +127,62 @@ export const useFundingHook = () => {
         }
     }
 
-    const retrieveControlBooks = async (dispatch) => {
+    const retrieveDvData = async (id, fieldID, callback) => {
+        try{
+            const q = query(collection(firestore, "ControlBook", id, "FieldOffices", fieldID, "DV"));
+            const querySnapshot = await getDocs(q);
+            const dvData = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            callback(dvData);
+
+        }catch(err){
+            console.log(`error on retrieving dv data ${id} : `, err)
+        }
+    }
+
+    const retrieveChosenCB = (id, callback) => {
+
+        if (!id) {
+            console.error("Error: ID is missing or invalid.");
+            return () => {};
+        }
+
+        try{
+            const q = query(collection(firestore, "ControlBook", id, "FieldOffices"));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const fieldOffices = {}
+                snapshot.docs.forEach(doc => {
+                    fieldOffices[doc.id] = {...doc.data()}
+                });
+                callback(fieldOffices);
+              });
+              return unsubscribe;
+        }catch(err){
+            console.log(`error on retrieving ${id} : `, err)
+            return () => {};
+        }
+    }
+
+    const retrieveControlBooks = (dispatch) => {
         const q = query(collection(firestore, 'ControlBook'));
-      
+        const unsubscribeControlBook = onSnapshot(q, (snapshot) => {
+            const controlBooks = snapshot.docs.reduce((acc, doc) => {
+                acc[doc.id] = doc.data()
+                return acc
+            }, {})
+            dispatch(setControlBook(controlBooks));
+        });
+
+        return unsubscribeControlBook
+        
+    }
+
+    const EretrieveControlBooks = async (dispatch) => {
+        const q = query(collection(firestore, 'ControlBook'));
+        
         // Main listener for ControlBook collection
         const unsubscribeControlBook = onSnapshot(q, (snapshot) => {
           const controlBooks = {};
@@ -162,6 +215,7 @@ export const useFundingHook = () => {
       
                   // Deep copy of controlBooks to trigger React state update
                   const updatedControlBooks = JSON.parse(JSON.stringify(controlBooks));
+                //   console.log(updatedControlBooks)
                   dispatch(setControlBook(updatedControlBooks));
                   
                 });
@@ -178,9 +232,45 @@ export const useFundingHook = () => {
             controlBooks[doc.id].unsubscribeSubcollection = unsubscribeSubcollection;
           });
         });
-      
         return unsubscribeControlBook;
       };
+
+    // const retrieveControlBooks = async (dispatch) => {
+    //     const q = query(collection(firestore, 'ControlBook'));
+    //     const controlBookSnapshot = await getDocs(q);
+    //     console.log(controlBookSnapshot)
+    //     let controlBooks = {};
+      
+    //     for (const doc of controlBookSnapshot.docs) {
+    //       const controlBookId = doc.id;
+    //       controlBooks[controlBookId] = { ...doc.data(), fieldOffices: {} };
+      
+    //       // Fetch FieldOffices sub-collection
+    //       const fieldOfficesSnapshot = await getDocs(collection(firestore, 'ControlBook', controlBookId, 'FieldOffices'));
+    //       let fieldOfficesData = {};
+      
+    //       for (const fieldOfficeDoc of fieldOfficesSnapshot.docs) {
+    //         const fieldOfficeId = fieldOfficeDoc.id;
+    //         fieldOfficesData[fieldOfficeId] = { ...fieldOfficeDoc.data(), dvCollection: {} };
+      
+    //         // Fetch DV sub-collection
+    //         const dvSnapshot = await getDocs(collection(firestore, 'ControlBook', controlBookId, 'FieldOffices', fieldOfficeId, 'DV'));
+    //         const dvData = {};
+    //         dvSnapshot.docs.forEach((dvDoc) => {
+    //           dvData[dvDoc.id] = dvDoc.data();
+    //         });
+      
+    //         fieldOfficesData[fieldOfficeId].dvCollection = dvData;
+    //       }
+      
+    //       controlBooks[controlBookId].fieldOffices = fieldOfficesData;
+    //     }
+      
+    //     dispatch(setControlBook(controlBooks)); // Dispatch once instead of on every update
+    //   };
+      
+    
+      
       
       
 
@@ -228,6 +318,7 @@ export const useFundingHook = () => {
                 transformed[mainKey][projectName] = {
                     RO: project.RO,
                     projectID: project.projectID,
+                    tabStatus: project.tabStatus
                 };
             })
         }
@@ -282,7 +373,7 @@ export const useFundingHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                dispatchFolder(deleteProject(id))
+                // dispatchFolder(deleteProject(id))
                 return true
             }
         } catch(error) {
@@ -347,6 +438,8 @@ export const useFundingHook = () => {
         retrieveProjectName,
         updateASA_ORS,
         addingTab,
+        retrieveChosenCB,
+        retrieveDvData,
         isLoading, 
         error
     }

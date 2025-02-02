@@ -10,7 +10,7 @@ import { MdOutlineHistory } from "react-icons/md";
 
 import { useFundingHook } from "../hooks/useFundingHook"
 
-import {useDispatch} from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
 import { setDVRecords } from '../redux/DVUsersRedux'
 
@@ -26,7 +26,7 @@ const OperatorPage = () => {
   const dispatch = useDispatch()
   //const permission = useSelector((state) => state.permission)
   //const apiURL = import.meta.env.VITE_API_URL
-
+  const cb = useSelector((state) => state.controlBook)
   const navItems = [
     { label: 'Records', path: '/operator/disbursementrecords', icon: <FaRegFile size={20} /> },
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
@@ -46,11 +46,17 @@ const OperatorPage = () => {
   }, [page.pathname])
 
   useEffect(() => {
-    const fetch = async() => {
-      const unsubscribe = retrieveControlBooks(dispatch)
-      return () => unsubscribe;
+    
+    console.log('FETHICHNG')
+    const unsubscribe = retrieveControlBooks(dispatch)
+    
+
+    return () => {
+      if(unsubscribe){
+        console.log('unsub on operatorpage')
+        unsubscribe()
+      }
     }
-    fetch()
   }, []) 
 
   // useEffect(() => {
@@ -106,13 +112,13 @@ const OperatorPage = () => {
         socket.on('operatorPermission:firestore:update', (doc) => {
           dispatch(setPermission(doc));
         })
-        socket.on('operator:firestore:records', (doc) => {
-          console.log(doc)
-        })
+        // socket.on('operator:firestore:records', (doc) => {
+        //   console.log(doc)
+        // })
         return () => {
           socket.off('operator:firestore:update');
           socket.off('operatorPermission:firestore:update');
-          socket.off('operator:firestore:records')
+          // socket.off('operator:firestore:records')
           
         };
       }

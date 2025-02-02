@@ -49,9 +49,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
     }, [])
 
     useEffect(() => {
-        const firstASA = Object.entries(data.ASA)
-        console.log(data)
-    }, [data])
+        console.log(ASANo)
+    }, [ASANo])
 
     useEffect(() => {
         const getData = async() => {
@@ -355,7 +354,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                         <label className="font-semibold">ASA No.</label>
                         <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold`}>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
                     </div>
-                    <div className="w-full h-auto">
+                    {/* <div className="w-full h-auto">
                         <select 
                             className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                             onChange={(e) => setSelectedASANo(e.target.value)}
@@ -371,11 +370,11 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                 <option disabled value="">No ASA No. Found</option>
                             }
                         </select>
-                    </div>
+                    </div> */}
                     <div className="flex-1 overflow-y-auto gap-2 p-2 w-full">
-                        {selectedASANo && 
-                            Object.entries(filterSelectedASA(filterFundCluster(ASANo))).length > 0 ? (
-                                Object.entries(filterSelectedASA(filterFundCluster(ASANo))).map(([key, asano]) => {
+                        {
+                            Object.entries(filterFundCluster(ASANo)).length > 0 ? (
+                                Object.entries(filterFundCluster(ASANo)).map(([key, asano]) => {
                                     const finalASANO = key.replace('|', ' ').split('!')[0];
                                     return (
                                         <div key={key} className="w-full h-auto border-b pb-2">
@@ -407,10 +406,15 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                             }
                                                             
                                                         />
-                                                        <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen transition-all duration-150">  
-                                                            {projectName} :{' '}
-                                                            {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
-                                                            {/* {operatorInput.asa?.[`${key}/${project.projectID}`] ? formatToPeso(operatorInput.asa?.[`${key}/${project.projectID}`]) : formatToPeso(project.RO)} */}
+                                                        <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen hover:shadow-lg transition-all duration-150">
+                                                            <span className="font-medium">{projectName}</span>
+                                                            <span>:</span>
+                                                            <span className="font-semibold">
+                                                                {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
+                                                            </span>
+                                                            {project.tabStatus && (
+                                                                <span className="text-sm bg-teal-700 rounded text-white px-2">{project.tabStatus}</span>
+                                                            )}
                                                         </span>
                                                     </label>
                                                 ))}
