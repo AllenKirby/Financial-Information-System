@@ -23,7 +23,7 @@ const Folder = ({ASANo, controlBook}) => {
     const [options, setOptions] = useState(false)
     const { deleteControlBook, isLoading, error } = useFundingHook()
 
-    const subcollectionCounts = () => controlBook.fieldOffices ? Object.entries(controlBook.fieldOffices).length : 0
+    const subcollectionCounts = () => controlBook.items ? controlBook.items : 0
 
     const modal = (e) => {
       e.stopPropagation()
@@ -31,6 +31,7 @@ const Folder = ({ASANo, controlBook}) => {
     }
 
     const deleteCB = async (e) => {
+      console.log(ASANo)
       e.stopPropagation()
         Swal.fire({
             title: "Are you sure?",
@@ -70,7 +71,9 @@ const Folder = ({ASANo, controlBook}) => {
   };
 
   useEffect(() => {
-    isDeletable()
+    // isDeletable()
+    const deleteVar = controlBook.cantDelete || false
+    setIsDeletable(deleteVar);
   }, [controlBook])
 
   return (
@@ -81,7 +84,7 @@ const Folder = ({ASANo, controlBook}) => {
       <div className="w-full h-[70%] flex items-center justify-center">
         <img
           src={
-            Object.entries(controlBook.fieldOffices).length > 0
+            Object.entries(controlBook).length > 0
               ? FolderWithItems
               : EmptyFolder
           }

@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 export const AllVouchersRedux = createSlice({
     name: 'vouchers',
-    initialState: null,
+    initialState: {},
     reducers: {
         setVouchers: (state, action) => {
             return {...state, ...action.payload}

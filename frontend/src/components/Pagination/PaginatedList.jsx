@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from 'react'; 
+import React, { useState, Suspense, useEffect } from 'react'; 
 import PropTypes from 'prop-types'
 
 import Pagination from './Pagination';
@@ -32,6 +32,9 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
 
   const totalPages = Math.ceil(itemsArray.length / itemsPerPage);
   
+  useEffect(() => {
+    console.log(items)
+  }, [items])
 
   const handlePageChange = (page) => setCurrentPage(page);
 

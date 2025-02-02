@@ -2,12 +2,14 @@ import { IoMdClose } from "react-icons/io";
 import { MdWorkOutline } from "react-icons/md";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
-
+import { useFundingHook } from "../../hooks/useFundingHook";
 import PropTypes from 'prop-types'
+import { useEffect, useState } from "react";
 
 const ViewProject = (props) => {
-    const { modal, projectData } = props 
+    const { modal,projectName, ASANo } = props 
     const { user } = useAuthContext()
+    const {retrieveDvData} = useFundingHook()
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -17,19 +19,29 @@ const ViewProject = (props) => {
       };
     
       const sortDate = () => {
-        if(projectData && projectData.dvCollection) {
-          const sortedProjects = Object.entries(projectData.dvCollection).sort(([,a],[,b]) => new Date(b.date) - new Date(a.date));
+        if(Object.keys(dvData).length > 0) {
+          const sortedProjects = Object.entries(dvData).sort(([,a],[,b]) => new Date(b.date) - new Date(a.date));
           return Object.fromEntries(sortedProjects)
         }
         return null
       }
+
+  const [dvData, setDvData] = useState({})
+  useEffect(() => {
+    console.log('dv hit')
+    if (!ASANo || !projectName) return;
+    const fieldID = `${ASANo},${projectName}`
+    retrieveDvData(ASANo, fieldID, (data) => {
+      setDvData(data)
+    })
+  }, [ASANo, projectName])
 
   return (
     <section onClick={(e) => e.stopPropagation()} className="w-3/4 h-3/4 bg-white rounded-lg z-50">
         <div className="w-full h-auto py-3 px-4 flex items-center justify-between border-b-2">
             <div className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} flex items-center justify-center gap-2 font-bold`}>
                 <MdWorkOutline size={25}/>
-                <p className="text-xl">{projectData.projectName}</p>
+                <p className="text-xl">{projectName}</p>
             </div>
             <button onClick={modal}>
                 <IoMdClose size={20}/>
@@ -79,7 +91,7 @@ const ViewProject = (props) => {
 
 ViewProject.propTypes = {
     modal: PropTypes.func.isRequired,
-    projectData: PropTypes.object.isRequired
+    projectName: PropTypes.string.isRequired
 }
 
 export default ViewProject

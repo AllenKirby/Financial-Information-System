@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 
 import { MdDeleteOutline, MdOutlineModeEdit } from "react-icons/md";
@@ -28,6 +28,8 @@ const FieldOffices = (props) => {
   const viewProject = () => {
     setViewProjectFlag(!viewProjectFlag)
   }
+
+  
 
   const formatToPeso = (value) => {
     return new Intl.NumberFormat('en-PH', {
@@ -74,7 +76,7 @@ const FieldOffices = (props) => {
           <span className='block lg:hidden'>Project Name:</span><p className='font-bold'>{fieldOffice.fieldOffice}</p>
         </div>
         <div className='w-full lg:w-1/4 flex items-center justify-start lg:justify-center gap-2'>
-          <span className='block lg:hidden'>Field Office:</span><p className='font-bold truncate'>{fieldOffice.projectName}</p>
+          <span className='block lg:hidden'>Field Office:</span><p className='font-bold truncate'>{fieldOffice.projectName} {fieldOffice.tabStatus}</p>
         </div>
         <div className='w-full lg:w-1/4 flex flex-row items-center justify-start lg:justify-center gap-2'>
           <div className='w-1/4 h-full flex lg:hidden items-center justify-center'>
@@ -130,7 +132,7 @@ const FieldOffices = (props) => {
               <button className='flex items-center justify-start gap-2' onClick={modal}>
                 <MdOutlineModeEdit size={20}/> Edit
               </button>
-              {!Object.entries(fieldOffice.dvCollection).length > 0 && (
+              {!fieldOffice.dvItems > 0 && (
                 <button className='flex items-center justify-start gap-2' disabled={isLoading} onClick={deleteFO}>
                   <MdDeleteOutline size={20} color='red'/> Delete
                 </button>
@@ -151,7 +153,7 @@ const FieldOffices = (props) => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50"/>
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <ViewProject modal={viewProject} projectData={fieldOffice}/>
+            <ViewProject modal={viewProject} projectName={fieldOffice.projectName} ASANo={ASANo}/>
           </div>
         </>
       )}

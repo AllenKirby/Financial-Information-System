@@ -899,6 +899,8 @@ const appendDataToSheet = async (req, res) => {
         week3RO: 0,
         week4RO: 0,
         week5RO: 0,
+        items: 0,
+        cantDelete: false
 
     }
 
@@ -950,12 +952,14 @@ const appendDataToSheet = async (req, res) => {
         week4RO: 0,
         week5RO: 0,
         tabStatus: tabStatus,
+        dvItems: 0
     }
 
     const formData = {
         projectID: projectID,
         projectName: projectName,
-        RO: ASA
+        RO: ASA,
+        tabStatus: tabStatus
     }
 
     try {
@@ -967,12 +971,16 @@ const appendDataToSheet = async (req, res) => {
             const leftBudget = parseFloat(controlBook.data().leftBudget);
             const updatedBudget = leftBudget - parseASA;
 
+            //items
+            const items = parseFloat(controlBook.data().items || 0)
+
             if(updatedBudget < 0){
                 throw Error("Insufficient amount.")
             }
 
             await controlBookRef.update({
-                leftBudget: updatedBudget
+                leftBudget: updatedBudget,
+                items: items + 1
             });
         } else {
             console.log("No such document!");
@@ -1121,15 +1129,17 @@ const updateFieldOffice = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, docId, projectName, RO, totalASA] = id.split('!')
+    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA] = id.split('!')
     const data = {
         RO: RO,
         projectID: docId,
         projectName: projectName
     }
+    const ASAid = `${ASANo}!${cluster}`
+    const documentID = `${docId}!${docIdCluster}`
 
     try {
-        const controlBookRef = db.collection('ControlBook').doc(ASANo);
+        const controlBookRef = db.collection('ControlBook').doc(ASAid);
         const controlBook = await controlBookRef.get();
 
         if (controlBook.exists) {
@@ -1137,25 +1147,30 @@ const deleteFieldOffice = async(req, res) => {
             const leftBudget = parseFloat(controlBook.data().leftBudget);
             const updatedBudget = leftBudget + parseASA;
 
+            const items = parseFloat(controlBook.data().items || 0)
+
             await controlBookRef.update({
-                leftBudget: updatedBudget
+                leftBudget: updatedBudget,
+                items: items - 1
             });
         } else {
             console.log("No such document!");
         }
 
-        const project = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId)
+        const project = db.collection('ControlBook').doc(ASAid).collection('FieldOffices').doc(documentID)
         const subcollectionRef = project.collection('DV');
         const subDocs = await subcollectionRef.get();
         
-        subDocs.forEach(async (subDoc) => {
-            await subDoc.ref.delete();
-        });
+        // subDocs.forEach(async (subDoc) => {
+        //     await subDoc.ref.delete();
+        // });
+        const deletePromises = subDocs.docs.map((subDoc) => subDoc.ref.delete());
+        await Promise.all(deletePromises);
         await project.delete()
 
         const docRef = db.collection('formData').doc('ControlBook')
         await docRef.update({
-            [ASANo]: admin.firestore.FieldValue.arrayRemove(data)
+            [ASAid]: admin.firestore.FieldValue.arrayRemove(data)
         })
         res.status(200).json({message: 'Field Office Successfully Deleted'})
     } catch (error) {

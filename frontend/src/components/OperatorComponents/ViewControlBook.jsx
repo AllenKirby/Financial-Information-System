@@ -11,18 +11,22 @@ import AddNewFieldOffice from "./AddNewFieldOffice";
 import FieldOffices from "./FieldOffices";
 import ControlBookReport from "./ControlBookReport";
 import AddTab from "./AddTab"
+import { useFundingHook } from "../../hooks/useFundingHook";
 
 import {useAuthContext} from '../../hooks/useAuthContext'
 
 const ViewControlBook = () => {
   const { id } = useParams()
   const controlBooks = useSelector((state) => state.controlBook)
+  // const fieldOffices = useSelector((state) => state.controlBook.projects)
   const {user} = useAuthContext()   
   const [ControlBook, setControlBook] = useState({key: '', data: {}})
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [modalTab, setModalTab] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [reportFlag, setReportFlag] = useState(false)
+
+  const {retrieveChosenCB} = useFundingHook();
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
   const tabModal = () => setModalTab(!modalTab)
@@ -50,6 +54,28 @@ const ViewControlBook = () => {
     }
 
   }, [controlBooks, id])
+
+
+  const [fieldoffices, setFieldOffices] = useState({})
+  useEffect(() => {
+    console.log(id)
+    if (!id) return;
+    console.log('FETHICHNG field offices')
+    const unsubscribe = retrieveChosenCB(id, (data) => {
+      setFieldOffices(data)
+    })
+    return () => {
+      if(unsubscribe){
+        console.log('unsub on fieldOffices')
+        unsubscribe()
+      }
+    }
+
+  }, [])
+
+  useEffect(() => {
+    console.log(fieldoffices)
+  }, [fieldoffices])
   
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {
@@ -205,9 +231,10 @@ const ViewControlBook = () => {
                 <div className="w-[5%] h-full"></div>
               </div>
               <div className="w-full flex-1 overflow-y-auto py-2">
-                {ControlBook.data.fieldOffices && Object.entries(ControlBook.data.fieldOffices).length > 0 ? (
-                  Object.entries(sortTimePassedDesc(ControlBook.data.fieldOffices)).map(([key,fieldOffice], index) => (
-                    <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
+                {fieldoffices && Object.entries(fieldoffices).length > 0 ? (
+                  Object.entries(sortTimePassedDesc(fieldoffices)).map(([key,fieldOffice], index) => (
+                    // <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
+                    <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={fieldoffices} tabs={ControlBook.data.tabs}/>
                   ))
                 ) : (
                   <div className="flex items-center justify-center w-full h-full font-semibold">No Field Offices Found</div>
@@ -218,7 +245,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={ControlBook.data.fieldOffices}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices}/>
                 </div>
               </>
             )}
