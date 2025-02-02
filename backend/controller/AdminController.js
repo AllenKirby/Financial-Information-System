@@ -594,19 +594,20 @@ const downloadGSIS = async(req, res) => {
     // workbook.sheet('Sheet1').cell("B42").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)
 
     //BIR
-    // workbook.sheet('Sheet1').cell("P81").value(data.fund)
-    // workbook.sheet('Sheet1').cell("P83").value(convertDate(data.date))
-    // workbook.sheet('Sheet1').cell("P91").value(data.ORSBURS)   
-    // workbook.sheet('Sheet1').cell("A95").value(data.birParticular)   
-    // workbook.sheet('Sheet1').cell("Q96").value(amount_due)   
-    // workbook.sheet('Sheet1').cell("Q109").value(amount_due)  
-    // workbook.sheet('Sheet1').cell("N119").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    // workbook.sheet('Sheet1').cell("N120").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    // workbook.sheet('Sheet1').cell("Q121").value(amount_due)
-    // workbook.sheet('Sheet1').cell("B119").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
-    // workbook.sheet('Sheet1').cell("B120").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
-    // workbook.sheet('Sheet1').cell("A115").value(data.NF_name)
-    // workbook.sheet('Sheet1').cell("A116").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("P88").value(data.fund)
+    workbook.sheet('Sheet1').cell("P90").value(convertDate(data.date))
+    workbook.sheet('Sheet1').cell("P91").value(data.DV)   
+    workbook.sheet('Sheet1').cell("P98").value(data.ORSBURS)
+    workbook.sheet('Sheet1').cell("A102").value(data.birParticular)   
+    workbook.sheet('Sheet1').cell("Q103").value(amount_due)   
+    workbook.sheet('Sheet1').cell("Q116").value(amount_due)  
+    workbook.sheet('Sheet1').cell("N126").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("N127").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q128").value(amount_due)
+    workbook.sheet('Sheet1').cell("B126").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
+    workbook.sheet('Sheet1').cell("B127").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
+    workbook.sheet('Sheet1').cell("A122").value(data.NF_name)
+    workbook.sheet('Sheet1').cell("A123").value(data.NF_office)
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
@@ -719,6 +720,60 @@ const updateFundCluster = async(req, res) => {
   }
 }
 
+const updateResCen = async(req, res) => {
+  const { updatedResCen } = req.body
+  const { id } = req.params
+
+  try {
+    const docref = db.collection('formData').doc('ResponsibilityCenter')
+
+    await docref.update({
+      [id]: updatedResCen
+    })
+
+    res.status(200).json({message: 'Responsibility center has been updated'})
+  } catch (error) {
+    console.log(`Error updating Responsibility center: ${error}`);
+      res.status(500).json({ message: "Internal Error" });
+  }
+}
+
+const updateNameAndOffice = async(req, res) => {
+  const { updatedName, updatedOffice } = req.body
+  const { id } = req.params
+
+  try {
+    const docref = db.collection('formData').doc('NameOffice')
+
+    await docref.update({
+      [id]: [updatedName, updatedOffice]
+    })
+
+    res.status(200).json({message: 'Name and Office has been updated'})
+  } catch (error) {
+    console.log(`Error updating Name and Office: ${error}`);
+      res.status(500).json({ message: "Internal Error" });
+  }
+}
+
+const updateTaxType = async(req, res) => {
+  const { updatedTax, updatedCost, updatedValue1, updatedValue2 } = req.body
+  const { id } = req.params
+
+  try {
+    const docref = db.collection('formData').doc('TaxType')
+
+    await docref.update({
+      [id]: [updatedTax, updatedCost, updatedValue1, updatedValue2]
+    })
+
+    res.status(200).json({message: 'Tax Type has been updated'})
+  } catch (error) {
+    console.log(`Error updating Tax Type: ${error}`);
+      res.status(500).json({ message: "Internal Error" });
+  }
+}
+
 module.exports = {
   getAllLogs,
   //readAdmin_records,
@@ -739,5 +794,8 @@ module.exports = {
   downloadDV,
   downloadGSIS,
   returnRecordTo,
-  updateFundCluster
+  updateFundCluster,
+  updateResCen,
+  updateNameAndOffice,
+  updateTaxType
 };

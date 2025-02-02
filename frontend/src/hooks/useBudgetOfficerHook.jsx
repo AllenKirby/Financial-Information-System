@@ -1,10 +1,14 @@
 import axios from "axios"
 import { useState } from "react"
 
+import { deleteDVrecords } from '../redux/DVUsersRedux'
+import { useDispatch } from 'react-redux'
+
 export const useBudgetOfficerHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const apiURL = import.meta.env.VITE_API_URL
+    const dispatch = useDispatch()
 
     const submitToAdmin = async(data) => {
         setIsLoading(true)
@@ -15,6 +19,7 @@ export const useBudgetOfficerHook = () => {
             } )
             if(res.status === 200){
                 setIsLoading(false)
+                dispatch(deleteDVrecords(data.DV))
                 return true
             }
         } catch (error) {
@@ -34,6 +39,7 @@ export const useBudgetOfficerHook = () => {
             })
             if(res.status === 200){
                 setIsLoading(false)
+                dispatch(deleteDVrecords(data.DV))
                 return true
             }
         }catch(error){

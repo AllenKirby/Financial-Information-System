@@ -1,5 +1,4 @@
 import { Outlet, useParams } from 'react-router-dom'
-import { useOpDisbursementContext } from '../../hooks/useOpDisbursementContext'
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -15,7 +14,7 @@ import PaginatedList from '../Pagination/PaginatedList';
 import DisbursementVoucher from '../EditorComponents/DisbursementVoucher';
 
 const DisbursementRecords = () => {
-  const { OpDocuments } = useOpDisbursementContext()
+  const DVRecords = useSelector((state) => state.dvrecords)
   const { id } = useParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const permission = useSelector((state) => state.permission)
@@ -34,16 +33,16 @@ const DisbursementRecords = () => {
   }
 
   useEffect(() => {
-    if (OpDocuments.documents && Object.keys(OpDocuments.documents).length > 0) {
+    if (DVRecords?.documents && Object.keys(DVRecords?.documents).length > 0) {
       if(!activeTabs) {
         const filteredResults = Object.fromEntries(
-          Object.entries(OpDocuments.documents).filter(([, document]) => 
+          Object.entries(DVRecords?.documents).filter(([, document]) => 
             document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
           )
         );
         setFilteredDocuments({...filteredDocuments, all: filteredResults});
       } else {
-        const drafts = Object.entries(OpDocuments.documents).filter(([, document]) => document.data.status.includes(activeTabs))
+        const drafts = Object.entries(DVRecords?.documents).filter(([, document]) => document.data.status.includes(activeTabs))
         const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.fund.toLowerCase().includes(filter.toLowerCase())))
         if(activeTabs === 'Drafting') {
           setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
@@ -56,15 +55,15 @@ const DisbursementRecords = () => {
     } else {
       setFilteredDocuments({});
     }
-  }, [filter, OpDocuments, activeTabs]);
+  }, [filter, DVRecords, activeTabs]);
 
   useEffect(() => {
-    if(!OpDocuments.documents) return 
+    if(!DVRecords?.documents) return 
     if(!activeTabs) {
-      const filteredResults = Object.entries(OpDocuments.documents).filter(doc => doc[1].data.payee.toLowerCase().includes(search.toLowerCase()) || doc[1].data.DV.toLowerCase().includes(search.toLowerCase()))
+      const filteredResults = Object.entries(DVRecords?.documents).filter(doc => doc[1].data.payee.toLowerCase().includes(search.toLowerCase()) || doc[1].data.DV.toLowerCase().includes(search.toLowerCase()))
       setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
     } else {
-      const drafts = Object.entries(OpDocuments.documents).filter(([, document]) => document.data.status.includes(activeTabs))
+      const drafts = Object.entries(DVRecords?.documents).filter(([, document]) => document.data.status.includes(activeTabs))
       const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.payee.toLowerCase().includes(search.toLowerCase()) || document[1].data.DV.toLowerCase().includes(search.toLowerCase())))
       if(activeTabs === 'Drafting') {
         setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
@@ -74,7 +73,7 @@ const DisbursementRecords = () => {
         setFilteredDocuments({...filteredDocuments, inReview: filteredDrafts})
       }
     }
-  }, [search, OpDocuments.documents, activeTabs])
+  }, [search, DVRecords, activeTabs])
 
 
   //ERROR DITO pag naka true yung permission sa funding
@@ -172,7 +171,7 @@ const DisbursementRecords = () => {
             {(activeTabs !== 'Drafting' && activeTabs !== '' && activeTabs !== 'In Review') && <h1 className='lg:text-sm 2xl:text-base w-1/6 text-center font-semibold'>Time Returned</h1>}
           </div>
           <div className="w-full flex-1 overflow-y-auto rounded-lg">
-            {Object.entries(getFilteredDocuments()).length > 0 ? (
+            {getFilteredDocuments() && Object.entries(getFilteredDocuments()).length > 0 ? (
               <PaginatedList items={sortTimePassedDesc(getFilteredDocuments())} type={'3'} activeTab={activeTabs} paginationFor={'DV'}/>
             ) : (
               <div className='w-full h-full flex items-center justify-center'>

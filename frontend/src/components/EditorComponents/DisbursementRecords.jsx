@@ -1,5 +1,4 @@
 import { Outlet, useParams } from 'react-router-dom'
-import { useDisbursementContext } from '../../hooks/useDisbursementContext'
 import { useEffect, useState } from 'react';
 import { useSelector} from 'react-redux'
 
@@ -15,7 +14,6 @@ import DisbursementVoucher from './DisbursementVoucher';
 import PaginatedList from '../Pagination/PaginatedList';
 
 const DisbursementRecords = () => {
-  const { documents } = useDisbursementContext()
   const { id } = useParams()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [filterFlag, setFilterFlag] = useState(false)
@@ -25,6 +23,7 @@ const DisbursementRecords = () => {
   const [search, setSearch] = useState('')
   const [activeTabs, setActiveTabs] = useState('')
   const permission = useSelector((state) => state.permission)
+  const DVRecords = useSelector((state) => state.dvrecords)
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -34,16 +33,16 @@ const DisbursementRecords = () => {
   }
 
   useEffect(() => {
-    if (documents && Object.keys(documents).length > 0) {
+    if (DVRecords && Object.keys(DVRecords).length > 0) {
       if(!activeTabs) {
         const filteredResults = Object.fromEntries(
-          Object.entries(documents).filter(([, document]) => 
-            document.fund.toLowerCase().includes(filter.toLowerCase())
+          Object.entries(DVRecords).filter(([, document]) => 
+            document?.fund?.toLowerCase().includes(filter.toLowerCase())
           )
         );
         setFilteredDocuments({...filteredDocuments, all: filteredResults});
       } else {
-        const drafts = Object.entries(documents).filter(([, document]) => document.status.includes(activeTabs))
+        const drafts = Object.entries(DVRecords).filter(([, document]) => document.status.includes(activeTabs))
         const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].fund.toLowerCase().includes(filter.toLowerCase())))
         if(activeTabs === 'Drafting') {
           setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
@@ -61,15 +60,15 @@ const DisbursementRecords = () => {
         inReview: {},
       }); 
     }
-  }, [filter, documents, activeTabs]);
+  }, [filter, DVRecords, activeTabs]);
 
   useEffect(() => {
-    if(documents && Object.entries(documents).length > 0) {
+    if(DVRecords && Object.entries(DVRecords).length > 0) {
       if(!activeTabs) {
-        const filteredResults = Object.entries(documents).filter(doc => doc[1].payee.toLowerCase().includes(search.toLowerCase()) || doc[1].DV.toLowerCase().includes(search.toLowerCase()))
+        const filteredResults = Object.entries(DVRecords).filter(doc => doc[1].payee.toLowerCase().includes(search.toLowerCase()) || doc[1].DV.toLowerCase().includes(search.toLowerCase()))
         setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
       } else {
-        const drafts = Object.entries(documents).filter(([, document]) => document.status.includes(activeTabs))
+        const drafts = Object.entries(DVRecords).filter(([, document]) => document.status.includes(activeTabs))
         const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].payee.toLowerCase().includes(search.toLowerCase()) || document[1].DV.toLowerCase().includes(search.toLowerCase())))
         if(activeTabs === 'Drafting') {
           setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
@@ -87,7 +86,7 @@ const DisbursementRecords = () => {
         inReview: {}
       })
     }
-  }, [search, documents, activeTabs])
+  }, [search, DVRecords, activeTabs])
 
   const sortTimeCreatedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {

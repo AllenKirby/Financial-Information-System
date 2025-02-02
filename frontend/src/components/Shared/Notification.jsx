@@ -1,23 +1,18 @@
 import { parse, formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types'
-import { useOpDisbursementContext } from '../../hooks/useOpDisbursementContext';
 import { useNavigate } from 'react-router-dom';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import { useEffect, useState } from 'react';
-import { useDisbursementContext } from '../../hooks/useDisbursementContext';
-import { useHeadDisbursementContext } from '../../hooks/useHeadDisbursementContext';
-import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext';
+
+import { useSelector } from 'react-redux';
 
 
 const Notification = ({ notification, markAsRead }) => {
-  const {OpDocuments} = useOpDisbursementContext();
   const navigate = useNavigate();
   const { user } = useAuthContext()
   const [notifData, setNotifData] = useState({dateTime: '', docName: '', name: '', DV: ''})
   const [notifMessage, setNotifMessage] = useState({message1: '', message2: '' })
-  const { documents } = useDisbursementContext()
-  const { HeadDocuments } = useHeadDisbursementContext()
-  const {AdminDocuments} = useAdminDisbursementContext()
+  const DVRecords = useSelector((state) => state.dvrecords)
 
   
   useEffect(() => {
@@ -30,16 +25,16 @@ const Notification = ({ notification, markAsRead }) => {
 
   const openNotif = (DV) =>{
     if(user.role === '3'){
-      const document = OpDocuments.documents[DV].data
+      const document = DVRecords.documents[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }else if(user.role === '4'){
-      const document = documents[DV]
+      const document = DVRecords[DV]
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }else if(user.role === '2'){
-      const document = HeadDocuments[DV].data
+      const document = DVRecords[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }else if(user.role === '1'){
-      const document = AdminDocuments[DV].data
+      const document = DVRecords[DV].data
       navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
     }
   }

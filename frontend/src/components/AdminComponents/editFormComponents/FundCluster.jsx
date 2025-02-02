@@ -19,7 +19,6 @@ import LargeLoader from '../../Loaders/LargeLoader'
     const [key, setKey] = useState('')
 
     useEffect(() => {
-        console.log(updateFlag)
         if(!showInput) {
             setInputValue('')
         }
@@ -41,8 +40,8 @@ import LargeLoader from '../../Loaders/LargeLoader'
         setInputValue(e.target.value); // Update input field value
     };
 
-    const handleSubmit = () => {
-        // Add the input value to the list of strings
+    const handleSubmit = (e) => {
+        e.preventDefault()
         if (inputValue.trim() !== "") {
             const randomKey = Math.random().toString(36).substring(2, 15);
             addNewFundCluster(inputValue, randomKey)
@@ -57,7 +56,8 @@ import LargeLoader from '../../Loaders/LargeLoader'
         }
     };
 
-    const handleUpdate = async() => {
+    const handleUpdate = async(e) => {
+        e.preventDefault()
         if(inputValue.trim() !== "") {
             await updateFundCluster(key, inputValue)
             setInputValue(""); // Clear input after submission
@@ -110,21 +110,22 @@ import LargeLoader from '../../Loaders/LargeLoader'
                 </div>
             </div>
             {showInput && (
-                    <div className="px-2 py-2 bg-gray-100 flex gap-1">
+                    <form onSubmit={updateFlag ? handleUpdate : handleSubmit} className="px-2 py-2 bg-gray-100 flex gap-1">
                         <input
                             type="text"
                             value={inputValue}
+                            required
                             onChange={handleInputChange}
                             placeholder="e.g. 501 COB"
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
                         />
                         <button
-                            onClick={updateFlag ? handleUpdate : handleSubmit}
+                            type="submit"
                             className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-1/5 h-auto text-white rounded-lg flex items-center justify-center`}
                         >
                             <FaCheck size={15} />
                         </button>
-                    </div>
+                    </form>
                 )}
             <div className="flex-1 overflow-y-auto">
                 {Object.keys(arrFund).length > 0 ? (

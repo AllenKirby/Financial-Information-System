@@ -3,8 +3,6 @@ import { useState, useEffect } from 'react';
 
 import PaginatedList from '../Pagination/PaginatedList';
 
-import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
-
 import { IoSearchSharp } from "react-icons/io5";
 import { HiAdjustmentsHorizontal } from "react-icons/hi2";
 import { RxCross2 } from "react-icons/rx";
@@ -12,10 +10,11 @@ import { IoIosClose } from "react-icons/io";
 import { LuFileCheck } from "react-icons/lu";
 import { FiLayers } from "react-icons/fi";
 import { BsListTask } from "react-icons/bs";
+import { useSelector } from 'react-redux';
 
 const DisbursementRecords = () => {
   const { id } = useParams()
-  const { AdminDocuments } = useAdminDisbursementContext()
+  const DVRecords = useSelector((state) => state.dvrecords)
   const [filterFlag, setFilterFlag] = useState(false)
   const [filter, setFilter] = useState('')
   const [filteredDocuments, setFilteredDocuments] = useState({all: {}, forApproval: {}, approved: {}})
@@ -28,18 +27,17 @@ const DisbursementRecords = () => {
     setFilterFlag(!filterFlag)
   }
 
-  console.log(AdminDocuments)
   useEffect(() => {
-    if (AdminDocuments && Object.keys(AdminDocuments).length > 0) {
+    if (DVRecords && Object.keys(DVRecords).length > 0) {
       if(!activeTabs) {
         const filteredResults = Object.fromEntries(
-          Object.entries(AdminDocuments).filter(([, document]) =>
+          Object.entries(DVRecords).filter(([, document]) =>
             document?.data?.fund.toLowerCase().includes(filter.toLowerCase())
           )
         );
         setFilteredDocuments({...filteredDocuments, all: filteredResults});
       } else {
-        const drafts = Object.entries(AdminDocuments).filter(([, document]) => document.data.status.includes(activeTabs))
+        const drafts = Object.entries(DVRecords).filter(([, document]) => document.data.status.includes(activeTabs))
         const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.fund.toLowerCase().includes(filter.toLowerCase())))
         if(activeTabs === 'For Approval') {
           setFilteredDocuments({...filteredDocuments, forApproval: filteredDrafts})
@@ -50,15 +48,15 @@ const DisbursementRecords = () => {
     } else {
       setFilteredDocuments({});
     }
-  }, [filter, AdminDocuments, activeTabs]);
+  }, [filter, DVRecords, activeTabs]);
 
   useEffect(() => {
-    if(!AdminDocuments) return 
+    if(!DVRecords) return 
     if(!activeTabs) {
-      const filteredResults = Object.entries(AdminDocuments).filter(doc => doc[1].data.payee.toLowerCase().includes(search.toLowerCase()) || doc[1].data.DV.toLowerCase().includes(search.toLowerCase()))
+      const filteredResults = Object.entries(DVRecords).filter(doc => doc[1].data.payee.toLowerCase().includes(search.toLowerCase()) || doc[1].data.DV.toLowerCase().includes(search.toLowerCase()))
       setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
     } else {
-      const drafts = Object.entries(AdminDocuments).filter(([, document]) => document.data.status.includes(activeTabs))
+      const drafts = Object.entries(DVRecords).filter(([, document]) => document.data.status.includes(activeTabs))
       const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].data.payee.toLowerCase().includes(search.toLowerCase()) || document[1].data.DV.toLowerCase().includes(search.toLowerCase())))
       if(activeTabs === 'Approved') {
         setFilteredDocuments({...filteredDocuments, approved: filteredDrafts})
@@ -66,7 +64,7 @@ const DisbursementRecords = () => {
         setFilteredDocuments({...filteredDocuments, forApproval: filteredDrafts})
       }
     }
-  }, [search, AdminDocuments, activeTabs])
+  }, [search, DVRecords, activeTabs])
 
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {

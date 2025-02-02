@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react"
+import {Outlet, useParams} from 'react-router-dom'
 
 import { useSelector } from "react-redux";
 
@@ -9,6 +10,7 @@ import PaginatedList from "../Pagination/PaginatedList";
 
 const DVRegister = () => {
     const [activeTab, setActiveTabs] = useState('501 COB') 
+    const { id } = useParams()
     const [search, setSearch]= useState('')
     const [searchModal, setSearchModal] = useState(false)
     const [filteredDocuments, setFilteredDocuments] = useState({})
@@ -103,6 +105,14 @@ const DVRegister = () => {
                 </div>
             </div>
         </div>
+        {id && (
+            <>
+            <div className="fixed inset-0 z-20 bg-black opacity-50" />
+            <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                <Outlet/>
+            </div>
+            </>
+        )}
     </section>
   )
 }

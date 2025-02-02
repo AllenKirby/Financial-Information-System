@@ -1,5 +1,4 @@
 import { Outlet, useLocation } from "react-router-dom"
-import { useOpDisbursementContext } from '../hooks/useOpDisbursementContext'
 
 import Navbar from "../components/Shared/Navbar"
 import Header from "../components/Shared/Header"
@@ -13,6 +12,7 @@ import { useFundingHook } from "../hooks/useFundingHook"
 
 import {useDispatch} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
+import { setDVRecords } from '../redux/DVUsersRedux'
 
 import {initializeSocket } from "../socketService/socketService";
 
@@ -21,7 +21,6 @@ const OperatorPage = () => {
   const [location, setLocation] = useState('')
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
-  const { dispatch: dispatchContext } = useOpDisbursementContext()
   const { retrieveControlBooks } = useFundingHook()
   // const [status, setStatus] = useState([])
   const dispatch = useDispatch()
@@ -101,7 +100,8 @@ const OperatorPage = () => {
     const {socket, isInitialized} = initializeSocket()
       if(isInitialized){
         socket.on('operator:firestore:update', (doc) => {
-          dispatchContext({type: 'SET_OPDOCUMENTS', payload: doc})
+          //dispatchContext({type: 'SET_OPDOCUMENTS', payload: doc})
+          dispatch(setDVRecords(doc))
         })
         socket.on('operatorPermission:firestore:update', (doc) => {
           dispatch(setPermission(doc));

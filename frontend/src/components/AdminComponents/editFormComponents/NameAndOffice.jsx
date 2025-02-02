@@ -1,10 +1,12 @@
 import { IoAdd } from "react-icons/io5";
-import { MdRemove } from "react-icons/md";
+import { MdOutlineEdit, MdRemove } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
+import { IoIosClose } from "react-icons/io";
 
 import { useEffect, useState } from "react";
 import { useApproverHook } from "../../../hooks/useApproverHook";
 import { useAuthContext } from '../../../hooks/useAuthContext'
+import LargeLoader from '../../Loaders/LargeLoader'
 
 export const NameAndOffice = () => {
     const { user } = useAuthContext()
@@ -12,9 +14,26 @@ export const NameAndOffice = () => {
     const [name, setName] = useState('');
     const [office, setOffice] = useState('');
     const [entries, setEntries] = useState({});
-    const {addNewNameAndOffice, getNameAndOffice, deleteNameAndOffice} = useApproverHook()
+    const {addNewNameAndOffice, getNameAndOffice, deleteNameAndOffice, updateNameOffice, isLoading} = useApproverHook()
+    const [updateFlag, setUpdateFlag] = useState(false)
+    const [key, setKey] = useState('')
 
-    const handleAddNameOffice = () => {
+    useEffect(() => {
+        if(!updateFlag) {
+            setName("")
+            setOffice("")
+        }
+    }, [updateFlag, name, office, showInpuTBoxA])
+
+    const handleAddNameOffice = (flag, name = '', office = '', key = '') => {
+        if(flag) { 
+            setName(name)
+            setOffice(office)
+            setKey(key)
+            setUpdateFlag(!updateFlag)
+        } else {
+            setUpdateFlag(!updateFlag)
+        }
         setShowInputBoxA(!showInpuTBoxA);
     }
 
@@ -26,26 +45,36 @@ export const NameAndOffice = () => {
         setOffice(e.target.value);
     };
 
-    const handleSubmit = () => {
-        
-        if (name && office) {
-            const input = name+office
-            const randomKey = input.replace(/[^a-zA-Z0-9]/g, "");
-            setEntries((prev) => {
-                const newObj = {...prev}
-                newObj[randomKey] = {name, office}
-                return newObj
-            })
-            setName('');
-            setOffice('');
-            addNewNameAndOffice(name, office, randomKey)
-            setShowInputBoxA(false)
-            sessionStorage.removeItem('NameAndOfficeData')
-        } else {
-            alert("Both Name and Office must be filled.");
-        }
-
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const input = name+office
+        const randomKey = input.replace(/[^a-zA-Z0-9]/g, "");
+        setEntries((prev) => {
+            const newObj = {...prev}
+            newObj[randomKey] = {name, office}
+            return newObj
+        })
+        setName('');
+        setOffice('');
+        addNewNameAndOffice(name, office, randomKey)
+        setShowInputBoxA(false)
+        sessionStorage.removeItem('NameAndOfficeData')
     };
+
+    const handleUpdate = async (e) => {
+        e.preventDefault()
+        await updateNameOffice(key, name, office)
+        setName('');
+        setOffice('');
+        setUpdateFlag(false)
+        setShowInputBoxA(false)
+        setEntries((prev) => {
+            const newObj = {...prev}
+            newObj[key] = {name, office}
+            return newObj
+        })
+        sessionStorage.removeItem('NameAndOfficeData')
+    }
 
     const handleRemoveEntry = (keyToRemove) => {
         const deleting = async () => {
@@ -97,14 +126,15 @@ export const NameAndOffice = () => {
                 <div className="w-2/12 flex justify-center items-center">
                     <button 
                         className='text-2xl rounded-full'
-                        onClick={handleAddNameOffice}><IoAdd/></button>
+                        onClick={() => handleAddNameOffice(false)}>{showInpuTBoxA ? <IoIosClose />: <IoAdd/>}</button>
                 </div>
             </div>
             {showInpuTBoxA && (
-                <div className="px-2 py-2 bg-gray-100 flex gap-1">
+                <form onSubmit={updateFlag ? handleUpdate : handleSubmit} className="px-2 py-2 bg-gray-100 flex gap-1">
                     <input
                         type="text"
                         value={name}
+                        required
                         onChange={handleInputChangeName}
                         placeholder="e.g. Juan Dela Cruz"
                         className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
@@ -112,17 +142,18 @@ export const NameAndOffice = () => {
                     <input
                         type="text"
                         value={office}
+                        required
                         onChange={handleInputChangeOffice}
                         placeholder="e.g. Division Manager A, AFD"
                         className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg w-4/5`}
                     />
                     <button
-                        onClick={handleSubmit}
+                        type="submit"
                         className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} w-1/5 h-auto text-white rounded-lg flex items-center justify-center`}
                     >
                         <FaCheck size={15} />
                     </button>
-                </div>
+                </form>
             )}
             <div className="flex-1 overflow-y-auto">
                 {Object.entries(entries).map(([key, entry], index) => (
@@ -130,6 +161,12 @@ export const NameAndOffice = () => {
                         <p className="w-full sm:w-5/12 flex justify-start">{entry.name}</p>
                         <p className="w-full sm:w-5/12 flex justify-start sm:justify-center">{entry.office}</p>
                         <div className="w-full sm:w-2/12 flex justify-start sm:justify-center">
+                            <button 
+                                onClick={() => handleAddNameOffice(true, entry.name, entry.office, key)}
+                                className="px-1 py-1 rounded-full"
+                            >
+                                <MdOutlineEdit />
+                            </button>
                             <button
                                 className="text-red-500 w-6 h-6 flex items-center justify-center rounded-full hover:bg-red-500 hover:text-white"
                                 onClick={() => handleRemoveEntry(key)}
@@ -140,6 +177,9 @@ export const NameAndOffice = () => {
                     </div>
                 ))}
             </div>
+            {isLoading && (
+                <LargeLoader/>
+            )}
         </div>
     )
 }

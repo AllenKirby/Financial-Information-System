@@ -16,10 +16,7 @@ import AddComment from "./AddComment";
 import Comments from "./Comments";
 
 //contexts
-import { useDisbursementContext } from "../../hooks/useDisbursementContext";
-import { useHeadDisbursementContext } from "../../hooks/useHeadDisbursementContext";
-import { useAdminDisbursementContext } from '../../hooks/useAdminDisbursementContext'
-import { useOpDisbursementContext } from "../../hooks/useOpDisbursementContext";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 //hooks
 import { usePreparerHook } from "../../hooks/usePreparerHook";
@@ -27,7 +24,6 @@ import { useApproverHook } from "../../hooks/useApproverHook";
 
 //redux
 import { useSelector } from "react-redux";
-import { useAuthContext } from "../../hooks/useAuthContext";
 
 const ViewDocument = () => {
   //states
@@ -43,10 +39,6 @@ const ViewDocument = () => {
   const [returnFlag, setReturnFlag] = useState(false)
 
   //contexts
-  const { documents } = useDisbursementContext();
-  const {OpDocuments} = useOpDisbursementContext();
-  const { HeadDocuments} = useHeadDisbursementContext()
-  const { AdminDocuments } = useAdminDisbursementContext()
   const { user } = useAuthContext()
 
   //hooks
@@ -55,6 +47,9 @@ const ViewDocument = () => {
 
   //redux
   const permission = useSelector((state) => state.permission) 
+  const DVRecords = useSelector((state) => state.dvrecords)
+  const Vouchers = useSelector((state) => state.vouchers)
+
 
   const modal = () => {
     setIsModalOpen(!isModalOpen)
@@ -96,9 +91,9 @@ const ViewDocument = () => {
   useEffect(() => {
 
     if (idStatus.type === '4') {
-      if (documents && Object.keys(documents).length > 0) {
+      if (DVRecords && Object.keys(DVRecords).length > 0) {
 
-        const selectedDocument = Object.entries(documents).find(([, document]) => document.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document.DVKey === idStatus.id);
         
         if (selectedDocument) {
           setDoc(selectedDocument[1]);
@@ -110,9 +105,9 @@ const ViewDocument = () => {
       }
     }
     else if (idStatus.type === '3'){
-      if(OpDocuments && Object.keys(OpDocuments).length > 0){
+      if(DVRecords && Object.keys(DVRecords).length > 0){
 
-        const selectedDocument = Object.entries(OpDocuments.documents).find(([, document]) => document.data.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords.documents).find(([, document]) => document.data.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -121,9 +116,9 @@ const ViewDocument = () => {
         }
       }
     }else if (idStatus.type === '2'){
-      if(HeadDocuments && Object.keys(HeadDocuments).length > 0){
+      if(DVRecords && Object.keys(DVRecords).length > 0){
 
-        const selectedDocument = Object.entries(HeadDocuments).find(([, document]) => document.data.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document.data.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -132,8 +127,17 @@ const ViewDocument = () => {
         }
       }
     }else if(idStatus.type === '1'){
-      if(AdminDocuments && Object.keys(AdminDocuments).length > 0){
-        const selectedDocument = Object.entries(AdminDocuments).find(([, document]) => document.data.DVKey === idStatus.id);
+      if(DVRecords && Object.keys(DVRecords).length > 0){
+        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document.data.DVKey === idStatus.id);
+        if (selectedDocument) {
+          setDoc(selectedDocument[1].data);
+        } else {
+          console.log("Error finding the Head document");
+        }
+      }
+    } else if(idStatus.type === '0'){
+      if(Vouchers && Object.keys(Vouchers).length > 0){
+        const selectedDocument = Object.entries(Vouchers).find(([, document]) => document.data.DVKey === idStatus.id);
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
         } else {
@@ -141,7 +145,7 @@ const ViewDocument = () => {
         }
       }
     }
-  }, [OpDocuments, HeadDocuments, documents, idStatus, AdminDocuments]); 
+  }, [idStatus, DVRecords,Vouchers]); 
 
   const handleDownload = async() => {
     await downloadDV(doc)

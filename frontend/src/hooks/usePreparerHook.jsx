@@ -1,10 +1,14 @@
 import axios from "axios";
 import { useState } from "react";
 
+import {useDispatch} from 'react-redux'
+import { deleteDVrecords } from '../redux/DVUsersRedux'
+
 export const usePreparerHook = () => {
     const [error, setError] = useState(null)
     const [isLoading, setIsLoading] = useState(false)
     const apiURL = import.meta.env.VITE_API_URL
+    const dispatch = useDispatch()
 
     const createDisbursement = async(data) => {
         setError(null)
@@ -39,6 +43,7 @@ export const usePreparerHook = () => {
 
             if(res.status === 200){
                 setIsLoading(false)
+                dispatch(deleteDVrecords(id))
                 return true
             }
         } catch (error) {
@@ -76,6 +81,7 @@ export const usePreparerHook = () => {
             });
             if(res.status === 200){
                 setIsLoading(false)
+                dispatch(deleteDVrecords(data.DV))
                 return true
             }
           }catch(error){
