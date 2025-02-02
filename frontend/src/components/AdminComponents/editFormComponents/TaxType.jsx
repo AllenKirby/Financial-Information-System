@@ -1,15 +1,18 @@
+import { useState, useEffect } from "react";
+
 import { IoAdd } from "react-icons/io5";
-import { MdRemove } from "react-icons/md";
+import { MdOutlineEdit, MdRemove } from "react-icons/md";
 import { FaCheck } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { IoIosClose } from "react-icons/io";
 
 import { useApproverHook } from "../../../hooks/useApproverHook";
 import { useAuthContext } from '../../../hooks/useAuthContext'
+import LargeLoader from '../../Loaders/LargeLoader'
 
 export const TaxType = () => {
     const { user } = useAuthContext()
     const [showInput, setShowInput] = useState(false)
-    const {addTax, getTaxType, deleteTax} = useApproverHook()
+    const {addTax, getTaxType, deleteTax, updateTaxType,isLoading} = useApproverHook()
 
     const [tax, setTax] = useState('')
     const [cost, setCost] = useState('')
@@ -18,8 +21,29 @@ export const TaxType = () => {
     const [value2, setValue2] = useState("");
 
     const [entries, setEntries] = useState({});
+    const [updateFlag, setUpdateFlag] = useState(false)
+    const [key, setKey] = useState('')
 
-    const handleShowInput = () => {
+    useEffect(() => {
+        if(!updateFlag) {
+            setTax('')
+            setCost('')
+            setValue1('')
+            setValue2('')
+        }
+    }, [updateFlag, tax, cost, value1, value2, showInput])
+
+    const handleShowInput = (flag, Tax = '', Cost = '', Value1 = '', Value2 = '', key = '') => {
+        if(flag) { 
+            setTax(Tax)
+            setCost(Cost)
+            setValue1(Value1)
+            setValue2(Value2)
+            setKey(key)
+            setUpdateFlag(!updateFlag)
+        } else {
+            setUpdateFlag(!updateFlag)
+        }
         setShowInput(!showInput)
     }
 
@@ -37,28 +61,42 @@ export const TaxType = () => {
         }
     };
 
-    const handleSubmit = () => {
-        if(tax && cost && value1 && value2){
-            const key = tax+cost;
-            if(!(key in entries)){
-                addTax(tax, cost, value1, value2, key)
-                setShowInput(false)
-                setEntries((prev) => {
-                    const newObj = {...prev}
-                    newObj[key] = {tax, cost, value1, value2}
-                    return newObj
-                })
-                setTax('')
-                setCost('')
-                setValue1('')
-                setValue2('')
-                sessionStorage.removeItem('TaxTypeData')
-            }else{
-                alert("Please choose another title for cost category.");
-            }
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const key = tax+cost;
+        if(!(key in entries)){
+            addTax(tax, cost, value1, value2, key)
+            setShowInput(false)
+            setEntries((prev) => {
+                const newObj = {...prev}
+                newObj[key] = {tax, cost, value1, value2}
+                return newObj
+            })
+            setTax('')
+            setCost('')
+            setValue1('')
+            setValue2('')
+            sessionStorage.removeItem('TaxTypeData')
         }else{
-            alert(`${cost} is already existing on ${tax}`);
+            alert("Please choose another title for cost category.");
         }
+    }
+
+    const handleUpdate = async (e) => {
+        e.preventDefault()
+        await updateTaxType(key, tax, cost, value1, value2)
+        setTax('')
+        setCost('')
+        setValue1('')
+        setValue2('')
+        setUpdateFlag(false)
+        setShowInput(false)
+        setEntries((prev) => {
+            const newObj = {...prev}
+            newObj[key] = {tax, cost, value1, value2}
+            return newObj
+        })
+        sessionStorage.removeItem('TaxTypeData')
     }
 
     useEffect(() => {
@@ -110,13 +148,13 @@ export const TaxType = () => {
                 <h1 className='hidden sm:block w-[30%] text-center font-bold'>Computation</h1>
                 <button 
                     className='w-[10%] text-2xl rounded-full flex items-center justify-center'
-                    onClick={handleShowInput}
-                ><IoAdd/></button>
+                    onClick={() => handleShowInput(false)}>{showInput ? <IoIosClose />: <IoAdd/>}</button>
             </div>
             {showInput && (
-                    <div className="px-2 py-2 bg-gray-100 gap-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+                    <form onSubmit={updateFlag ? handleUpdate : handleSubmit} className="px-2 py-2 bg-gray-100 gap-1 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
                         <select
                             value={tax}
+                            required
                             onChange={(e) => setTax(e.target.value)}
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
                         >
@@ -127,6 +165,7 @@ export const TaxType = () => {
                         <input
                             type="text"
                             value={cost}
+                            required
                             onChange={(e) => setCost(capitalize(e.target.value))}
                             placeholder="e.g. Services"
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
@@ -134,6 +173,7 @@ export const TaxType = () => {
                         <input
                             type="text"
                             value={value1}
+                            required
                             onChange={(e) => setValue1(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="e.g. /1.12 * 0.05"
@@ -142,18 +182,19 @@ export const TaxType = () => {
                         <input
                             type="text"
                             value={value2}
+                            required
                             onChange={(e) => setValue2(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder="e.g. /1.12 * 0.05"
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border border-gray-300 p-2 rounded-lg`}
                         />
                         <button
-                            onClick={handleSubmit}
+                            type="submit"
                             className={`${user?.role === '1' ? 'bg-customgreen' : 'bg-BOGreen'} h-auto text-white rounded-lg flex items-center justify-center py-2`}
                         >
                              <FaCheck size={15} />
                         </button>
-                    </div>
+                    </form>
                 )}
                 <div className="w-full h-auto">
                     {Object.entries(entries).map(([key, entry], index) => (
@@ -162,6 +203,12 @@ export const TaxType = () => {
                             <p className="w-full sm:w-[30%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">{entry.cost}</p>
                             <p className="w-full sm:w-[30%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">gross{entry.value1} and gross{entry.value2}</p>
                             <div className="w-full sm:w-[10%] flex justify-start sm:justify-center items-center px-2 sm:p-0 ">
+                                <button 
+                                    onClick={() => handleShowInput(true, entry.tax, entry.cost, entry.value1, entry.value2,key)}
+                                    className="px-1 py-1 rounded-full"
+                                >
+                                    <MdOutlineEdit />
+                                </button>
                                 <button
                                     className="text-red-500 w-auto h-full flex items-center justify-center rounded-full hover:bg-red-500 hover:text-white"
                                     onClick={() => handleRemoveEntry(key)}
@@ -172,7 +219,9 @@ export const TaxType = () => {
                         </div>
                     ))}
                 </div>
-            
+            {isLoading && (
+                <LargeLoader/>
+            )}
         </div>
     )
  }

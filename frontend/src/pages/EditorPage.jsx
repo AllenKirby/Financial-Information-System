@@ -1,11 +1,11 @@
 import { Outlet, useLocation } from "react-router-dom";
-//import {io} from 'socket.io-client'
-import { useDisbursementContext } from '../hooks/useDisbursementContext'
+import { useFundingHook } from "../hooks/useFundingHook";
 import { useEffect, useState } from "react";
+
 import {useDispatch, useSelector} from 'react-redux'
 import {setPermission} from '../redux/PermissionRedux'
 import {setVouchers} from '../redux/AllVouchersRedux' 
-import { useFundingHook } from "../hooks/useFundingHook";
+import { setDVRecords } from '../redux/DVUsersRedux'
 
 //Components
 import Navbar from "../components/Shared/Navbar"
@@ -26,7 +26,6 @@ const EditorPage = () => {
   const [location, setLocation] = useState('')
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
-  const { dispatch: dispatchContext } = useDisbursementContext()
   const dispatch = useDispatch()
   //const apiURL = import.meta.env.VITE_API_URL
   const permission = useSelector((state) => state.permission)
@@ -89,7 +88,8 @@ const EditorPage = () => {
     const {socket, isInitialized} = initializeSocket()
     if(isInitialized){
       socket.on('editor:firestore:update', (doc) => {
-        dispatchContext({ type: 'SET_DOCUMENTS', payload: doc });
+        //dispatchContext({ type: 'SET_DOCUMENTS', payload: doc });
+        dispatch(setDVRecords(doc))
       })
       socket.on('editorPermission:firestore:update', (doc) => {
         dispatch(setPermission(doc));

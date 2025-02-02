@@ -9,12 +9,12 @@ import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 
 //import { useAuthContext } from "../hooks/useAuthContext";
-import { useAdminDisbursementContext } from '../hooks/useAdminDisbursementContext'
 // import { firestore } from "../config/firebase-config"
 // import { collection, query, where, onSnapshot } from "firebase/firestore"
 import { useApproverHook } from "../hooks/useApproverHook";
 import { useDispatch, useSelector } from "react-redux";
 import { setVouchers } from "../redux/AllVouchersRedux";
+import { setDVRecords } from '../redux/DVUsersRedux'
 
 import {initializeSocket } from "../socketService/socketService";
 
@@ -24,7 +24,6 @@ const AdminPage = () => {
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
   //const { user } = useAuthContext()
-  const { dispatch: contextDispatch  } = useAdminDisbursementContext()
   //const apiURL = import.meta.env.VITE_API_URL
   const { getRecords } = useApproverHook()
   const dispatch = useDispatch() 
@@ -62,14 +61,15 @@ const AdminPage = () => {
         const updatedDocuments = {...documents, ...doc};
         const filteredDV = filterApproverDocu(updatedDocuments)
         dispatch(setVouchers(doc))
-        contextDispatch({ type: 'SET_ADMINDOCUMENTS', payload: filteredDV });
+        //contextDispatch({ type: 'SET_ADMINDOCUMENTS', payload: filteredDV });
+        dispatch(setDVRecords(filteredDV))
         setDocuments(updatedDocuments);
       })
       return () => {
         socket.off('admin:firestore:update');
       };
     }
-  }, [documents])//[documents, user, apiURL, dispatch]
+  }, [])//[documents, user, apiURL, dispatch]
 
   const filterApproverDocu = (doc) => {
     const filteredData = Object.entries(doc).filter(([, value]) => ['Approved', 'For Approval'].includes(value.data.status))

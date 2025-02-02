@@ -3,9 +3,6 @@ import axios from "axios"
 import {useNavigate} from 'react-router-dom';
 
 import { useAuthContext } from "./useAuthContext"
-import { useDisbursementContext } from './useDisbursementContext.jsx';
-import { useOpDisbursementContext } from './useOpDisbursementContext.jsx';
-import { useHeadDisbursementContext } from './useHeadDisbursementContext.jsx';
 
 import { getAuth, sendPasswordResetEmail, signOut, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "firebase/auth"; 
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -15,6 +12,7 @@ import { toggleChangePassFlag, resetChangePassFlag } from '../redux/ChangePasswo
 //redux
 import { useDispatch } from "react-redux";
 import { setPermission } from "../redux/PermissionRedux.jsx"; 
+import { setDVRecords } from '../redux/DVUsersRedux.jsx'
 // import { initializeSocket, disconnectSocket } from "../redux/socketRedux.jsx";
 import { initializeSocket, disconnectSocket } from "../socketService/socketService.jsx";
 
@@ -23,9 +21,6 @@ import { disableNetwork, getFirestore } from "firebase/firestore";
 
 export const useAuthHook = () => {
     const {dispatch: dispatchAuth} = useAuthContext()
-    const {dispatch: dispatchDocuments} = useDisbursementContext()
-    const { dispatch: dispatchOpDocuments } = useOpDisbursementContext()
-    const { dispatch: dispatchHeadDocuments } = useHeadDisbursementContext()
     const dispatch = useDispatch()
 
     const [isLoading, setIsLoading] = useState(false)
@@ -101,9 +96,7 @@ export const useAuthHook = () => {
             console.log('logouted')
             dispatch(resetChangePassFlag())
             dispatchAuth({type: 'LOGOUT', payload: null})
-            dispatchDocuments({type: 'SET_DOCUMENTS', payload: null })
-            dispatchOpDocuments({type: 'SET_OPDOCUMENTS', payload: null })
-            dispatchHeadDocuments({type: 'SET_HEADDOCUMENTS', payload: null })
+            dispatch(setDVRecords(null))
             dispatch(setPermission(null))
             cookies.remove('user', { path: '/', secure: true, sameSite: 'Strict' });
             cookies.remove('token', { path: '/', secure: true, sameSite: 'Strict' });

@@ -49,7 +49,9 @@ const Mainpage = () => {
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewControlBook/></PrivateRoute>}/>
           </Route>
           <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['4']}><HistoryLogs/></PrivateRoute>}/>
-          <Route path="dvregister" element={<PrivateRoute allowedRoles={['4']}><DVRegister/></PrivateRoute>}/>
+          <Route path="dvregister" element={<PrivateRoute allowedRoles={['4']}><DVRegister/></PrivateRoute>}>
+            <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
+          </Route>
         </Route>
         <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>

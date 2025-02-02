@@ -23,7 +23,10 @@ const {getAllLogs,
        downloadDV,
        downloadGSIS,
        returnRecordTo,
-       updateFundCluster
+       updateFundCluster,
+       updateResCen,
+       updateNameAndOffice,
+       updateTaxType
         } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
@@ -50,6 +53,9 @@ adminRouter.get('/getTaxType', getTaxType)
 adminRouter.delete('/deleteTax/:field_key', deleteTax)
 adminRouter.post('/returnRecords', returnRecordTo)
 adminRouter.patch('/updateFundCluster/:id', updateFundCluster)
+adminRouter.patch('/updateResCen/:id', updateResCen)
+adminRouter.patch('/updateNameOffice/:id', updateNameAndOffice)
+adminRouter.patch('/updateTaxType/:id', updateTaxType)
 //DASHBOARD (NUMBER OF RECORDS)
 
 

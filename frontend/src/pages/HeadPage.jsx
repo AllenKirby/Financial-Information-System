@@ -3,11 +3,11 @@ import Header from "../components/Shared/Header"
 
 import { Outlet, useLocation } from "react-router-dom"
 //import axios from "axios"
-import { useHeadDisbursementContext } from "../hooks/useHeadDisbursementContext"
 //import { firestore } from "../config/firebase-config"
 //import { collection, query, doc, where, onSnapshot } from "firebase/firestore"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPermission } from "../redux/PermissionRedux" 
+import { setDVRecords } from '../redux/DVUsersRedux'
 import { useEffect, useState } from "react"
 
 import { TbLayoutDashboard } from "react-icons/tb";
@@ -25,7 +25,6 @@ const HeadPage = () => {
   const [navbarExpand, setNavbarExpand] = useState(true)
   const [mobileSidebar, setMobileSidebar] = useState(false)
   //const { user } = useAuthContext() 
-  const { dispatch: dispatchContext } = useHeadDisbursementContext()
   const dispatch = useDispatch()
   const permission = useSelector((state) => state.permission)
   // const [status, setStatus] = useState([])
@@ -106,7 +105,8 @@ const HeadPage = () => {
     const {socket, isInitialized} = initializeSocket()
     if(isInitialized){
       socket.on('head:firestore:update', (doc) => {
-        dispatchContext({ type: 'SET_HEADDOCUMENTS', payload: doc });
+        //dispatchContext({ type: 'SET_HEADDOCUMENTS', payload: doc });
+        dispatch(setDVRecords(doc))
       })
       socket.on('headPermission:firestore:update', (doc) => {
         dispatch(setPermission(doc));

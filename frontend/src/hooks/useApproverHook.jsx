@@ -3,11 +3,14 @@ import { useState } from "react"
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot } from "firebase/firestore"
 import { setVouchers } from '../redux/AllVouchersRedux'
+import { deleteDVrecords } from '../redux/DVUsersRedux'
+import { useDispatch } from 'react-redux'
 
 export const useApproverHook = () => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
     const apiURL = import.meta.env.VITE_API_URL
+    const dispatch = useDispatch()
 
     const approveDV = async(DV, data) => {
         setIsLoading(true)
@@ -301,6 +304,7 @@ export const useApproverHook = () => {
             })
             if(res.status === 200){
                 setIsLoading(false)
+                dispatch(deleteDVrecords(data.DV))
                 return true
             }
         }catch(error){
@@ -331,6 +335,76 @@ export const useApproverHook = () => {
         }
     }
 
+    const updateResCen = async(key, updatedResCen) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/admin/updateResCen/${key}`,{ updatedResCen}, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error updating responsibility center";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const updateNameOffice = async(key, updatedName, updatedOffice) => {
+        setIsLoading(true)
+        setError(null)
+        const data = {
+            updatedName: updatedName,
+            updatedOffice: updatedOffice
+        }
+        try {
+            const res = await axios.patch(`${apiURL}/admin/updateNameOffice/${key}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error updating Name and Office";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const updateTaxType = async(key, updatedTax, updatedCost, updatedValue1, updatedValue2) => {
+        setIsLoading(true)
+        setError(null)
+        const data = {
+            updatedTax: updatedTax,
+            updatedCost: updatedCost,
+            updatedValue1: updatedValue1,
+            updatedValue2: updatedValue2,
+        }
+        try {
+            const res = await axios.patch(`${apiURL}/admin/updateTaxType/${key}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error updating Tax Type";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
   return {
     approveDV, 
     addNewFundCluster, 
@@ -349,6 +423,9 @@ export const useApproverHook = () => {
     downloadDV,
     returnDocFromAdmin,
     updateFundCluster,
+    updateResCen,
+    updateNameOffice,
+    updateTaxType,
     isLoading, 
     error
     }

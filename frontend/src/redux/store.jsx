@@ -7,6 +7,7 @@ import TotalExpenseReducer from "./TotalExpenseRedux"
 import AllVouchersReducer from './AllVouchersRedux'
 import ResetPasswordRequestsReducer from "./ResetPasswordRequests"
 import ChangePassFlagReducer from "./ChangePasswordFlagRedux"
+import DVUsersReducer from "./DVUsersRedux"
 
 export const store = configureStore({
     reducer : {
@@ -18,5 +19,6 @@ export const store = configureStore({
         vouchers: AllVouchersReducer,
         request: ResetPasswordRequestsReducer,
         changePass: ChangePassFlagReducer,
+        dvrecords: DVUsersReducer
     }
 })

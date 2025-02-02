@@ -15,6 +15,14 @@ const FieldOffices = (props) => {
 
   const {fieldOffice, index, ASANo, fieldOfficeID, remainingASA, test, tabs} = props
 
+  // console.log('fieldOffice: ', fieldOffice)
+  // console.log('index: ', index)
+  // console.log('ASANo:', ASANo)
+  // console.log('fieldOfficeID: ',fieldOfficeID)
+  // console.log('remainingASA: ', remainingASA)
+  // console.log('test: ', test)
+  // console.log('tabs: ', tabs)
+
   const { deleteFieldOffice, isLoading, error } = useFundingHook()
   
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
