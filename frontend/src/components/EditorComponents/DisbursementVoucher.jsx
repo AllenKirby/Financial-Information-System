@@ -15,9 +15,13 @@ import { useAuthContext } from '../../hooks/useAuthContext'
 import { usePreparerHook } from '../../hooks/usePreparerHook'
 import { useInitialStateDV } from '../../hooks/useInitialStateDV'
 
-//import {useSelector} from 'react-redux'
+import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
+   //hooks
+   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
+   const {getDVno} = useInitialStateDV()
+   const { user } = useAuthContext() 
 
   const [payeeData, setPayeeData] = useState({ 
     payee: '', 
@@ -51,7 +55,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
-  const [activeTab, setActiveTab] = useState('DV')
+  const [activeTab, setActiveTab] = useState(user?.role === '4' ? 'To Release' : 'To Payment')
   
 
   //payee
@@ -74,13 +78,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [nameOffice, setNameOffice] = useState({})
   const [ASANo, setASANo] = useState({})
   
-  //hooks
-  const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
-  const {getDVno} = useInitialStateDV()
-  const { user } = useAuthContext() 
-  
   //redux
-  //const permission = useSelector((state) => state.permission)
+  const permission = useSelector((state) => state.permission)
 
   useEffect(() => {
     if (flag && document) {
@@ -116,7 +115,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       //   asa: document.ASA || ''
       // })
 
-      if (document.activeTab === 'DV'){
+      if (document.activeTab === 'To Release'){
         const initialFormFields = (document.accTitle || []).map((title, index) => ({
           accCategory: document.accCategory && document.accCategory[index] ? document.accCategory[index] : '',
           accTitle: title || '',
@@ -295,7 +294,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let updatedPayeeData
-    if(activeTab === 'DV'){
+    if(activeTab === 'To Release'){
       updatedPayeeData = dataForDV()
     }else if(activeTab === 'GSIS'){
       updatedPayeeData = dataForGSIS()
@@ -600,6 +599,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }
 
+  console.log(permission)
+
   return (
     <form onSubmit={(e) => flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
       <div className='w-full h-auto'>
@@ -608,12 +609,22 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         </div>
         <div className='w-full h-auto py-1'>
           <div className='flex items-start gap-3 px-3'>
-            <button type='button' 
-              onClick={() => setActiveTab('DV')} 
-              className={`${activeTab === 'DV' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-              disabled={flag}>
-              General
-            </button>
+            {(permission?.data?.permission && permission?.data?.roleName === 'Funding' || user?.role === '4') && ( 
+              <button type='button' 
+                onClick={() => setActiveTab('To Release')} 
+                className={`${activeTab === 'To Release' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                disabled={flag}>
+                To Release
+              </button>
+            )}
+            {(permission?.data?.permission && permission?.data?.roleName === 'Preparer' || user?.role === '3') && (
+              <button type='button' 
+                onClick={() => setActiveTab('To Payment')} 
+                className={`${activeTab === 'To Payment' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                disabled={flag}>
+                To Payment
+              </button>
+            )}
             <button type='button' 
               onClick={() => setActiveTab('GSIS')} 
               className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
@@ -903,7 +914,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               </div>
             </div>
           </div>
-          {(activeTab === 'DV' || activeTab === 'Others') && (
+          {(activeTab === 'To Release' || activeTab === 'Others') && (
             <div className='w-full h-auto'>
               <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
               <div className="w-full h-auto flex flex-col mt-2">

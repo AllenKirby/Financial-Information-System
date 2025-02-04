@@ -4,6 +4,7 @@ import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc, getDocs } from "firebase/firestore"
 import { setControlBook, deleteFolder, deleteProject } from '../redux/ControlBookRedux' 
 import { useDispatch } from "react-redux";
+import { deleteDVrecords } from '../redux/DVUsersRedux'
 
 export const useFundingHook = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -59,6 +60,7 @@ export const useFundingHook = () => {
 
             if(res.status === 200){
                 setIsLoading(false)
+                dispatchFolder(deleteDVrecords(data.data.DV))
                 return true
             }
             
