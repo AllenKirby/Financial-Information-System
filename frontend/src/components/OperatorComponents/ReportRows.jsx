@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react"
 
 import PropTypes from 'prop-types'
 
-const ReportRows = ({reportData}) => {
+const ReportRows = ({reportData, fieldoffices}) => {
   const [data, setData] = useState({
     previousRO: 0,
     previousFO: 0,
@@ -22,7 +22,7 @@ const ReportRows = ({reportData}) => {
     
     const computePreviousRO = () => {
         let TotalASA = parseFloat(reportData.TotalASA)
-        const TotalFieldOfficeExpense = Object.values(reportData.fieldOffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
+        const TotalFieldOfficeExpense = Object.values(fieldoffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
         for(let i = 0; i < TotalFieldOfficeExpense.length; i++) {
             TotalASA -= TotalFieldOfficeExpense[i]
         }
@@ -30,7 +30,7 @@ const ReportRows = ({reportData}) => {
     }
 
     const computePreviousFO = () => {
-        const TotalFieldOfficeExpense = Object.values(reportData.fieldOffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
+        const TotalFieldOfficeExpense = Object.values(fieldoffices).map(fieldOffice => parseFloat(fieldOffice.ASA))
         let sum = 0
         for(let i = 0; i < TotalFieldOfficeExpense.length; i++) {
             sum += TotalFieldOfficeExpense[i]
@@ -110,25 +110,25 @@ const ReportRows = ({reportData}) => {
             <td className='border-2 border-black text-center font-bold'>{}</td>
         </tr>
         {
-          Object.keys(reportData.fieldOffices).length > 0 ? (
+          Object.keys(fieldoffices).length > 0 ? (
             <>
               {
-                Object.keys(reportData.fieldOffices).map((key, index) => {
-                  const totalObligationRO = add(reportData.fieldOffices[key].prevMonthRO, reportData.fieldOffices[key].thisMonthRO) || 0
-                  const totalObligationFO = add(reportData.fieldOffices[key].prevMonthFO, reportData.fieldOffices[key].thisMonthFO) || 0
+                Object.keys(fieldoffices).map((key, index) => {
+                  const totalObligationRO = add(fieldoffices[key].prevMonthRO, fieldoffices[key].thisMonthRO) || 0
+                  const totalObligationFO = add(fieldoffices[key].prevMonthFO, fieldoffices[key].thisMonthFO) || 0
                   const totalObligation = add(totalObligationRO, totalObligationFO)
-                  const Unobligated = subtract(totalObligation, reportData.fieldOffices[key].ASA || 0)
+                  const Unobligated = subtract(fieldoffices[key].ASA || 0 ,totalObligation)
                   return (
                     <tr key={index}>
                       <td className='border-2 border-black'></td>
                       <td className='border-2 border-black'>{key.split(',')[1]}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].ASA || 0)}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].prevMonthRO || 0)}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].prevMonthFO || 0)}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(add(reportData.fieldOffices[key].prevMonthRO, reportData.fieldOffices[key].prevMonthFO) || 0)}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].thisMonthRO || 0)}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(reportData.fieldOffices[key].thisMonthFO || 0)}</td>
-                      <td className='border-2 border-black text-right'>{formatToPeso(add(reportData.fieldOffices[key].thisMonthRO, reportData.fieldOffices[key].thisMonthFO) || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].ASA || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].prevMonthRO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].prevMonthFO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(add(fieldoffices[key].prevMonthRO, fieldoffices[key].prevMonthFO) || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].thisMonthRO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].thisMonthFO || 0)}</td>
+                      <td className='border-2 border-black text-right'>{formatToPeso(add(fieldoffices[key].thisMonthRO, fieldoffices[key].thisMonthFO) || 0)}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(totalObligationRO)}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(totalObligationFO)}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(totalObligation)}</td>
@@ -139,17 +139,17 @@ const ReportRows = ({reportData}) => {
                       <td className='border-2 border-black text-center'>{}</td>
                       <td className='border-2 border-black text-center'>{}</td>
                       <td className='border-2 border-black text-center'>{}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week1FO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week2FO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week3FO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week4FO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week5FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week1FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week2FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week3FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week4FO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week5FO || 0)}</td>
                       <td className='border-2 border-black text-center'>{}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week1RO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week2RO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week3RO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week4RO || 0)}</td>
-                      <td className='border-2 border-black text-center'>{formatToPeso(reportData.fieldOffices[key].week5RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week1RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week2RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week3RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week4RO || 0)}</td>
+                      <td className='border-2 border-black text-center'>{formatToPeso(fieldoffices[key].week5RO || 0)}</td>
                       <td className='border-2 border-black text-center'>{}</td>
                       <td className='border-2 border-black text-center'>{}</td>
                       <td className='border-2 border-black text-center'>{}</td>

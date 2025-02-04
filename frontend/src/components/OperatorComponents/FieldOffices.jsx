@@ -47,8 +47,8 @@ const FieldOffices = (props) => {
 };
   const deleteFO = async(e) => {
     e.stopPropagation()
-    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}`
-
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}`
+    
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -161,7 +161,7 @@ const FieldOffices = (props) => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50"/>
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <ViewProject modal={viewProject} projectName={fieldOffice.projectName} ASANo={ASANo}/>
+            <ViewProject modal={viewProject} projectName={fieldOffice.projectName} ASANo={ASANo} tabStatus={fieldOffice.tabStatus}/>
           </div>
         </>
       )}

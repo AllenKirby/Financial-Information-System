@@ -129,6 +129,8 @@ export const useFundingHook = () => {
         }
     }
 
+    
+
     const retrieveDvData = async (id, fieldID, callback) => {
         try{
             const q = query(collection(firestore, "ControlBook", id, "FieldOffices", fieldID, "DV"));
@@ -316,10 +318,10 @@ export const useFundingHook = () => {
         for(const [mainKey, projArray] of Object.entries(projData)){
             transformed[mainKey] = {};
             projArray.forEach((project) => {
-                const projectName = project.projectName;
-                transformed[mainKey][projectName] = {
+                const projectID = project.projectID;
+                transformed[mainKey][projectID] = {
                     RO: project.RO,
-                    projectID: project.projectID,
+                    projectName: project.projectName,
                     tabStatus: project.tabStatus
                 };
             })

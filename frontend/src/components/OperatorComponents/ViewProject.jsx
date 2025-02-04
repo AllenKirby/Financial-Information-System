@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from "react";
 
 const ViewProject = (props) => {
-    const { modal,projectName, ASANo } = props 
+    const { modal,projectName, ASANo, tabStatus } = props 
     const { user } = useAuthContext()
     const {retrieveDvData} = useFundingHook()
 
@@ -30,7 +30,7 @@ const ViewProject = (props) => {
   useEffect(() => {
     console.log('dv hit')
     if (!ASANo || !projectName) return;
-    const fieldID = `${ASANo},${projectName}`
+    const fieldID = `${ASANo},${projectName}>${tabStatus}`
     retrieveDvData(ASANo, fieldID, (data) => {
       setDvData(data)
     })
@@ -71,10 +71,11 @@ const ViewProject = (props) => {
                   Object.entries(sortDate()).map(([key, DV], index) => (
                     <tr key={key} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
                       <td className="text-center">{DV.date}</td>
-                      <td className="text-center">{DV.DVNoCount}</td>
                       <td className="text-center">{DV.orsData}</td>
-                      <td className="text-left break-words">{DV.payee}</td>
-                      <td className="text-left break-words">{DV.particulars}</td>
+                      <td className="text-center">{DV.date}</td>
+                      <td className="text-center">{DV.DVNoCount[DV.DVNoCount.length-1]}</td>
+                      <td className="text-center break-words">{DV.payee}</td>
+                      <td className="text-center break-words">{DV.particulars}</td>
                       <td className="text-center">{DV.amount}</td>
                     </tr>
                   ))

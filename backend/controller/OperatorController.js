@@ -1076,10 +1076,13 @@ const deleteControlBook = async (req, res) => {
 
 const updateFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo, docId] = id.split('!')
+    const [ASANo, ASANoCluster, docId, docIdCluster] = id.split('!')
     const fieldOfficeData = req.body.data
     const LeftBudget = req.body.leftBudget
-    const {RO, projectID, projectName} = req.body.prevData
+    const {RO, projectID, projectName, tabStatus} = req.body.prevData
+
+    const ASANoId = `${ASANo}!${ASANoCluster}`
+    const documentId = `${docId}!${docIdCluster}`
 
     const dateTimeCollection = getDateTime();
     // console.log(req.body)
@@ -1093,30 +1096,33 @@ const updateFieldOffice = async(req, res) => {
     formData = {
         RO: RO,
         projectID: projectID,
-        projectName: projectName
+        projectName: projectName,
+        tabStatus: tabStatus
+
     }
     console.log(fieldOfficeData)
 
     const updatedFieldOfficeData = {
         RO: fieldOfficeData.ASA,
         projectID: projectID,
-        projectName: fieldOfficeData.projectName
+        projectName: fieldOfficeData.projectName,
+        tabStatus: fieldOfficeData.tabStatus
     }
     // FORMULA :   newLeftBudget = LeftBudget + RO - desireUpdate
     //             newLeftBudget = Latest + Current - update
     const updatedLeftBudget = parseFloat(LeftBudget) + parseFloat(RO) - parseFloat(fieldOfficeData.ASA)
     console.log(`${updatedLeftBudget} = ${LeftBudget} + ${RO} - ${fieldOfficeData.ASA}`)
     try {
-        const controlBookRef = db.collection('ControlBook').doc(ASANo)
+        const controlBookRef = db.collection('ControlBook').doc(ASANoId)
         controlBookRef.update({leftBudget: updatedLeftBudget})
-        const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(docId)
+        const docRef = db.collection('ControlBook').doc(ASANoId).collection('FieldOffices').doc(documentId)
         await docRef.update(data)
         const docref = db.collection('formData').doc('ControlBook')
         await docref.update({
-            [ASANo]: admin.firestore.FieldValue.arrayRemove(formData)
+            [ASANoId]: admin.firestore.FieldValue.arrayRemove(formData)
         })
         await docref.update({
-            [ASANo]: admin.firestore.FieldValue.arrayUnion(updatedFieldOfficeData)
+            [ASANoId]: admin.firestore.FieldValue.arrayUnion(updatedFieldOfficeData)
         })
         res.status(200).json({message: 'Field Office Successfully Updated'})
     } catch (error) {
@@ -1129,14 +1135,17 @@ const updateFieldOffice = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA] = id.split('!')
-    const data = {
-        RO: RO,
-        projectID: docId,
-        projectName: projectName
-    }
+    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA, tabStatus] = id.split('!')
+    
     const ASAid = `${ASANo}!${cluster}`
     const documentID = `${docId}!${docIdCluster}`
+
+    const data = {
+        RO: RO,
+        projectID: documentID,
+        projectName: projectName,
+        tabStatus: tabStatus
+    }
 
     try {
         const controlBookRef = db.collection('ControlBook').doc(ASAid);
