@@ -129,7 +129,7 @@ const EditorPage = () => {
         socket.off('editor:firestore:records')
       };
     }
-  }, [])
+  }, [permission?.data?.permission])
 
   // useEffect(() => {
   //   const docRef = doc(firestore, 'Roles', 'Preparer'); 

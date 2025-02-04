@@ -65,7 +65,7 @@ const DisbursementRecords = () => {
   useEffect(() => {
     if(DVRecords && Object.entries(DVRecords).length > 0) {
       if(!activeTabs) {
-        const filteredResults = Object.entries(DVRecords).filter(doc => doc[1].payee.toLowerCase().includes(search.toLowerCase()) || doc[1].DV.toLowerCase().includes(search.toLowerCase()))
+        const filteredResults = Object.entries(DVRecords).filter(doc => doc[1]?.payee?.toLowerCase().includes(search.toLowerCase()) || doc[1]?.DV?.toLowerCase().includes(search.toLowerCase()))
         setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
       } else {
         const drafts = Object.entries(DVRecords).filter(([, document]) => document.status.includes(activeTabs))

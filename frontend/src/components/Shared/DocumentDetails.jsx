@@ -166,8 +166,8 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
           <h2 className="sm:text-xs 2xl:text-sm font-light flex items-center justify-start sm:justify-center gap-2 w-full sm:w-1/6">
             {/* {docu?.returnedToPreparer || docu?.returnedToFunding ? formatDistanceToNow(formatDateTime(getTimeDateforReturned()), { addSuffix: true }) : '-'} */}
             <span className="font-bold block sm:hidden">Time Transferred:</span>
-            {(type === '4' || permission?.data.permission && permission?.data?.roleName === 'Funding') && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
-            {type === '3' && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) }
+            {(type === '4' || permission?.data?.permission && permission?.data?.roleName === 'Funding') && docu?.returnedToPreparer && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToPreparer)), { addSuffix: true }) }
+            {(type === '3' || permission?.data?.permission && permission?.data?.roleName === 'Preparer') && docu?.returnedToFunding && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToFunding)), { addSuffix: true }) }
             {type === '2' && docu?.returnedToBO && formatDistanceToNow(formatDateTime(getTimeDateforReturned(docu?.returnedToBO)), { addSuffix: true }) }  
           </h2>
         )

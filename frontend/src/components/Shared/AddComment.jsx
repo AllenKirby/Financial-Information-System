@@ -128,6 +128,8 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
         });
     }
 
+    console.log(doc.DV)
+
     const handleSubmitForOp = async() => {
       if(ASA) {
         const data = {

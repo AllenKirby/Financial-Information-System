@@ -7,6 +7,7 @@ import { useState, useEffect } from "react"
 import { FiBook } from "react-icons/fi";
 import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
+import { LuFiles } from "react-icons/lu";
 
 import { useFundingHook } from "../hooks/useFundingHook"
 
@@ -24,13 +25,14 @@ const OperatorPage = () => {
   const { retrieveControlBooks } = useFundingHook()
   // const [status, setStatus] = useState([])
   const dispatch = useDispatch()
-  //const permission = useSelector((state) => state.permission)
+  const permission = useSelector((state) => state.permission)
   //const apiURL = import.meta.env.VITE_API_URL
-  const cb = useSelector((state) => state.controlBook)
+  //const cb = useSelector((state) => state.controlBook)
   const navItems = [
     { label: 'Records', path: '/operator/disbursementrecords', icon: <FaRegFile size={20} /> },
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
-    { label: 'Logs', path: '/operator/disbursementlogs', icon: <MdOutlineHistory size={22} /> }
+    ...(permission?.data.permission ? [{ label: 'DV Register', path: '/operator/dvregister', icon: <LuFiles size={22} /> }] : []),
+    { label: 'Logs', path: '/operator/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
   ]
 
   useEffect(() => {
@@ -42,12 +44,14 @@ const OperatorPage = () => {
       setLocation('Control Book')
     } else if(page.pathname === "/operator/disbursementlogs"){
       setLocation('Logs')
+    } else if(page.pathname === "/operator/dvregister"){
+      setLocation('DV Register')
     } 
   }, [page.pathname])
 
   useEffect(() => {
     
-    console.log('FETHICHNG')
+    console.log('FETHCHNG')
     const unsubscribe = retrieveControlBooks(dispatch)
     
 
