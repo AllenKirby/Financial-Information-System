@@ -137,6 +137,7 @@ const AddControlBook = (props) => {
             <div className=''>
                 <label className="font-semibold">ASA No.</label>
                     <input 
+                        disabled={flag}
                         type="text"
                         value={controlBookData.ASANo}
                         onChange={(e) => setControlBookData({...controlBookData, ASANo: e.target.value.trimStart()})}
@@ -179,6 +180,7 @@ const AddControlBook = (props) => {
                 <div className="w-1/3 flex flex-col mt-2">
                     <label className="font-semibold">Total ASA</label>
                     <input 
+                        disabled={flag}
                         type="number"
                         value={controlBookData.TotalASA}
                         onFocus={handleFocus}
@@ -206,7 +208,8 @@ const AddControlBook = (props) => {
             )}
             <div className="w-full flex flex-col mt-2">
                 <label className="font-semibold">Description</label>
-                <textarea 
+                <textarea
+                    disabled={flag} 
                     value={controlBookData.description}
                     onChange={(e) => setControlBookData({...controlBookData, description: e.target.value.trimStart()})}
                     required

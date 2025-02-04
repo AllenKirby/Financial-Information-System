@@ -56,8 +56,9 @@ const AddNewFieldOffice = (props) => {
         if(flag && !prevData.current) {
             prevData.current = {
                 RO: fieldOffice.ASA,
-                projectID: `${ASANo},${fieldOffice.projectName}`,
-                projectName: fieldOffice.projectName
+                projectID: `${ASANo},${fieldOffice.projectName}>${fieldOffice.tabStatus}`,
+                projectName: fieldOffice.projectName,
+                tabStatus: fieldOffice.tabStatus
             }
         } else {
             prevData.current = null
@@ -110,7 +111,7 @@ const AddNewFieldOffice = (props) => {
         const data = {
             data: fieldOfficeData,
             ASANo: ASANo,
-            projectID: `${ASANo},${fieldOfficeData.projectName}`
+            projectID: `${ASANo},${fieldOfficeData.projectName}>${fieldOfficeData.tabStatus}`
         }
         if(errorFlag) {
             Swal.fire({
@@ -149,7 +150,6 @@ const AddNewFieldOffice = (props) => {
             prevData: prevData.current,
             leftBudget: remainingASA
         }
-        
         if(errorFlag) {
             Swal.fire({
                 title: "Error",
@@ -177,7 +177,8 @@ const AddNewFieldOffice = (props) => {
         <div className='w-full h-auto p-3'>
             <div className="w-full mt-2">
                 <label>Project Name</label>
-                <input 
+                <input
+                    disabled={flag} 
                     type="text"
                     value={fieldOfficeData.projectName}
                     onChange={(e) => setFieldOfficeData({...fieldOfficeData, projectName: e.target.value.trimStart()})} 
@@ -201,6 +202,7 @@ const AddNewFieldOffice = (props) => {
             <div className="w-full mt-2">
                 <label>Select Tab</label>
                 <select 
+                    disabled={flag}
                     required
                     value={fieldOfficeData.tabStatus}
                     onChange={(e) => {

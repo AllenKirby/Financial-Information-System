@@ -3,10 +3,15 @@ import ReportRows from './ReportRows';
 
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { FiDownload } from "react-icons/fi";
+import { useEffect } from 'react';
 
 const ControlBookReport = (props) => {
-    const { showReport, reportData } = props
+    const { showReport, reportData, fieldoffices = {} } = props
 
+    useEffect(() => {
+        console.log(fieldoffices)
+    }, [])
+    
     
   return (
     <div className='w-full h-full'>
@@ -80,7 +85,7 @@ const ControlBookReport = (props) => {
                             <th className='border-2 border-black'>RO</th>
                         </tr>
                     </thead>
-                    <ReportRows reportData={reportData}/>
+                    <ReportRows reportData={reportData} fieldoffices={fieldoffices}/>
                 </table>
             </div>
         </div>

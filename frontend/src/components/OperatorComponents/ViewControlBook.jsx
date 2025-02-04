@@ -74,8 +74,8 @@ const ViewControlBook = () => {
   }, [])
 
   useEffect(() => {
-    console.log(fieldoffices)
-  }, [fieldoffices])
+    console.log(ControlBook)
+  }, [ControlBook])
   
   const sortTimePassedDesc = (docu) => {
     if (docu && Object.keys(docu).length > 0) {
@@ -259,7 +259,7 @@ const ViewControlBook = () => {
             )}
         </>
       ) : (
-        <ControlBookReport showReport={showReport} reportData={ControlBook.data}/>
+        <ControlBookReport showReport={showReport} reportData={ControlBook.data} fieldoffices={fieldoffices}/>
       )}
     </div>
   )

@@ -314,6 +314,11 @@ const FundingModal = ({modal, data, fundCluster}) => {
     //     }
 
     // }
+    useEffect(() => {
+        if(data){
+            setIsToggled(true)
+        }
+    }, [])
 
     return(
         <form onSubmit={handleSubmit} className="bg-white w-full sm:w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
@@ -373,7 +378,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                     </div> */}
                     <div className="flex-1 overflow-y-auto gap-2 p-2 w-full">
                         {
-                            Object.entries(filterFundCluster(ASANo)).length > 0 ? (
+                            Object.entries(filterFundCluster(ASANo)).length > 0 && isToggled ? (
                                 Object.entries(filterFundCluster(ASANo)).map(([key, asano]) => {
                                     const finalASANO = key.replace('|', ' ').split('!')[0];
                                     return (
@@ -407,14 +412,16 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                             
                                                         />
                                                         <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen hover:shadow-lg transition-all duration-150">
-                                                            <span className="font-medium">{projectName}</span>
+                                                            {/* .match(/,([^,>]+)>/)?.[1] || "N/A" */}
+                                                            <span className="font-medium">{projectName.split(",")[1]?.split(">")[0] || "N/A"}</span>
+                                                            {project.tabStatus && (
+                                                                <span className="text-sm bg-teal-700 rounded text-white px-2">{project.tabStatus}</span>
+                                                            )}
                                                             <span>:</span>
                                                             <span className="font-semibold">
                                                                 {project.RO ? formatToPeso(project.RO) : formatToPeso(0)}
                                                             </span>
-                                                            {project.tabStatus && (
-                                                                <span className="text-sm bg-teal-700 rounded text-white px-2">{project.tabStatus}</span>
-                                                            )}
+                                                            
                                                         </span>
                                                     </label>
                                                 ))}
