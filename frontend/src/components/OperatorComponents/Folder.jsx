@@ -72,7 +72,7 @@ const Folder = ({ASANo, controlBook}) => {
 
   useEffect(() => {
     // isDeletable()
-    const deleteVar = controlBook.cantDelete || false
+    const deleteVar = controlBook.FO > 0
     setIsDeletable(deleteVar);
   }, [controlBook])
 
