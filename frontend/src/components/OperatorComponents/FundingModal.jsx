@@ -93,25 +93,24 @@ const FundingModal = ({modal, data, fundCluster}) => {
             // controlBooks: CBAmount,
             update: needUpdate
         }
-        console.log(fundingData)
-        // const res = await updateASA_ORS(fundingData, DVNo)
-        // // const res = true
-        // if(res){
-        //     Swal.fire({
-        //         title: "Saved",
-        //         text: "Disbursement Voucher is successfully save!",
-        //         icon: "success",
-        //         confirmButtonColor: "#009933"
-        //     });
-        //     modal()
-        // } else {
-        //     Swal.fire({
-        //         title: "Error",
-        //         text: {error},
-        //         icon: "error",
-        //         confirmButtonColor: "#009933"
-        //     });
-        // }
+        const res = await updateASA_ORS(fundingData, DVNo)
+        // const res = true
+        if(res){
+            Swal.fire({
+                title: "Saved",
+                text: "Disbursement Voucher is successfully save!",
+                icon: "success",
+                confirmButtonColor: "#009933"
+            });
+            modal()
+        } else {
+            Swal.fire({
+                title: "Error",
+                text: {error},
+                icon: "error",
+                confirmButtonColor: "#009933"
+            });
+        }
     }
 
     const [balances, setBalances] = useState({})
