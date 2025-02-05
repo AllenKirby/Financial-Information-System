@@ -49,10 +49,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
     }, [])
 
     useEffect(() => {
-        console.log(ASANo)
-    }, [ASANo])
-
-    useEffect(() => {
         const getData = async() => {
             setOperatorInput({
                 asa: await data.ASA,
@@ -62,9 +58,12 @@ const FundingModal = ({modal, data, fundCluster}) => {
         getData()
     }, [data])
 
+    const[needUpdate, setNeedUpdate] = useState(false)
     useEffect(() => {
+        
         if(data.ASA) {
             prevASARef.current = data.ASA;
+            setNeedUpdate(true)
         }
     }, [data])
 
@@ -92,7 +91,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
             previousASA: prevASARef.current,
             origBUR: origBUR,
             // controlBooks: CBAmount,
-            update: isToggled
+            update: needUpdate
         }
         const res = await updateASA_ORS(fundingData, DVNo)
         // const res = true
@@ -132,8 +131,12 @@ const FundingModal = ({modal, data, fundCluster}) => {
         setBudget(newBudget)
     }, [data])
 
+
+    
+
     //this function works for new ASA
     const handleChangeBoxAmount = (checked, key, projectID, amount, projectName) => {
+        console.log(`${key}/${projectID}`)
         const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
         if (checked) {
             // console.log(Boolean(parseFloat(data.amount) < amount + budget))
@@ -157,12 +160,11 @@ const FundingModal = ({modal, data, fundCluster}) => {
             setBudget((prev) => prev + exactAmount)
 
             setASANo((prev) => {
-                // const prevAmount =  ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
-
+                
                 return{
                     ...prev,[key] : {
-                        ...prev[key], [projectName] : {
-                            ...prev[key][projectName], RO: prev[key][projectName].RO - exactAmount
+                        ...prev[key], [projectID] : {
+                            ...prev[key][projectID], RO: parseFloat(prev[key][projectID].RO) - exactAmount
                         }
                     }
                 }
@@ -199,8 +201,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
               
                 return{
                     ...prev,[key] : {
-                        ...prev[key], [projectName] : {
-                            ...prev[key][projectName], RO: prev[key][projectName].RO + prevAmount
+                        ...prev[key], [projectID] : {
+                            ...prev[key][projectID], RO: prev[key][projectID].RO + prevAmount
                         }
                     }
                 }
@@ -340,7 +342,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
                     className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
                     type="button"
                     onClick={() => {
-                        const value = !isToggled ? BUR : ''
+                        // const value = !isToggled ? BUR : ''
+                        const value = BUR
                         setOperatorInput({...operatorInput, ors: value})
                         setIsToggled(!isToggled)
                     }}
@@ -359,23 +362,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                         <label className="font-semibold">ASA No.</label>
                         <p className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-bold`}>Budget:{formatToPeso(budget > parseFloat(data.amount) ? data.amount : budget)}</p>
                     </div>
-                    {/* <div className="w-full h-auto">
-                        <select 
-                            className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
-                            onChange={(e) => setSelectedASANo(e.target.value)}
-                            value={selectedASANo}>
-                            <option disabled value="">Select ASA No.</option>
-                            {Object.keys(filterFundCluster(ASANo)).length > 0 ? 
-                                Object.keys(filterFundCluster(ASANo)).map((asano, index) => { 
-                                    const ASA = asano.split('!')[0]
-                                    const finalASA = ASA.replace('|', " ")
-                                    return <option key={index} value={asano}>{finalASA}</option>
-                                }
-                            ) : 
-                                <option disabled value="">No ASA No. Found</option>
-                            }
-                        </select>
-                    </div> */}
+
                     <div className="flex-1 overflow-y-auto gap-2 p-2 w-full">
                         {
                             Object.entries(filterFundCluster(ASANo)).length > 0 && isToggled ? (
@@ -387,12 +374,12 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                 {finalASANO}
                                             </h4>
                                             <div className="flex flex-wrap items-center justify-start gap-2">
-                                                {Object.entries(asano).map(([projectName, project]) => (
-                                                    <label key={projectName} className="peer flex items-center gap-2">
+                                                {Object.entries(asano).map(([projectID, project]) => (
+                                                    <label key={projectID} className="peer flex items-center gap-2">
                                                         <input
                                                             type="checkbox"
                                                             required
-                                                            value={`${key}/${project.projectID}`}
+                                                            value={projectID}
                                                             className="peer hidden"
                                                             onChange={(e) => {
                                                                 const isChecked = e.target.checked;
@@ -400,20 +387,20 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                                 const amount = parseFloat(
                                                                     project.RO || 0
                                                                 );
-                                                                handleChangeBoxAmount(isChecked,key, project.projectID, amount, projectName)
+                                                                handleChangeBoxAmount(isChecked,key, projID, amount, project.projectName)
     
                                                                 
                                                             }}
-                                                            checked={Boolean(operatorInput.asa?.[`${key}/${project.projectID}`])}
+                                                            checked={Boolean(operatorInput.asa?.[`${key}/${projectID}`])}
                                                             disabled={
-                                                                !Boolean(operatorInput.asa?.[`${key}/${project.projectID}`]) && 
+                                                                !Boolean(operatorInput.asa?.[`${key}/${projectID}`]) && 
                                                                 Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
                                                             }
                                                             
                                                         />
                                                         <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen hover:shadow-lg transition-all duration-150">
                                                             {/* .match(/,([^,>]+)>/)?.[1] || "N/A" */}
-                                                            <span className="font-medium">{projectName.split(",")[1]?.split(">")[0] || "N/A"}</span>
+                                                            <span className="font-medium">{projectID.split(",")[1]?.split(">")[0] || "N/A"}</span>
                                                             {project.tabStatus && (
                                                                 <span className="text-sm bg-teal-700 rounded text-white px-2">{project.tabStatus}</span>
                                                             )}

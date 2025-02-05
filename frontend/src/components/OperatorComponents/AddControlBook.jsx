@@ -190,7 +190,8 @@ const AddControlBook = (props) => {
                 </div>
                 <div className="w-1/3 flex flex-col mt-2">
                     <label className="font-semibold">Fund Cluster</label>
-                    <select 
+                    <select
+                        disabled={flag} 
                         value={controlBookData.fundCluster}
                         onChange={(e) => setControlBookData({...controlBookData, fundCluster: e.target.value})}
                         required

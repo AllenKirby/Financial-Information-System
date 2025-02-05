@@ -49,7 +49,6 @@ const updateASAORS = async (req, res) => {
 
         if((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)){
             if(needBUR){
-
                 const asaForBur = Object.entries(asa_test).map(([key, amount]) => {
                     // console.log(key)
                     const [ASANo, projectID] = key.split('/');
@@ -97,7 +96,7 @@ const updateASAORS = async (req, res) => {
             dvData.ORSBURS = finalORS
         }
 
-        if(!needBUR){
+        if(needBUR){
 
             const previousASA_amount = Object.entries(previousASA).reduce((acc, [key, value]) => {
                 const newKey = key.split('/')[0];
