@@ -282,6 +282,53 @@ const DVTemplate = ({document}) => {
             </div>
           </div>
         </div>
+        {document?.ORSBURS && (
+          <div className='w-full h-auto flex flex-col'>
+            <div className='w-full py-1'>
+              <h1 className='text-lg 2xl:text-xl font-semibold'>Budget Utilization Request and Status</h1>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Payee:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{document?.payee}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Office:</p>
+              <p className='w-3/5 text-customFontColor font-medium'></p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Address:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{document?.address}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Date:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{document?.date}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Serial No:</p>
+              <p className='w-3/5 text-customFontColor font-medium'></p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Fund Cluster:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{document?.fund}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Responsibility Center:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{document?.RC}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Paticulars:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{document?.particular}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Amount:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
+            </div>
+            <div className='w-full h-auto flex px-2'>
+              <p className='w-2/5'>Amount Due:</p>
+              <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>
+            </div>
+          </div>
+        )}
         <div className='flex flex-col'>
           <div className='w-full py-1'>
             <h1 className='text-lg 2xl:text-xl font-semibold'>Action Log</h1>

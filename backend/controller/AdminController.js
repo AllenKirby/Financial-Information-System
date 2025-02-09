@@ -461,7 +461,7 @@ const downloadDV = async(req, res) => {
   const { data } = req.body
 
   try {
-    const templatePath = path.join(__dirname, '..', 'templates', 'DV.xlsx'); 
+    const templatePath = path.join(__dirname, '..', 'templates', data.ORSBURS ? 'DVwithBUR.xlsx' : 'DV.xlsx'); 
     const workbook = await XlsxPopulate.fromFileAsync(templatePath);
 
     //Computation
@@ -532,6 +532,19 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B120").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
     workbook.sheet('Sheet1').cell("A115").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A116").value(data.NF_office)
+
+    //BUR
+    if(data.ORSBURS) {
+      workbook.sheet('Sheet1').cell("D164").value(data.payee)
+      workbook.sheet('Sheet1').cell("D168").value(data.address)
+      workbook.sheet('Sheet1').cell("P160").value(`Serial No.: ${convertDate(data.date)}`)
+      workbook.sheet('Sheet1').cell("P162").value(`Fund Cluster: ${data.fund}`)
+      workbook.sheet('Sheet1').cell("P161").value(`Date: ${convertDate(data.date)}`)
+      workbook.sheet('Sheet1').cell("P173").value(total_val)
+      workbook.sheet('Sheet1').cell("P187").value(amount_due)
+      workbook.sheet('Sheet1').cell("D173").value(data.particular)
+      workbook.sheet('Sheet1').cell("A173").value(data.RC)
+    }
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
