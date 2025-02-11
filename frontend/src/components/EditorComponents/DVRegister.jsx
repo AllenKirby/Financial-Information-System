@@ -7,7 +7,6 @@ import { IoSearchSharp } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
 
 import PaginatedList from "../Pagination/PaginatedList";
-import DVRegisterItems from "./DVRegisterItems";
 
 const DVRegister = () => {
     const [activeTab, setActiveTabs] = useState('501 COB') 
@@ -86,63 +85,18 @@ const DVRegister = () => {
                 </button>
             </div>
         </div>
-        <div className="w-full h-[90%] overflow-x-auto py-2">
-            <div className="min-w-max w-full h-full flex flex-col">
+        <div className="w-full h-[90%] py-2">
+            <div className="w-full h-full flex flex-col">
                 <div className="w-auto h-auto rounded-lg hidden sm:flex items-center justify-center bg-gray-100 text-gray-400 text-sm">
-                    <p className="w-36 h-full font-bold flex items-center justify-center">PR No. Date</p>
-                    <p className="w-24 h-full font-bold flex items-center justify-center">PR No.</p>
-                    <p className="w-36 h-full font-bold flex items-center justify-center">PO No. Date</p>
-                    <p className="w-36 h-full font-bold flex items-center justify-center">BUR Date</p>
-                    <p className="w-24 h-full font-bold flex items-center justify-center">BUR No.</p>
-                    <p className="w-36 h-full font-bold flex items-center justify-center">DV Date</p>
-                    <p className="w-60 h-full font-bold flex items-center justify-center">DV No.</p>
-                    <p className="w-80 h-full font-bold flex items-center justify-center">Payee</p>
-                    <p className="w-[420px] h-full font-bold flex items-center justify-center">Particulars</p>
-                    <div className="w-[500px] h-full flex flex-col">
-                        <p className="text-center py-1">Obligations</p>
-                        <div className="flex py-1">
-                            <p className="w-1/4 text-center">ASA No.</p>
-                            <p className="w-1/4 text-center">Project Name</p>
-                            <p className="w-1/4 text-center">Category</p>
-                            <p className="w-1/4 text-center">ASA Amount</p>
-                        </div>
-                    </div>
-                    <div className="w-auto h-full flex flex-col">
-                        <p className="text-center py-1">Obligations</p>
-                        <div className="flex py-1">
-                            <p className="w-28 text-center">ADA-1st</p>
-                            <p className="w-28 text-center">ADA-2nd</p>
-                            <p className="w-28 text-center">Remittance</p>
-                            <p className="w-28 text-center">ASA Amount</p>
-                            <p className="w-28 text-center">ASA No.</p>
-                            <p className="w-28 text-center">Project Name</p>
-                            <p className="w-28 text-center">Category</p>
-                            <p className="w-28 text-center">ASA Amount</p>
-                            <p className="w-28 text-center">ASA No.</p>
-                            <p className="w-28 text-center">Project Name</p>
-                            <p className="w-28 text-center">Category</p>
-                            <p className="w-28 text-center">ASA Amount</p>
-                            <p className="w-28 text-center">ASA No.</p>
-                            <p className="w-28 text-center">Project Name</p>
-                            <p className="w-28 text-center">Category</p>
-                            <p className="w-28 text-center">ASA Amount</p>
-                            <p className="w-28 text-center">ASA No.</p>
-                            <p className="w-28 text-center">Project Name</p>
-                        </div>
-                    </div>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
-                    <p></p>
+                    <p className="w-1/5 py-2 text-center font-semibold">BUR No.</p>
+                    <p className="w-1/5 py-2 text-center font-semibold">DV No.</p>
+                    <p className="w-1/5 py-2 text-center font-semibold">Payee</p>
+                    <p className="w-1/5 py-2 text-center font-semibold">Particulars</p>
+                    <p className="w-1/5 py-2 text-center font-semibold">Amount</p>
                 </div>
                 <div className="w-full flex-1 overflow-y-auto rounded-lg">
                     {Object.entries(documents).length > 0 ? (
-                        //<PaginatedList items={sortTimeCreatedDesc(documents)} paginationFor="DVRegister"/>
-                        Object.entries(sortTimeCreatedDesc(documents)).map(([key, document], index) => 
-                            <DVRegisterItems key={key} index={index} DV={document}/>
-                        )
+                        <PaginatedList items={sortTimeCreatedDesc(documents)} paginationFor="DVRegister"/>
                     ) : (
                         <div className='w-full h-full flex items-center justify-center'>
                             <p className='font-bold'>No Disbursement Voucher Found</p>
