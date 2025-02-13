@@ -263,7 +263,7 @@ export const useApproverHook = () => {
         console.log(data)
         try {
             let res
-            if(data.activeTab === 'DV'){
+            if(data.activeTab === 'To Release'){
                 res = await axios.post(`${apiURL}/admin/downloadDV`, {data}, {
                     responseType: 'blob',
                     withCredentials: true

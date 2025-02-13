@@ -159,8 +159,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   }, [])
 
   const handleChangePayee = (e) => {
-    const target = e.target.value.toUpperCase().trim();
-    setPayeeData({...payeeData, payee: target})
+    const target = e.target.value.toUpperCase()
+    setPayeeData({...payeeData, payee: target.toUpperCase()})
 
     if (target) {
       const filtered = Object.entries(payeeOptions)
@@ -1074,6 +1074,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         <div className='w-full sm:w-1/2'>
                           <label>Account Code</label>
                           <input
+                            disabled
                             className={`${
                               user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                             } text-gray-500 w-full px-4 py-2 rounded-md border-2`}

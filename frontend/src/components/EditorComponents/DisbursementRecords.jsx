@@ -42,8 +42,8 @@ const DisbursementRecords = () => {
         );
         setFilteredDocuments({...filteredDocuments, all: filteredResults});
       } else {
-        const drafts = Object.entries(DVRecords).filter(([, document]) => document.status.includes(activeTabs))
-        const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1].fund.toLowerCase().includes(filter.toLowerCase())))
+        const drafts = Object.entries(DVRecords).filter(([, document]) => document?.status?.includes(activeTabs))
+        const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1]?.fund?.toLowerCase().includes(filter.toLowerCase())))
         if(activeTabs === 'Drafting') {
           setFilteredDocuments({...filteredDocuments, drafting: filteredDrafts})
         } else if(activeTabs.includes('Returned')) {
@@ -150,7 +150,7 @@ const DisbursementRecords = () => {
                   <div onClick={() => filterModal('501 COB')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 COB</div>
                   <div onClick={() => filterModal('501 LFP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 LFP</div>
                   <div onClick={() => filterModal('501 CARP')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>501 CARP</div>
-                  <div onClick={() => filterModal('Farming Support Services Program')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Farming Support Services Program</div>
+                  <div onClick={() => filterModal('Contract Farming')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Farming Support Services Program</div>
                 </div>
               </>
             )}

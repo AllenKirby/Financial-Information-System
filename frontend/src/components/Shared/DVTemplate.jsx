@@ -17,6 +17,8 @@ const DVTemplate = ({document}) => {
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
+  console.log(document)
+
   //GSIS computation
   const gross_gsis = (parseFloat(document?.amount) || 0) + (parseFloat(document?.stamp) || 0) + (parseFloat(document?.dst) || 0) + (parseFloat(document?.vat12) || 0)
   const amountDue_gsis = gross_gsis - (parseFloat(val1) || 0)
@@ -100,7 +102,7 @@ const DVTemplate = ({document}) => {
             <h1 className='text-lg 2xl:text-xl font-semibold'>Financial Details</h1>
           </div>
           {
-            document?.activeTab === 'DV' && (
+            document?.activeTab === 'To Release' && (
               <div className='py-1 flex flex-row px-2 text-sm sm:text-base 2xl:text-lg'>
                 <div className='w-2/5 h-full'>
                   <p className='text-gray-500'>Amount</p>
@@ -269,7 +271,7 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-medium'>{document?.DVBIR}</p>
               <p className='text-customFontColor font-medium'>RO</p>
               {
-                document?.activeTab === 'DV' && (
+                document?.activeTab === 'To Release' && (
                   <p className='text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>
                 )
               }
