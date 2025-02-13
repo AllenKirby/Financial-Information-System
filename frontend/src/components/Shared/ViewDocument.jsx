@@ -290,7 +290,7 @@ const ViewDocument = () => {
             </div>
           )}
           
-          {(idStatus.type === '4' || idStatus.type === '3') && (idStatus.status === 'Drafting' || idStatus.status === 'In Review') && (
+          {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
             <button
               onClick={delDV}
               className={`w-auto px-5 rounded-lg py-2 text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-white transtion-all duration-150`}
