@@ -4,11 +4,6 @@ import PropTypes from 'prop-types'
 import Pagination from './Pagination';
 import Loading from './Loading';
 import LoadingForControlBook from './LoadingForControlBook'
-// import DocumentDetails from '../Shared/DocumentDetails';
-// import HistoryLogsItem from '../Shared/DocumentDetails';
-// import Folder from '../OperatorComponents/Folder';
-// import UserLogs from '../SuperAdminComponents/UserLogs';
-// import AccessControlLogs from '../SuperAdminComponents/AccessControlLogs';
 
 const DocumentDetails = React.lazy(() => import('../Shared/DocumentDetails'));
 const HistoryLogsItem = React.lazy(() => import('../Shared/HistoryLogsItem'));
@@ -17,7 +12,7 @@ const UserLogs = React.lazy(() => import('../SuperAdminComponents/UserLogs'));
 const AccessControlLogs = React.lazy(() => import('../SuperAdminComponents/AccessControlLogs'));
 const DVRegisterItems = React.lazy(() => import('../EditorComponents/DVRegisterItems'));
 
-const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
+const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0 }) => {
 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 20;
@@ -48,7 +43,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
                     if(paginationFor === 'ControlBook') return <Folder key={key} controlBook={document[1]} ASANo={document[0]}/>
                     if(paginationFor === 'loginLogs') return <UserLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
-                    if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document}/>
+                    if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document} counter={counter}/>
                 })}
             </Suspense>
         </div>
@@ -63,9 +58,10 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor }) => {
 
 PaginatedList.propTypes = {
     items: PropTypes.object.isRequired,
-    type: PropTypes.string.isRequired,
-    activeTab: PropTypes.string.isRequired,
-    paginationFor: PropTypes.string.isRequired
+    type: PropTypes.string,
+    activeTab: PropTypes.string,
+    paginationFor: PropTypes.string.isRequired,
+    counter: PropTypes.number
   };
 
 export default PaginatedList

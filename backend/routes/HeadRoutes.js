@@ -4,7 +4,9 @@ const setRole = require('../middleware/Role');
 const { //readHead_records, 
         returnRecordTo, 
         transferDocument, 
-        getPermission } = require('../controller/HeadController')
+        getPermission ,
+        addCertified
+} = require('../controller/HeadController')
 
 HeadRouter.use(setRole([2]))
 
@@ -12,5 +14,7 @@ HeadRouter.use(setRole([2]))
 HeadRouter.post('/return_record', returnRecordTo)
 HeadRouter.post('/passToAdmin', transferDocument)
 HeadRouter.get('/getPermission', getPermission)
+HeadRouter.patch('/addCertified/:id', addCertified)
+
 
 module.exports = HeadRouter;

@@ -13,8 +13,10 @@ const login = async(req, res) => {
         }
 
         const docref = db.collection('listOfUsers').doc(uid)
+        
         const user = await docref.get()
         addLoginLogs(uid, email, name, role)
+        
         res.cookie('token', token, {
             httpOnly: true,  
             secure: true,  
@@ -23,6 +25,7 @@ const login = async(req, res) => {
         });
         res.status(200).json({ success: true, role: role, name: name, uid: uid, uemail: email, firstTimeLogin: user.data().firstTimeLogin});
     }catch(error){
+        console.log("can't sign in", error.message)
         res.status(500).json({ success: false, message: 'Login failed', error: error.message });
     }
 };

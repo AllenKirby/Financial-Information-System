@@ -477,9 +477,8 @@ const downloadDV = async(req, res) => {
 
     const combinedAccTitle = data.accTitle.join("\n");
     const combinedAccCode = data.accCode.join("\n");
-    console.log(Object.keys(data.ASA).join('\n').replace(/\|/g, ' ').replace(/\//g, ' ').replace(/\,/g, ' '));
   
-    const ASA = Object.keys(data.ASA).join("\r\n").replace(/\|/g, ' ').replace(/\//g, ' ').replace(/\,/g, ' ');
+    const ASA = Object.keys(data.ASA).map(key => key.split('!')[0]).join("\r\n").replace(/\|/g, ' ').replace(/\//g, ' ').replace(/\,/g, ' ');
 
     //payee
     workbook.sheet('Sheet1').cell("P2").value(data.fund)
@@ -503,10 +502,10 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("Q30").value(amount_due)
     workbook.sheet('Sheet1').cell("A36").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A37").value(data.NF_office)
-    workbook.sheet('Sheet1').cell("Q43").value(amount_due)
-    workbook.sheet('Sheet1').cell("Q42").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("Q41").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("K45").value(`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} pesos`)
+    workbook.sheet('Sheet1').cell("Q43").value(total_val)
+    workbook.sheet('Sheet1').cell("N41").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("N42").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("K45").value(`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} Pesos`)
     workbook.sheet('Sheet1').cell("B40").value(combinedAccTitle).style({
       wrapText: true, 
       verticalAlignment: "top",
@@ -517,21 +516,25 @@ const downloadDV = async(req, res) => {
     });
     workbook.sheet('Sheet1').cell("B41").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
     workbook.sheet('Sheet1').cell("B42").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)
+    workbook.sheet('Sheet1').cell("B45").value(data.cashAvailable ? '✓' : '')
+    workbook.sheet('Sheet1').cell("B46").value(data.debitAccount ? '✓' : '')
+    workbook.sheet('Sheet1').cell("B47").value(data.supportingDocuments ? '✓' : '')
 
     //BIR
     workbook.sheet('Sheet1').cell("P81").value(data.fund)
     workbook.sheet('Sheet1').cell("P83").value(convertDate(data.date))
     workbook.sheet('Sheet1').cell("P91").value(data.ORSBURS)   
     workbook.sheet('Sheet1').cell("A95").value(data.birParticular)   
-    workbook.sheet('Sheet1').cell("Q96").value(amount_due)   
-    workbook.sheet('Sheet1').cell("Q109").value(amount_due)  
+    workbook.sheet('Sheet1').cell("Q96").value(total_val)   
+    workbook.sheet('Sheet1').cell("Q109").value(total_val)  
     workbook.sheet('Sheet1').cell("N119").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("N120").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("Q121").value(amount_due)
+    workbook.sheet('Sheet1').cell("Q121").value(total_val)
     workbook.sheet('Sheet1').cell("B119").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
     workbook.sheet('Sheet1').cell("B120").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
     workbook.sheet('Sheet1').cell("A115").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A116").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("K123").value(`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} Pesos`)
 
     //BUR
     if(data.ORSBURS) {
@@ -603,6 +606,9 @@ const downloadGSIS = async(req, res) => {
       wrapText: true, 
       verticalAlignment: "top",
     });
+    workbook.sheet('Sheet1').cell("B53").value(data.cashAvailable ? '✓' : '')
+    workbook.sheet('Sheet1').cell("B54").value(data.debitAccount ? '✓' : '')
+    workbook.sheet('Sheet1').cell("B55").value(data.supportingDocuments ? '✓' : '')
     // workbook.sheet('Sheet1').cell("B41").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
     // workbook.sheet('Sheet1').cell("B42").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)
 
@@ -612,11 +618,11 @@ const downloadGSIS = async(req, res) => {
     workbook.sheet('Sheet1').cell("P91").value(data.DV)   
     workbook.sheet('Sheet1').cell("P98").value(data.ORSBURS)
     workbook.sheet('Sheet1').cell("A102").value(data.birParticular)   
-    workbook.sheet('Sheet1').cell("Q103").value(amount_due)   
-    workbook.sheet('Sheet1').cell("Q116").value(amount_due)  
+    workbook.sheet('Sheet1').cell("Q103").value(amountDue_gsis)   
+    workbook.sheet('Sheet1').cell("Q116").value(amountDue_gsis)  
     workbook.sheet('Sheet1').cell("N126").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("N127").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("Q128").value(amount_due)
+    workbook.sheet('Sheet1').cell("Q128").value(amountDue_gsis)
     workbook.sheet('Sheet1').cell("B126").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
     workbook.sheet('Sheet1').cell("B127").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
     workbook.sheet('Sheet1').cell("A122").value(data.NF_name)

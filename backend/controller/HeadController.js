@@ -114,8 +114,30 @@ const getPermission = async(req, res) => {
     }
 }
 
+const addCertified = async(req, res) => {
+    const { cashAvailable, debitAccount, supportingDocuments } = req.body
+    const { id } = req.params
+
+    console.log(cashAvailable, debitAccount, supportingDocuments)
+    try {
+        const docref = db.collection('records').doc(id)
+
+        await docref.update({ 
+            cashAvailable,
+            debitAccount,
+            supportingDocuments
+        })
+
+        res.status(200).json({message: 'Successfully Added'})
+    } catch (error) {
+        console.log(`Error adding new fields ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 module.exports = { 
     returnRecordTo, 
     transferDocument,
-    getPermission
+    getPermission,
+    addCertified
 }

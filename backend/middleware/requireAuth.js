@@ -19,7 +19,7 @@ const requireAuth = async (req, res, next) => {
             role: decodedToken.role || 0,
             token: token
           };
-        
+        console.log(decodedToken)
         next()
     }catch(error){
         return res.status(401).json({ success: false, message: 'Unauthorized: Invalid Token' });
