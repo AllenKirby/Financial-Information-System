@@ -50,5 +50,25 @@ export const useBudgetOfficerHook = () => {
         }
     }
 
-  return {submitToAdmin, returnDocFromHeader, isLoading, error}
+    const addCertified = async(data, id) => {
+        console.log(data)
+        setError(null)
+        setIsLoading(true)
+        try {
+            const res = await axios.patch(`${apiURL}/head/addCertified/${id}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error adding certified";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+  return {submitToAdmin, returnDocFromHeader, addCertified, isLoading, error}
 }

@@ -24,6 +24,7 @@ import { useApproverHook } from "../../hooks/useApproverHook";
 
 //redux
 import { useSelector } from "react-redux";
+import CertifiedModal from "../HeadComponents/CertifiedModal";
 
 const ViewDocument = () => {
   //states
@@ -36,6 +37,7 @@ const ViewDocument = () => {
   //const [primaryColor, setPrimaryColor] = useState('')
   const [type, setType] = useState('')
   const [fundingModal, setFundingModal] = useState(false)
+  const [BOModal, setBOModal] = useState(false)
   const [returnFlag, setReturnFlag] = useState(false)
 
   //contexts
@@ -65,6 +67,9 @@ const ViewDocument = () => {
   const isFundingModalOpen = () => {
     setFundingModal(!fundingModal)
   }
+  const isBOModalOpen = () => {
+    setBOModal(!BOModal)
+  }
 
   // useEffect(() => {
   //   if(user && user.role === '1'){
@@ -93,7 +98,7 @@ const ViewDocument = () => {
     if (idStatus.type === '4') {
       if (DVRecords && Object.keys(DVRecords).length > 0) {
 
-        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document?.DVKey === idStatus.id);
         
         if (selectedDocument) {
           setDoc(selectedDocument[1]);
@@ -107,7 +112,7 @@ const ViewDocument = () => {
     else if (idStatus.type === '3'){
       if(DVRecords && Object.keys(DVRecords).length > 0){
 
-        const selectedDocument = Object.entries(DVRecords.documents).find(([, document]) => document.data.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords.documents).find(([, document]) => document?.data?.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -118,7 +123,7 @@ const ViewDocument = () => {
     }else if (idStatus.type === '2'){
       if(DVRecords && Object.keys(DVRecords).length > 0){
 
-        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document.data.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document?.data?.DVKey === idStatus.id);
 
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
@@ -128,7 +133,7 @@ const ViewDocument = () => {
       }
     }else if(idStatus.type === '1'){
       if(DVRecords && Object.keys(DVRecords).length > 0){
-        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document.data.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(DVRecords).find(([, document]) => document?.data?.DVKey === idStatus.id);
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
         } else {
@@ -137,7 +142,7 @@ const ViewDocument = () => {
       }
     } else if(idStatus.type === '0'){
       if(Vouchers && Object.keys(Vouchers).length > 0){
-        const selectedDocument = Object.entries(Vouchers).find(([, document]) => document.data.DVKey === idStatus.id);
+        const selectedDocument = Object.entries(Vouchers).find(([, document]) => document?.data?.DVKey === idStatus.id);
         if (selectedDocument) {
           setDoc(selectedDocument[1].data);
         } else {
@@ -261,7 +266,7 @@ const ViewDocument = () => {
           
           {(idStatus.type === '2' && idStatus.status !== 'Approved' && idStatus.status !== 'For Approval') && (
             <div className="w-auto h-auto relative">
-              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-2 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150"><BsArrowLeft/> Return</button>
+              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-2.5 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg hover:bg-white hover:text-red-500 border-red-500 bg-red-500 text-white transition-all duration-150"><BsArrowLeft/> Return</button>
               {returnFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setReturnFlag(!returnFlag)}/>
@@ -276,7 +281,7 @@ const ViewDocument = () => {
 
           {(idStatus.type === '1' && idStatus.status === 'For Approval') && (
             <div className="w-auto h-auto relative">
-              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-2 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150"><BsArrowLeft/> Return</button>
+              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-3 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150"><BsArrowLeft/> Return</button>
               {returnFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setReturnFlag(!returnFlag)}/>
@@ -314,6 +319,16 @@ const ViewDocument = () => {
               <IoMdAdd size={20}/>
             </button>
           )}
+
+          {(idStatus.type === '2' && idStatus.status === 'Under Review') && (
+            <button
+              onClick={isBOModalOpen}
+              className="w-auto rounded-lg px-5 py-3 border-2 hover:bg-BOGreen border-BOGreen hover:text-white transition-all duration-150"
+              >
+              <IoMdAdd size={20}/>
+            </button>
+          )}
+
           {idStatus.type === '4' && (
             <button
               //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
@@ -333,7 +348,7 @@ const ViewDocument = () => {
             </button>
           )}
 
-          {(idStatus.type === '2' && !permission.data.permission) && (
+          {(idStatus.type === '2' && !permission?.data?.permission) && (
             <button
               onClick={() => openModal('SubmitBO')}
               className={`w-auto px-5 py-2 rounded-lg bg-BOGreen border-2 border-BOGreen hover:bg-white hover:text-BOGreen text-white transition-all duration-150`}
@@ -383,7 +398,7 @@ const ViewDocument = () => {
       )}
       {isModalOpen && (
         <>
-          <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
+          <div className="fixed inset-0 z-20 bg-black opacity-50"/>
           <section
             onClick={(e) => e.stopPropagation()}
             className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-end"
@@ -395,13 +410,24 @@ const ViewDocument = () => {
       )}
       {fundingModal && (
         <>
-          <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={isFundingModalOpen} />
-          <section
+          <div className="fixed inset-0 z-20 bg-black opacity-50"/>
+          <div
             onClick={(e) => e.stopPropagation()}
             className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
             >
               <FundingModal modal={isFundingModalOpen} data={doc} fundCluster={doc.fund}/>
-          </section>
+          </div>
+        </>
+      )}
+      {BOModal && (
+        <>
+          <div className="fixed inset-0 z-20 bg-black opacity-50"/>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center"
+            >
+              <CertifiedModal modal={isBOModalOpen} data={doc}/>
+          </div>
         </>
       )}
       {(isLoadingApprover || isLoadingPreparer) && (
