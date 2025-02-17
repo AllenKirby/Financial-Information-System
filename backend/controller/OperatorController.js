@@ -90,7 +90,7 @@ const updateASAORS = async (req, res) => {
         
         let finalORS = ''
         const dvData = {ASA: asa}
-        if(needBUR){ 
+        if(!needBUR){ 
             const ORS = await getOrigNumberOfCopiesBUR(ors)
             finalORS = `501-${year}-${month}-${ORS}`
             dvData.ORSBURS = finalORS
@@ -144,7 +144,8 @@ const updateASAORS = async (req, res) => {
     }
 }
 
-const updateASA_ORS = async (req, res) => {
+
+const updateASA_ORS_previous_version = async (req, res) => {
     const { ors, asa } = req.body.data
 
     const { date, DVNo, payee, particulars, amount } = req.body.DV
@@ -387,7 +388,8 @@ const batch_handlefieldOffices = async (updates, DVNoCount, fieldOfficeData, ope
                     console.error(`Insufficient amount for ASANo: ${ASANo}, projectID: ${projectID}`);
                     continue; // Skip this document and continue with others
                 }
-    
+                console.log(ASANo, projectID, `${DVNoCount}|${amount}`)
+                console.log(`${ASANo} wait ${projectID} wait ${DVNoCount}|${amount}`)
                 // Add updates to the batch
                 batch.update(docRef, {
                     RO: updatedRO,
@@ -920,7 +922,7 @@ const appendDataToSheet = async (req, res) => {
   }
 
   const addNewFieldOffice = async(req, res) => {
-    const { projectName, fieldOffice, ASA, tabStatus } = req.body.data
+    const { projectName, fieldOffice, ASA, tabStatus, cash } = req.body.data
     const  projectID  = req.body.projectID
     const { id } = req.params
 
@@ -951,7 +953,8 @@ const appendDataToSheet = async (req, res) => {
         week4RO: 0,
         week5RO: 0,
         tabStatus: tabStatus,
-        dvItems: 0
+        dvItems: 0,
+        cash: cash
     }
 
     const formData = {
@@ -1268,7 +1271,6 @@ module.exports = {
     deleteControlBook,
     updateFieldOffice,
     deleteFieldOffice,
-    updateASA_ORS,
     getBUR,
     updateASAORS,
     addTab

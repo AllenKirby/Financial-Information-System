@@ -13,7 +13,7 @@ import LargeLoader from '../Loaders/LargeLoader';
 
 const FieldOffices = (props) => {
 
-  const {fieldOffice, index, ASANo, fieldOfficeID, remainingASA, test, tabs} = props
+  const {fieldOffice, index, ASANo, fieldOfficeID, remainingASA, test, tabs, Cluster} = props
 
   // console.log('fieldOffice: ', fieldOffice)
   // console.log('index: ', index)
@@ -110,13 +110,13 @@ const FieldOffices = (props) => {
           </div>
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>0</p>
+              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.cash || 0)}</p>
             </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>0</p>
+              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(fieldOffice.FO)}</p>
             </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>0</p>
+              <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>{formatToPeso(parseFloat(fieldOffice.cash) - parseFloat(fieldOffice.FO) || 0)}</p>
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@ const FieldOffices = (props) => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50"/>
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-            <ViewProject modal={viewProject} projectName={fieldOffice.projectName} ASANo={ASANo} tabStatus={fieldOffice.tabStatus}/>
+            <ViewProject modal={viewProject} projectName={fieldOffice.projectName} ASANo={ASANo} tabStatus={fieldOffice.tabStatus} Cluster={Cluster}/>
           </div>
         </>
       )}
