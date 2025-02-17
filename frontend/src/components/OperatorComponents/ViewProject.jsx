@@ -7,7 +7,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from "react";
 
 const ViewProject = (props) => {
-    const { modal,projectName, ASANo, tabStatus } = props 
+    const { modal,projectName, ASANo, tabStatus, Cluster } = props 
     const { user } = useAuthContext()
     const {retrieveDvData} = useFundingHook()
 
@@ -28,13 +28,22 @@ const ViewProject = (props) => {
 
   const [dvData, setDvData] = useState({})
   useEffect(() => {
-    console.log('dv hit')
     if (!ASANo || !projectName) return;
-    const fieldID = `${ASANo},${projectName}>${tabStatus}`
+    let fieldID;
+    if (Cluster === '501 COB'){
+      fieldID = `${ASANo},${projectName}>NoCategory`
+    }else{
+      fieldID = `${ASANo},${projectName}>${tabStatus}`
+    }
     retrieveDvData(ASANo, fieldID, (data) => {
       setDvData(data)
     })
   }, [ASANo, projectName])
+
+
+  useEffect(() => {
+    console.log(dvData)
+  }, [dvData])
 
   return (
     <section onClick={(e) => e.stopPropagation()} className="w-3/4 h-3/4 bg-white rounded-lg z-50">

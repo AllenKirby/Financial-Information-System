@@ -79,7 +79,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
         const fieldOfficeData = {
             date: data.date,
             DVNo: data.DV,
-            BUR: data.ors,
+            BUR: data.ORSBURS,
             payee: data.payee,
             particulars: data.particular,
             amount: data.amount
@@ -93,6 +93,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
             // controlBooks: CBAmount,
             update: needUpdate
         }
+        console.log(fundingData)
         const res = await updateASA_ORS(fundingData, DVNo)
         // const res = true
         if(res){
@@ -317,7 +318,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     // }
     useEffect(() => {
-        if(data){
+        if(data.ORSBURS){
             setIsToggled(true)
         }
     }, [])

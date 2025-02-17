@@ -229,7 +229,7 @@ const DVTemplate = ({document}) => {
                     const parts = key.split('|'); // Split the key
                     return (
                       <li key={index} className="text-customFontColor font-semibold">
-                        {`${parts[0].replace('|', ' ')} : ${value}`}
+                        {`${parts[0].replace('|', ' ')} : ${formatToPeso(value)}`}
                       </li>
                     );
                   })}

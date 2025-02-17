@@ -25,6 +25,7 @@ const ViewControlBook = () => {
   const [modalTab, setModalTab] = useState(false)
   const [showTooltip, setShowTooltip] = useState(false)
   const [reportFlag, setReportFlag] = useState(false)
+  const [cluster, setCluster] = useState('')
 
   const {retrieveChosenCB} = useFundingHook();
 
@@ -74,7 +75,11 @@ const ViewControlBook = () => {
   }, [])
 
   useEffect(() => {
-    console.log(ControlBook)
+    const COB = ControlBook.data.FundCluster
+    console.log(COB)
+    if(COB === '501 COB'){
+      setCluster(COB)
+    }
   }, [ControlBook])
   
   const sortTimePassedDesc = (docu) => {
@@ -178,7 +183,7 @@ const ViewControlBook = () => {
                         <p className="font-semibold lg:text-base 2xl:text-lg">New Project</p>
                       </div>
                     </button>
-                    <button onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
+                    <button disabled={cluster === '501 COB'} onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
                       <div className="flex flex-row items-center justify-center gap-2">
                         <IoAddOutline size={30}/>
                         <p className="font-semibold lg:text-base 2xl:text-lg">Add Tab</p>
@@ -234,7 +239,7 @@ const ViewControlBook = () => {
                 {fieldoffices && Object.entries(fieldoffices).length > 0 ? (
                   Object.entries(sortTimePassedDesc(fieldoffices)).map(([key,fieldOffice], index) => (
                     // <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={ControlBook.data.fieldOffices} tabs={ControlBook.data.tabs}/>
-                    <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={fieldoffices} tabs={ControlBook.data.tabs}/>
+                    <FieldOffices key={key} index={index} fieldOfficeID={key} fieldOffice={fieldOffice} ASANo={ControlBook.key} remainingASA={ControlBook.data.leftBudget} test={fieldoffices} tabs={ControlBook.data.tabs} Cluster={ControlBook.data.FundCluster}/>
                   ))
                 ) : (
                   <div className="flex items-center justify-center w-full h-full font-semibold">No Field Offices Found</div>
@@ -245,7 +250,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices} Cluster={cluster} Items={ControlBook.data.items}/>
                 </div>
               </>
             )}
