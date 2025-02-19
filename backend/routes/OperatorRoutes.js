@@ -18,7 +18,8 @@ const {
     updateASA_ORS,
     getBUR,
     updateASAORS,
-    addTab
+    addTab,
+    handleCash
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -34,6 +35,7 @@ OperatorRouter.patch('/updateFieldOffice/:id', updateFieldOffice)
 OperatorRouter.delete('/deleteFieldOffice/:id', deleteFieldOffice)
 // OperatorRouter.patch('/updateASA_ORS/:id', updateASA_ORS)
 OperatorRouter.patch('/updateASA_ORS/:id', updateASAORS)
+OperatorRouter.patch('/handleCash/:id', handleCash)
 OperatorRouter.get('/getBUR', getBUR)
 OperatorRouter.post('/addTab/:id', addTab)
 

@@ -85,7 +85,8 @@ const ViewProject = (props) => {
                       <td className="text-center">{DV.DVNoCount[DV.DVNoCount.length-1]}</td>
                       <td className="text-center break-words">{DV.payee}</td>
                       <td className="text-center break-words">{DV.particulars}</td>
-                      <td className="text-center">{DV.amount}</td>
+                      <td className="text-center">{formatToPeso(DV.amount || 0)}</td>
+                      <td className="text-center">{formatToPeso(DV.cash || 0)}</td>
                     </tr>
                   ))
                 ) : (

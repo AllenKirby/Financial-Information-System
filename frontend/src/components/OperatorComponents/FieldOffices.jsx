@@ -113,10 +113,10 @@ const FieldOffices = (props) => {
               <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.cash || 0)}</p>
             </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(fieldOffice.FO)}</p>
+              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(fieldOffice.cashFO)}</p>
             </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>{formatToPeso(parseFloat(fieldOffice.cash) - parseFloat(fieldOffice.FO) || 0)}</p>
+              <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>{formatToPeso(parseFloat(fieldOffice.cash) - parseFloat(fieldOffice.cashFO) || 0)}</p>
             </div>
           </div>
         </div>

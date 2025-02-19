@@ -13,7 +13,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
     const {getBurNo} = useInitialStateDV()
     const [isToggled, setIsToggled] = useState(false);
     const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
-    const {retrieveProjectName, updateASA_ORS, isLoading, error} = useFundingHook()
+    const {retrieveProjectName, updateASA_ORS,updateCASH, isLoading, error} = useFundingHook()
     const [ASANo, setASANo] = useState({})
     const [BUR, setBUR] = useState('')
     const [origBUR, setOrigBUR] = useState('')
@@ -58,6 +58,10 @@ const FundingModal = ({modal, data, fundCluster}) => {
         getData()
     }, [data])
 
+    useEffect(() => {
+        console.log(ASANo)
+    }, [ASANo])
+
     const[needUpdate, setNeedUpdate] = useState(false)
     useEffect(() => {
         
@@ -94,7 +98,15 @@ const FundingModal = ({modal, data, fundCluster}) => {
             update: needUpdate
         }
         console.log(fundingData)
-        const res = await updateASA_ORS(fundingData, DVNo)
+        let res;
+        if(isToggled){
+            console.log("with bur")
+            res = await updateASA_ORS(fundingData, DVNo)
+        }else{
+            console.log("without bur")
+            res = await updateCASH(fundingData, DVNo)
+        }
+        
         // const res = true
         if(res){
             Swal.fire({
@@ -140,14 +152,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
         console.log(`${key}/${projectID}`)
         const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
         if (checked) {
-            // console.log(Boolean(parseFloat(data.amount) < amount + budget))
-            // console.log(exactAmount)
-
-            // if(Boolean(parseFloat(data.amount) < amount + budget)){
-            //     console.log(`${amount} - (${amount} + ${budget} - parseFloat(${data.amount})) = ${amount - (amount + budget - parseFloat(data.amount))}`)
-            // }else{
-            //     console.log(amount)
-            // }
 
             if(exactAmount <= 0){
                 return
@@ -211,6 +215,84 @@ const FundingModal = ({modal, data, fundCluster}) => {
         }
     }
 
+    const handlechange = (checked, ) => {
+        if(checked){
+            setOperatorInput((prev) => ({...prev,
+                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+            }));
+        }else{
+
+        }
+    }
+
+    //pending
+    const handleChangeBoxAmountCASH = (checked, key, projectID, amount, projectName) => {
+        console.log(`${key}/${projectID}`)
+        const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
+        if (checked) {
+
+            if(exactAmount <= 0){
+                return
+            }
+
+            setOperatorInput((prev) => ({...prev,
+                asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
+            }));
+    
+            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
+            setBudget((prev) => prev + exactAmount)
+
+            setASANo((prev) => {
+                
+                return{
+                    ...prev,[key] : {
+                        ...prev[key], [projectID] : {
+                            ...prev[key][projectID], cash: parseFloat(prev[key][projectID].cash) - exactAmount
+                        }
+                    }
+                }
+            })
+
+        } else {
+            // const prevAmount = parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0)
+            let unselectedAmount
+            setOperatorInput((prev) => {
+                const updatedAsa = { ...(prev.asa || {}) };
+                unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
+                delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
+                return {
+                    ...prev,
+                    asa: updatedAsa,
+                };
+            });
+            setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
+            setBudget((prev) => {
+                const prevAmount = operatorInput?.asa[`${key}/${projectID}`] ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
+             
+                if(Boolean(operatorInput?.asa[`${key}/${projectID}`])){
+                    console.log(parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0))
+                }else{
+                    console.log(amount)
+                }
+                const newAmount = prev - prevAmount < 0 ? 0  : prev - prevAmount
+                return newAmount
+            })
+
+            //FOR INTEREACTIVITY DIFFERENCE
+            setASANo((prev) => {
+                const prevAmount = operatorInput?.asa[`${key}/${projectID}`] ? parseFloat(operatorInput?.asa[`${key}/${projectID}`] || 0) : amount
+              
+                return{
+                    ...prev,[key] : {
+                        ...prev[key], [projectID] : {
+                            ...prev[key][projectID], cash: prev[key][projectID].cash + prevAmount
+                        }
+                    }
+                }
+            })
+        }
+    }
+
 
     const filterFundCluster = (controlBook) => {
         if(controlBook && Object.entries(controlBook).length > 0) {
@@ -254,74 +336,16 @@ const FundingModal = ({modal, data, fundCluster}) => {
     //     }
     // }
 
-    // const handleChangeBoxAmount_v1 = (checked, key, projectID, amount, projectName) => {
-    //     const projectKey = `${key}/${projectID}`;
-    //     const checked2 = !Boolean(operatorInput.asa?.[`${key}/${projectID}`])
-    //     //FOR NEXT UPDATE
-    //     // console.log(checked2)
-    //     // setASANo((prevState) => {
-    //     //     const updatedState = { ...prevState };
-    //     //     if (!updatedState[key] || !updatedState[key][projectName]) {
-    //     //         console.warn("Project not found for update.");
-    //     //         return prevState; // Return current state if no match found
-    //     //     }
-
-    //     //     const currentRO = parseFloat(updatedState[key][projectName].RO || 0);
-    //     //     if (checked) {
-    //     //         updatedState[key][projectName].RO = Math.max(0, currentRO - parseFloat(data.amount)); //fix this
-    //     //     } 
-    //     //     else {
-    //     //         updatedState[key][projectName].RO = currentRO + parseFloat(data.amount); //fix this
-    //     //     }
-    
-    //     //     return updatedState;
-    //     // });
-
-    //     if (checked) {
-    //         const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
-    //         // console.log(exactAmount)
-    //         setOperatorInput((prev) => ({...prev,
-    //             asa: {...(prev.asa || {}),[`${key}/${projectID}`]: exactAmount},
-    //         }));
-    
-    //         setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) + exactAmount}));
-    //         setBudget((prev) => prev + amount)
-
-    //     } else {
-    //         let unselectedAmount
-    //         setOperatorInput((prev) => {
-    //             const updatedAsa = { ...(prev.asa || {}) };
-    //             unselectedAmount = parseFloat(updatedAsa[`${key}/${projectID}`])
-    //             console.log(unselectedAmount)
-    //             delete updatedAsa[`${key}/${projectID}`]; // Remove the projID key
-    //             return {
-    //                 ...prev,
-    //                 asa: updatedAsa,
-    //             };
-    //         });
-    //         //this is for differencing on update
-    //         // setASANo((prev) => {
-
-    //         //     return {
-    //         //         ...prev, [key]: {
-    //         //             ...prev[key],
-    //         //             [projectName]: {
-    //         //                 ...prev[key]?.[projectName],
-    //         //                 RO: parseFloat((prev[key]?.[projectName]?.RO || 0)) + unselectedAmount
-    //         //             }
-    //         //         }
-    //         //     }
-    //         // })
-    //         setCBAmount((prev) => ({...prev,[key]: (prev[key] || 0) - amount}));
-    //         setBudget((prev) => prev - amount < 0 ? 0 : prev - amount)
-    //     }
-
-    // }
     useEffect(() => {
         if(data.ORSBURS){
             setIsToggled(true)
         }
     }, [])
+
+    useEffect(() => {
+        setOperatorInput({...operatorInput, asa: ''})
+        setBudget(0)
+    }, [isToggled])
 
     return(
         <form onSubmit={handleSubmit} className="bg-white w-full sm:w-2/6 h-4/5 p-3 rounded-lg flex flex-col text-gray-500">
@@ -339,7 +363,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                     
                     {/* Toggle Button */}
                     <button
-                    disabled={data.ORSBURS ? true : false}
+                    disabled={needUpdate}
                     className={`${isToggled ? 'bg-fundingBlueGreen' : 'bg-gray-300'} relative w-20 h-10 rounded-full focus:outline-none transition-colors duration-30 ease-in-out`}
                     type="button"
                     onClick={() => {
@@ -378,15 +402,16 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                 {Object.entries(asano).map(([projectID, project]) => (
                                                     <label key={projectID} className="peer flex items-center gap-2">
                                                         <input
+                                                            name="utilized"
                                                             type="checkbox"
-                                                            required
+                                                            // required
                                                             value={projectID}
                                                             className="peer hidden"
                                                             onChange={(e) => {
                                                                 const isChecked = e.target.checked;
                                                                 const projID = e.target.value;
                                                                 const amount = parseFloat(
-                                                                    project.RO || 0
+                                                                    project.cash || 0
                                                                 );
                                                                 handleChangeBoxAmount(isChecked,key, projID, amount, project.projectName)
     
@@ -418,10 +443,55 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                     );
                                 })
                             ) : (
-                                
-                                <div className="w-full h-full flex items-center justify-center">
-                                    <p className="font-semibold">No options available</p>
-                                </div>
+                                Object.entries(filterFundCluster(ASANo)).map(([key, asano]) => {
+                                    const finalASANO = key.replace('|', ' ').split('!')[0];
+                                    return (
+                                        <div key={key} className="w-full h-auto border-b pb-2">
+                                            <h4 className="font-semibold text-lg mb-2">
+                                                {finalASANO}
+                                            </h4>
+                                            <div className="flex flex-wrap items-center justify-start gap-2">
+                                                {Object.entries(asano).map(([projectID, project]) => (
+                                                    <label key={projectID} className="peer flex items-center gap-2">
+                                                        <input
+                                                            name="disbursed"
+                                                            type="checkbox"
+                                                            // required
+                                                            value={projectID}
+                                                            className="peer hidden"
+                                                            onChange={(e) => {
+                                                                const isChecked = e.target.checked;
+                                                                const projID = e.target.value;
+                                                                const amount = parseFloat(
+                                                                    project.RO || 0
+                                                                );
+                                                                handleChangeBoxAmountCASH(isChecked,key, projID, amount, project.projectName)
+                                                            }}
+                                                            checked={Boolean(operatorInput.asa?.[`${key}/${projectID}`])}
+                                                            disabled={
+                                                                !Boolean(operatorInput.asa?.[`${key}/${projectID}`]) && 
+                                                                Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
+                                                            }
+                                                            
+                                                        />
+                                                        <span className="cursor-pointer border-2 px-5 py-1 flex items-center justify-center gap-2 rounded-full peer-checked:border-fundingBlueGreen peer-checked:bg-fundingBlueGreen peer-checked:text-white hover:text-fundingBlueGreen hover:border-fundingBlueGreen hover:shadow-lg transition-all duration-150">
+                                                            {/* .match(/,([^,>]+)>/)?.[1] || "N/A" */}
+                                                            <span className="font-medium">{projectID.split(",")[1]?.split(">")[0] || "N/A"}</span>
+                                                            {project.tabStatus && (
+                                                                <span className="text-sm bg-teal-700 rounded text-white px-2">{project.tabStatus}</span>
+                                                            )}
+                                                            <span>:</span>
+                                                            <span className="font-semibold">
+                                                                {project.cash ? formatToPeso(project.cash) : formatToPeso(0)}
+                                                            </span>
+                                                            
+                                                        </span>
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })
                             )
                         }
                     </div>
