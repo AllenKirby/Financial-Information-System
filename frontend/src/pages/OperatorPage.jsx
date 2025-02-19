@@ -14,6 +14,7 @@ import { useFundingHook } from "../hooks/useFundingHook"
 import {useDispatch, useSelector} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
 import { setDVRecords } from '../redux/DVUsersRedux'
+import { setVouchers } from "../redux/AllVouchersRedux";
 
 import {initializeSocket } from "../socketService/socketService";
 
@@ -116,9 +117,9 @@ const OperatorPage = () => {
         socket.on('operatorPermission:firestore:update', (doc) => {
           dispatch(setPermission(doc));
         })
-        // socket.on('operator:firestore:records', (doc) => {
-        //   console.log(doc)
-        // })
+        socket.on('operator:firestore:records', (doc) => {
+          dispatch(setVouchers(doc))
+        })
         return () => {
           socket.off('operator:firestore:update');
           socket.off('operatorPermission:firestore:update');

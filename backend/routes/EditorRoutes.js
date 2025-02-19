@@ -15,7 +15,8 @@ const {
     getPermission,
     getNumberOfCopies,
     savePayeeData,
-    getPayeeData
+    getPayeeData,
+    downloadDVRegister
 } = require('../controller/EditorController');
 
 
@@ -34,6 +35,7 @@ editorRouter.get('/getNumberOfCopies', getNumberOfCopies)
 
 editorRouter.post('/savePayeeData', savePayeeData)
 editorRouter.get('/getPayeeData', getPayeeData)
+editorRouter.post('/exportDV', downloadDVRegister)
 
 
 module.exports = editorRouter;

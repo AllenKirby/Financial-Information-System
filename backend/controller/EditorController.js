@@ -1,6 +1,7 @@
 const {admin, db, rtdb}  = require('../config/firebase');
 const { doc } = require('firebase/firestore')
-
+const XlsxPopulate = require('xlsx-populate');
+const path = require('path')
 const { encryptObj } = require('./functions');
 
 const { 
@@ -415,6 +416,32 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
     }
 }
 
+const downloadDVRegister = async(req, res) => {
+    const data = req.body
+    try {
+        const templatePath = path.join(__dirname, '..', 'templates', 'Book1.xlsx'); 
+        const workbook = await XlsxPopulate.fromFileAsync(templatePath);
+        console.log(data)
+        let startingCell = 7
+        data.forEach((item,) => {
+            console.log(item.fund)
+            workbook.sheet('Sheet1').cell(`A${startingCell}`).value(item.fund)
+            workbook.sheet('Sheet1').cell(`B${startingCell}`).value(item.key)
+            workbook.sheet('Sheet1').cell(`C${startingCell}`).value(item.MOP)
+            workbook.sheet('Sheet1').cell(`D${startingCell}`).value(item.counter)
+            workbook.sheet('Sheet1').cell(`E${startingCell}`).value(item.RC)
+            startingCell++
+        })
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
+        await workbook.outputAsync({ type: "nodebuffer" }).then(buffer => res.send(buffer));
+    } catch (error) {
+        console.log(`Error on downloading dv register ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
 // const addOnClusterAmount = async (amount, cluster, dateString, operation='add') => {
 //     try{
 //         const float_amount = parseFloat(amount)
@@ -456,5 +483,6 @@ module.exports = {
     getPermission,
     getNumberOfCopies,
     savePayeeData,
-    getPayeeData
+    getPayeeData,
+    downloadDVRegister
 };

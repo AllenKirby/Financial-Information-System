@@ -147,6 +147,31 @@ export const usePreparerHook = () => {
         }
     }
 
+    const exportDVRegister = async(data) => {
+        setError(null)
+        setIsLoading(true)
+        try {
+            const res = await axios.post(`${apiURL}/editor/exportDV`, data, {
+                responseType: 'blob',
+                withCredentials: true
+            })
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'populated-template.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setIsLoading(false)
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
+            return false
+        }
+    }
+
   return {
     createDisbursement, 
     deleteDV, 
@@ -155,6 +180,7 @@ export const usePreparerHook = () => {
     updateDV, 
     savePayeeData, 
     loadPayee, 
+    exportDVRegister,
     isLoading, 
     error}
 }
