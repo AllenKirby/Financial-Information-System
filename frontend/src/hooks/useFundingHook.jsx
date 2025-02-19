@@ -50,6 +50,25 @@ export const useFundingHook = () => {
         }
     }
 
+    const updateCASH = async(data, DV) => {
+        setIsLoading(true)
+        setError(null)
+        try{
+            const res = await axios.patch(`${apiURL}/operator/handleCash/${DV}`, data, {
+                withCredentials: true
+            })
+            if (res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        }catch(error){
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "Error updating the document: operator";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
     const transferToHead = async(data) => {
         setError(null)
         setIsLoading(true)
@@ -322,7 +341,8 @@ export const useFundingHook = () => {
                 transformed[mainKey][projectID] = {
                     RO: project.RO,
                     projectName: project.projectName,
-                    tabStatus: project.tabStatus
+                    tabStatus: project.tabStatus,
+                    cash: project.cash
                 };
             })
         }
@@ -444,6 +464,7 @@ export const useFundingHook = () => {
         addingTab,
         retrieveChosenCB,
         retrieveDvData,
+        updateCASH,
         isLoading, 
         error
     }

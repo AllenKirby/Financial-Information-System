@@ -31,6 +31,7 @@ const AddNewFieldOffice = (props) => {
     }, [])
 
     useEffect(() => {
+        console.log(props)
         if(flag && fieldOffice) {
             setFieldOfficeData({
                 projectName: fieldOffice.projectName || '', 
@@ -143,7 +144,6 @@ const AddNewFieldOffice = (props) => {
             ASANo: ASANo,
             projectID: `${ASANo},${fieldOfficeData.projectName}>${fieldOfficeData.tabStatus}`
         }
-        console.log(ASANo)
         if(Cluster === '501 COB'){
             data.projectID = `${ASANo},${fieldOfficeData.projectName}>NoCategory`
         }
