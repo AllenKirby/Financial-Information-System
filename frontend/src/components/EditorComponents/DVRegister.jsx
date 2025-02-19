@@ -6,8 +6,11 @@ import { useSelector } from "react-redux";
 import { IoSearchSharp } from "react-icons/io5";
 import { IoIosClose } from "react-icons/io";
 import { MdNavigateNext, MdNavigateBefore } from "react-icons/md";
+import { PiExport } from "react-icons/pi";
 
 import PaginatedList from "../Pagination/PaginatedList";
+import { useAuthContext } from "../../hooks/useAuthContext";
+import { usePreparerHook } from "../../hooks/usePreparerHook";
 
 const DVRegister = () => {
     const [activeTab, setActiveTabs] = useState('501 COB') 
@@ -18,6 +21,8 @@ const DVRegister = () => {
     const [documents, setDocuments] = useState({})
     const DV = useSelector((state) => state.vouchers)
     const [counter, setCounter] = useState(1)
+    const { user } = useAuthContext()
+    const { exportDVRegister, isLoading, error } = usePreparerHook()
 
     useEffect(() => {
         if(DV && Object.entries(DV).length > 0) {
@@ -57,8 +62,29 @@ const DVRegister = () => {
         setCounter(prevCounter => prevCounter - 1)
     }
 
+    // console.log(Object.entries(documents)[1][1].data)
+
+    const exportDV = async() => {
+
+        const data = Object.entries(documents).map(([key, data]) => {
+            const {fund, DVKey, MOP, NF_name, RC} = data.data
+
+            return {
+                key,
+                fund: fund,
+                DVKey:`${DVKey} asdsaffdsf`,
+                MOP: MOP,
+                RC,
+                NF_name,
+                counter
+            }
+        })
+
+        await exportDVRegister(data)
+    }
+
   return (
-    <section className="w-full h-full p-2 text-gray-500 relative">
+    <section className="w-full h-full p-2 text-gray-500 relative flex flex-col">
         <div className={`${searchModal ? ' block h-auto' : 'hidden'} absolute py-5 bg-white z-20 top-0 left-0 w-full block overflow-hidden sm:hidden transition-all duration-100`}>
             <div className='flex items-center justify-center gap-2 px-3'>
                 <div className='w-5/6 relative'>
@@ -74,28 +100,33 @@ const DVRegister = () => {
                 </button>
             </div>
         </div>
-        <div className="w-full h-[10%] pt-2 flex items-center justify-between">
-            <div className="flex items-center justify-center gap-1 text-sm sm:text-base">
-                <button onClick={() => setActiveTabs('501 COB')} className={`${activeTab === '501 COB' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 COB</button>
-                <button onClick={() => setActiveTabs('501 LFP')} className={`${activeTab === '501 LFP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 LFP</button>
-                <button onClick={() => setActiveTabs('501 CARP')} className={`${activeTab === '501 CARP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 CARP</button>
-                <button onClick={() => setActiveTabs('Farming Support Services Program')} className={`${activeTab === 'Farming Support Services Program' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>Farming Support Services Program</button>
+        <div className="w-full h-fit flex flex-col items-center justify-between gap-2">
+            <div className="w-full flex items-center justify-end">
+                <button onClick={exportDV} disabled={isLoading} className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white px-5 py-2 rounded-lg flex items-center justify-center gap-2`}><PiExport size={20}/>Export</button>
             </div>
-            <div>
-                <div className='relative w-auto hidden sm:block'>
-                    <IoSearchSharp size={20} className='absolute top-[10px] left-4 text-gray-400'/>
-                    <input 
-                        type="search"
-                        placeholder='Search'
-                        onChange={(e) => setSearch(e.target.value)}
-                        className='w-14 sm:w-auto py-2 text-sm 2xl:text-base pl-10 placeholder-transparent sm:placeholder-gray-500 rounded-lg focus:outline-none border-2' />
+            <div className="w-full flex items-center justify-between">
+                <div className="w-fit flex items-center justify-center gap-1 text-sm sm:text-base">
+                    <button onClick={() => setActiveTabs('501 COB')} className={`${activeTab === '501 COB' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 COB</button>
+                    <button onClick={() => setActiveTabs('501 LFP')} className={`${activeTab === '501 LFP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 LFP</button>
+                    <button onClick={() => setActiveTabs('501 CARP')} className={`${activeTab === '501 CARP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 CARP</button>
+                    <button onClick={() => setActiveTabs('Farming Support Services Program')} className={`${activeTab === 'Farming Support Services Program' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>Farming Support Services Program</button>
                 </div>
-                <button onClick={() => setSearchModal(!searchModal)} className='block sm:hidden'>
-                    <IoSearchSharp size={38} className='border-2 rounded-lg px3 py-2 text-gray-400'/>
-                </button>
+                <div className="w-fit">
+                    <div className='relative w-auto hidden sm:block'>
+                        <IoSearchSharp size={20} className='absolute top-[10px] left-4 text-gray-400'/>
+                        <input 
+                            type="search"
+                            placeholder='Search'
+                            onChange={(e) => setSearch(e.target.value)}
+                            className='w-14 sm:w-auto py-2 text-sm 2xl:text-base pl-10 placeholder-transparent sm:placeholder-gray-500 rounded-lg focus:outline-none border-2' />
+                    </div>
+                    <button onClick={() => setSearchModal(!searchModal)} className='block sm:hidden'>
+                        <IoSearchSharp size={38} className='border-2 rounded-lg px3 py-2 text-gray-400'/>
+                    </button>
+                </div>
             </div>
         </div>
-        <div className="w-full h-[90%] py-2">
+        <div className="w-full flex-1 py-2">
             <div className="w-full h-full flex flex-col">
                 <div className="w-auto h-auto rounded-lg hidden sm:flex items-center justify-between bg-gray-100 text-gray-400 text-sm">
                     <button onClick={decrement} disabled={counter === 1} className="w-fit px-2 h-full"><MdNavigateBefore size={24}/></button>
