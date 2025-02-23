@@ -14,7 +14,7 @@ const FundClusterModal = ({fundCluster, modal, vouchers}) => {
 
     useEffect(() => {
         if(vouchers && Object.entries(vouchers).length > 0) {
-            const result = Object.entries(vouchers).filter(([,voucher]) => console.log(voucher))
+            const result = Object.entries(vouchers).filter(([,voucher]) => voucher.data.fund === fundCluster)
             console.log(result)
             if(result.length !== 0) {
                 setFilteredVouchers(Object.fromEntries(result))
@@ -68,13 +68,13 @@ const FundClusterModal = ({fundCluster, modal, vouchers}) => {
                 {selectedVoucher ? (
                     <DVTemplate document={selectedVoucher}/>
                 ) : (
-                    filteredVouchers.length > 0 ? 
-                        filteredVouchers.map((voucher, index) => (
+                    Object.entries(filteredVouchers).length > 0 ? 
+                    Object.entries(filteredVouchers).map((voucher, index) => (
                             <button key={index} onClick={() => setSelectedVoucher(voucher[1].data)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} my-1 text-sm w-full p-2 rounded-md flex flex-col sm:flex-row`}>
                                 <p className='w-full sm:w-2/4 truncate text-left font-semibold'>{voucher[1].data.payee}</p>
                                 <p className='w-full sm:w-1/4 text-left sm:text-center'>{voucher[1].data.DV}</p>
                                 <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center'>
-                                    <p className={`${getStatusColor(voucher[1].data.status)} w-auto px-4 rounded-md font-semibold`}>{voucher[1].data.status.includes('Returned') ? 'Returned' : voucher[1].data.status}</p>
+                                    <p className={`${getStatusColor(voucher[1].data.status)} w-auto px-4 rounded-md text-sm font-semibold`}>{voucher[1].data.status.includes('Returned') ? 'Returned' : voucher[1].data.status}</p>
                                 </div>
                             </button>
                         )) : (
