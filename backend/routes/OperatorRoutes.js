@@ -19,7 +19,8 @@ const {
     getBUR,
     updateASAORS,
     addTab,
-    handleCash
+    handleCash,
+    changeStatus
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -38,5 +39,6 @@ OperatorRouter.patch('/updateASA_ORS/:id', updateASAORS)
 OperatorRouter.patch('/handleCash/:id', handleCash)
 OperatorRouter.get('/getBUR', getBUR)
 OperatorRouter.post('/addTab/:id', addTab)
+OperatorRouter.patch('/change-status/:id', changeStatus)
 
 module.exports = OperatorRouter

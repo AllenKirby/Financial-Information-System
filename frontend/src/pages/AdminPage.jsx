@@ -57,12 +57,13 @@ const AdminPage = () => {
     const {socket, isInitialized} = initializeSocket()
     if(isInitialized){
       socket.on('admin:firestore:update', (doc) => {
-        console.log(doc)
+        
         const updatedDocuments = {...documents, ...doc};
         const filteredDV = filterApproverDocu(updatedDocuments)
+        dispatch(setDVRecords(filteredDV))
+        console.log(filteredDV)
         dispatch(setVouchers(doc))
         //contextDispatch({ type: 'SET_ADMINDOCUMENTS', payload: filteredDV });
-        dispatch(setDVRecords(filteredDV))
         setDocuments(updatedDocuments);
       })
       return () => {

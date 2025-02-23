@@ -16,6 +16,7 @@ const headSocket = (socket, io) => {
             ? ['Approved', 'Under Review', 'For Approval', 'Returned|2']
             : ['Under Review', 'Returned|2'];
 
+        console.log('STATUS_ : ',status)
         if (collectionUnsubscribe) {
             console.log('Updating Firestore collection listener...');
             collectionUnsubscribe();
