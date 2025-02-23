@@ -9,9 +9,17 @@ import ResetPasswordRequestsReducer from "./ResetPasswordRequests"
 import ChangePassFlagReducer from "./ChangePasswordFlagRedux"
 import DVUsersReducer from "./DVUsersRedux"
 
-export const store = configureStore({
-    reducer : {
-        permission: permissionReducer,
+import { persistStore, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage'; // Using local storage
+import { combineReducers } from 'redux';
+
+const persistConfig = {
+    key: 'root',
+    storage,
+  };
+
+  const rootReducer = combineReducers({
+    permission: permissionReducer,
         records: RecordsReducer,
         controlBook: ControlBookReducer,
         testforecast: TestForecastedReducer,
@@ -20,5 +28,13 @@ export const store = configureStore({
         request: ResetPasswordRequestsReducer,
         changePass: ChangePassFlagReducer,
         dvrecords: DVUsersReducer
-    }
+  });
+
+  const persistedReducer = persistReducer(persistConfig, rootReducer);
+  
+
+export const store = configureStore({
+    reducer: persistedReducer,
 })
+
+export const persistor = persistStore(store);

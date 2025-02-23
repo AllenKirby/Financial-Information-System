@@ -56,7 +56,7 @@ const DisbursementRecords = () => {
       const filteredResults = Object.entries(DVRecords).filter(doc => doc[1]?.data?.payee?.toLowerCase().includes(search.toLowerCase()) || doc[1]?.data?.DV?.toLowerCase().includes(search.toLowerCase()))
       setFilteredDocuments({...filteredDocuments, all: Object.fromEntries(filteredResults)})
     } else {
-      const drafts = Object.entries(DVRecords).filter(([, document]) => document.data.status.includes(activeTabs))
+      const drafts = Object.entries(DVRecords).filter(([, document]) => document?.data?.status?.includes(activeTabs))
       const filteredDrafts = Object.fromEntries(drafts.filter((document ,) => document[1]?.data?.payee?.toLowerCase().includes(search.toLowerCase()) || document[1]?.data?.DV?.toLowerCase().includes(search.toLowerCase())))
       if(activeTabs === 'Approved') {
         setFilteredDocuments({...filteredDocuments, approved: filteredDrafts})

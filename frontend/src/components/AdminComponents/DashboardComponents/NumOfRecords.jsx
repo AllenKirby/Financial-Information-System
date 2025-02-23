@@ -55,20 +55,20 @@ const NumOfRecords = ({modal, downloadPNG, comparison}) => {
 
     return (
         <div className="w-full h-full grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-            <div className="text-left rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 COB</div>
+            <div onClick={() => modal('501 COB')} className="text-left rounded-lg overflow-hidden border-2 py-2 px-4 cursor-pointer">
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm my-2`}>501 COB</div>
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501COB !== '0000' ? recordx?.DVno501COB?.replace(/^0+/, '') : '0'}</div>
             </div>
-            <div className="text-left rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 LFP</div>
+            <div onClick={() => modal('501 LFP')} className="text-left rounded-lg overflow-hidden border-2 py-2 px-4 cursor-pointer">
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm my-2`}>501 LFP</div>
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501LFP !== '0000' ? recordx?.DVno501LFP?.replace(/^0+/, '') : '0'}</div>
             </div>
-            <div className="text-left rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>501 CARP</div>
+            <div onClick={() => modal('501 CARP')} className="text-left rounded-lg overflow-hidden border-2 py-2 px-4 cursor-pointer">
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm my-2`}>501 CARP</div>
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVno501CARP !== '0000' ? recordx?.DVno501CARP?.replace(/^0+/, '') : '0'}</div>
             </div>
-            <div className="text-left rounded-lg overflow-hidden border-2 py-2 px-4">
-              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm`}>Farming Support Services Program</div>
+            <div onClick={() => modal('Contract Farming')} className="text-left rounded-lg overflow-hidden border-2 py-2 px-4 cursor-pointer">
+              <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} w-full h-1/3 text-sm my-2`}>Farming Support Services Program</div>
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVnoContractFarming !== '0000' ? recordx?.DVnoContractFarming?.replace(/^0+/, '') : '0'}</div>
             </div>
             <div className="rounded-lg flex flex-col gap-2 overflow-hidden p-2">

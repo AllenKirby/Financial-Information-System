@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 //icons
 import { RxPaperPlane } from "react-icons/rx";
 import { FiEdit3 } from "react-icons/fi";
-import { MdDeleteOutline, MdOutlineFileDownload  } from "react-icons/md";
+import { MdDelete  } from "react-icons/md";
+import { PiExport } from "react-icons/pi";
 import { IoMdArrowRoundBack, IoMdCheckmark, IoMdAdd  } from "react-icons/io";
 import { BsArrowLeft } from "react-icons/bs";
 //components
@@ -234,39 +235,21 @@ const ViewDocument = () => {
               onClick={handleDownload}
               className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
               >
-            <MdOutlineFileDownload size={20} /> <span className="hidden sm:block ">Download</span>
+            <PiExport size={20} /> <span className="hidden sm:block ">Export</span>
           </button>)}
 
           {idStatus.type === '3' && idStatus.status === 'In Review' && (
             <button
               onClick={() => openModal('ReturnDV')}
-              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-red-500 bg-white border-2 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150 flex items-center justify-center gap-2"
+              className="w-auto px-5 rounded-lg py-3 sm:py-2.5 text-red-500 font-semibold transition-all duration-150 flex items-center justify-center gap-2"
             >
               <BsArrowLeft size={20}/> <span className="hidden sm:block ">Return to Preparer</span>
             </button>
           )}
-
-          {/* {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-            <button
-              onClick={() => openModal('ReturnToFunding')}
-              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
-              >
-              <BsArrowLeft/> <span className="hidden sm:block ">Return to Funding</span>
-            </button>
-          )}
-
-          {(idStatus.type === '2' && idStatus.status !== 'Approved') && (
-            <button
-              onClick={() => openModal('ReturnToPreparer')}
-              className="w-auto px-5 rounded-lg py-3 sm:py-2 text-white bg-red-500 border-2 border-red-500 hover:bg-white hover:text-red-500 transition-all duration-150 flex items-center justify-center gap-2"
-              >
-              <BsArrowLeft/> <span className="hidden sm:block ">Return to Preparer</span>
-            </button>
-          )} */}
           
           {(idStatus.type === '2' && idStatus.status !== 'Approved' && idStatus.status !== 'For Approval') && (
             <div className="w-auto h-auto relative">
-              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-2.5 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg hover:bg-white hover:text-red-500 border-red-500 bg-red-500 text-white transition-all duration-150"><BsArrowLeft/> Return</button>
+              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-5 rounded-lg py-3 sm:py-2.5 text-red-500 font-semibold transition-all duration-150 flex items-center justify-center gap-2"><BsArrowLeft/> Return</button>
               {returnFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setReturnFlag(!returnFlag)}/>
@@ -281,7 +264,7 @@ const ViewDocument = () => {
 
           {(idStatus.type === '1' && idStatus.status === 'For Approval') && (
             <div className="w-auto h-auto relative">
-              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-3 py-3 flex items-center justify-center gap-2 font-semibold border-2 rounded-lg text-red-500 border-red-500 hover:bg-red-500 hover:text-white transition-all duration-150"><BsArrowLeft/> Return</button>
+              <button onClick={() => setReturnFlag(!returnFlag)} className="w-auto px-5 rounded-lg py-3 sm:py-2.5 text-red-500 font-semibold transition-all duration-150 flex items-center justify-center gap-2"><BsArrowLeft/> Return</button>
               {returnFlag && (
                 <>
                   <div className="fixed inset-0 z-0" onClick={() => setReturnFlag(!returnFlag)}/>
@@ -298,9 +281,9 @@ const ViewDocument = () => {
           {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
             <button
               onClick={delDV}
-              className={`w-auto px-5 rounded-lg py-2 text-red-500 border-2 border-red-500 hover:bg-red-500 hover:text-white transtion-all duration-150`}
+              className={`w-auto px-5 rounded-lg py-2.5 text-red-500 hover:bg-white hover:text-red-500 hover:white transtion-all duration-150`}
               >
-              <MdDeleteOutline size={20}/>
+              <MdDelete size={24}/>
             </button>
           )}
           {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
