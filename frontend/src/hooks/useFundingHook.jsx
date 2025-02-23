@@ -447,6 +447,26 @@ export const useFundingHook = () => {
             return false
         }
     }
+
+    const disableCB = async (data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            console.log(data)
+            const res = await axios.patch(`${apiURL}/operator/change-status/${data.id}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error.message)
+        }
+    }
       
     return {
         returnDoc, 
@@ -465,6 +485,7 @@ export const useFundingHook = () => {
         retrieveChosenCB,
         retrieveDvData,
         updateCASH,
+        disableCB,
         isLoading, 
         error
     }

@@ -829,6 +829,78 @@ const handleControlBook = async (ASANo, amount, operation='add') => {
     }
 }
 
+const changeStatus = async(req, res) => {
+    try{
+        const {id} = req.params
+        const status = req.body.status
+        const controlBookRef = db.collection("ControlBook").doc(id);
+
+        if (!status) {
+            return res.status(400).json({ error: "Status is required" });
+        }
+
+        const newStatus = status === "active" ? "disabled" : "active";
+        await controlBookRef.update({ cbStatus: newStatus });
+        
+        let result;
+        if(status === "active"){
+            result = await delete_FormData(id);
+        }else{
+            result = await fetchData_formData(id);
+        }
+        const message = result ? "Updated Succesfully" : "Something's wrong..."
+        res.status(200).json({ message: message });
+    }catch(err){
+        console.error("Error updating status:", err);
+        res.status(500).json({ error: "Failed to update status" });
+    }
+}
+
+const delete_FormData = async (fieldName) => {
+    try{
+        if (!fieldName) {
+            return false
+        }
+        const controlBookRef = db.collection("formData").doc("ControlBook");
+        await controlBookRef.update({
+            [fieldName]: admin.firestore.FieldValue.delete(),
+        });
+    
+        return true
+    }catch(err){
+        console.log(err, "error at delete_formdata")
+        return false
+    }
+}
+
+const fetchData_formData = async(id) => {
+    try{
+        const snapshot = await db.collection("ControlBook").doc(id).collection("FieldOffices").get();
+
+        if (snapshot.empty) {
+            return res.status(404).json({ message: "No documents found" });
+        }
+
+        const documents = snapshot.docs.map(doc => ({
+            projectID: doc.id,
+            RO: doc.data().RO, 
+            cash: doc.data().cash,    
+            projectName: doc.data().projectName, 
+            tabStatus: doc.data().tabStatus,
+        }));
+
+        const targetDocRef = db.collection("formData").doc("ControlBook");
+        await targetDocRef.update({
+            [id]: documents
+        });
+        return true
+    }catch(err){
+        console.log(err, "error at fetchdata_formdata")
+        return false
+    }
+
+}
+
 const handleBudget = async (body) => {
     const {date, DVNo, BUR, payee, particulars, amount,asa} = body 
 
@@ -1446,5 +1518,6 @@ module.exports = {
     getBUR,
     updateASAORS,
     addTab,
-    handleCash
+    handleCash,
+    changeStatus
 }

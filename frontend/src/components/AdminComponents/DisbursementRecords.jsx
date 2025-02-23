@@ -28,6 +28,10 @@ const DisbursementRecords = () => {
   }
 
   useEffect(() => {
+    console.log(DVRecords)
+  }, [DVRecords])
+
+  useEffect(() => {
     if (DVRecords && Object.keys(DVRecords).length > 0) {
       if(!activeTabs) {
         const filteredResults = Object.fromEntries(

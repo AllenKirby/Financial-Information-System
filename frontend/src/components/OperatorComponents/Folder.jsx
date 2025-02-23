@@ -21,7 +21,7 @@ const Folder = ({ASANo, controlBook}) => {
     const [deletable, setIsDeletable] = useState(true)
     const navigate = useNavigate()
     const [options, setOptions] = useState(false)
-    const { deleteControlBook, isLoading, error } = useFundingHook()
+    const { deleteControlBook, disableCB, isLoading, error } = useFundingHook()
 
     const subcollectionCounts = () => controlBook.items ? controlBook.items : 0
 
@@ -59,6 +59,42 @@ const Folder = ({ASANo, controlBook}) => {
               }
             }
           });
+    }
+
+    const disable_cb = async(e) => {
+      e.stopPropagation()
+      const status = controlBook.cbStatus
+      const data = {
+        id: ASANo,
+        status: status
+      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#009933",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Proceed",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+            const res = await disableCB(data)
+          if (res) {
+            Swal.fire({
+              title: "Sucess!",
+              text: "Control Book has been updated.",
+              icon: "success",
+            });
+          } else {
+            Swal.fire({
+                title: "Error",
+                text: {error},
+                icon: "error",
+            });
+          }
+        }
+      });
+
     }
 
     const isDeletable = () => {
@@ -103,6 +139,9 @@ const Folder = ({ASANo, controlBook}) => {
               <>
                 <div className="fixed inset-0 z-0" onClick={(e) => {e.stopPropagation(); setOptions(!options);}}/>
                 <div className="absolute right-0 w-24 h-auto  bg-white rounded-md border-2">
+                  <button className='w-full py-1 px-2 flex items-center justify-start gap-2' onClick={disable_cb}>
+                    {controlBook.cbStatus === "active" ? "Disable" : "Enable"}
+                  </button>
                   <button className='w-full py-1 px-2 flex items-center justify-start gap-2' onClick={modal}>
                     <MdOutlineModeEdit size={20} /> Edit
                   </button>
