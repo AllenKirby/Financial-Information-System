@@ -172,6 +172,24 @@ export const usePreparerHook = () => {
         }
     }
 
+
+    const add_payroll_records = async(data) => {
+        try{
+            const res = await axios.post(`${apiURL}/editor/add-payroll-records`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                return true
+            }
+        }catch(error){
+          setIsLoading(false)
+          const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+          setError(errorMessage);
+          console.log(errorMessage)
+          return false
+        }
+    }
+
     const DVRegisterData = async(data, id) => {
         setIsLoading(true)
         setError(null)
@@ -202,6 +220,7 @@ export const usePreparerHook = () => {
     savePayeeData, 
     loadPayee, 
     exportDVRegister,
+    add_payroll_records,
     DVRegisterData,
     isLoading, 
     error}

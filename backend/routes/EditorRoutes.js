@@ -17,7 +17,9 @@ const {
     savePayeeData,
     getPayeeData,
     downloadDVRegister,
+    add_payroll_records,
     DVRegisterData
+
 } = require('../controller/EditorController');
 
 
@@ -37,6 +39,7 @@ editorRouter.get('/getNumberOfCopies', getNumberOfCopies)
 editorRouter.post('/savePayeeData', savePayeeData)
 editorRouter.get('/getPayeeData', getPayeeData)
 editorRouter.post('/exportDV', downloadDVRegister)
+editorRouter.post('/add-payroll-records', add_payroll_records)
 editorRouter.patch('/dvregisterdata/:id', DVRegisterData)
 
 

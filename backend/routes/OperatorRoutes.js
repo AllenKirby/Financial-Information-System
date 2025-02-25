@@ -20,7 +20,9 @@ const {
     updateASAORS,
     addTab,
     handleCash,
-    changeStatus
+    changeStatus,
+    add_imo_balance,
+    addNewUtility
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -40,5 +42,7 @@ OperatorRouter.patch('/handleCash/:id', handleCash)
 OperatorRouter.get('/getBUR', getBUR)
 OperatorRouter.post('/addTab/:id', addTab)
 OperatorRouter.patch('/change-status/:id', changeStatus)
+OperatorRouter.patch('/add-imo/:id', add_imo_balance)
+OperatorRouter.post('/addNewUtility/:id', addNewUtility)
 
 module.exports = OperatorRouter

@@ -411,7 +411,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                                 const isChecked = e.target.checked;
                                                                 const projID = e.target.value;
                                                                 const amount = parseFloat(
-                                                                    project.cash || 0
+                                                                    project.RO || 0
                                                                 );
                                                                 handleChangeBoxAmount(isChecked,key, projID, amount, project.projectName)
     
@@ -463,7 +463,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                                 const isChecked = e.target.checked;
                                                                 const projID = e.target.value;
                                                                 const amount = parseFloat(
-                                                                    project.RO || 0
+                                                                    project.cash || 0
                                                                 );
                                                                 handleChangeBoxAmountCASH(isChecked,key, projID, amount, project.projectName)
                                                             }}

@@ -39,6 +39,7 @@ const EditorPage = () => {
       : []),
     { label: 'DV Register', path: '/editor/dvregister', icon: <LuFiles size={22} /> },
     { label: 'Logs', path: '/editor/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
+    { label: 'Payroll Records', path: '/editor/payroll-records', icon: <MdOutlineHistory size={22} /> }
   ];
 
   useEffect(() => {
@@ -52,6 +53,8 @@ const EditorPage = () => {
       setLocation('Logs')
     } else if(page.pathname === "/editor/dvregister"){
       setLocation('DV Register')
+    }else if(page.pathname === "/editor/payroll-records"){
+      setLocation('Payroll Records')
     }
   }, [page.pathname])
 

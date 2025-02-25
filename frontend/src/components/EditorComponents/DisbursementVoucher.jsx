@@ -19,7 +19,7 @@ import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
    //hooks
-   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
+   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee,add_payroll_records, isLoading, error} = usePreparerHook()
    const {getDVno} = useInitialStateDV()
    const { user } = useAuthContext() 
 
@@ -293,6 +293,37 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if(activeTab === "Payroll"){
+      console.log('get')
+      await forPayrollCreation()
+    }else{
+      await Create()
+    }
+  }
+
+  const [payrollItems, setPayrollItems ] = useState({particular: '', amount: ''})
+  const forPayrollCreation = async () => {
+    console.log('this')
+    const res = await add_payroll_records(payrollItems)
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "Added new payroll record successfully!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+      modal()
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: {error},
+        icon: "error",
+        confirmButtonColor: "#FF0000"
+      });
+    }
+  }
+
+  const Create = async() => {
     let updatedPayeeData
     if(activeTab === 'To Release'){
       updatedPayeeData = dataForDV()
@@ -599,7 +630,33 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }
 
-  console.log(permission)
+  const formatToPeso = (value) => {
+        return new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+        }).format(value);
+    };
+
+  const formatNumberWithCommas = (value) => {
+    if (!value) return "";
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handleAmountChange = (e) => {
+    let value = e.target.value.replace(/,/g, "");
+
+    if (value === "") {
+      setPayrollItems({ ...payrollItems, amount: "" });
+      return;
+    }
+
+    if (!isNaN(value)) {
+      setPayrollItems({
+        ...payrollItems,
+        amount: value, 
+      });
+    }
+  };
 
   return (
     <form onSubmit={(e) => flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
@@ -643,12 +700,53 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               disabled={flag}>
                 Others
             </button>
+            <button type='button' 
+              onClick={() => setActiveTab('Payroll')} 
+              className={`${activeTab === 'Payroll' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+              disabled={flag}>
+                Payroll
+            </button>
           </div>
           <hr />
         </div>
       </div>
       <div className='w-full flex-1 overflow-y-auto bg-gray-50'>
-        <div className='w-full h-full py-3 px-5'>
+        {
+           activeTab === 'Payroll' && (
+            <div className='w-full h-full py-3 px-5'>
+              <div className='w-full h-auto'>
+                <label className='text-gray-500'>Particulars</label>
+                <textarea 
+                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setPayrollItems({...payrollItems, particular: value})
+                  }}
+                  value={payrollItems.particular}
+                  placeholder='Write details here...'
+                  required
+                  maxLength="500"
+                />
+              </div>
+              <div className="w-full">
+                  <label className="text-gray-500">Amount</label>
+                  <input
+                    className={`${
+                      user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                    } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    type="text"
+                    placeholder="0"
+                    value={formatNumberWithCommas(payrollItems.amount)}
+                    onChange={handleAmountChange}
+                    required
+                  />
+                </div>
+            </div>
+           )
+        }
+        {
+          activeTab != 'Payroll' && (
+          <div className='w-full h-full py-3 px-5'>
           <h1 className="font-semibold text-lg text-gray-500">Personal/Payee Information</h1>
           <div className="w-full h-auto mt-2">
             <div className='w-full relative'>
@@ -1264,6 +1362,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             </div>
           </div>          
         </div>
+        )}
       </div>
       <div className="w-full h-auto flex items-center justify-end gap-2 px-3 py-5 border-t-2">
         <div className='w-1/3 flex items-center justify-end px-3 gap-2'> 
