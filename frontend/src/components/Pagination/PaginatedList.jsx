@@ -13,7 +13,7 @@ const AccessControlLogs = React.lazy(() => import('../SuperAdminComponents/Acces
 const DVRegisterItems = React.lazy(() => import('../EditorComponents/DVRegisterItems'));
 const ItemPayroll = React.lazy(() => import('../Shared/ItemPayroll'))
 
-const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0 }) => {
+const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0, modal = () => {} }) => {
 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 20;
@@ -44,8 +44,8 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                     if(paginationFor === 'ControlBook') return <Folder key={key} controlBook={document[1]} ASANo={document[0]}/>
                     if(paginationFor === 'loginLogs') return <UserLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
-                    if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document} counter={counter}/>
                     if(paginationFor === 'payrollRecords') return <ItemPayroll key={key} index={key} log={document}/>
+                    if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document} counter={counter} modal={modal}/>
                 })}
             </Suspense>
         </div>
@@ -63,7 +63,8 @@ PaginatedList.propTypes = {
     type: PropTypes.string,
     activeTab: PropTypes.string,
     paginationFor: PropTypes.string.isRequired,
-    counter: PropTypes.number
+    counter: PropTypes.number,
+    modal: PropTypes.func
   };
 
 export default PaginatedList

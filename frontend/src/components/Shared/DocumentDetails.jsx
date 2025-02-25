@@ -113,8 +113,6 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
     }
   }
 
-  console.log(docu?.DVKey)
-
   return (
     <div
       onClick={() => navigate(`${docu?.DVKey}|${Status}|${type}`)}
