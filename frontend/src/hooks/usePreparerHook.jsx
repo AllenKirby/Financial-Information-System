@@ -172,6 +172,27 @@ export const usePreparerHook = () => {
         }
     }
 
+    const DVRegisterData = async(data, id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/editor/dvregisterdata/${id}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                console.log(res.data)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
+            return false
+        }
+    }
+
   return {
     createDisbursement, 
     deleteDV, 
@@ -181,6 +202,7 @@ export const usePreparerHook = () => {
     savePayeeData, 
     loadPayee, 
     exportDVRegister,
+    DVRegisterData,
     isLoading, 
     error}
 }
