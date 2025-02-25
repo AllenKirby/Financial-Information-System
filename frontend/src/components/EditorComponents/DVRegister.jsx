@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import {Outlet, useParams} from 'react-router-dom'
 
 import { useSelector } from "react-redux";
@@ -11,6 +11,7 @@ import { PiExport } from "react-icons/pi";
 import PaginatedList from "../Pagination/PaginatedList";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { usePreparerHook } from "../../hooks/usePreparerHook";
+import DVRegisterModal from "./DVRegisterModal";
 
 const DVRegister = () => {
     const [activeTab, setActiveTabs] = useState('501 COB') 
@@ -23,20 +24,33 @@ const DVRegister = () => {
     const [counter, setCounter] = useState(1)
     const { user } = useAuthContext()
     const { exportDVRegister, isLoading, error } = usePreparerHook()
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [data, setData] = useState({})
+
+    const modal = (data = {}) => {
+        setIsModalOpen(!isModalOpen)
+        setData(data)
+    }
+
+    const approvedDV = useMemo(() => {
+        return Object.fromEntries(
+            Object.entries(DV).filter(([, vouchers]) => vouchers.data.status === "Approved")
+        );
+    }, [DV]);
 
     useEffect(() => {
-        if(DV && Object.entries(DV).length > 0) {
-            const filteredResults = Object.entries(DV).filter(([, document]) => document.data.fund === activeTab)
+        if(approvedDV && Object.entries(approvedDV).length > 0) {
+            const filteredResults = Object.entries(approvedDV).filter(([, document]) => document?.data?.fund === activeTab)
             setDocuments(Object.fromEntries(filteredResults))
-            setFilteredDocuments(Object.fromEntries(filteredResults))
+            setFilteredDocuments(Object.fromEntries(filteredResults));
         } else {
-            setFilteredDocuments({})
+            setFilteredDocuments({});
         }
-    }, [activeTab, DV])
+    }, [activeTab, approvedDV])
 
     useEffect(() => {
         if(filteredDocuments && Object.entries(filteredDocuments).length > 0) {
-            const filteredResults = Object.entries(filteredDocuments).filter(([,document]) => document.data.payee.toLowerCase().includes(search.toLowerCase()) || document.data.DV.toLowerCase().includes(search.toLowerCase()))
+            const filteredResults = Object.entries(filteredDocuments).filter(([,document]) => document?.data?.payee?.toLowerCase().includes(search.toLowerCase()) || document?.data?.DV?.toLowerCase().includes(search.toLowerCase()))
             setDocuments(Object.fromEntries(filteredResults))
         } else {
             setDocuments({})
@@ -46,7 +60,7 @@ const DVRegister = () => {
     const sortTimeCreatedDesc = (docu) => {
         if (docu && Object.keys(docu).length > 0) {
           const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => 
-            new Date(b.data.createdAt) - new Date(a.data.createdAt)
+            new Date(b?.data?.createdAt) - new Date(a?.data?.createdAt)
           );
           return Object.fromEntries(sortedEntries);
         } else {
@@ -128,9 +142,9 @@ const DVRegister = () => {
         </div>
         <div className="w-full flex-1 py-2">
             <div className="w-full h-full flex flex-col">
-                <div className="w-auto h-auto rounded-lg hidden sm:flex items-center justify-between bg-gray-100 text-gray-400 text-sm">
+                <div className="w-auto h-auto rounded-lg flex items-center justify-between bg-gray-100 text-gray-400 text-sm">
                     <button onClick={decrement} disabled={counter === 1} className="w-fit px-2 h-full"><MdNavigateBefore size={24}/></button>
-                    <div className="w-full flex items-center justify-center">
+                    <div className="w-full hidden sm:flex items-end justify-center">
                         <p className="w-1/6 py-2 text-center font-semibold">DV No.</p>
                         {counter === 1 && (
                             <>
@@ -165,82 +179,35 @@ const DVRegister = () => {
                         {counter === 4 && (
                             <div className="w-5/6 flex flex-col">
                                 <div className="w-full text-center">
-                                    <p className="py-2 text-center font-semibold">Obligation</p>
+                                    <p className="py-2 text-center font-semibold">RO Payroll</p>
                                 </div>
                                 <div className="w-full flex">
-                                    <p className="w-1/5 py-2 text-center font-semibold">ADA-1st </p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">ADA-2nd</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">Remittance</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">BIR</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">GSIS</p>
+                                    <p className="w-1/3 py-2 text-center font-semibold">ADA-1st </p>
+                                    <p className="w-1/3 py-2 text-center font-semibold">ADA-2nd</p>
+                                    <p className="w-1/3 py-2 text-center font-semibold">Cash</p>
                                 </div>
                             </div>
                         )}
-                        {counter == 5 && (
-                            <div className="w-5/6 flex flex-col">
-                                <div className="w-full text-center">
-                                    <p className="py-2 text-center font-semibold">Obligation</p>
-                                </div>
-                                <div className="w-full flex">
-                                    <p className="w-1/5 py-2 text-center font-semibold">GSIS Loan</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">Landbank</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">Disallowance</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">HDMF</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">HDMF Loan</p>
-                                </div>
+                        {counter === 5 && (
+                            <div className="w-5/6 flex">
+                                <p className="w-1/4 py-2 text-center font-semibold">ASA Total</p>
+                                <p className="w-1/4 py-2 text-center font-semibold">ASA Releases</p>
+                                <p className="w-1/4 py-2 text-center font-semibold">Cash Total</p>
+                                <p className="w-1/4 py-2 text-center font-semibold">Cash Releases</p>
                             </div>
                         )}
                         {counter === 6 && (
-                            <div className="w-5/6 flex flex-col">
-                                <div className="w-full text-center">
-                                    <p className="py-2 text-center font-semibold">Obligation</p>
-                                </div>
-                                <div className="w-full flex">
-                                    <p className="w-1/5 py-2 text-center font-semibold">PHIC</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">NIAEASP-RO</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">NIAEASP-DO</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">NIAEASP-Dues</p>
-                                    <p className="w-1/5 py-2 text-center font-semibold">COOP</p>
-                                </div>
-                            </div>
-                        )}
-                        {counter === 7 && (
-                            <div className="w-5/6 flex flex-col">
-                                <div className="w-full text-center">
-                                    <p className="py-2 text-center font-semibold">Obligation</p>
-                                </div>
-                                <div className="w-full flex">
-                                    <p className="w-1/3 py-2 text-center font-semibold">Total</p>
-                                    <p className="w-1/3 py-2 text-center font-semibold">Cash</p>
-                                    <p className="w-1/3 py-2 text-center font-semibold">BIR-Others</p>
-                                </div>
-                            </div>
-                        )}
-                        {counter === 8 && (
-                            <div className="w-5/6 flex flex-col">
-                                <div className="w-full text-center">
-                                    <p className="py-2 text-center font-semibold">I.M.O.</p>
-                                </div>
-                                <div className="w-full flex">
-                                    <p className="w-1/4 py-2 text-center font-semibold">ASA Total</p>
-                                    <p className="w-1/4 py-2 text-center font-semibold">ASA Releases</p>
-                                    <p className="w-1/4 py-2 text-center font-semibold">Cash Total</p>
-                                    <p className="w-1/4 py-2 text-center font-semibold">Cash Releases</p>
-                                </div>
-                            </div>
-                        )}
-                        {counter === 9 && (
                             <div className="w-5/6 flex">
-                                <p className="w-1/2 py-2 text-center font-semibold">Check Date</p>
-                                <p className="w-1/2 py-2 text-center font-semibold">Check No.</p>
+                                <p className="w-1/4 py-2 text-center font-semibold">Check Date</p>
+                                <p className="w-1/4 py-2 text-center font-semibold">Check No.</p>
                             </div>
                         )}
                     </div>
-                    <button onClick={increment} disabled={counter === 9} className="w-fit px-2 h-full"><MdNavigateNext size={24}/></button>
+                    <button onClick={increment} disabled={counter === 6} className="w-fit px-2 h-full"><MdNavigateNext size={24}/></button>
                 </div>
                 <div className="w-full flex-1 overflow-y-auto rounded-lg">
                     {Object.entries(documents).length > 0 ? (
-                        <PaginatedList items={sortTimeCreatedDesc(documents)} paginationFor="DVRegister" counter={counter}/>
+                        <PaginatedList items={sortTimeCreatedDesc(documents)} paginationFor="DVRegister" counter={counter} modal={modal}/>
                         ) : (
                             <div className='w-full h-full flex items-center justify-center'>
                                 <p className='font-bold'>No Disbursement Voucher Found</p>
@@ -255,6 +222,14 @@ const DVRegister = () => {
             <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
                 <Outlet/>
             </div>
+            </>
+        )}
+        {isModalOpen && (
+            <>
+                <div className="fixed inset-0 z-20 bg-black opacity-50" />
+                <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+                    <DVRegisterModal modal={modal} DVData={data}/>
+                </div>
             </>
         )}
     </section>

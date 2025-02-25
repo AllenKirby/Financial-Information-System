@@ -306,7 +306,7 @@ const DVTemplate = ({document}) => {
               <p className='text-gray-500 w-2/5'>Amount Due</p>
               {
                 document?.activeTab === 'To Release' && (
-                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatAmountDue)}`}</p>
+                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatTotal_val)}`}</p>
                 )
               }
               {

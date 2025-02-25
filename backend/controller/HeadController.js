@@ -117,8 +117,7 @@ const getPermission = async(req, res) => {
 const addCertified = async(req, res) => {
     const { cashAvailable, debitAccount, supportingDocuments } = req.body
     const { id } = req.params
-
-    console.log(cashAvailable, debitAccount, supportingDocuments)
+    
     try {
         const docref = db.collection('records').doc(id)
 

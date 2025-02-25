@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 import { useBudgetOfficerHook } from '../../hooks/useBudgetOfficerHook'
 import Swal from 'sweetalert2'
+import LargeLoader from '../Loaders/LargeLoader'
 
 const CertifiedModal = ({modal, data}) => {
     const [certified, setCertified] = useState({cashAvailable: false, debitAccount: false, supportingDocuments: false})
@@ -70,6 +71,9 @@ const CertifiedModal = ({modal, data}) => {
                     Save
             </button>
         </div>
+        {isLoading && (
+            <LargeLoader/>
+        )}
     </form>
   )
 }
