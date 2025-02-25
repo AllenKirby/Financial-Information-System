@@ -34,6 +34,7 @@ const OperatorPage = () => {
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
     ...(permission?.data.permission ? [{ label: 'DV Register', path: '/operator/dvregister', icon: <LuFiles size={22} /> }] : []),
     { label: 'Logs', path: '/operator/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
+    { label: 'Payroll Records', path: '/operator/payroll-records', icon: <MdOutlineHistory size={22} /> },
   ]
 
   useEffect(() => {
@@ -47,7 +48,9 @@ const OperatorPage = () => {
       setLocation('Logs')
     } else if(page.pathname === "/operator/dvregister"){
       setLocation('DV Register')
-    } 
+    }else if(page.pathname === "/editor/payroll-records"){
+      setLocation('Payroll Records')
+    }
   }, [page.pathname])
 
   useEffect(() => {

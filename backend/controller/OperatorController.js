@@ -1504,6 +1504,14 @@ const theDifference = (obj1 = {}, obj2 = {}) => {
     return { obj1: diff1, obj2: diff2 };
 }
 
+const add_payroll_records = async (req, res) => {
+    const data = req.body
+    const id = req.params
+    await db.collection("PayrollRecords").doc(id).set(data);
+    res.status(200).json({messge: "Succesfully Added"})
+
+}
+
 module.exports = {
     opReturnDocu, 
     transferDocument,

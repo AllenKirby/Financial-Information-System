@@ -172,6 +172,10 @@ export const usePreparerHook = () => {
         }
     }
 
+    const add_payroll_records = () => {
+        console.log("Adding payroll records")
+    }
+
   return {
     createDisbursement, 
     deleteDV, 

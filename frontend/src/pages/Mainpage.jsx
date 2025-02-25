@@ -25,6 +25,7 @@ import ViewControlBook from "../components/OperatorComponents/ViewControlBook";
 import ComparisonView from "../components/AdminComponents/ComparisonView"
 import Logs from "../components/SuperAdminComponents/Logs";
 import DVRegister from "../components/EditorComponents/DVRegister";
+import PayrollRecords from "../components/Shared/PayrollRecords";
 
 const Mainpage = () => {
 
@@ -52,6 +53,7 @@ const Mainpage = () => {
           <Route path="dvregister" element={<PrivateRoute allowedRoles={['4']}><DVRegister/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>
+          <Route path="payroll-records" element={<PrivateRoute allowedRoles={['4']}><PayrollRecords/></PrivateRoute>}/>
         </Route>
         <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
           <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
@@ -64,6 +66,7 @@ const Mainpage = () => {
           <Route path="dvregister" element={<PrivateRoute allowedRoles={['3']}><DVRegister/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
           </Route>
+          <Route path="payroll-records" element={<PrivateRoute allowedRoles={['3']}><PayrollRecords/></PrivateRoute>}/>
         </Route>
         <Route path="/head" element={<PrivateRoute allowedRoles={['2']}><HeadPage/></PrivateRoute>}>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['2']}><Dashboard/></PrivateRoute>}/>
