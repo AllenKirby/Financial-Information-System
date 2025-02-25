@@ -21,7 +21,7 @@ const AddNewFieldOffice = (props) => {
     const [allowCluster, setAllowCluster] = useState(false)
     
     
-    const { AddFieldOffice, updateFieldOffice, isLoading, error } = useFundingHook()
+    const { AddFieldOffice, updateFieldOffice,AddNewUtility, isLoading, error } = useFundingHook()
 
     useEffect(() => {
         if(Cluster === '501 COB'){
@@ -151,8 +151,7 @@ const AddNewFieldOffice = (props) => {
         return data
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
+    const addnewProject = async() => {
         const data = handleData()
         console.log(data)
         if(errorFlag) {
@@ -180,6 +179,48 @@ const AddNewFieldOffice = (props) => {
                 confirmButtonColor: "#009933"
                 });
             modal()
+        }
+    }
+
+    const addnewUtility = async() => {
+        const data = handleData()
+        console.log(data)
+        if(errorFlag) {
+            Swal.fire({
+                title: "Error",
+                text: "The input exceeds the remaining available ASA",
+                icon: "error",
+                confirmButtonColor: "#009933"
+                });
+        } else {
+            const res = await AddNewUtility(data)
+            if(res) {
+                Swal.fire({
+                    title: "Saved",
+                    text: "Field Office is successfully created!",
+                    icon: "success",
+                    confirmButtonColor: "#009933"
+                    });
+                modal()
+            }
+            Swal.fire({
+                title: "Saved",
+                text: "Field Office is successfully created!",
+                icon: "success",
+                confirmButtonColor: "#009933"
+                });
+            modal()
+        }
+    }
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        if(Cluster === '501 COB'){
+            console.log("adding utility")
+            addnewUtility()
+        }else{
+            console.log("adding new project")
+            addnewProject()
         }
     }
 

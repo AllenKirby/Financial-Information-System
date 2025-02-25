@@ -48,7 +48,7 @@ const OperatorPage = () => {
       setLocation('Logs')
     } else if(page.pathname === "/operator/dvregister"){
       setLocation('DV Register')
-    }else if(page.pathname === "/editor/payroll-records"){
+    }else if(page.pathname === "/operator/payroll-records"){
       setLocation('Payroll Records')
     }
   }, [page.pathname])

@@ -442,6 +442,17 @@ const downloadDVRegister = async(req, res) => {
     }
 }
 
+const add_payroll_records = async (req, res) => {
+    try{
+        const data = req.body
+        const id = getDateTime()
+        await db.collection("PayrollRecords").doc(id).set(data);
+        res.status(200).json({message: "Succesfully Added"})
+    }catch(err){
+        res.status(500).json({message: "There's an error on creating new payroll record."})
+    }
+}
+
 // const addOnClusterAmount = async (amount, cluster, dateString, operation='add') => {
 //     try{
 //         const float_amount = parseFloat(amount)
@@ -484,5 +495,6 @@ module.exports = {
     getNumberOfCopies,
     savePayeeData,
     getPayeeData,
-    downloadDVRegister
+    downloadDVRegister,
+    add_payroll_records
 };

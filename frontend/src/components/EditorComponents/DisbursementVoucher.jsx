@@ -19,7 +19,7 @@ import {useSelector} from 'react-redux'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
    //hooks
-   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee, isLoading, error} = usePreparerHook()
+   const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee,add_payroll_records, isLoading, error} = usePreparerHook()
    const {getDVno} = useInitialStateDV()
    const { user } = useAuthContext() 
 
@@ -294,15 +294,33 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeTab === "Payroll"){
-      forPayrollCreation()
+      console.log('get')
+      await forPayrollCreation()
     }else{
       await Create()
     }
   }
 
   const [payrollItems, setPayrollItems ] = useState({particular: '', amount: ''})
-  const forPayrollCreation = () => {
-    console.log(payrollItems)
+  const forPayrollCreation = async () => {
+    console.log('this')
+    const res = await add_payroll_records(payrollItems)
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "Added new payroll record successfully!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+      modal()
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: {error},
+        icon: "error",
+        confirmButtonColor: "#FF0000"
+      });
+    }
   }
 
   const Create = async() => {
@@ -723,7 +741,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     required
                   />
                 </div>
-
             </div>
            )
         }

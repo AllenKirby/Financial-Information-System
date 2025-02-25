@@ -467,6 +467,44 @@ export const useFundingHook = () => {
             console.log(error.message)
         }
     }
+
+    const addIMO = async(data, id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.patch(`${apiURL}/operator/add-imo/${id}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error.message)
+        }
+    }
+
+    const AddNewUtility = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post(`${apiURL}/operator/addNewUtility/${data.ASANo}`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
       
     return {
         returnDoc, 
@@ -486,6 +524,8 @@ export const useFundingHook = () => {
         retrieveDvData,
         updateCASH,
         disableCB,
+        addIMO,
+        AddNewUtility,
         isLoading, 
         error
     }

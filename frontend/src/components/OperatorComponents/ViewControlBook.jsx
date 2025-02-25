@@ -27,7 +27,7 @@ const ViewControlBook = () => {
   const [reportFlag, setReportFlag] = useState(false)
   const [cluster, setCluster] = useState('')
 
-  const {retrieveChosenCB} = useFundingHook();
+  const {retrieveChosenCB, addIMO} = useFundingHook();
 
   const modal = () => setFieldOfficeModal(!FieldOfficeModal)
   const tabModal = () => setModalTab(!modalTab)
@@ -105,6 +105,45 @@ const ViewControlBook = () => {
     });
   }
 
+  const [editIMO, setEditIMO] = useState(true)
+  const [IMO, setIMO] = useState('0')
+  const [prevIMO, setPrevIMO] = useState('')
+  useEffect(() => {
+    setIMO(String(ControlBook.data.IMO_budget) || '0')
+    setPrevIMO(String(ControlBook.data.IMO_budget) || '0')
+  }, [ControlBook.data.TotalASA])
+
+  const IMO_BALANCE = async() => {
+
+    const data = {
+      IMO_budget: IMO
+    }
+    setEditIMO(!editIMO)
+    console.log(prevIMO, IMO)
+    if(!editIMO && (parseFloat(prevIMO) !== parseFloat(IMO))){
+      console.log('changed')
+      // await addIMO(data, id)
+    }
+  }
+
+  const formatNumberWithCommas = (value) => {
+    if (!value) return "";
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const handleAmountChange = (e) => {
+    let value = e.target.value.replace(/,/g, "");
+
+    if (value === "") {
+      setIMO('0');
+      return;
+    }
+
+    if (!isNaN(value)) {
+      setIMO(value);
+    }
+  };
+
   return (
     <div className="w-full h-full">
       {!reportFlag ? (
@@ -153,7 +192,13 @@ const ViewControlBook = () => {
                       <p className="font-semibold text-xs 2xl:text-lg">IMO Balance</p>
                     </div>
                     <div className="w-full flex items-center justify-center">
-                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(ControlBook.data.leftBudget)}</p>
+                      <input
+                        type="text"
+                        className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl bg-transparent border-none outline-none text-center`}
+                        value={formatNumberWithCommas(IMO)}
+                        onChange={handleAmountChange}
+                        readOnly={editIMO}
+                      />
                     </div>
                   </div>
                   <div className="w-1/2 h-full rounded-lg p-3 border-2">
@@ -163,7 +208,7 @@ const ViewControlBook = () => {
 
                     </div>
                     <div className="w-full flex items-center justify-center">
-                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso((parseFloat(ControlBook.data.TotalASA) - parseFloat(ControlBook.data.leftBudget)) - parseFloat(ControlBook.data.FO))}</p>
+                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(parseFloat(ControlBook.data.leftBudget) - parseFloat(ControlBook.data.IMO_budget || 0))}</p>
                     </div>
                   </div>
                 </div>
@@ -180,15 +225,23 @@ const ViewControlBook = () => {
                     <button onClick={modal} className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
                       <div className="flex flex-row items-center justify-center gap-2">
                         <IoAddOutline size={30}/>
-                        <p className="font-semibold lg:text-base 2xl:text-lg">New Project</p>
+                        <p className="font-semibold lg:text-base 2xl:text-lg">{cluster === '501 COB'? 'New Utility' : 'New Project'}</p>
                       </div>
                     </button>
-                    <button disabled={cluster === '501 COB'} onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
+                    {cluster !== '501 COB' && (
+                      <button onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
+                        <div className="flex flex-row items-center justify-center gap-2">
+                          <IoAddOutline size={30}/>
+                          <p className="font-semibold lg:text-base 2xl:text-lg">Add Tab</p>
+                        </div>
+                      </button>
+                    )}
+                    <button onClick={IMO_BALANCE} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
                       <div className="flex flex-row items-center justify-center gap-2">
-                        <IoAddOutline size={30}/>
-                        <p className="font-semibold lg:text-base 2xl:text-lg">Add Tab</p>
+                        <p className="font-semibold lg:text-base 2xl:text-lg">{editIMO ? 'Edit IMO Balance' : 'Save changes '}</p>
                       </div>
                     </button>
+                    
                   </div>
                 </div>
               </div>
@@ -201,35 +254,35 @@ const ViewControlBook = () => {
                     <p className="font-semibold">Project Name</p>
                   </div>
                   <div className="w-1/4 h-auto py-1 flex flex-col">
-                    <div className="w-full h-auto text-center">
+                    {/* <div className="w-full h-auto text-center">
                       <p className="font-semibold">ASA</p>
-                    </div>
+                    </div> */}
                     <div className="w-full h-auto flex items-center justify-center">
-                      <div className="w-1/3 text-center ">
+                      {/* <div className="w-1/3 text-center ">
                         <p className="font-semibold">Beginning</p>
-                      </div>
-                      <div className="w-1/3 text-center ">
+                      </div> */}
+                      <div className="w-full text-center ">
                         <p className="font-semibold">Utilized</p>
                       </div>
-                      <div className="w-1/3 text-center">
+                      {/* <div className="w-1/3 text-center">
                         <p className="font-semibold">Balance</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="w-1/4 h-auto py-1 flex flex-col">
-                    <div className="w-full h-auto text-center">
+                    {/* <div className="w-full h-auto text-center">
                       <p className="font-semibold">Cash</p>
-                    </div>
+                    </div> */}
                     <div className="w-full h-auto flex items-center justify-center">
-                      <div className="w-1/3 text-center">
+                      {/* <div className="w-1/3 text-center">
                         <p className="font-semibold">Beginning</p>
-                      </div>
-                      <div className="w-1/3 text-center">
+                      </div> */}
+                      <div className="w-full text-center">
                         <p className="font-semibold">Disbursed</p>
                       </div>
-                      <div className="w-1/3 text-center">
+                      {/* <div className="w-1/3 text-center">
                         <p className="font-semibold">Balance</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>

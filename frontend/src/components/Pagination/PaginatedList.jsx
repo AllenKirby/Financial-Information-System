@@ -11,6 +11,7 @@ const Folder = React.lazy(() => import('../OperatorComponents/Folder'));
 const UserLogs = React.lazy(() => import('../SuperAdminComponents/UserLogs'));
 const AccessControlLogs = React.lazy(() => import('../SuperAdminComponents/AccessControlLogs'));
 const DVRegisterItems = React.lazy(() => import('../EditorComponents/DVRegisterItems'));
+const ItemPayroll = React.lazy(() => import('../Shared/ItemPayroll'))
 
 const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0 }) => {
 
@@ -28,8 +29,8 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
   const totalPages = Math.ceil(itemsArray.length / itemsPerPage);
   
   useEffect(() => {
-    console.log(items)
-  }, [items])
+    console.log(currentItems)
+  }, [currentItems])
 
   const handlePageChange = (page) => setCurrentPage(page);
 
@@ -44,6 +45,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                     if(paginationFor === 'loginLogs') return <UserLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document} counter={counter}/>
+                    if(paginationFor === 'payrollRecords') return <ItemPayroll key={key} index={key} log={document}/>
                 })}
             </Suspense>
         </div>

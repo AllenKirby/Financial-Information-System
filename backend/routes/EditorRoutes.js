@@ -16,7 +16,8 @@ const {
     getNumberOfCopies,
     savePayeeData,
     getPayeeData,
-    downloadDVRegister
+    downloadDVRegister,
+    add_payroll_records
 } = require('../controller/EditorController');
 
 
@@ -36,6 +37,7 @@ editorRouter.get('/getNumberOfCopies', getNumberOfCopies)
 editorRouter.post('/savePayeeData', savePayeeData)
 editorRouter.get('/getPayeeData', getPayeeData)
 editorRouter.post('/exportDV', downloadDVRegister)
+editorRouter.post('/add-payroll-records', add_payroll_records)
 
 
 module.exports = editorRouter;

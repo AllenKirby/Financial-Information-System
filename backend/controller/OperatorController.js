@@ -1239,6 +1239,91 @@ const appendDataToSheet = async (req, res) => {
     }
   }
 
+  const addNewUtility = async(req, res) => {
+    const { projectName, fieldOffice, ASA, tabStatus, cash } = req.body.data
+    const  projectID  = req.body.projectID
+    const { id } = req.params
+
+    const dateTimeCollection = getDateTime();
+
+    const data = {
+        fieldOffice: fieldOffice,
+        projectName: projectName,
+        ASA: ASA,
+        createdAt: dateTimeCollection,
+        RO: 0, //this is ZERO because it is already utilized
+        FO: ASA, //this is the utilized budget now
+        leftBudget: ASA,
+        prevMonthFO: 0,
+        prevMonthRO: 0,
+        thisMonthFO: 0,
+        thisMonthRO: 0,
+        weekFO: 0,
+        week1FO: 0,
+        week2FO: 0,
+        week3FO: 0,
+        week4FO: 0,
+        week5FO: 0,
+        weekRO: 0,
+        week1RO: 0,
+        week2RO: 0,
+        week3RO: 0,
+        week4RO: 0,
+        week5RO: 0,
+        tabStatus: tabStatus,
+        dvItems: 0,
+        cash: cash,
+        cashFO: 0
+    }
+
+    // const formData = {
+    //     projectID: projectID,
+    //     projectName: projectName,
+    //     RO: ASA,
+    //     tabStatus: tabStatus,
+    //     cash: cash
+    // }
+
+    try {
+        const controlBookRef = db.collection('ControlBook').doc(id);
+        const controlBook = await controlBookRef.get();
+
+        if (controlBook.exists) {
+            const parseASA = parseFloat(ASA)
+            const leftBudget = parseFloat(controlBook.data().leftBudget);
+            const updatedBudget = leftBudget - parseASA;
+
+            //UTILIZED
+            const utlizedAmount = parseFloat(controlBook.data().FO)
+            const new_utilizedAmount = utlizedAmount + parseASA
+
+            //items
+            const items = parseFloat(controlBook.data().items || 0)
+
+            if(updatedBudget < 0){
+                throw Error("Insufficient amount.")
+            }
+
+            await controlBookRef.update({
+                leftBudget: updatedBudget,
+                items: items + 1,
+                FO: new_utilizedAmount
+
+            });
+        } else {
+            console.log("No such document!");
+        }
+        await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(projectID).set(data)
+        // await db.collection('formData').doc('ControlBook').update({
+        //     [id]: admin.firestore.FieldValue.arrayUnion(formData)
+        // })
+        res.status(200).json({message: 'Field Office Successfully Created'})
+    } catch (error) {
+        console.log(`Error adding field office: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+  }
+
 const addTab = async(req, res) => {
     const tabs = req.body
     const {id} = req.params
@@ -1504,12 +1589,18 @@ const theDifference = (obj1 = {}, obj2 = {}) => {
     return { obj1: diff1, obj2: diff2 };
 }
 
-const add_payroll_records = async (req, res) => {
-    const data = req.body
-    const id = req.params
-    await db.collection("PayrollRecords").doc(id).set(data);
-    res.status(200).json({messge: "Succesfully Added"})
-
+const add_imo_balance = async(req, res) => {
+    try{
+        const {id} = req.params
+        const data = req.body
+        console.log(id)
+        const ref = db.collection("ControlBook").doc(id)
+        await ref.update(data)
+        res.status(200).json({message: "Successfully add IMO balance"})
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: "Error on adding IMO balance"})
+    }
 }
 
 module.exports = {
@@ -1527,5 +1618,7 @@ module.exports = {
     updateASAORS,
     addTab,
     handleCash,
-    changeStatus
+    changeStatus,
+    add_imo_balance,
+    addNewUtility
 }
