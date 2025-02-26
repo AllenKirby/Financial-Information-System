@@ -1276,13 +1276,13 @@ const appendDataToSheet = async (req, res) => {
         cashFO: 0
     }
 
-    // const formData = {
-    //     projectID: projectID,
-    //     projectName: projectName,
-    //     RO: ASA,
-    //     tabStatus: tabStatus,
-    //     cash: cash
-    // }
+    const formData = {
+        projectID: projectID,
+        projectName: projectName,
+        // RO: ASA,
+        // tabStatus: tabStatus,
+        // cash: cash
+    }
 
     try {
         const controlBookRef = db.collection('ControlBook').doc(id);
@@ -1314,9 +1314,9 @@ const appendDataToSheet = async (req, res) => {
             console.log("No such document!");
         }
         await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(projectID).set(data)
-        // await db.collection('formData').doc('ControlBook').update({
-        //     [id]: admin.firestore.FieldValue.arrayUnion(formData)
-        // })
+        await db.collection('formData').doc('forPayrolls').set({
+            [id]: admin.firestore.FieldValue.arrayUnion(formData)
+        }, {merge: true})
         res.status(200).json({message: 'Field Office Successfully Created'})
     } catch (error) {
         console.log(`Error adding field office: ${error}`)
@@ -1462,7 +1462,65 @@ const updateFieldOffice = async(req, res) => {
     }
 }
 
+const updateASA_COB = async(req, res) => {
+    const { id } = req.params
+    const [ASANo, ASANoCluster, docId, docIdCluster] = id.split('!')
+    const fieldOfficeData = req.body.data
+    const LeftBudget = req.body.leftBudget
+    const {RO, projectID, projectName, tabStatus, cash} = req.body.prevData
 
+    const ASANoId = `${ASANo}!${ASANoCluster}`
+    const documentId = `${docId}!${docIdCluster}`
+
+    const dateTimeCollection = getDateTime();
+    // console.log(req.body)
+    const data = {
+        ...fieldOfficeData,
+        updatedAt: dateTimeCollection,
+        leftBudget: fieldOfficeData.ASA,
+        RO: fieldOfficeData.ASA,
+        cash: fieldOfficeData.cash
+    }
+
+    formData = {
+        RO: RO,
+        projectID: projectID,
+        projectName: projectName,
+        tabStatus: tabStatus,
+        cash: cash
+
+    }
+    console.log(fieldOfficeData)
+
+    const updatedFieldOfficeData = {
+        RO: fieldOfficeData.ASA,
+        projectID: projectID,
+        projectName: fieldOfficeData.projectName,
+        tabStatus: fieldOfficeData.tabStatus,
+        cash: fieldOfficeData.cash
+    }
+    // FORMULA :   newLeftBudget = LeftBudget + RO - desireUpdate
+    //             newLeftBudget = Latest + Current - update
+    const updatedLeftBudget = parseFloat(LeftBudget) + parseFloat(RO) - parseFloat(fieldOfficeData.ASA)
+    console.log(`${updatedLeftBudget} = ${LeftBudget} + ${RO} - ${fieldOfficeData.ASA}`)
+    try {
+        const controlBookRef = db.collection('ControlBook').doc(ASANoId)
+        controlBookRef.update({leftBudget: updatedLeftBudget})
+        const docRef = db.collection('ControlBook').doc(ASANoId).collection('FieldOffices').doc(documentId)
+        await docRef.update(data)
+        const docref = db.collection('formData').doc('ControlBook')
+        await docref.update({
+            [ASANoId]: admin.firestore.FieldValue.arrayRemove(formData)
+        })
+        await docref.update({
+            [ASANoId]: admin.firestore.FieldValue.arrayUnion(updatedFieldOfficeData)
+        })
+        res.status(200).json({message: 'Field Office Successfully Updated'})
+    } catch (error) {
+        console.log(`Error book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
@@ -1517,6 +1575,90 @@ const deleteFieldOffice = async(req, res) => {
         console.log(`Error book: ${error}`)
         res.status(500).json({ success: false, error: error.message });
     }
+}
+
+const deleteASA_COB = async(req, res) => {
+    const { id } = req.params
+    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA, tabStatus] = id.split('!')
+    
+    const ASAid = `${ASANo}!${cluster}`
+    const documentID = `${docId}!${docIdCluster}`
+
+    const data = {
+        projectID: documentID,
+        projectName: projectName
+    }
+
+    try {
+        const controlBookRef = db.collection('ControlBook').doc(ASAid);
+        const controlBook = await controlBookRef.get();
+
+        if (controlBook.exists) {
+            const parseASA = parseFloat(totalASA)
+            const leftBudget = parseFloat(controlBook.data().leftBudget);
+            const FO = parseFloat(controlBook.data().FO)
+            const updatedBudget = leftBudget + parseASA;
+            const updatedFO = FO - parseASA
+
+            const items = parseFloat(controlBook.data().items || 0)
+
+            await controlBookRef.update({
+                leftBudget: updatedBudget,
+                items: items - 1,
+                FO: updatedFO
+            });
+        } else {
+            console.log("No such document!");
+        }
+
+        const project = db.collection('ControlBook').doc(ASAid).collection('FieldOffices').doc(documentID)
+        const subcollectionRef = project.collection('DV');
+        const subDocs = await subcollectionRef.get();
+        
+        // subDocs.forEach(async (subDoc) => {
+        //     await subDoc.ref.delete();
+        // });
+        const deletePromises = subDocs.docs.map((subDoc) => subDoc.ref.delete());
+        await Promise.all(deletePromises);
+        await project.delete()
+
+        const docRef = db.collection('formData').doc('forPayrolls')
+        await docRef.update({
+            [ASAid]: admin.firestore.FieldValue.arrayRemove(data)
+        })
+        res.status(200).json({message: 'Field Office Successfully Deleted'})
+    } catch (error) {
+        console.log(`Error book: ${error}`)
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const add_ASA_cashFO = async(req, res) =>{
+    const data = req.body
+    console.log(data)
+    const ASAID = data.project.projectID.split(',')[0]
+    const ASA_amount = parseFloat(data.amount)
+
+    const cb_ref = db.collection('ControlBook').doc(ASAID).collection('FieldOffices').doc(data.project.projectID)
+    const cb = await cb_ref.get()
+
+    if(cb.exists){
+        const cashFO = parseFloat(cb.data().cashFO || 0)
+        const updatedcashFO = cashFO + ASA_amount
+
+        await cb_ref.update({
+            cashFO: updatedcashFO
+        })
+
+        await db.collection('PayrollRecords').doc(data.date_id).delete()
+    }
+
+    //DELETE ON PAYROLL RECORDS
+    // const docRef = db.collection('formData').doc('forPayrolls')
+    // await docRef.update({
+    //     [ASAid]: admin.firestore.FieldValue.arrayRemove(data)
+    // })
+    res.status(200).json({message: 'Successfully added o COB CONTROL BOOK'})
 }
 
 const getOrigNumberOfCopiesBUR = async(givenNo) => {
@@ -1620,5 +1762,7 @@ module.exports = {
     handleCash,
     changeStatus,
     add_imo_balance,
-    addNewUtility
+    addNewUtility,
+    deleteASA_COB,
+    add_ASA_cashFO
 }

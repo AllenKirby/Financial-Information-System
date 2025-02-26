@@ -106,11 +106,11 @@ const ViewControlBook = () => {
   }
 
   const [editIMO, setEditIMO] = useState(true)
-  const [IMO, setIMO] = useState('0')
+  const [IMO, setIMO] = useState(0)
   const [prevIMO, setPrevIMO] = useState('')
   useEffect(() => {
-    setIMO(String(ControlBook.data.IMO_budget) || '0')
-    setPrevIMO(String(ControlBook.data.IMO_budget) || '0')
+    setIMO(ControlBook.data.IMO_budget || 0)
+    setPrevIMO(ControlBook.data.IMO_budget || 0)
   }, [ControlBook.data.TotalASA])
 
   const IMO_BALANCE = async() => {
@@ -122,27 +122,27 @@ const ViewControlBook = () => {
     console.log(prevIMO, IMO)
     if(!editIMO && (parseFloat(prevIMO) !== parseFloat(IMO))){
       console.log('changed')
-      // await addIMO(data, id)
+      await addIMO(data, id)
     }
   }
 
-  const formatNumberWithCommas = (value) => {
-    if (!value) return "";
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  // const formatNumberWithCommas = (value) => {
+  //   if (!value) return "";
+  //   return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  // };
 
-  const handleAmountChange = (e) => {
-    let value = e.target.value.replace(/,/g, "");
+  // const handleAmountChange = (e) => {
+  //   let value = e.target.value.replace(/,/g, "");
 
-    if (value === "") {
-      setIMO('0');
-      return;
-    }
+  //   if (value === "") {
+  //     setIMO('0');
+  //     return;
+  //   }
 
-    if (!isNaN(value)) {
-      setIMO(value);
-    }
-  };
+  //   if (!isNaN(value)) {
+  //     setIMO(value);
+  //   }
+  // };
 
   return (
     <div className="w-full h-full">
@@ -195,8 +195,10 @@ const ViewControlBook = () => {
                       <input
                         type="text"
                         className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl bg-transparent border-none outline-none text-center`}
-                        value={formatNumberWithCommas(IMO)}
-                        onChange={handleAmountChange}
+                        // value={formatNumberWithCommas(IMO)}
+                        // onChange={handleAmountChange}
+                        value={IMO}
+                        onChange={(e) => setIMO(e.target.value)}
                         readOnly={editIMO}
                       />
                     </div>
@@ -251,7 +253,7 @@ const ViewControlBook = () => {
                     <p className="font-semibold">Field Office</p>
                   </div>
                   <div className="w-1/4 h-full py-1 flex items-center justify-center">
-                    <p className="font-semibold">Project Name</p>
+                    <p className="font-semibold">{cluster === '501 COB' ? 'ASA' :'Project Name'}</p>
                   </div>
                   <div className="w-1/4 h-auto py-1 flex flex-col">
                     {/* <div className="w-full h-auto text-center">

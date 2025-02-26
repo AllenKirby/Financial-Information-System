@@ -408,6 +408,26 @@ export const useFundingHook = () => {
         }
     }
 
+    const deleteASA_COB = async(id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.delete(`${apiURL}/operator/deleteASA_COB/${id}`, {
+                withCredentials: true
+            })
+            if(res.status === 200) {
+                setIsLoading(false)
+                // dispatchFolder(deleteProject(id))
+                return true
+            }
+        } catch(error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
     const updateFieldOffice = async(data) => {
         setIsLoading(true)
         setError(null)
@@ -505,6 +525,25 @@ export const useFundingHook = () => {
             console.log(error)
         }
     }
+
+    const add_ASA_cashFO = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post(`${apiURL}/operator/add_ASA_cashFO`, data, {
+                withCredentials: true
+            })
+            if(res.status === 200){
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
       
     return {
         returnDoc, 
@@ -526,6 +565,8 @@ export const useFundingHook = () => {
         disableCB,
         addIMO,
         AddNewUtility,
+        deleteASA_COB,
+        add_ASA_cashFO,
         isLoading, 
         error
     }
