@@ -44,7 +44,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                     if(paginationFor === 'ControlBook') return <Folder key={key} controlBook={document[1]} ASANo={document[0]}/>
                     if(paginationFor === 'loginLogs') return <UserLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
-                    if(paginationFor === 'payrollRecords') return <ItemPayroll key={key} index={key} log={document}/>
+                    if(paginationFor === 'payrollRecords') return <ItemPayroll key={key} index={key} log={document} modal={modal}/>
                     if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document} counter={counter} modal={modal}/>
                 })}
             </Suspense>

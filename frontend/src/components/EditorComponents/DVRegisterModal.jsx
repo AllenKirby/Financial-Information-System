@@ -148,7 +148,7 @@ const DVRegisterModal = ({modal, DVData}) => {
                 type='button' 
                 onClick={modal}
                 className='px-5 py-2 rounded-lg border-2 font-semibold'>Back</button>
-            <button type="submit" className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-BOGreen'} px-5 py-2 rounded-lg text-white`} >Save</button>
+            <button type="submit" className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} px-5 py-2 rounded-lg text-white`} >Save</button>
         </div>
         {isLoading && (
             <LargeLoader/>

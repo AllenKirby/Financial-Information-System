@@ -16,6 +16,7 @@ import { FiBook} from "react-icons/fi";
 import { MdOutlineHistory } from "react-icons/md";
 import { FaRegFile } from "react-icons/fa";
 import { LuFiles } from "react-icons/lu";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 import { initializeSocket } from "../socketService/socketService";
 
@@ -39,7 +40,7 @@ const EditorPage = () => {
       : []),
     { label: 'DV Register', path: '/editor/dvregister', icon: <LuFiles size={22} /> },
     { label: 'Logs', path: '/editor/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
-    { label: 'Payroll Records', path: '/editor/payroll-records', icon: <MdOutlineHistory size={22} /> }
+    { label: 'Payroll Records', path: '/editor/payroll-records', icon: <RiMoneyDollarCircleLine size={22} /> }
   ];
 
   useEffect(() => {
