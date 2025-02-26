@@ -8,6 +8,7 @@ import { FiBook } from "react-icons/fi";
 import { FaRegFile } from "react-icons/fa";
 import { MdOutlineHistory } from "react-icons/md";
 import { LuFiles } from "react-icons/lu";
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 import { useFundingHook } from "../hooks/useFundingHook"
 
@@ -34,7 +35,7 @@ const OperatorPage = () => {
     { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
     ...(permission?.data.permission ? [{ label: 'DV Register', path: '/operator/dvregister', icon: <LuFiles size={22} /> }] : []),
     { label: 'Logs', path: '/operator/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
-    { label: 'Payroll Records', path: '/operator/payroll-records', icon: <MdOutlineHistory size={22} /> },
+    { label: 'Payroll Records', path: '/operator/payroll-records', icon: <RiMoneyDollarCircleLine size={22} /> },
   ]
 
   useEffect(() => {
