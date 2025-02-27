@@ -13,7 +13,7 @@ const AccessControlLogs = React.lazy(() => import('../SuperAdminComponents/Acces
 const DVRegisterItems = React.lazy(() => import('../EditorComponents/DVRegisterItems'));
 const ItemPayroll = React.lazy(() => import('../Shared/ItemPayroll'))
 
-const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0, modal = () => {} }) => {
+const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0, modal = () => {} , total = 0}) => {
 
   const [currentPage, setCurrentPage] = useState(1); 
   const itemsPerPage = 20;
@@ -27,10 +27,6 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
   const currentItems = itemsArray.slice(indexOfFirstItem, indexOfLastItem);
 
   const totalPages = Math.ceil(itemsArray.length / itemsPerPage);
-  
-  useEffect(() => {
-    console.log(currentItems)
-  }, [currentItems])
 
   const handlePageChange = (page) => setCurrentPage(page);
 
@@ -49,6 +45,27 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                 })}
             </Suspense>
         </div>
+        {paginationFor === 'DVRegister' && (
+            <div className='w-full py-2 font-bold px-10 flex items-center justify-between'>
+                <p className='w-1/6'>Total</p>
+                {counter === 3 && ( <p className='w-1/5 text-center'>{total.ASA}</p> )}
+                {counter === 4 && ( 
+                    <div className='w-5/6 flex flex-row'>
+                        <p className='w-1/3 text-center'>{total.ADAfirst}</p> 
+                        <p className='w-1/3 text-center'>{total.ADAsecond}</p> 
+                        <p className='w-1/3 text-center'>{total.cash}</p> 
+                    </div>
+                )}
+                {counter === 5 && ( 
+                    <div className='w-5/6 flex flex-row'>
+                        <p className='w-1/4 text-center'>{total.ASATotal}</p> 
+                        <p className='w-1/4 text-center'>{total.ASAReleases}</p> 
+                        <p className='w-1/4 text-center'>{total.cashTotal}</p> 
+                        <p className='w-1/4 text-center'>{total.cashReleases}</p> 
+                    </div>
+                )}
+            </div>
+        )}
         <div className='w-full h-auto py-3 bg-white flex items-center justify-center'>
             <div className='w-auto'>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
@@ -64,7 +81,8 @@ PaginatedList.propTypes = {
     activeTab: PropTypes.string,
     paginationFor: PropTypes.string.isRequired,
     counter: PropTypes.number,
-    modal: PropTypes.func
+    modal: PropTypes.func,
+    total: PropTypes.number
   };
 
 export default PaginatedList

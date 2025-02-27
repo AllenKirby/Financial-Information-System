@@ -487,21 +487,19 @@ const DVRegisterData = async(req, res) => {
     const { PRNoDate, PRNo, PONODate, PONO, BURDate, ADAfirst, ADASecond, checkDate, checkNo } = req.body
     const { id } = req.params
 
-    console.log(PRNoDate)
-
     try {
         const docRef = db.collection('records').doc(id)
 
         await docRef.update({
-            PRNoDate, 
-            PRNo, 
-            PONODate, 
-            PONO, 
-            BURDate, 
-            ADAfirst, 
-            ADASecond, 
-            checkDate, 
-            checkNo 
+            PRNoDate: PRNoDate ? PRNoDate : '', 
+            PRNo: PRNo ? PRNo : 0, 
+            PONODate: PONODate ? PONODate : '', 
+            PONO: PONO ? PONO : 0, 
+            BURDate: BURDate ? BURDate : '', 
+            ADAfirst: ADAfirst ? ADAfirst : 0, 
+            ADASecond: ADASecond ? ADASecond : 0, 
+            checkDate: checkDate ? checkDate : '', 
+            checkNo: checkNo ? checkNo : 0
         })
 
         res.status(200).json({message: 'Successfully Added'})
