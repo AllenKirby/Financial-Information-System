@@ -26,6 +26,7 @@ const ViewControlBook = () => {
   const [showTooltip, setShowTooltip] = useState(false)
   const [reportFlag, setReportFlag] = useState(false)
   const [cluster, setCluster] = useState('')
+  const [choice, setChoice] = useState('')
 
   const {retrieveChosenCB, addIMO} = useFundingHook();
 
@@ -106,11 +107,11 @@ const ViewControlBook = () => {
   }
 
   const [editIMO, setEditIMO] = useState(true)
-  const [IMO, setIMO] = useState('0')
+  const [IMO, setIMO] = useState(0)
   const [prevIMO, setPrevIMO] = useState('')
   useEffect(() => {
-    setIMO(String(ControlBook.data.IMO_budget) || '0')
-    setPrevIMO(String(ControlBook.data.IMO_budget) || '0')
+    setIMO(ControlBook.data.IMO_budget || 0)
+    setPrevIMO(ControlBook.data.IMO_budget || 0)
   }, [ControlBook.data.TotalASA])
 
   const IMO_BALANCE = async() => {
@@ -122,27 +123,27 @@ const ViewControlBook = () => {
     console.log(prevIMO, IMO)
     if(!editIMO && (parseFloat(prevIMO) !== parseFloat(IMO))){
       console.log('changed')
-      // await addIMO(data, id)
+      await addIMO(data, id)
     }
   }
 
-  const formatNumberWithCommas = (value) => {
-    if (!value) return "";
-    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  };
+  // const formatNumberWithCommas = (value) => {
+  //   if (!value) return "";
+  //   return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  // };
 
-  const handleAmountChange = (e) => {
-    let value = e.target.value.replace(/,/g, "");
+  // const handleAmountChange = (e) => {
+  //   let value = e.target.value.replace(/,/g, "");
 
-    if (value === "") {
-      setIMO('0');
-      return;
-    }
+  //   if (value === "") {
+  //     setIMO('0');
+  //     return;
+  //   }
 
-    if (!isNaN(value)) {
-      setIMO(value);
-    }
-  };
+  //   if (!isNaN(value)) {
+  //     setIMO(value);
+  //   }
+  // };
 
   return (
     <div className="w-full h-full">
@@ -195,8 +196,10 @@ const ViewControlBook = () => {
                       <input
                         type="text"
                         className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl bg-transparent border-none outline-none text-center`}
-                        value={formatNumberWithCommas(IMO)}
-                        onChange={handleAmountChange}
+                        // value={formatNumberWithCommas(IMO)}
+                        // onChange={handleAmountChange}
+                        value={IMO}
+                        onChange={(e) => setIMO(e.target.value)}
                         readOnly={editIMO}
                       />
                     </div>
@@ -222,12 +225,30 @@ const ViewControlBook = () => {
                     </div>
                   </div>
                   <div className="w-full sm:w-1/2 h-auto flex flex-row md:flex-col gap-2">
-                    <button onClick={modal} className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
+                    <button 
+                      onClick={(e) => {
+                        modal()
+                        setChoice('utility')
+                      }} 
+                      className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
                       <div className="flex flex-row items-center justify-center gap-2">
                         <IoAddOutline size={30}/>
-                        <p className="font-semibold lg:text-base 2xl:text-lg">{cluster === '501 COB'? 'New Utility' : 'New Project'}</p>
+                        <p className="font-semibold lg:text-base 2xl:text-lg">{'New Utility'}</p>
                       </div>
                     </button>
+
+                    <button 
+                    onClick={(e) => {
+                      modal()
+                      setChoice('project')
+                    }} 
+                    className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
+                      <div className="flex flex-row items-center justify-center gap-2">
+                        <IoAddOutline size={30}/>
+                        <p className="font-semibold lg:text-base 2xl:text-lg">{'New Project'}</p>
+                      </div>
+                    </button>
+
                     {cluster !== '501 COB' && (
                       <button onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
                         <div className="flex flex-row items-center justify-center gap-2">
@@ -251,16 +272,16 @@ const ViewControlBook = () => {
                     <p className="font-semibold">Field Office</p>
                   </div>
                   <div className="w-1/4 h-full py-1 flex items-center justify-center">
-                    <p className="font-semibold">Project Name</p>
+                    <p className="font-semibold">{cluster === '501 COB' ? 'ASA' :'Project Name'}</p>
                   </div>
                   <div className="w-1/4 h-auto py-1 flex flex-col">
                     {/* <div className="w-full h-auto text-center">
                       <p className="font-semibold">ASA</p>
                     </div> */}
                     <div className="w-full h-auto flex items-center justify-center">
-                      {/* <div className="w-1/3 text-center ">
+                      <div className="w-1/3 text-center ">
                         <p className="font-semibold">Beginning</p>
-                      </div> */}
+                      </div>
                       <div className="w-full text-center ">
                         <p className="font-semibold">Utilized</p>
                       </div>
@@ -274,9 +295,9 @@ const ViewControlBook = () => {
                       <p className="font-semibold">Cash</p>
                     </div> */}
                     <div className="w-full h-auto flex items-center justify-center">
-                      {/* <div className="w-1/3 text-center">
+                      <div className="w-1/3 text-center">
                         <p className="font-semibold">Beginning</p>
-                      </div> */}
+                      </div>
                       <div className="w-full text-center">
                         <p className="font-semibold">Disbursed</p>
                       </div>
@@ -303,7 +324,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices} Cluster={cluster} Items={ControlBook.data.items}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices} Cluster={cluster} Items={ControlBook.data.items} Choice={choice}/>
                 </div>
               </>
             )}

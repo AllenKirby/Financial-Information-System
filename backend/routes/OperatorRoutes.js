@@ -22,7 +22,9 @@ const {
     handleCash,
     changeStatus,
     add_imo_balance,
-    addNewUtility
+    addNewUtility,
+    deleteASA_COB,
+    add_ASA_cashFO
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -44,5 +46,7 @@ OperatorRouter.post('/addTab/:id', addTab)
 OperatorRouter.patch('/change-status/:id', changeStatus)
 OperatorRouter.patch('/add-imo/:id', add_imo_balance)
 OperatorRouter.post('/addNewUtility/:id', addNewUtility)
+OperatorRouter.delete('/deleteASA_COB/:id', deleteASA_COB)
+OperatorRouter.post('/add_ASA_cashFO', add_ASA_cashFO)
 
 module.exports = OperatorRouter

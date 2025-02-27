@@ -8,7 +8,7 @@ import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
 
 const AddNewFieldOffice = (props) => {
-    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], cbFO = 0, test, Cluster, Items} = props
+    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], cbFO = 0, test, Cluster, Items, Choice} = props
 
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0, tabStatus: '', tabAmount: 0, cash: 0})
     const [errorFlag, setErrorFlag] = useState(false)
@@ -215,10 +215,10 @@ const AddNewFieldOffice = (props) => {
     
     const handleSubmit = async (e) => {
         e.preventDefault()
-        if(Cluster === '501 COB'){
+        if(Choice === 'utility'){
             console.log("adding utility")
             addnewUtility()
-        }else{
+        }else if(Choice === 'project'){
             console.log("adding new project")
             addnewProject()
         }

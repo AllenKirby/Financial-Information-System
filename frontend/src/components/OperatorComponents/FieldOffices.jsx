@@ -23,7 +23,7 @@ const FieldOffices = (props) => {
   // console.log('test: ', test)
   // console.log('tabs: ', tabs)
 
-  const { deleteFieldOffice, isLoading, error } = useFundingHook()
+  const { deleteFieldOffice, deleteASA_COB, isLoading, error } = useFundingHook()
   
   const [FieldOfficeModal, setFieldOfficeModal] = useState(false)
   const [viewProjectFlag, setViewProjectFlag] = useState(false)
@@ -44,7 +44,8 @@ const FieldOffices = (props) => {
         style: 'currency',
         currency: 'PHP',
     }).format(value);
-};
+  };
+
   const deleteFO = async(e) => {
     e.stopPropagation()
     const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}`
@@ -59,7 +60,41 @@ const FieldOffices = (props) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
+          console.log('deleting FO')
           const res = await deleteFieldOffice(id)
+        if (res) {
+          Swal.fire({
+            title: "Deleted!",
+            text: "Project has been deleted.",
+            icon: "success",
+          });
+        } else {
+          Swal.fire({
+              title: "Error",
+              text: {error},
+              icon: "error",
+          });
+        }
+      }
+    });
+  }
+
+  const deleteASA = async(e) => {
+    e.stopPropagation()
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}`
+    
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        console.log('deleting ASA')
+          const res = await deleteASA_COB(id)
         if (res) {
           Swal.fire({
             title: "Deleted!",
@@ -92,9 +127,9 @@ const FieldOffices = (props) => {
           </div>
 
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
-            {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.ASA)}</p>
-            </div> */}
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.RO)}</p>
+            </div>
             <div className='w-full lg:w-full flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Utilized:</span><p className='font-semibold'>{formatToPeso(fieldOffice.FO)}</p>
             </div>
@@ -108,9 +143,9 @@ const FieldOffices = (props) => {
             <p>Cash</p>
           </div>
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
-            {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.cash || 0)}</p>
-            </div> */}
+            </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(fieldOffice.cashFO)}</p>
             </div>
@@ -140,7 +175,7 @@ const FieldOffices = (props) => {
                 <MdOutlineModeEdit size={20}/> Edit
               </button>
               {!fieldOffice.dvItems > 0 && (
-                <button className='flex items-center justify-start gap-2' disabled={isLoading} onClick={deleteFO}>
+                <button className='flex items-center justify-start gap-2' disabled={isLoading} onClick={Cluster === '501 COB' ? deleteASA : deleteFO}>
                   <MdDeleteOutline size={20} color='red'/> Delete
                 </button>
               )}
@@ -152,7 +187,7 @@ const FieldOffices = (props) => {
         <>
           <div className="fixed inset-0 z-40 bg-black opacity-50" onClick={modal} />
           <div className="fixed z-50 left-0 top-0 w-full h-full flex items-center justify-center">
-            <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA} test={test} tabs={tabs}/>
+            <AddNewFieldOffice modal={modal} ASANo={ASANo} fieldOffice={fieldOffice} fieldOfficeID={fieldOfficeID} flag={true} remainingASA={remainingASA} test={test} tabs={tabs} Cluster={Cluster}/>
           </div>
         </>
       )}

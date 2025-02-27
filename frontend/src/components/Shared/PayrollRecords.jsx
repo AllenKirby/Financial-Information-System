@@ -25,6 +25,10 @@ const PayrollRecords = () => {
     setIsModalOpen(!isModalOpen)
   }
 
+  const getData = (log) => {
+    console.log()
+  }
+
   useEffect(() => {
     console.log(payrollRecords)
   }, [payrollRecords])
@@ -47,14 +51,14 @@ const PayrollRecords = () => {
               </div>
           )}
         </div>
-        {isModalOpen && (
+        {/* {isModalOpen && (
             <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50" />
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
                     <PayrollModal modal={modal}/>
                 </div>
             </>
-        )}
+        )} */}
     </div>
   )
 }
