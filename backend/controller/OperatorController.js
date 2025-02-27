@@ -1314,9 +1314,15 @@ const appendDataToSheet = async (req, res) => {
             console.log("No such document!");
         }
         await db.collection('ControlBook').doc(id).collection('FieldOffices').doc(projectID).set(data)
+
         await db.collection('formData').doc('forPayrolls').set({
             [id]: admin.firestore.FieldValue.arrayUnion(formData)
         }, {merge: true})
+
+        await db.collection('formData').doc('ControlBook').set({
+            [id]: admin.firestore.FieldValue.arrayUnion(formData)
+        }, {merge: true})
+        
         res.status(200).json({message: 'Field Office Successfully Created'})
     } catch (error) {
         console.log(`Error adding field office: ${error}`)

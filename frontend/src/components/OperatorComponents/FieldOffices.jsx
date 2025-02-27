@@ -127,9 +127,9 @@ const FieldOffices = (props) => {
           </div>
 
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
-            {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.ASA)}</p>
-            </div> */}
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.RO)}</p>
+            </div>
             <div className='w-full lg:w-full flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Utilized:</span><p className='font-semibold'>{formatToPeso(fieldOffice.FO)}</p>
             </div>
@@ -143,9 +143,9 @@ const FieldOffices = (props) => {
             <p>Cash</p>
           </div>
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
-            {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.cash || 0)}</p>
-            </div> */}
+            </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(fieldOffice.cashFO)}</p>
             </div>
