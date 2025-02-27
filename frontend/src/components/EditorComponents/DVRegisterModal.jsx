@@ -14,8 +14,8 @@ const DVRegisterModal = ({modal, DVData}) => {
         PONODate: '', 
         PONO: 0, 
         BURDate: '', 
-        ADAfirst: '', 
-        ADASecond: '', 
+        ADAfirst: 0, 
+        ADASecond: 0, 
         checkDate: '', 
         checkNo: 0
     })
@@ -109,7 +109,7 @@ const DVRegisterModal = ({modal, DVData}) => {
             <div className='w-full flex flex-row items-center justify-center gap-2 mt-3'>
                 <div className='w-1/2 flex flex-col'>
                     <label className='font-medium'>ADA - 1st</label>
-                    <input type="text" 
+                    <input type="number" 
                         value={data.ADAfirst}
                         onChange={(e) => setData({...data, ADAfirst: e.target.value})}
                         className={`${user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
@@ -117,7 +117,7 @@ const DVRegisterModal = ({modal, DVData}) => {
                 </div>
                 <div className='w-1/2 flex flex-col'>
                     <label className='font-medium'>ADA - 2nd</label>
-                    <input type="text" 
+                    <input type="number" 
                         value={data.ADASecond}
                         onChange={(e) => setData({...data, ADASecond: e.target.value})}
                         className={`${user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`} 

@@ -76,7 +76,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
             <p className='w-full sm:w-1/6 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BUR No.: </span>{DV[1]?.data?.ORSBURS?.split("-")[3] || '--'}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>DV Date.: </span>{DV[1]?.data.date}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Payee: </span>{DV[1]?.data?.payee}</p>
-            <p className='w-full sm:w-2/6 flex items-center justify-start text-sm gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>Particulars: </span>{DV[1]?.data.particular}</p>
+            <p className='w-full sm:w-2/6 flex items-center justify-start text-sm gap-2 font-semibold text-wrap flex-r'><span className='font-normal block sm:hidden'>Particulars: </span>{DV[1]?.data.particular}</p>
           </>
         )}
         {counter === 3 && (
@@ -84,15 +84,26 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
             <p className='w-full sm:w-1/4 flex items-center justify-center sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA No.: </span>{ASA.join('\n') || '--'}</p>
             <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Project Name: </span>{project.join('\n') || '--'}</p>
             <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Category: </span>{category.join('\n') || '--'}</p>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>{asaAmount.join('\n') || '--'}</p>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
+              <div className='flex flex-col'>
+                {asaAmount.map((item, index) => 
+                  <p key={index}>{formatToPeso(item)}</p>
+                ) || '--'}
+              </div>
+            </p>
           </div>
         )}
         {counter === 4 && (
-          <>
-            <p className='w-full sm:w-1/3 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA-1st: </span>{DV[1].data.ADAfirst ? DV[1].data.ADAfirst : '--'}</p>
-            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ADA-2nd: </span>{DV[1].data.ADASecond ? DV[1].data.ADASecond : '--'}</p>
-            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>{`${formatToPeso(adue)} | ${formatToPeso(floatTotal_val)}`}</p>
-          </>
+          <div className='w-5/6 flex flex-col sm:flex-row'>
+            <p className='w-full sm:w-1/3 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA-1st: </span>{DV[1].data.ADAfirst ? formatToPeso(DV[1].data.ADAfirst) : '--'}</p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ADA-2nd: </span>{DV[1].data.ADASecond ? formatToPeso(DV[1].data.ADASecond) : '--'}</p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>  
+              <div className='flex flex-col'>
+                  <p>{formatToPeso(adue)}</p>
+                  <p>{formatToPeso(floatTotal_val)}</p>
+              </div>
+            </p>
+          </div>
         )}
         {counter === 5 && (
           <div className='w-5/6 flex'>

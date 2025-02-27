@@ -26,6 +26,23 @@ const DVRegister = () => {
     const { exportDVRegister, isLoading, error } = usePreparerHook()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [data, setData] = useState({})
+    const [total, setTotal] = useState({
+        ASA: 0, 
+        ADAfirst: 0, 
+        ADAsecond: 0, 
+        cash: 0, 
+        ASATotal: 0, 
+        ASAReleases: 0, 
+        cashTotal: 0, 
+        cashReleases: 0
+    })
+
+    const formatToPeso = (value) => {
+        return new Intl.NumberFormat('en-PH', {
+            style: 'currency',
+            currency: 'PHP',
+        }).format(value);
+    };
 
     const modal = (data = {}) => {
         setIsModalOpen(!isModalOpen)
@@ -76,8 +93,6 @@ const DVRegister = () => {
         setCounter(prevCounter => prevCounter - 1)
     }
 
-    // console.log(Object.entries(documents)[1][1].data)
-
     const exportDV = async() => {
 
         const data = Object.entries(documents).map(([key, data]) => {
@@ -96,6 +111,36 @@ const DVRegister = () => {
 
         await exportDVRegister(data)
     }
+
+    const sumOfASA = () => {
+        const ASA = Object.entries(documents).map((item,) => Object.values(item[1].data.ASA))
+        const innerSums = ASA.map((arr) => arr.reduce((sum, num) => sum + Number(num), 0));
+        return innerSums.reduce((sum, num) => sum + num, 0);
+    }
+
+    const sumOfADAFirst = () => {
+        const ADAFirst = Object.entries(documents).map((item,) => item[1].data.ADAfirst)
+        return ADAFirst.reduce((sum, num) => sum + Number(num), 0);
+    }
+
+    const sumOfADASecond = () => {
+        const ADASecond = Object.entries(documents).map((item,) => item[1].data.ADASecond)
+        return ADASecond.reduce((sum, num) => sum + Number(num), 0);
+    }
+
+    useEffect(() => {
+        //ASA
+        setTotal({
+            ASA: formatToPeso(sumOfASA()),
+            ADAfirst: formatToPeso(sumOfADAFirst()), 
+            ADAsecond: formatToPeso(sumOfADASecond()), 
+            cash: 0, 
+            ASATotal: 0, 
+            ASAReleases: 0, 
+            cashTotal: 0, 
+            cashReleases: 0
+        })
+    }, [])
 
   return (
     <section className="w-full h-full p-2 text-gray-500 relative flex flex-col">
@@ -207,7 +252,12 @@ const DVRegister = () => {
                 </div>
                 <div className="w-full flex-1 overflow-y-auto rounded-lg">
                     {Object.entries(documents).length > 0 ? (
-                        <PaginatedList items={sortTimeCreatedDesc(documents)} paginationFor="DVRegister" counter={counter} modal={modal}/>
+                        <PaginatedList 
+                            items={sortTimeCreatedDesc(documents)} 
+                            paginationFor="DVRegister" 
+                            counter={counter} 
+                            modal={modal}
+                            total={total}/>
                         ) : (
                             <div className='w-full h-full flex items-center justify-center'>
                                 <p className='font-bold'>No Disbursement Voucher Found</p>
