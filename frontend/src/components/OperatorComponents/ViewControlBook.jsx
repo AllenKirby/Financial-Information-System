@@ -145,6 +145,18 @@ const ViewControlBook = () => {
   //   }
   // };
 
+  const [RO_balance, setRO] = useState(0)
+  useEffect(() => {
+    if(cluster === '501 COB'){
+      const res = parseFloat(ControlBook.data.leftBudget) - parseFloat(ControlBook.data.IMO_budget || 0)
+      setRO(res)
+    }else{
+      const released = parseFloat(ControlBook.data.IMO_BALANCE || 0) + parseFloat(ControlBook.data.FO || 0)
+      const res = parseFloat(ControlBook.data.leftBudget) - released
+      setRO(res)
+    }
+  }, [ControlBook])
+
   return (
     <div className="w-full h-full">
       {!reportFlag ? (
@@ -211,7 +223,7 @@ const ViewControlBook = () => {
 
                     </div>
                     <div className="w-full flex items-center justify-center">
-                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(parseFloat(ControlBook.data.leftBudget) - parseFloat(ControlBook.data.IMO_budget || 0))}</p>
+                      <p className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl`}>{formatToPeso(RO_balance)}</p>
                     </div>
                   </div>
                 </div>
@@ -225,18 +237,21 @@ const ViewControlBook = () => {
                     </div>
                   </div>
                   <div className="w-full sm:w-1/2 h-auto flex flex-row md:flex-col gap-2">
-                    <button 
-                      onClick={(e) => {
-                        modal()
-                        setChoice('utility')
-                      }} 
-                      className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
-                      <div className="flex flex-row items-center justify-center gap-2">
-                        <IoAddOutline size={30}/>
-                        <p className="font-semibold lg:text-base 2xl:text-lg">{'New Utility'}</p>
-                      </div>
-                    </button>
-
+                    {
+                      cluster === '501 COB' && (
+                        <button 
+                          onClick={(e) => {
+                            modal()
+                            setChoice('utility')
+                          }} 
+                          className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
+                          <div className="flex flex-row items-center justify-center gap-2">
+                            <IoAddOutline size={30}/>
+                            <p className="font-semibold lg:text-base 2xl:text-lg">{'New Utility'}</p>
+                          </div>
+                        </button>
+                      )
+                    }
                     <button 
                     onClick={(e) => {
                       modal()
