@@ -112,6 +112,16 @@ const FieldOffices = (props) => {
     });
   }
 
+  const [beginning, setBegin] = useState(0)
+  const [disbursed, setDisbursed] = useState(0)
+  useEffect(() => {
+    const disbursedBeginning = parseFloat(fieldOffice.cash||0) - parseFloat(fieldOffice.FO)
+    setBegin(disbursedBeginning)
+    const disbursedTotal = parseFloat(fieldOffice.cashFO || 0) + parseFloat(fieldOffice.FO)
+    setDisbursed(disbursedTotal)
+
+  }, [fieldOffice])
+
   return (
     <div onClick={viewProject} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto cursor-pointer p-2 text-sm rounded-lg flex flex-row gap-2 my-1 transition-all duration-300`}>
       <div className='w-full lg:w-[95%] flex flex-col lg:flex-row items-center justify-start lg:justify-center'>
@@ -144,10 +154,10 @@ const FieldOffices = (props) => {
           </div>
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.cash || 0)}</p>
+              <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(beginning)}</p>
             </div>
             <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
-              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(fieldOffice.cashFO)}</p>
+              <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(disbursed)}</p>
             </div>
             {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Balance:</span><p className='font-semibold'>{formatToPeso(parseFloat(fieldOffice.cash) - parseFloat(fieldOffice.cashFO) || 0)}</p>
