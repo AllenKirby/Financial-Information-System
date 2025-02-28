@@ -23,16 +23,16 @@ export const NameAndOffice = () => {
             setName("")
             setOffice("")
         }
-    }, [updateFlag, name, office, showInpuTBoxA])
+    }, [showInpuTBoxA])
 
     const handleAddNameOffice = (flag, name = '', office = '', key = '') => {
         if(flag) { 
             setName(name)
             setOffice(office)
             setKey(key)
-            setUpdateFlag(!updateFlag)
+            setUpdateFlag(true)
         } else {
-            setUpdateFlag(!updateFlag)
+            setUpdateFlag(false)
         }
         setShowInputBoxA(!showInpuTBoxA);
     }
@@ -45,7 +45,8 @@ export const NameAndOffice = () => {
         setOffice(e.target.value);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        console.log('submit')
         e.preventDefault()
         const input = name+office
         const randomKey = input.replace(/[^a-zA-Z0-9]/g, "");
@@ -56,13 +57,14 @@ export const NameAndOffice = () => {
         })
         setName('');
         setOffice('');
-        addNewNameAndOffice(name, office, randomKey)
+        await addNewNameAndOffice(name, office, randomKey)
         setShowInputBoxA(false)
         sessionStorage.removeItem('NameAndOfficeData')
     };
 
     const handleUpdate = async (e) => {
         e.preventDefault()
+        console.log('updating')
         await updateNameOffice(key, name, office)
         setName('');
         setOffice('');

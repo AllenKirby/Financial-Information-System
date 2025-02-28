@@ -96,16 +96,17 @@ export const useApproverHook = () => {
                 office: office,
                 key: key
             }
-
+            console.log(data)
             const res = await axios.post(`${apiURL}/admin/addNameAndOffice`, data, {
                 withCredentials: true
             })
 
             if(res.status === 200){
-                return
+                return true
             }
         }catch(error){
             console.log(`Error in creating new name and office ${error}`)
+            return false
         }
     }
 

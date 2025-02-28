@@ -151,8 +151,8 @@ const ViewControlBook = () => {
       const res = parseFloat(ControlBook.data.leftBudget) - parseFloat(ControlBook.data.IMO_budget || 0)
       setRO(res)
     }else{
-      const released = parseFloat(ControlBook.data.IMO_BALANCE || 0) + parseFloat(ControlBook.data.FO || 0)
-      const res = parseFloat(ControlBook.data.leftBudget) - released
+      const released = parseFloat(ControlBook.data.IMO_budget || 0)
+      const res = parseFloat(ControlBook.data.RO) - released
       setRO(res)
     }
   }, [ControlBook])
