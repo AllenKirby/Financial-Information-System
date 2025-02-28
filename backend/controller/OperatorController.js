@@ -1422,7 +1422,7 @@ const updateFieldOffice = async(req, res) => {
     const documentId = `${docId}!${docIdCluster}`
 
     const dateTimeCollection = getDateTime();
-    // console.log(req.body)
+    console.log(req.body)
     const data = {
         ...fieldOfficeData,
         updatedAt: dateTimeCollection,
@@ -1439,7 +1439,7 @@ const updateFieldOffice = async(req, res) => {
         cash: cash
 
     }
-    console.log(fieldOfficeData)
+    // console.log(formData)
 
     const updatedFieldOfficeData = {
         RO: fieldOfficeData.ASA,

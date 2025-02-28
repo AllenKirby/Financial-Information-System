@@ -346,6 +346,7 @@ export const useFundingHook = () => {
                 };
             })
         }
+        console.log(transformed)
         return transformed
     }
     

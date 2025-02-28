@@ -20,6 +20,7 @@ const AddNewFieldOffice = (props) => {
     const [recordedASA, setRecordedASA] = useState(0)
     const [allowCluster, setAllowCluster] = useState(false)
     
+    console.log('herr')
     
     const { AddFieldOffice, updateFieldOffice,AddNewUtility, isLoading, error } = useFundingHook()
 
@@ -68,7 +69,8 @@ const AddNewFieldOffice = (props) => {
                 RO: fieldOffice.ASA,
                 projectID: `${ASANo},${fieldOffice.projectName}>${fieldOffice.tabStatus}`,
                 projectName: fieldOffice.projectName,
-                tabStatus: fieldOffice.tabStatus
+                tabStatus: fieldOffice.tabStatus,
+                cash: fieldOffice.cash
             }
         } else {
             prevData.current = null
