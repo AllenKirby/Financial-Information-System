@@ -874,15 +874,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   min={new Date(new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" }))
                   .toISOString()
                   .slice(0, 7) + "-01"} 
-                max={new Date(
-                  new Date(
-                    new Date().toLocaleString("en-PH", { timeZone: "Asia/Manila" })
-                  ).getFullYear(),
-                  new Date().getMonth() + 1,
-                  0
-                )
-                  .toISOString()
-                  .slice(0, 10)}
+                
                     />
               </div>
             </div>

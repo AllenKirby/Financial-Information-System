@@ -229,6 +229,7 @@ const addNameAndOffice = async (req, res) => {
     }
     const docRef = db.collection('formData').doc('NameOffice');
     const doc = await docRef.get()
+    console.log(data)
     if(doc.exists){
       await docRef.update(data)
     }else{

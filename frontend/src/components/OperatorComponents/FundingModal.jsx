@@ -107,7 +107,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
             res = await updateCASH(fundingData, DVNo)
         }
         
-        // const res = true
         if(res){
             Swal.fire({
                 title: "Saved",

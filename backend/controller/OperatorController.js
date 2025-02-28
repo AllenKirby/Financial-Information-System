@@ -105,6 +105,7 @@ const updateASAORS = async (req, res) => {
             }
         })
 
+
         if((!asa || Object.keys(asa).length === 0) && (!previousASA || Object.keys(previousASA).length === 0)){
             if(needBUR){
                 const asaForBur = Object.entries(asa_test).map(([key, amount]) => {
@@ -153,6 +154,8 @@ const updateASAORS = async (req, res) => {
             finalORS = `501-${year}-${month}-${ORS}`
             dvData.ORSBURS = finalORS
         }
+
+        console.log(dvData)
 
         if(needBUR){
 
