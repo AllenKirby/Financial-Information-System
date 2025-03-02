@@ -58,6 +58,7 @@ const handleCash = async (req, res) => {
             await batch_handlefieldOffices_cash(prevAsaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData, 'subtract');
             await batch_handlefieldOffices_cash(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData);
         }else{
+            // console.log(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData)
             await batch_handlefieldOffices_cash(asaEntries, DVNoKey[DVNoKey.length-1], fieldOfficeData);   
         }
 
@@ -78,6 +79,7 @@ const updateASAORS = async (req, res) => {
         const {id} = req.params
         const year = new Date().getFullYear();
         const month = new Date().getMonth() + 1
+        const dateTimeCollection = getDateTime()
 
 
         //handle control books new amount per control book
@@ -415,7 +417,8 @@ const addBUR = async (orsForBUR, updates, DVNoCount, id) => {
 
 const batch_handlefieldOffices = async (updates, DVNoCount, fieldOfficeData, operation='add') => {
     const batch = db.batch();
-    
+    const dateTimeCollection = getDateTime()
+
     try{
         for (const { ASANo, projectID, amount } of updates) {
             const docRef = db.collection('ControlBook').doc(ASANo).collection('FieldOffices').doc(projectID);
@@ -471,7 +474,9 @@ const batch_handlefieldOffices = async (updates, DVNoCount, fieldOfficeData, ope
                 if(operation == 'add'){
                     const fieldOfficed = {
                         ...fieldOfficeData,
-                        amount: amount
+                        amount: amount,
+                        cash: amount,
+                        fundedOn: dateTimeCollection
                     }
     
                     batch.set(DVDocRef, fieldOfficed);
@@ -493,6 +498,7 @@ const batch_handlefieldOffices = async (updates, DVNoCount, fieldOfficeData, ope
 
 const batch_handlefieldOffices_cash = async (updates, DVNoCount, fieldOfficeData, operation='add') => {
     const batch = db.batch();
+    const dateTimeCollection = getDateTime()
     
     try{
         for (const { ASANo, projectID, amount } of updates) {
@@ -523,10 +529,10 @@ const batch_handlefieldOffices_cash = async (updates, DVNoCount, fieldOfficeData
                     updatedWeekFO = weekFO - parseAmount;
                 }
     
-                if (updatedRO < 0) {
-                    console.error(`Insufficient amount for ASANo: ${ASANo}, projectID: ${projectID}`);
-                    continue; // Skip this document and continue with others
-                }
+                // if (updatedRO < 0) {
+                //     console.error(`Insufficient amount for ASANo: ${ASANo}, projectID: ${projectID}`);
+                //     continue; // Skip this document and continue with others
+                // }
                 console.log(ASANo, projectID, `${DVNoCount}|${amount}`)
                 console.log(`${ASANo} wait ${projectID} wait ${DVNoCount}|${amount}`)
                 // Add updates to the batch
@@ -549,7 +555,9 @@ const batch_handlefieldOffices_cash = async (updates, DVNoCount, fieldOfficeData
                 if(operation == 'add'){
                     const fieldOfficed = {
                         ...fieldOfficeData,
-                        cash: amount
+                        cash: amount,
+                        amount: 0,
+                        fundedOn: dateTimeCollection
                     }
     
                     batch.set(DVDocRef, fieldOfficed);
@@ -1643,31 +1651,40 @@ const deleteASA_COB = async(req, res) => {
 }
 
 const add_ASA_cashFO = async(req, res) =>{
-    const data = req.body
-    console.log(data)
-    const ASAID = data.project.projectID.split(',')[0]
-    const ASA_amount = parseFloat(data.amount)
+    try{
+        const data = req.body
+        console.log(data)
+        const ASAID = data.project.projectID.split(',')[0]
+        const ASA_amount = parseFloat(data.amount)
 
-    const cb_ref = db.collection('ControlBook').doc(ASAID).collection('FieldOffices').doc(data.project.projectID)
-    const cb = await cb_ref.get()
+        const cb_ref = db.collection('ControlBook').doc(ASAID).collection('FieldOffices').doc(data.project.projectID)
+        const cb = await cb_ref.get()
 
-    if(cb.exists){
-        const cashFO = parseFloat(cb.data().cashFO || 0)
-        const updatedcashFO = cashFO + ASA_amount
+        if(cb.exists){
+            const cash = parseFloat(cb.data().cash || 0)
+            const updatedCash = cash - ASA_amount
 
-        await cb_ref.update({
-            cashFO: updatedcashFO
-        })
+            const cashFO = parseFloat(cb.data().cashFO || 0)
+            const updatedcashFO = cashFO + ASA_amount
 
-        await db.collection('PayrollRecords').doc(data.date_id).delete()
+            await cb_ref.update({
+                cash: updatedCash,
+                cashFO: updatedcashFO
+            })
+
+            await db.collection('PayrollRecords').doc(data.date_id).delete()
+        }
+
+        //DELETE ON PAYROLL RECORDS
+        // const docRef = db.collection('formData').doc('forPayrolls')
+        // await docRef.update({
+        //     [ASAid]: admin.firestore.FieldValue.arrayRemove(data)
+        // })
+        res.status(200).json({message: 'Successfully added o COB CONTROL BOOK'})
+    }catch(err){
+        console.log(err)
+        res.status(500).json({message: "error on add asa cash fo"})
     }
-
-    //DELETE ON PAYROLL RECORDS
-    // const docRef = db.collection('formData').doc('forPayrolls')
-    // await docRef.update({
-    //     [ASAid]: admin.firestore.FieldValue.arrayRemove(data)
-    // })
-    res.status(200).json({message: 'Successfully added o COB CONTROL BOOK'})
 }
 
 const getOrigNumberOfCopiesBUR = async(givenNo) => {
