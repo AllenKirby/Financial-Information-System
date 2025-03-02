@@ -417,18 +417,49 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
 }
 
 const downloadDVRegister = async(req, res) => {
-    const data = req.body
+    const {DV, header} = req.body
     try {
-        const templatePath = path.join(__dirname, '..', 'templates', 'Book1.xlsx'); 
+        const templatePath = path.join(__dirname, '..', 'templates', 'DVRegister.xlsx'); 
         const workbook = await XlsxPopulate.fromFileAsync(templatePath);
-        let startingCell = 7
-        data.forEach((item,) => {
-            console.log(item.fund)
-            workbook.sheet('Sheet1').cell(`A${startingCell}`).value(item.fund)
-            workbook.sheet('Sheet1').cell(`B${startingCell}`).value(item.key)
-            workbook.sheet('Sheet1').cell(`C${startingCell}`).value(item.MOP)
-            workbook.sheet('Sheet1').cell(`D${startingCell}`).value(item.counter)
-            workbook.sheet('Sheet1').cell(`E${startingCell}`).value(item.RC)
+        let startingCell = 8
+        workbook.sheet('Sheet1').cell(`B1`).value(header.fundCluster)
+        workbook.sheet('Sheet1').cell(`B2`).value(header.month)
+        DV.forEach((item,) => {
+            const [ DV1, DV2, DV3, DV4 ] = item.DV.split('-')
+            workbook.sheet('Sheet1').cell(`A${startingCell}`).value(item.PRNoDate)
+            workbook.sheet('Sheet1').cell(`B${startingCell}`).value(item.PRNo)
+            workbook.sheet('Sheet1').cell(`C${startingCell}`).value(item.PONODate)
+            workbook.sheet('Sheet1').cell(`D${startingCell}`).value(item.PONO)
+            workbook.sheet('Sheet1').cell(`E${startingCell}`).value(item.BURDate)
+            workbook.sheet('Sheet1').cell(`F${startingCell}`).value(item.BURNo)
+            workbook.sheet('Sheet1').cell(`G${startingCell}`).value(item.DVDate)
+            workbook.sheet('Sheet1').cell(`H${startingCell}`).value(DV1)
+            workbook.sheet('Sheet1').cell(`I${startingCell}`).value(DV2)
+            workbook.sheet('Sheet1').cell(`J${startingCell}`).value(DV3)
+            workbook.sheet('Sheet1').cell(`K${startingCell}`).value(DV4)
+            workbook.sheet('Sheet1').cell(`L${startingCell}`).value(item.payee)
+            workbook.sheet('Sheet1').cell(`M${startingCell}`).value(item.particular)
+            item.ASANo.map((ASA,) => 
+                workbook.sheet('Sheet1').cell(`N${startingCell}`).value(ASA)
+            )
+            item.projectName.map((project,) => 
+                workbook.sheet('Sheet1').cell(`O${startingCell}`).value(project)
+            )
+            item.category.map((category,) => 
+                workbook.sheet('Sheet1').cell(`P${startingCell}`).value(category)
+            )
+            item.ASAAmount.map((ASAAmount,) => 
+                workbook.sheet('Sheet1').cell(`Q${startingCell}`).value(ASAAmount)
+            )
+            workbook.sheet('Sheet1').cell(`R${startingCell}`).value(item.ADAfirst)
+            workbook.sheet('Sheet1').cell(`S${startingCell}`).value(item.ADASecond)
+            workbook.sheet('Sheet1').cell(`T${startingCell}`).value(item.cash)
+            workbook.sheet('Sheet1').cell(`U${startingCell}`).value(item.ASATotal)
+            workbook.sheet('Sheet1').cell(`V${startingCell}`).value(item.ASAReleases)
+            workbook.sheet('Sheet1').cell(`W${startingCell}`).value(item.cashTotal)
+            workbook.sheet('Sheet1').cell(`X${startingCell}`).value(item.cashReleases)
+            workbook.sheet('Sheet1').cell(`Y${startingCell}`).value(item.checkDate)
+            workbook.sheet('Sheet1').cell(`Z${startingCell}`).value(item.checkNo)
             startingCell++
         })
 

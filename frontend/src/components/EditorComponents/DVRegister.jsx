@@ -23,9 +23,10 @@ const DVRegister = () => {
     const DV = useSelector((state) => state.vouchers)
     const [counter, setCounter] = useState(1)
     const { user } = useAuthContext()
-    const { exportDVRegister, isLoading, error } = usePreparerHook()
+    const { exportDVRegister, isLoading } = usePreparerHook()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [data, setData] = useState({})
+    const [date, setDate] = useState({start: '',end: ''});
     const [total, setTotal] = useState({
         ASA: 0, 
         ADAfirst: 0, 
@@ -36,6 +37,40 @@ const DVRegister = () => {
         cashTotal: 0, 
         cashReleases: 0
     })
+
+    useEffect(() => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth();
+    
+        // First day of the current month
+        const firstDay = new Date(year, month, 1);
+        // Last day of the current month
+        const lastDay = new Date(year, month + 1, 0);
+    
+        // Format date to YYYY-MM-DD correctly
+        const formatDate = (date) => date.toLocaleDateString("en-CA");
+    
+        setDate({start: formatDate(firstDay), end: formatDate(lastDay)});
+        extractMonthYear()
+      }, []);
+
+      const extractMonthYear = (startDate, endDate) => {
+        if (startDate && endDate) {
+          const start = new Date(startDate);
+          const end = new Date(endDate);
+    
+          const startMonth = start.toLocaleString("default", { month: "long" });
+          const startYear = start.getFullYear();
+    
+          const endMonth = end.toLocaleString("default", { month: "long" });
+          const endYear = end.getFullYear();
+
+          const date = [`${startMonth} ${startYear}`, `${endMonth} ${endYear}`]
+
+          return date
+        }
+      };
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -76,14 +111,24 @@ const DVRegister = () => {
 
     const sortTimeCreatedDesc = (docu) => {
         if (docu && Object.keys(docu).length > 0) {
-          const sortedEntries = Object.entries(docu).sort(([, a], [, b]) => 
-            new Date(b?.data?.createdAt) - new Date(a?.data?.createdAt)
-          );
-          return Object.fromEntries(sortedEntries);
+            const startDate = new Date(date.start);
+            const endDate = new Date(date.end);
+
+            const filteredDocuments = Object.entries(docu).filter(([, document]) => {
+                const docDate = new Date(document?.data?.date);
+                return docDate >= startDate && docDate <= endDate;
+            });
+
+            const sortedEntries = filteredDocuments.sort(([, a], [, b]) => 
+                new Date(b?.data?.createdAt) - new Date(a?.data?.createdAt)
+            );
+            return Object.fromEntries(sortedEntries);
         } else {
           return {}
         }
     }
+
+    console.log(sortTimeCreatedDesc())
 
     const increment = () => {
         setCounter(prevCounter => prevCounter + 1)
@@ -94,20 +139,59 @@ const DVRegister = () => {
     }
 
     const exportDV = async() => {
+        const [startDate, endDate] = extractMonthYear(date.start, date.end) 
+        let reportMonth = ''
+        if(startDate === endDate) {
+            reportMonth = startDate
+        } else {
+            reportMonth = `${startDate} to ${endDate}`
+        }
 
-        const data = Object.entries(documents).map(([key, data]) => {
-            const {fund, DVKey, MOP, NF_name, RC} = data.data
+        const header = {
+            fundCluster: activeTab,
+            month: reportMonth,
+        }
 
+        const dataDV = Object.entries(documents).map(([, data]) => {
+            const { PRNoDate, PRNo, PONODate, PONO, BURDate, ADAfirst, ADASecond, checkDate, checkNo, ORSBURS, date, DV,
+                payee, particular, ASA, amount
+             } = data.data
+
+             const ASANo = Object.keys(ASA).map((item,) => item.split('!')[0].replace("|", ' '))
+             const projectName = Object.keys(ASA).map((item,) => item.split(',')[1].split('>')[0])
+             const category = Object.keys(ASA).map((item,) => item.split(',')[1].split('>')[1])
+             const ASAAmount = Object.values(ASA).map((item,) => item)
             return {
-                key,
-                fund: fund,
-                DVKey:`${DVKey} asdsaffdsf`,
-                MOP: MOP,
-                RC,
-                NF_name,
-                counter
+                PRNoDate, 
+                PRNo, 
+                PONODate, 
+                PONO, 
+                BURDate, 
+                BURNo: ORSBURS?.split('-')[3] || '',
+                DVDate: date,
+                DV,
+                payee, 
+                particular,
+                ASANo,
+                projectName,
+                category,
+                ASAAmount,
+                ADAfirst, 
+                ADASecond,
+                cash: amount,
+                ASATotal: 0,
+                ASAReleases: 0,
+                cashTotal: 0,
+                cashReleases: 0,
+                checkDate, 
+                checkNo
             }
         })
+
+        const data= {
+            DV: dataDV,
+            header: header
+        }
 
         await exportDVRegister(data)
     }
@@ -128,19 +212,24 @@ const DVRegister = () => {
         return ADASecond.reduce((sum, num) => sum + Number(num), 0);
     }
 
+    const sumOfCash = () => {
+        const cash = Object.entries(documents).map((item,) => parseFloat(item[1].data.amount))
+        return cash.reduce((sum, num) => sum + num, 0);
+    }
+
     useEffect(() => {
         //ASA
         setTotal({
             ASA: formatToPeso(sumOfASA()),
             ADAfirst: formatToPeso(sumOfADAFirst()), 
             ADAsecond: formatToPeso(sumOfADASecond()), 
-            cash: 0, 
-            ASATotal: 0, 
-            ASAReleases: 0, 
-            cashTotal: 0, 
-            cashReleases: 0
+            cash: formatToPeso(sumOfCash()),  
+            ASATotal: formatToPeso(sumOfASA()),
+            ASAReleases: formatToPeso(sumOfASA()), 
+            cashTotal: formatToPeso(sumOfASA()), 
+            cashReleases: formatToPeso(sumOfASA())
         })
-    }, [])
+    }, [documents])
 
   return (
     <section className="w-full h-full p-2 text-gray-500 relative flex flex-col">
@@ -160,7 +249,19 @@ const DVRegister = () => {
             </div>
         </div>
         <div className="w-full h-fit flex flex-col items-center justify-between gap-2">
-            <div className="w-full flex items-center justify-end">
+            <div className="w-full flex items-center justify-end gap-2">
+                <label>Start:</label>
+                <input
+                    type="date"
+                    value={date.start}
+                    onChange={(e) => setDate({...date, start: e.target.value})}
+                    className={`${user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 text-sm w-40 px-4 py-1 rounded-md border-2`}/>
+                <label>End:</label>
+                <input  
+                    type="date"
+                    value={date.end}
+                    onChange={(e) => setDate({...date, end: e.target.value})}
+                    className={`${user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 text-sm w-40 px-4 py-1 rounded-md border-2`}/>
                 <button onClick={exportDV} disabled={isLoading} className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white px-5 py-2 rounded-lg flex items-center justify-center gap-2`}><PiExport size={20}/>Export</button>
             </div>
             <div className="w-full flex items-center justify-between">
@@ -168,7 +269,7 @@ const DVRegister = () => {
                     <button onClick={() => setActiveTabs('501 COB')} className={`${activeTab === '501 COB' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 COB</button>
                     <button onClick={() => setActiveTabs('501 LFP')} className={`${activeTab === '501 LFP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 LFP</button>
                     <button onClick={() => setActiveTabs('501 CARP')} className={`${activeTab === '501 CARP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 CARP</button>
-                    <button onClick={() => setActiveTabs('Farming Support Services Program')} className={`${activeTab === 'Farming Support Services Program' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>Farming Support Services Program</button>
+                    <button onClick={() => setActiveTabs('Contract Farming')} className={`${activeTab === 'Farming Support Services Program' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>Farming Support Services Program</button>
                 </div>
                 <div className="w-fit">
                     <div className='relative w-auto hidden sm:block'>
@@ -251,7 +352,7 @@ const DVRegister = () => {
                     <button onClick={increment} disabled={counter === 6} className="w-fit px-2 h-full"><MdNavigateNext size={24}/></button>
                 </div>
                 <div className="w-full flex-1 overflow-y-auto rounded-lg">
-                    {Object.entries(documents).length > 0 ? (
+                    {Object.entries(sortTimeCreatedDesc(documents)).length > 0 ? (
                         <PaginatedList 
                             items={sortTimeCreatedDesc(documents)} 
                             paginationFor="DVRegister" 
