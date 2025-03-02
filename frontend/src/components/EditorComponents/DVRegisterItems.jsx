@@ -59,7 +59,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
   }
 
   return (
-    <div onClick={() => navigate(`${DV[1]?.data?.DVKey}|${getStatus(DV[1]?.data?.status)}|${'0'}`)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full sm:pl-10 sm:pr-5  h-auto cursor-pointer my-1 rounded-lg p-2 flex flex-row items-start justify-center text-sm`}>
+    <div onClick={() => navigate(`${DV[1]?.data?.DVKey}|${getStatus(DV[1]?.data?.status)}|${'0'}`)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full sm:pl-10 sm:pr-5 h-auto cursor-pointer my-1 rounded-lg p-2 flex flex-row items-center justify-center text-sm`}>
       <div className='w-full flex flex-col sm:flex-row items-center justify-center'>
         <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>DV NO.: </span>{DV[1]?.data.DV}</p>
         {counter === 1 && (
@@ -134,7 +134,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
           </div>
         )}
       </div>
-      <button onClick={(e) => {e.stopPropagation(); modal(DV[1].data);}} className='w-fit'>
+      <button onClick={(e) => {e.stopPropagation(); modal(DV[1].data);}} className='w-fit h-full'>
         <MdOutlineEdit size={20}/>
       </button>
     </div>
@@ -142,8 +142,8 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
 }
 
 DVRegisterItems.propTypes = {
-    DV: PropTypes.object.isRequired,
-    index: PropTypes.number.isRequired,
+    DV: PropTypes.array.isRequired,
+    index: PropTypes.string.isRequired,
     counter: PropTypes.number.isRequired,
     modal: PropTypes.func.isRequired
 }

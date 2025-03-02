@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useEffect } from 'react'; 
+import React, { useState, Suspense } from 'react'; 
 import PropTypes from 'prop-types'
 
 import Pagination from './Pagination';
@@ -46,7 +46,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
             </Suspense>
         </div>
         {paginationFor === 'DVRegister' && (
-            <div className='w-full py-2 font-bold px-10 flex items-center justify-between'>
+            <div className='w-full py-2 font-bold px-10 flex items-center justify-between border-t-2'>
                 <p className='w-1/6'>Total</p>
                 {counter === 3 && ( <p className='w-1/5 text-center'>{total.ASA}</p> )}
                 {counter === 4 && ( 
@@ -82,7 +82,7 @@ PaginatedList.propTypes = {
     paginationFor: PropTypes.string.isRequired,
     counter: PropTypes.number,
     modal: PropTypes.func,
-    total: PropTypes.number
+    total: PropTypes.object
   };
 
 export default PaginatedList

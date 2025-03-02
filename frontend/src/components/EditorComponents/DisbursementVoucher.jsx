@@ -50,13 +50,25 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     particular: ''})
   const [gsis, setGSIS] = useState({stamp: 0, dst: 0, vat12: 0})
   const [meralco, setMeralco] = useState({meralcoVAT: 0, meralcoNONVAT: 0})
+  const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '', labels: '' }]);
+  const [BURAmount, setBURAmount] = useState([{title:'',  amount: ''}]);
+  const [BURData, setBURData] = useState({
+    payee: '', 
+    address: '', 
+    office: 'NIA Region IV-A',
+    No: '',
+    GAA: '',
+    MFOPAP: '',
+    uacsCode: '',
+    NFNameB: '',
+    NFOfficeB: ''
+  })
   //states
   const [birData, setBirData] = useState({ birParticular: ''})
   //const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
-  const [activeTab, setActiveTab] = useState(user?.role === '4' ? 'To Release' : 'To Payment')
-  
+  const [activeTab, setActiveTab] = useState(user?.role === '4' ? 'To Payment' : 'To Release')
 
   //payee
   const [payeeOptions, setPayeeOptions] = useState({});
@@ -115,7 +127,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       //   asa: document.ASA || ''
       // })
 
-      if (document.activeTab === 'To Release'){
+      if (document.activeTab === 'To Payment'){
         const initialFormFields = (document.accTitle || []).map((title, index) => ({
           accCategory: document.accCategory && document.accCategory[index] ? document.accCategory[index] : '',
           accTitle: title || '',
@@ -291,14 +303,35 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     return updatedPayeeData
   }
 
+  const dataBURData = () => {
+    const finalData = {
+      ...BURData,
+      date: payeeData.date,
+      resCenter: payeeData.RC,
+      particular: payeeData.particular,
+      NFNameA: payeeData.NF_name,
+      NFOfficeA: payeeData.NF_office,
+      amount: BURAmount
+    }
+    return finalData
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeTab === "Payroll"){
       console.log('get')
       await forPayrollCreation()
-    }else{
+    }
+    if(activeTab === 'BUR') {
+      createBUR() 
+    }
+    else{
       await Create()
     }
+  }
+
+  const createBUR = () => {
+    console.log(dataBURData())
   }
 
   const [payrollItems, setPayrollItems ] = useState({particular: '', amount: ''})
@@ -325,7 +358,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const Create = async() => {
     let updatedPayeeData
-    if(activeTab === 'To Release'){
+    if(activeTab === 'To Payment'){
       updatedPayeeData = dataForDV()
     }else if(activeTab === 'GSIS'){
       updatedPayeeData = dataForGSIS()
@@ -549,7 +582,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //   }
   // }
 
-  const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '', labels: '' }]);
 
   const addNewField = () => {
     setFormFields([...formFields, { accCategory:'',accTitle: '', accCode: '', amount: '', labels: '' }]);
@@ -574,6 +606,29 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       setOptionalAmount(formFields.length -1 === 1)
       removeField(index);
       
+    }
+  };
+
+  const addNewBUR = () => {
+    setBURAmount([...BURAmount, { title: '', amount: ''}]);
+  };
+
+  const removeBUR = (index) => {
+    const updatedFields = BURAmount.filter((_, i) => i !== index);
+    setBURAmount(updatedFields);
+  };
+
+  const handleFieldChangeBUR = (index, field, value) => {
+    const updatedFields = [...BURAmount];
+    updatedFields[index][field] = value;
+    setBURAmount(updatedFields);
+  };
+
+  const handleButtonClickBUR = (index) => {
+    if (index === formFields.length - 1) {
+      addNewBUR();
+    } else {
+      removeBUR(index);
     }
   };
 
@@ -631,11 +686,11 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   }
 
   const formatToPeso = (value) => {
-        return new Intl.NumberFormat('en-PH', {
-            style: 'currency',
-            currency: 'PHP',
-        }).format(value);
-    };
+    return new Intl.NumberFormat('en-PH', {
+        style: 'currency',
+        currency: 'PHP',
+    }).format(value);
+  };
 
   const formatNumberWithCommas = (value) => {
     if (!value) return "";
@@ -668,44 +723,56 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className='flex items-start gap-3 px-3'>
             {(permission?.data?.permission && permission?.data?.roleName === 'Funding' || user?.role === '4') && ( 
               <button type='button' 
-                onClick={() => setActiveTab('To Release')} 
-                className={`${activeTab === 'To Release' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                disabled={flag}>
-                To Release
-              </button>
-            )}
-            {(permission?.data?.permission && permission?.data?.roleName === 'Preparer' || user?.role === '3') && (
-              <button type='button' 
                 onClick={() => setActiveTab('To Payment')} 
                 className={`${activeTab === 'To Payment' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
                 disabled={flag}>
                 To Payment
               </button>
             )}
-            <button type='button' 
-              onClick={() => setActiveTab('GSIS')} 
-              className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-              disabled={flag}>
-                GSIS
-            </button>
-            <button type='button' 
-              onClick={() => setActiveTab('Meralco')} 
-              className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-              disabled={flag}>
-                Meralco
-            </button>
-            <button type='button' 
-              onClick={() => setActiveTab('Others')} 
-              className={`${activeTab === 'Others' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-              disabled={flag}>
-                Others
-            </button>
-            <button type='button' 
-              onClick={() => setActiveTab('Payroll')} 
-              className={`${activeTab === 'Payroll' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-              disabled={flag}>
-                Payroll
-            </button>
+            {(permission?.data?.permission && permission?.data?.roleName === 'Preparer' || user?.role === '3') && (
+              <button type='button' 
+                onClick={() => setActiveTab('To Release')} 
+                className={`${activeTab === 'To Release' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                disabled={flag}>
+                To Release
+              </button>
+            )}
+            {user?.role === '4' && (
+              <>
+                <button type='button' 
+                  onClick={() => setActiveTab('GSIS')} 
+                  className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                  disabled={flag}>
+                    GSIS
+                </button>
+                <button type='button' 
+                  onClick={() => setActiveTab('Meralco')} 
+                  className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                  disabled={flag}>
+                    Meralco
+                </button>
+                <button type='button' 
+                  onClick={() => setActiveTab('Others')} 
+                  className={`${activeTab === 'Others' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                  disabled={flag}>
+                    Others
+                </button>
+                <button type='button' 
+                  onClick={() => setActiveTab('Payroll')} 
+                  className={`${activeTab === 'Payroll' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                  disabled={flag}>
+                    Payroll
+                </button>
+              </>
+            )}
+            {user?.role === '3' && (
+              <button type='button' 
+                onClick={() => setActiveTab('BUR')} 
+                className={`${activeTab === 'BUR' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                disabled={flag}>
+                  BUR
+              </button>
+            )}
           </div>
           <hr />
         </div>
@@ -751,32 +818,67 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className="w-full h-auto mt-2">
             <div className='w-full relative'>
               <label className='text-gray-500'>Payee</label>
-              <input
-                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                disabled={ ['GSIS', 'Meralco'].includes(activeTab)}
-                type="text" 
-                pattern="^[a-zA-Z\s'-]+$"
-                value={ ['GSIS', 'Meralco'].includes(activeTab) ? activeTab : ['GSIS', 'Meralco'].includes(payeeData.payee) ? '' : payeeData.payee }
-                minLength="2" 
-                maxLength="50"
-                onChange={handleChangePayee}
-                required  />
-                {showDropdown && (
-                  <ul className="absolute text-gray-500 w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
-                    {filteredOptions.map((option, index) => (
-                      <li
-                        key={index}
-                        onClick={() => handleSelectPayee(option)}
-                        className="p-2 cursor-pointer hover:bg-gray-200"
-                      >
-                        {option.replace(/\|/g, ' ')}
-                      </li>
-                    ))}
-                  </ul>
+              {activeTab !== 'BUR' ? (
+                <>
+                  <input
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    disabled={['GSIS', 'Meralco'].includes(activeTab)}
+                    type="text"
+                    pattern="^[a-zA-Z\s'-]+$"
+                    value={['GSIS', 'Meralco'].includes(activeTab) ? activeTab : ['GSIS', 'Meralco'].includes(payeeData.payee) ? '' : payeeData.payee}
+                    minLength="2"
+                    maxLength="50"
+                    onChange={handleChangePayee}
+                    required
+                  />
+                  {showDropdown && (
+                    <ul className="absolute text-gray-500 w-full bg-white border border-gray-300 rounded mt-1 max-h-48 overflow-y-auto z-10">
+                      {filteredOptions.map((option, index) => (
+                        <li
+                          key={index}
+                          onClick={() => handleSelectPayee(option)}
+                          className="p-2 cursor-pointer hover:bg-gray-200"
+                        >
+                          {option.replace(/\|/g, ' ')}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
+                <select
+                  value={BURData.payee}
+                  onChange={(e) => setBURData({...BURData, payee: e.target.value})}
+                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                >
+                  <option value="" disabled>Select</option>
+                  <option value="Laguna-Rizal IMO">Laguna-Rizal IMO</option>
+                  <option value="Cavite-Batangas IMO">Cavite-Batangas IMO</option>
+                  <option value="Quezon IMO">Quezon IMO</option>
+                </select>
               )}
             </div>
             <div className='w-full flex flex-col sm:flex-row  gap-2'>
-              <div className='w-full sm:w-1/2 mt-2'>
+              {activeTab === 'BUR' ? (
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label>Address</label>
+                  <select 
+                    disabled
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    value={BURData.payee === 'Laguna-Rizal IMO' ? 'Pila, Laguna' :
+                      BURData.payee === 'Cavite-Batangas IMO' ? 'Naic, Cavite' :
+                      BURData.payee === 'Quezon IMO' ? 'Lucena, Quezon' :
+                      BURData.address || ''
+                    }
+                    onChange={(e) => setBURData({...BURData, address: e.target.value})}>
+                    <option value="" disabled>Select</option>
+                    <option value="Pila, Laguna">Pila, Laguna</option>
+                    <option value="Naic, Cavite">Naic, Cavite</option>
+                    <option value="Lucena, Quezon">Lucena City, Quezon</option>
+                  </select>
+                </div>
+              ) : 
+              (<div className='w-full sm:w-1/2 mt-2'>
                 <label className='text-gray-500'>Address</label>
                 {isOtherSelected ? (
                   <div className="flex items-center border-2 rounded-md px-2">
@@ -815,52 +917,86 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       ))}
                   </select>
                 )}
-              </div>
-              <div className='w-full sm:w-1/2 mt-2'>
-                <label className='text-gray-500'>TIN/Employee No.</label>
-                <input 
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  //disabled={isDisabled && !permission.data.permission}
-                  type="text" 
-                  value={payeeData.TIN}
-                  placeholder='123-456-789-000'
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    const numericValue = value.replace(/\D/g, "");
-                    const limitedValue = numericValue.slice(0, 12);
-                    const formattedValue = limitedValue.replace(/(\d{3})(?=\d)/g, "$1-");
-                    setPayeeData({...payeeData, TIN: formattedValue})
-                  }} 
-                  required  />
-              </div>
+              </div>)}
+              {activeTab !== 'BUR' ? (
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label className='text-gray-500'>TIN/Employee No.</label>
+                  <input 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    //disabled={isDisabled && !permission.data.permission}
+                    type="text" 
+                    value={payeeData.TIN}
+                    placeholder='123-456-789-000'
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numericValue = value.replace(/\D/g, "");
+                      const limitedValue = numericValue.slice(0, 12);
+                      const formattedValue = limitedValue.replace(/(\d{3})(?=\d)/g, "$1-");
+                      setPayeeData({...payeeData, TIN: formattedValue})
+                    }} 
+                    required  />
+                </div>
+                ) : (
+                  <div className='w-full sm:w-1/2 mt-2'>
+                    <label className='text-gray-500'>Office</label>
+                    <input 
+                      value={BURData.office}
+                      onChange={(e) => setBURData({...BURData, office: e.target.value})}
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      type="text" 
+                      required  />
+                  </div>
+              )}
             </div>
           </div>
           <h1 className="font-semibold text-lg mt-2 text-gray-500">Document/Transaction Information</h1>
           <div className="w-full h-auto flex flex-col py-2">
-            <div className='w-full flex flex-col sm:flex-row gap-2'>
-              <div className="flex flex-col w-full sm:w-4/6">
-                <label className='text-gray-500'>Fund Cluster</label>
-                <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
-                  value={payeeData.fund}
-                  //disabled={isDisabled && !permission.data.permission}
-                  required
-                  //value
-                >
-                  <option value="" disabled>Select</option>
-                  {fundCluster.length > 0 ? (
-                      fundCluster.map((fund, index) => (
-                          <option key={index} value={fund}>
-                              {fund === 'Contract Farming' ? 'Farming Support Service Program' : fund }
-                          </option>
-                      ))
-                  ) : (
-                      <option value="" disabled>
-                          No options available
-                      </option>
-                  )}
-                </select>
-              </div>
+            <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2'>
+              {activeTab !== 'BUR' ? (
+                <div className="flex flex-col w-full sm:w-4/6">
+                  <label className='text-gray-500'>Fund Cluster</label>
+                  <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
+                    value={payeeData.fund}
+                    //disabled={isDisabled && !permission.data.permission}
+                    required
+                    //value
+                  >
+                    <option value="" disabled>Select</option>
+                    {fundCluster.length > 0 ? (
+                        fundCluster.map((fund, index) => (
+                            <option key={index} value={fund}>
+                                {fund === 'Contract Farming' ? 'Farming Support Service Program' : fund }
+                            </option>
+                        ))
+                    ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                    )}
+                  </select>
+                </div>
+              ) : (
+                <div className="flex flex-col w-full sm:w-4/6">
+                  <label className='text-gray-500'>No.</label>
+                  <select
+                    value={BURData.No}
+                    onChange={(e) => setBURData({...BURData, No: e.target.value})}
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    required>
+                    <option value="" disabled>Select</option>
+                    {(Object.keys(ASANo)).map((item, index) => {
+                      const [ASA, fundCluster] = item.split('!')
+                      const [finalASA,] = ASA.split('|')
+                      const finalFundCluster = fundCluster.replace('501', '-')
+          
+                      return (
+                        <option key={index}>{`${finalASA} ${finalFundCluster}`}</option>
+                      )
+                    })}
+                  </select>
+                </div>
+              )}
               <div className="flex flex-col w-full sm:w-2/6">
                 <label className='text-gray-500'>Date</label>
                 <input 
@@ -878,20 +1014,32 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     />
               </div>
             </div>
-            <div className='w-full flex flex-col sm:flex-row gap-2'>
-              <div className='w-full sm:w-1/2 mt-2'>
-                <label className='text-gray-500'>DV No.</label>
-                <input 
-                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  type="text" 
-                  disabled={true}
-                  value={payeeData.DV}
-                  required  />
-              </div>
+            <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2 mt-2'>
+              {activeTab !== 'BUR' ? (
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label className='text-gray-500'>DV No.</label>
+                  <input 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    type="text" 
+                    disabled={true}
+                    value={payeeData.DV}
+                    required  />
+                </div>
+              ) : (
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label className='text-gray-500'>GAA</label>
+                  <input 
+                    value={BURData.GAA}
+                    onChange={(e) => setBURData({...BURData, GAA: e.target.value})}
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    type="text" 
+                    required  />
+                </div>
+              )}
               <div className="flex flex-col w-full sm:w-1/2 mt-2">
                 <label>Responsibility Center</label>
                 <select  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                  onChange={(e) => {setPayeeData({...payeeData, RC: e.target.value})}}
+                  onChange={(e) => setPayeeData({...payeeData, RC: e.target.value})}
                   value={payeeData.RC}
                   //disabled={isDisabled && !permission.data.permission}
                   required
@@ -911,7 +1059,63 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 </select>
               </div>
             </div>
-            <div className='w-full h-auto mt-2'>
+            {activeTab === 'BUR' && (
+              <> 
+                <div className='w-full flex flex-col sm:flex-row gap-2 mt-2'>
+                  <div className='w-full sm:w-1/2'>
+                    <label htmlFor="">MFO/PAP</label>
+                    <input 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      value={BURData.MFOPAP}
+                      onChange={(e) => setBURData({...BURData, MFOPAP: e.target.value})}
+                      type="text"
+                      />
+                  </div>
+                  <div className='w-full sm:w-1/2'>
+                    <label htmlFor="">UACS Code</label>
+                    <input 
+                      className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      value={BURData.uacsCode}
+                      onChange={(e) => setBURData({...BURData, uacsCode: e.target.value })}
+                      type="text"
+                      />
+                  </div>
+                </div>
+                <div className='w-full'>
+                  {BURAmount.map((item, index) => (
+                    <div key={index} className='w-full flex flex-col sm:flex-row items-end justify-center gap-2'>
+                      <div className='w-1/2 flex flex-col'>
+                        <label>Title</label>
+                        <input 
+                          value={item.title} 
+                          onChange={(e) => handleFieldChangeBUR(index, 'title', e.target.value)}
+                          type="text"
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`} />
+                      </div>
+                      <div className='w-1/2 flex flex-col'>
+                        <label>Amount</label>
+                        <input 
+                          value={item.amount} 
+                          onChange={(e) => handleFieldChangeBUR(index, 'amount', e.target.value)}
+                          type="text"
+                          className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`} />
+                      </div>
+                      <button
+                        className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} w-fit h-fit p-2 rounded-full text-xl ${
+                          index !== formFields.length - 1 ? 'hover:bg-red-700' : 'hover:bg-customgreen'
+                        } hover:text-white`}
+                        onClick={() => handleButtonClickBUR(index)}
+                        type="button"
+                      >
+                        {index === formFields.length - 1 ? <IoAdd /> : <MdRemove />}
+                      </button>
+                    </div>
+                  )) }
+                </div>
+              </>
+            )}
+            {activeTab !== 'BUR' && (
+              <div className='w-full h-auto mt-2'>
                 <label className='text-gray-500'>Mode of Payment</label>
                 <div className='w-full h-auto flex flex-col sm:flex-row itens-start sm:items-center justify-center  gap-3 p-2'>
                   <div className='w-auto flex gap-2'>
@@ -966,45 +1170,70 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                     </div>
                   </div>
                 </div>
-            </div>
+              </div>
+            )}
             <div className='w-full h-auto'>
-              <div className='w-full flex flex-col lg:flex-row gap-2'>
-                <div className="flex flex-col w-full lg:w-3/5">
-                  <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Certified by</label>
-                  <labe0l className="text-gray-500">Name</labe0l>
-                  <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    onChange={(e) => {
-                      const selectedOption = e.target.options[e.target.selectedIndex];
-                      setPayeeData({...payeeData, NF_name: e.target.value, NF_office: selectedOption.getAttribute('office')})
-                    }}
-                    value={payeeData.NF_name}
-                    //disabled={isDisabled && !permission.data.permission}
-                    required
-                  >
-                    <option value="" disabled>Select</option>
-                    {Object.entries(nameOffice).length > 0 ? (
-                        Object.entries(nameOffice).map(([key, value]) => (
-                            <option key={key} value={value[0]} office={value[1]}>
-                                {value[0]}
-                            </option>
-                        ))
-                    ) : (
-                      <option value="" disabled>
-                          No options available
-                      </option>
-                    )}
-                  </select>
-                </div>
-                <div className='w-full lg:w-2/5 flex items-end'>
-                  <div className='flex flex-col items-start justify-center'>
-                    <label className=' text-gray-500'>Office</label>
-                    <label className='w-full px-4 py-2 border-2 border-white text-gray-500'>{payeeData.NF_office ? payeeData.NF_office : 'None'}</label>
+              <div className='w-full flex flex-col gap-2'>
+                <div className="w-full flex flex-row gap-2">
+                  <div className='w-1/2 flex flex-col'>
+                    <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">A. Certified by</label>
+                    <label className="text-gray-500">Name</label>
+                    <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      onChange={(e) => {
+                        const selectedOption = e.target.options[e.target.selectedIndex];
+                        setPayeeData({...payeeData, NF_name: e.target.value, NF_office: selectedOption.getAttribute('office')})
+                      }}
+                      value={payeeData.NF_name}
+                      //disabled={isDisabled && !permission.data.permission}
+                      required
+                    >
+                      <option value="" disabled>Select</option>
+                      {Object.entries(nameOffice).length > 0 ? (
+                          Object.entries(nameOffice).map(([key, value]) => (
+                              <option key={key} value={value[0]} office={value[1]}>
+                                  {value[0]}
+                              </option>
+                          ))
+                      ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                  <div className='w-1/2 flex items-end'>
+                    <div className='w-full flex flex-col items-start justify-center'>
+                      <label className='font-medium text-gray-500'>Position</label>
+                      <label className='w-full px-4 py-2 text-gray-500'>{payeeData.NF_office ? payeeData.NF_office : 'None'}</label>
+                    </div>
                   </div>
                 </div>
+                {activeTab === 'BUR' && (
+                  <div className="flex flex-row w-full gap-2">
+                    <div className='w-1/2 flex flex-col'>
+                      <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">B. Certified by</label>
+                      <label className="text-gray-500">Name</label>
+                      <select 
+                        value={BURData.NFNameB}
+                        onChange={(e) => setBURData({...BURData, NFNameB: e.target.value.split('|')[0], NFOfficeB: e.target.value.split('|')[1]})}
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      >
+                        <option value="" disabled>Select</option>
+                        <option value="Adelia I. Lopez|Financial Planning Specialist B">Adelia I. Lopez</option>
+                      </select>
+                    </div>
+                    <div className='w-1/2 flex items-end'>
+                      <div className='w-full flex flex-col items-start justify-center'>
+                        <label className='font-medium text-gray-500'>Position</label>
+                        <label className='w-full px-4 py-2 text-gray-500'>{BURData.NFOfficeB ? BURData.NFOfficeB : 'None'}</label>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          {(activeTab === 'To Release' || activeTab === 'Others') && (
+          {(activeTab === 'To Payment' || activeTab === 'Others') && (
             <div className='w-full h-auto'>
               <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
               <div className="w-full h-auto flex flex-col mt-2">
@@ -1156,7 +1385,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                               handleFieldChange(index, 'labels', e.target.value)
                             }} 
                             className={`${
-                              user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                              user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                             } text-gray-500 w-full px-4 py-2 rounded-md border-2`}/>
                         </div>
                       </div>
@@ -1166,7 +1395,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           <input
                             disabled
                             className={`${
-                              user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                              user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                             } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                             type="text"
                             value={formFields[index].accCode}
@@ -1179,7 +1408,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                             <div className='flex items-center justify-center'>
                               <input
                                 className={`${
-                                  user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
+                                  user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                                 } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                                 type="number"
                                 //disabled={(isDisabled && !permission.data.permission) || optionalAmount}
@@ -1339,19 +1568,23 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 maxLength="500"
               />
             </div>
-            <h1 className="font-semibold text-lg mt-2 text-gray-500">BIR Information</h1>
-            <div className='w-full h-auto mt-2'>
-              <label className='text-gray-500'>Particulars</label>
-              <textarea 
-                className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
-                onChange={(e) => {setBirData({...birData, birParticular: e.target.value.trimStart()})}}
-                value={birData.birParticular}
-                //disabled={isDisabled && !permission.data.permission}
-                placeholder='Write details here...'
-                required
-                maxLength="500"
-              />
-            </div>
+            {activeTab !== 'BUR' && (
+              <>
+                <h1 className="font-semibold text-lg mt-2 text-gray-500">BIR Information</h1>
+                <div className='w-full h-auto mt-2'>
+                  <label className='text-gray-500'>Particulars</label>
+                  <textarea 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 resize-none h-40 rounded-md border-2`}
+                    onChange={(e) => {setBirData({...birData, birParticular: e.target.value.trimStart()})}}
+                    value={birData.birParticular}
+                    //disabled={isDisabled && !permission.data.permission}
+                    placeholder='Write details here...'
+                    required
+                    maxLength="500"
+                  />
+                </div>
+              </>
+            )}
           </div>          
         </div>
         )}
