@@ -31,11 +31,11 @@ const AddControlBook = (props) => {
         }
     }, [controlBook, flag])
 
-    const handleFocus = () => {
-        if (controlBookData.TotalASA === 0) {
-            setControlBookData({...controlBookData, TotalASA: ''});
-        }
-    };
+    // const handleFocus = () => {
+    //     if (controlBookData.TotalASA === 0) {
+    //         setControlBookData({...controlBookData, TotalASA: ''});
+    //     }
+    // };
 
     useEffect(() => {
         const totalAsa = parseFloat(controlBookData.TotalASA)
@@ -101,7 +101,7 @@ const AddControlBook = (props) => {
         const data = {
             data: controlBookData
         }
-        
+        console.log(data)
         if(errorFlag) {
             Swal.fire({
                 title: "Error",
@@ -129,6 +129,24 @@ const AddControlBook = (props) => {
             }
         }
     }
+
+    const formatNumberWithCommas = (value) => {
+        if (!value) return "";
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
+
+    const handleAmountChange = (e) => {
+        let value = e.target.value.replace(/,/g, "");
+    
+        if (value === "") {
+            setControlBookData({...controlBookData, TotalASA: ''})
+            return;
+        }
+    
+        if (!isNaN(value)) {
+            setControlBookData({...controlBookData, TotalASA: value})
+        }
+    };
 
   return (
     <form onSubmit={flag ? handleUpdate : handleSumit} className="w-full sm:w-2/5 h-auto p-3 bg-white rounded-lg text-gray-500">
@@ -181,10 +199,12 @@ const AddControlBook = (props) => {
                     <label className="font-semibold">Total ASA</label>
                     <input 
                         disabled={flag}
-                        type="number"
-                        value={controlBookData.TotalASA}
-                        onFocus={handleFocus}
-                        onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
+                        type="text"
+                        // value={controlBookData.TotalASA}
+                        value={formatNumberWithCommas(controlBookData.TotalASA)}
+                        // onFocus={handleFocus}
+                        // onChange={(e) => setControlBookData({...controlBookData, TotalASA: e.target.value})}
+                        onChange={handleAmountChange}
                         required
                         className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>

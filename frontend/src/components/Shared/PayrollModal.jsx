@@ -12,6 +12,7 @@ const PayrollModal = ({modal, log = {}}) => {
     const [selectedKey, setSelectedKey] = useState("");
     const [selectedProject, setSelectedProject] = useState({projectName: '', projectID: ''});
     const {add_ASA_cashFO} = useFundingHook()
+    const [disable, setDisable] = useState(false)
 
     useEffect(() => {
         const ref = doc(firestore, "formData","forPayrolls");
@@ -29,6 +30,7 @@ const PayrollModal = ({modal, log = {}}) => {
     
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setDisable(true)
     const data = {
         project: selectedProject,
         amount: log[1].amount,
@@ -50,11 +52,14 @@ const PayrollModal = ({modal, log = {}}) => {
                 value={selectedKey}
             >
                 <option value="" disabled>Select an option</option>
-                {keys.map((key) => (
-                    <option key={key} value={key}>
-                        {key}
-                    </option>
-                ))}
+                {keys.map((key) => {
+                    const displayText = key?.split('!')[0]?.replaceAll('|', ' ') || key;
+                    return (
+                        <option key={key} value={key}>
+                            {displayText}
+                        </option>
+                    );
+                })}
             </select>
             
                 
@@ -86,8 +91,8 @@ const PayrollModal = ({modal, log = {}}) => {
                 onClick={modal}
                 className='px-5 py-2 rounded-lg border-2 font-semibold'>Back</button>
             <button
-                
                 type="submit" 
+                disabled={disable}
                 className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} px-5 py-2 rounded-lg text-white`} >Save</button>
         </div>
     </form>

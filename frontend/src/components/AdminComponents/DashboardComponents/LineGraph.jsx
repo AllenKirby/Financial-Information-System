@@ -61,11 +61,6 @@ const LineGraph = ({ chartData, customYear }) => {
         }
     });
 
-
-    useEffect(() => {
-
-    }, [])
-
     useEffect(() => {
         dispatch(setExpense(chartData))
         const getXAxis = () => (chartData[year] ? Object.keys(chartData[year]) : []);

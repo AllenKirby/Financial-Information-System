@@ -81,7 +81,7 @@ const ViewProject = (props) => {
                     <tr key={key} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
                       <td className="text-center">{DV.date}</td>
                       <td className="text-center">{DV.orsData}</td>
-                      <td className="text-center">{DV.date}</td>
+                      <td className="text-center">{DV.fundedOn || '--'}</td>
                       <td className="text-center">{DV.DVNoCount[DV.DVNoCount.length-1]}</td>
                       <td className="text-center break-words">{DV.payee}</td>
                       <td className="text-center break-words">{DV.particulars}</td>

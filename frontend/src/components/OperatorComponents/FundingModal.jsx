@@ -41,22 +41,25 @@ const FundingModal = ({modal, data, fundCluster}) => {
             setBUR(primaryBUR)
             setOrigBUR(origBur)
             const unsubscribe = await retrieveProjectName(setASANo)
+
+            if(Boolean(data)){
+                console.log('update this')
+                getPrevBudget()
+                await getData()
+            }
+
             return () => unsubscribe()
         }
         fetch()
-
         
     }, [])
 
-    useEffect(() => {
-        const getData = async() => {
-            setOperatorInput({
-                asa: await data.ASA,
-                ors: await data.ORSBURS,
-            });
-        }
-        getData()
-    }, [data])
+    const getData = async() => {
+        setOperatorInput({
+            asa: await data.ASA,
+            ors: await data.ORSBURS,
+        });
+    }
 
     useEffect(() => {
         console.log(ASANo)
@@ -97,14 +100,14 @@ const FundingModal = ({modal, data, fundCluster}) => {
             // controlBooks: CBAmount,
             update: needUpdate
         }
-        console.log(fundingData)
-        let res;
+        const neededAmount = parseFloat(data.amount)
+        let res = true;
         if(isToggled){
             console.log("with bur")
-            res = await updateASA_ORS(fundingData, DVNo)
+            res = neededAmount != budget ? false : await updateASA_ORS(fundingData, DVNo)
         }else{
             console.log("without bur")
-            res = await updateCASH(fundingData, DVNo)
+            res = neededAmount != budget ? false : await updateCASH(fundingData, DVNo)
         }
         
         if(res){
@@ -138,10 +141,11 @@ const FundingModal = ({modal, data, fundCluster}) => {
         }
     }
 
-    useEffect(() => {
-        const newBudget = data?.ASA ? Object.values(data?.ASA).reduce((acc, val) => acc + val, 0) : 0
+    const getPrevBudget = () => {
+        const newBudget = data.ASA ? Object.values(data.ASA).reduce((acc, val) => acc + val, 0) : 0
+        console.log(newBudget)
         setBudget(newBudget)
-    }, [data])
+    }
 
 
     
@@ -227,7 +231,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
     //pending
     const handleChangeBoxAmountCASH = (checked, key, projectID, amount, projectName) => {
         console.log(`${key}/${projectID}`)
-        const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
+        // const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
+        const exactAmount = amount - (amount + budget - parseFloat(data.amount))
         if (checked) {
 
             if(exactAmount <= 0){
@@ -468,8 +473,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                             }}
                                                             checked={Boolean(operatorInput.asa?.[`${key}/${projectID}`])}
                                                             disabled={
-                                                                !Boolean(operatorInput.asa?.[`${key}/${projectID}`]) && 
-                                                                Object.values(operatorInput.asa || {}).reduce((val, item) => val + item, 0) >= parseFloat(data.amount)
+                                                                // !Boolean(operatorInput.asa?.[`${key}/${projectID}`])
+                                                                false
                                                             }
                                                             
                                                         />
@@ -479,10 +484,10 @@ const FundingModal = ({modal, data, fundCluster}) => {
                                                             {project.tabStatus && (
                                                                 <span className="text-sm bg-teal-700 rounded text-white px-2">{project.tabStatus}</span>
                                                             )}
-                                                            <span>:</span>
+                                                            {/* <span>:</span>
                                                             <span className="font-semibold">
                                                                 {project.cash ? formatToPeso(project.cash) : formatToPeso(0)}
-                                                            </span>
+                                                            </span> */}
                                                             
                                                         </span>
                                                     </label>

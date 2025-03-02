@@ -13,7 +13,8 @@ const {
     getUsers,
     setNotification,
     addComments
-  } = require('./MultiAccess/Functions')
+  } = require('./MultiAccess/Functions');
+const { merge } = require('../routes/AdminRoutes');
 
 const getAllLogs = async(req, res) => {
   try{
@@ -347,6 +348,8 @@ const approveDV = async(req, res) => {
   const dateTimeCollection = getDateTime();
   const logs = `${payee}!${DV}!Approved By ${dispName}!${dateTimeCollection}!Approved`
 
+  console.log(req.body.data)
+
   try{
     const docRef = db.collection('records').doc(DV);
     
@@ -362,11 +365,46 @@ const approveDV = async(req, res) => {
     await setHistoryLogs(dateTimeCollection, logs)
     await addOnClusterAmount(amount, fund, date)
     await addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
+    await addYearlyAmount(date, fund, amount)
     
     res.status(200).json({message: 'Document Approved Successfully'})
   }catch(error){
     console.log('Error Approving Document',error)
     res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const addYearlyAmount = async(dateString, fund, amount) => {
+
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const field = `${year}-${month}`;
+
+  const clusterMapping = {
+    "501 COB": "COB",
+    "501 LFP": "LFP",
+    "501 CARP": "CARP",
+    "Contract Farming": "CF"
+  };
+
+  const cluster_mapped = clusterMapping[fund]
+
+
+  const ref = db.collection("YearlyRecords").doc(String(year))
+
+  try{
+    await ref.set(
+      {
+        [field]: {
+          [cluster_mapped]: amount
+        }
+      },
+      {merge: true}
+    )
+    console.log(`Successfully updated ${field} for ${cluster}.`);
+  }catch(err){
+    console.log(err, 'error on adding yearlt amount')
   }
 }
 

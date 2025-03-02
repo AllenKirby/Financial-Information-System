@@ -8,7 +8,7 @@ import { useFundingHook } from '../../hooks/useFundingHook'
 import { useAuthContext } from '../../hooks/useAuthContext'
 
 const AddNewFieldOffice = (props) => {
-    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], cbFO = 0, test, Cluster, Items, Choice} = props
+    const {modal, ASANo, fieldOffice = {}, flag, fieldOfficeID = '', remainingASA = 0, tabs = [{}], cbFO = 0, test, Cluster, Items, Choice, IMO_budget = 0} = props
 
     const [fieldOfficeData, setFieldOfficeData] = useState({projectName: '', fieldOffice: '', ASA: 0, tabStatus: '', tabAmount: 0, cash: 0})
     const [errorFlag, setErrorFlag] = useState(false)
@@ -78,7 +78,16 @@ const AddNewFieldOffice = (props) => {
     }, [fieldOffice])
 
     const handleLimitASA = (e) => {
-        const value = e.target.value
+        const raw_value = e.target.value.replace(/,/g, "");
+        const value = parseFloat(raw_value)
+
+        if (raw_value === "") {
+            flag ? setCurrASA("") : setFieldOfficeData({...fieldOfficeData, ASA: ""});
+            return;
+        }
+
+        if (isNaN(value)) return;
+
         if(flag){
             const title = fieldOfficeData.tabStatus
             const usedAmount = parseFloat(usedAmountPerTab[title])
@@ -90,6 +99,7 @@ const AddNewFieldOffice = (props) => {
             // limit = totalAmount - avaialable
             const available = usedAmount - parseFloat(recordedASA)
             const limit = totalAmount - available
+            console.log(value, limit)
             if(value > limit){
                 setErrorFlag(true)
             }else{
@@ -103,7 +113,7 @@ const AddNewFieldOffice = (props) => {
             const usedAmount = parseFloat(usedAmountPerTab[title] || 0)
             const unused = totalAmount - usedAmount
 
-            const remaining = parseFloat(remainingASA)
+            const remaining = parseFloat(remainingASA) - parseFloat(IMO_budget)
 
             if(Cluster === '501 COB'){
                 console.log(`${value} > ${remaining} `,value > remaining)
@@ -123,10 +133,10 @@ const AddNewFieldOffice = (props) => {
         }
     }
 
-    const handleCash = (e) => {
-        const value = parseFloat(e.target.value)
-        setFieldOfficeData({...fieldOfficeData, cash: value})
-    }
+    // const handleCash = (e) => {
+    //     const value = parseFloat(e.target.value)
+    //     setFieldOfficeData({...fieldOfficeData, cash: value})
+    // }
 
     const handleFocus = () => {
         if (fieldOfficeData.ASA === 0) {
@@ -134,11 +144,11 @@ const AddNewFieldOffice = (props) => {
         }
     };
 
-    const handleFocusCash = () => {
-        if (fieldOfficeData.ASA === 0) {
-            setFieldOfficeData({...fieldOfficeData, cash: ''});
-        }
-    };
+    // const handleFocusCash = () => {
+    //     if (fieldOfficeData.ASA === 0) {
+    //         setFieldOfficeData({...fieldOfficeData, cash: ''});
+    //     }
+    // };
 
     const handleData = () => {
         const data = {
@@ -256,6 +266,27 @@ const AddNewFieldOffice = (props) => {
         }
     }
 
+    const formatNumberWithCommas = (value) => {
+        if (!value) return "";
+        console.log(flag)
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      };
+    
+    const handleAmountChange = (e) => {
+        let value = e.target.value.replace(/,/g, "");
+
+        if (value === "") {
+            setFieldOfficeData({...fieldOfficeData, cash: ''})
+            return;
+        }
+
+        if (!isNaN(value)) {
+            setFieldOfficeData({...fieldOfficeData, cash: value})
+        }
+    };
+
+    
+
   return (
     <form onClick={(e) => e.stopPropagation()} onSubmit={flag ? handleUpdate : handleSubmit} className="w-3/4 md:w-2/4 lg:w-1/4 h-auto bg-white p-3 rounded-lg">
         <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>{flag ? 'Edit Project' : 'Add Project'}</h1>
@@ -318,11 +349,16 @@ const AddNewFieldOffice = (props) => {
             <div className="w-full mt-2">
                 <label>ASA amount</label>
                 <input 
-                    disabled={flag ? false : Cluster === '501 COB' ? false : allowInput}
-                    type="number" 
-                    value={flag ? currASA : fieldOfficeData.ASA}
-                    onFocus={handleFocus}
-                    onChange={(e) => handleLimitASA(e)} 
+                    // disabled={flag ? false : Cluster === '501 COB' ? false : allowInput}
+                    disabled={flag}
+                    type="text" 
+                    // value={flag ? currASA : fieldOfficeData.ASA}
+                    // value={flag ? formatNumberWithCommas(currASA) : formatNumberWithCommas(fieldOfficeData.ASA)}
+                    value={flag ? formatNumberWithCommas(currASA) : formatNumberWithCommas(fieldOfficeData.ASA)}
+                    // onFocus={handleFocus}
+                    // onChange={(e) => handleLimitASA(e)} 
+                    onChange={handleLimitASA}
+                    placeholder='0'
                     className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     required />
             </div>
@@ -333,10 +369,13 @@ const AddNewFieldOffice = (props) => {
                 <label>Cash amount</label>
                 <input 
                     disabled={flag ? false : Cluster === '501 COB' ? false : allowInput}
-                    type="number" 
-                    value={fieldOfficeData.cash}
-                    onFocus={handleFocusCash}
-                    onChange={(e) => handleCash(e)} 
+                    type="text" 
+                    // value={fieldOfficeData.cash}
+                    value={formatNumberWithCommas(fieldOfficeData.cash)}
+                    // onFocus={handleFocusCash}
+                    // onChange={(e) => handleCash(e)} 
+                    onChange={handleAmountChange}
+                    placeholder='0'
                     className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}
                     required />
             </div>

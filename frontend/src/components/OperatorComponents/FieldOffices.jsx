@@ -115,7 +115,7 @@ const FieldOffices = (props) => {
   const [beginning, setBegin] = useState(0)
   const [disbursed, setDisbursed] = useState(0)
   useEffect(() => {
-    const disbursedBeginning = parseFloat(fieldOffice.cash||0) - parseFloat(fieldOffice.FO)
+    const disbursedBeginning = parseFloat(fieldOffice.cash||0) - (parseFloat(fieldOffice.FO) + parseFloat(fieldOffice.cashFO))
     setBegin(disbursedBeginning)
     const disbursedTotal = parseFloat(fieldOffice.cashFO || 0) + parseFloat(fieldOffice.FO)
     setDisbursed(disbursedTotal)

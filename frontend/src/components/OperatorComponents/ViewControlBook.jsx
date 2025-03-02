@@ -127,23 +127,23 @@ const ViewControlBook = () => {
     }
   }
 
-  // const formatNumberWithCommas = (value) => {
-  //   if (!value) return "";
-  //   return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  // };
+  const formatNumberWithCommas = (value) => {
+    if (!value) return "";
+    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
-  // const handleAmountChange = (e) => {
-  //   let value = e.target.value.replace(/,/g, "");
+  const handleAmountChange = (e) => {
+    let value = e.target.value.replace(/,/g, "");
 
-  //   if (value === "") {
-  //     setIMO('0');
-  //     return;
-  //   }
+    if (value === "") {
+      setIMO('0');
+      return;
+    }
 
-  //   if (!isNaN(value)) {
-  //     setIMO(value);
-  //   }
-  // };
+    if (!isNaN(value)) {
+      setIMO(value);
+    }
+  };
 
   const [RO_balance, setRO] = useState(0)
   useEffect(() => {
@@ -208,10 +208,10 @@ const ViewControlBook = () => {
                       <input
                         type="text"
                         className={`${user?.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} font-semibold lg:text-2xl 2xl:text-3xl bg-transparent border-none outline-none text-center`}
-                        // value={formatNumberWithCommas(IMO)}
-                        // onChange={handleAmountChange}
-                        value={IMO}
-                        onChange={(e) => setIMO(e.target.value)}
+                        value={formatNumberWithCommas(IMO)}
+                        onChange={handleAmountChange}
+                        // value={IMO}
+                        // onChange={(e) => setIMO(e.target.value)}
                         readOnly={editIMO}
                       />
                     </div>
@@ -339,7 +339,7 @@ const ViewControlBook = () => {
               <>
                 <div className="fixed inset-0 z-20 bg-black opacity-50"/>
                 <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices} Cluster={cluster} Items={ControlBook.data.items} Choice={choice}/>
+                  <AddNewFieldOffice modal={modal} ASANo={ControlBook.key} flag={false} remainingASA={ControlBook.data.leftBudget} tabs={ControlBook.data.tabs} cbFO={ControlBook.data.FO} test={fieldoffices} Cluster={cluster} Items={ControlBook.data.items} Choice={choice} IMO_budget={ControlBook.data.IMO_budget}/>
                 </div>
               </>
             )}
