@@ -80,6 +80,7 @@ const updateASAORS = async (req, res) => {
         const year = new Date().getFullYear();
         const month = new Date().getMonth() + 1
         const dateTimeCollection = getDateTime()
+        const fund = req.body.fund
 
 
         //handle control books new amount per control book
@@ -152,7 +153,7 @@ const updateASAORS = async (req, res) => {
         let finalORS = ''
         const dvData = {ASA: asa}
         if(!needBUR){ 
-            const ORS = await getOrigNumberOfCopiesBUR(ors)
+            const ORS = await getOrigNumberOfCopiesBUR(ors, fund)
             finalORS = `501-${year}-${month}-${ORS}`
             dvData.ORSBURS = finalORS
         }
@@ -580,11 +581,32 @@ const batch_handlefieldOffices_cash = async (updates, DVNoCount, fieldOfficeData
 const getBUR = async(req, res) => {
     try{
         const year = new Date().getFullYear()
-        const docRef = db.collection('NumberOfRecords').doc(year.toString())
+        const docRef = db.collection('NumOfRecords').doc(year.toString())
         const doc = await docRef.get()
+        const fund = req.query.fund
+        console.log(fund)
+        const field_mapping = {
+            "501 COB": "COB_BUR",
+            "501 LFP": "LFP_BUR",
+            "501 CARP": "CARP_BUR",
+            "Contract Farming": "CF_BUR"
+        };
+
+        if (!field_mapping[fund]) {
+            return res.status(400).json({ error: "Invalid fund type" });
+        }
+
+        const field = field_mapping[fund]
+
         if(doc.exists){
             const data = doc.data()
-            const value = data['BURno']
+
+            if (!data.BUR || !data.BUR[field]) {
+                return res.status(404).json({ error: "BUR field not found" });
+            }
+
+            const value = data.BUR[field]
+            console.log(value)
             res.status(200).json({currentBUR: value})
         }else{
             const data = {
@@ -592,7 +614,12 @@ const getBUR = async(req, res) => {
                 DVno501COB: '0000',
                 DVno501LFP: '0000',
                 DVnoContractFarming: '0000',
-                BURno: '0000'
+                BUR: {
+                    CARP_BUR: '0000',
+                    CF_BUR: '0000',
+                    COB_BUR: '0000',
+                    LFP_BUR: '0000'
+                }
             }
             await docRef.set(data);
             return res.status(200).json({currentBUR: '0000'})
@@ -1687,19 +1714,29 @@ const add_ASA_cashFO = async(req, res) =>{
     }
 }
 
-const getOrigNumberOfCopiesBUR = async(givenNo) => {
+const getOrigNumberOfCopiesBUR = async(givenNo, fund) => {
     try{
         const today = new Date();
         const year = today.getFullYear();
-        const docRef = db.collection('NumberOfRecords').doc(year.toString());
+        const docRef = db.collection('NumOfRecords').doc(year.toString());
         
         return await db.runTransaction(async (transaction) => {
             const doc = await transaction.get(docRef)
             if(!doc.exists){
                 throw new Error('Document does not exist!')
             }
+
+            const field_mapping = {
+                "501 COB": "COB_BUR",
+                "501 LFP": "LFP_BUR",
+                "501 CARP": "CARP_BUR",
+                "Contract Farming": "CF_BUR"
+            };
+
+            const field = field_mapping[fund]
+
             const data = doc.data()
-            const currentNoBUR = data['BURno'] || givenNo
+            const currentNoBUR = data.BUR[field] || givenNo
 
             let incrementedByOne;
             if(currentNoBUR === givenNo){
@@ -1711,7 +1748,7 @@ const getOrigNumberOfCopiesBUR = async(givenNo) => {
             }
 
             transaction.update(docRef, {
-                ['BURno'] : incrementedByOne
+                [`BUR.${field}`] : incrementedByOne
             });
 
             return incrementedByOne

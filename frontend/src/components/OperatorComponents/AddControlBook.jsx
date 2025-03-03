@@ -153,7 +153,7 @@ const AddControlBook = (props) => {
         <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>Add Control Book</h1>
         <div className="w-full h-auto p-3">
             <div className=''>
-                <label className="font-semibold">ASA No.</label>
+                <label className="font-semibold">ASA No. *</label>
                     <input 
                         disabled={flag}
                         type="text"
@@ -165,16 +165,16 @@ const AddControlBook = (props) => {
             </div>
             <div className="flex w-full h-auto gap-2 mt-2">
                 <div className="w-1/2 flex flex-col">
-                    <label className="font-semibold">Date of ASA</label>
+                    <label className="font-semibold">Date of ASA *</label>
                         <input 
                             type="date"
                             value={controlBookData.date}
                             onChange={(e) => setControlBookData({...controlBookData, date: e.target.value})}
                             required
-                            max={new Date().toISOString().split("T")[0]}
+                            // max={new Date().toISOString().split("T")[0]}
                             className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
-                <div className="w-1/2 flex flex-col">
+                {/* <div className="w-1/2 flex flex-col">
                     <label className="font-semibold">End of ASA</label>
                     <input 
                         type="date"
@@ -182,6 +182,14 @@ const AddControlBook = (props) => {
                         onChange={(e) => setControlBookData({...controlBookData, endDate: e.target.value})}
                         required
                         min={new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split("T")[0]}
+                        className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
+                </div> */}
+                <div className="w-1/2 flex flex-col">
+                    <label className="font-semibold">GAA</label>
+                    <input 
+                        type="text"
+                        // value={controlBookData.endDate}
+                        // onChange={(e) => setControlBookData({...controlBookData, endDate: e.target.value})}
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
             </div>
@@ -192,11 +200,11 @@ const AddControlBook = (props) => {
                         type="text"
                         value={controlBookData.SARONo}
                         onChange={(e) => setControlBookData({...controlBookData, SARONo: e.target.value.trimStart()})}
-                        required
+                        
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
                 <div className="w-1/3 flex flex-col mt-2">
-                    <label className="font-semibold">Total ASA</label>
+                    <label className="font-semibold">Total ASA *</label>
                     <input 
                         disabled={flag}
                         type="text"
@@ -209,7 +217,7 @@ const AddControlBook = (props) => {
                         className={`${errorFlag ? 'focus:outline-red-500' : ''} ${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
                 <div className="w-1/3 flex flex-col mt-2">
-                    <label className="font-semibold">Fund Cluster</label>
+                    <label className="font-semibold">Fund Cluster *</label>
                     <select
                         disabled={flag} 
                         value={controlBookData.fundCluster}
@@ -228,7 +236,7 @@ const AddControlBook = (props) => {
                 <p className='text-red-500 text-sm mt-2 text-right'>The input exceeds the remaining available ASA</p>
             )}
             <div className="w-full flex flex-col mt-2">
-                <label className="font-semibold">Description</label>
+                <label className="font-semibold">Description *</label>
                 <textarea
                     disabled={flag} 
                     value={controlBookData.description}
