@@ -10,14 +10,15 @@ const CertifiedModal = ({modal, data}) => {
 
     useEffect(() => {
         setCertified({
-            cashAvailable: data.cashAvailable,
-            debitAccount: data.debitAccount,
-            supportingDocuments: data.supportingDocuments
+            cashAvailable: data.cashAvailable ? data.cashAvailable : false,
+            debitAccount: data.debitAccount ? data.debitAccount : false,
+            supportingDocuments: data.supportingDocuments ? data.supportingDocuments : false
         })
-    }, [])
+    }, [data])
 
     const handleSubmit = async(e) => {
         e.preventDefault()
+        console.log(certified)
         const res = await addCertified(certified, data.DVKey)
 
         if(res){

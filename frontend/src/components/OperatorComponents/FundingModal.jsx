@@ -103,7 +103,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
         const neededAmount = parseFloat(data.amount)
         let res = true;
         if(isToggled){
-            console.log("with bur")
             res = neededAmount != budget ? false : await updateASA_ORS(fundingData, DVNo)
         }else{
             console.log("without bur")

@@ -104,7 +104,7 @@ const DVTemplate = ({document}) => {
             <h1 className='text-lg 2xl:text-xl font-semibold'>Financial Details</h1>
           </div>
           {
-            document?.activeTab === 'To Release' && (
+            document?.activeTab === 'To Payment' && (
               <div className='py-1 flex flex-col px-2 text-sm sm:text-base 2xl:text-lg'>
                 <div className='w-full h-auto flex items-center justify-center'>
                   <p className='text-gray-500 w-2/5'>Amount</p>
@@ -305,7 +305,7 @@ const DVTemplate = ({document}) => {
             <div className='w-full h-auto flex items-start justify-center'>
               <p className='text-gray-500 w-2/5'>Amount Due</p>
               {
-                document?.activeTab === 'To Release' && (
+                document?.activeTab === 'To Payment' && (
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatTotal_val)}`}</p>
                 )
               }
