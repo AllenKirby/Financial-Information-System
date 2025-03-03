@@ -6,7 +6,7 @@ const getNumberOfCopies = async (req, res) => {
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
         const day = today.getDate();
-        const docRef = db.collection('NumberOfRecords').doc(year.toString());
+        const docRef = db.collection('NumOfRecords').doc(year.toString());
         const doc = await docRef.get()
         if ((month === 1 && day === 1) || !doc.exists) {
             const data = {
@@ -14,7 +14,12 @@ const getNumberOfCopies = async (req, res) => {
                 DVno501COB: '0000',
                 DVno501LFP: '0000',
                 DVnoContractFarming: '0000',
-                BURno: '0000'
+                BUR: {
+                    CARP_BUR: '0000',
+                    CF_BUR: '0000',
+                    COB_BUR: '0000',
+                    LFP_BUR: '0000'
+                }
             }
             await docRef.set(data);
             return res.status(200).json({data: data})

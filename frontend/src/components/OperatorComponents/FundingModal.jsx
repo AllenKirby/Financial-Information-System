@@ -33,13 +33,14 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     useEffect(() => {
         const fetch = async () => { 
-            const {bur, origBur} = await getBurNo()
+            const {bur, origBur} = await getBurNo(fundCluster)
             const primaryBUR = data.ORSBURS ? data.ORSBURS : bur
             if(!data.ORSBURS && isToggled){
                 setOperatorInput({...operatorInput, ors: primaryBUR})
             }
             setBUR(primaryBUR)
             setOrigBUR(origBur)
+            console.log(fundCluster)
             const unsubscribe = await retrieveProjectName(setASANo)
 
             if(Boolean(data)){
@@ -98,7 +99,8 @@ const FundingModal = ({modal, data, fundCluster}) => {
             previousASA: prevASARef.current,
             origBUR: origBUR,
             // controlBooks: CBAmount,
-            update: needUpdate
+            update: needUpdate,
+            fund: data.fund
         }
         const neededAmount = parseFloat(data.amount)
         let res = true;

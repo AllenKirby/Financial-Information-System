@@ -42,21 +42,23 @@ export const useInitialStateDV = () => {
         }
     }
 
-    const getBurNo = async () => {
+    const getBurNo = async (fund) => {
         try{
             const res = await axios.get(`${apiURL}/operator/getBUR`, {
+                params: {fund: fund},
                 withCredentials: true
             })
             if(res.status === 200){
                 const origBur = res.data.currentBUR
-                console.log(origBur)
-                const increamentedData = (parseInt(origBur, 10) + 1).toString().padStart(4, 0)
+                console.log(parseInt(origBur, 10))
+                const increamentedData = (parseInt(origBur, 10) + 1).toString().padStart(4, '0')
                 const today = new Date()
                 const bur = `501-${today.getFullYear()}-${today.getMonth()+1}-${increamentedData}`
+                console.log(bur, origBur)
                 return {bur, origBur}
             }
             
-            return bur
+            return null
         }catch(error){
             console.log('error on getting bur no. at useinitialdv')
         }

@@ -47,7 +47,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     additionalLabels: [],
     additionalCode: [], 
     amount: 0, 
-    particular: ''})
+    particular: '',
+    // ASA_No_ref: ''
+    })
+
   const [gsis, setGSIS] = useState({stamp: 0, dst: 0, vat12: 0})
   const [meralco, setMeralco] = useState({meralcoVAT: 0, meralcoNONVAT: 0})
   const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '', labels: '' }]);
@@ -116,6 +119,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           RC: document.RC || '',
           amount: document.amount || 0,
           particular: document.particular || '',
+          // ASA_No_ref: document.ASA_No_ref || ''
         };
         return updatedData;
       });
@@ -956,7 +960,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className="w-full h-auto flex flex-col py-2">
             <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2'>
               {activeTab !== 'BUR' ? (
-                <div className="flex flex-col w-full sm:w-4/6">
+                <div className="flex flex-col w-full sm:w-2/6">
                   <label className='text-gray-500'>Fund Cluster</label>
                   <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                     onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
@@ -1000,6 +1004,18 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   </select>
                 </div>
               )}
+              {/* <div className="flex flex-col w-full sm:w-2/6">
+                <label className='text-gray-500'>ASA No.</label>
+                <input 
+                  className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                  type="text" 
+                  value={payeeData.ASA_No_ref}
+                  placeholder="ASA No. Reference"
+                  onChange={(e) => setPayeeData({...payeeData, ASA_No_ref: e.target.value})}
+                  required
+                  />
+              </div> */}
+
               <div className="flex flex-col w-full sm:w-2/6">
                 <label className='text-gray-500'>Date</label>
                 <input 
@@ -1016,6 +1032,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 
                     />
               </div>
+
             </div>
             <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2 mt-2'>
               {activeTab !== 'BUR' ? (
