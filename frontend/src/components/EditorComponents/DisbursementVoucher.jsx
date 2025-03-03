@@ -172,9 +172,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleChangePayee = (e) => {
     const target = e.target.value.toUpperCase()
+    console.log(target)
     setPayeeData({...payeeData, payee: target.toUpperCase()})
 
-    if (target) {
+    if (target && payeeOptions) {
       const filtered = Object.entries(payeeOptions)
         .filter(([key]) => key.toLowerCase().includes(target.toLowerCase()))
         .map(([key]) => key)
@@ -377,8 +378,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       tax: payeeData.TT_tax,
       cost: payeeData.TT_cost
     }
-    // console.log(data)
     if(data.payee_data.accCode.length <= 1){
+      console.log('hekllo')
+      console.log(pData)
+      // console.log(payeeOptions[payeeKey])
       if(!deepEqual(pData, payeeOptions[payeeKey])){
         savePayeeData(pData)
       }

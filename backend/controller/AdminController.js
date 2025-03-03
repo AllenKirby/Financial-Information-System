@@ -392,12 +392,17 @@ const addYearlyAmount = async(dateString, fund, amount) => {
 
 
   const ref = db.collection("YearlyRecords").doc(String(year))
+  const doc = await ref.get()
+
+  const data = doc.exists ? doc.data() : {};
+  const curr_value = data[field]?.[cluster_mapped] || 0;
+  const newValue = parseFloat(curr_value) + parseFloat(amount);
 
   try{
     await ref.set(
       {
         [field]: {
-          [cluster_mapped]: amount
+          [cluster_mapped]: newValue
         }
       },
       {merge: true}
