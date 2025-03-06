@@ -107,7 +107,7 @@ const DVTemplate = ({document}) => {
             document?.activeTab === 'To Payment' && (
               <div className='py-1 flex flex-col px-2 text-sm sm:text-base 2xl:text-lg'>
                 <div className='w-full h-auto flex items-center justify-center'>
-                  <p className='text-gray-500 w-2/5'>Amount</p>
+                  <p className='text-gray-500 w-2/5'>Gross Amount</p>
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(document?.amount)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-center justify-center'>
@@ -115,7 +115,7 @@ const DVTemplate = ({document}) => {
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatTotal_val)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-center justify-center'>
-                  <p className='text-gray-500 w-2/5'>Amount Due</p>
+                  <p className='text-gray-500 w-2/5'>Net Amount Due</p>
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatAmountDue)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-center justify-center'>
@@ -240,10 +240,16 @@ const DVTemplate = ({document}) => {
                 document?.ASA ? (
                   <ul className="list-disc list-inside w-3/5">
                     {Object.entries(document.ASA).map(([key, value], index) => {
-                    const parts = key.split('|'); // Split the key
+                    const parts = key.split('/'); // Split the key
+                    const controlBookNumber = parts[1].split('|')[0]
+                    const controlBookDesc = parts[1].split('|')[1].split('!')[0]
+                    const projectName = parts[1].split(',')[1]. replace('>', ' ')
+
+                    const display = `${controlBookDesc} ${projectName}`
+                    // controlBookNumber
                     return (
                       <li key={index} className="text-customFontColor font-semibold">
-                        {`${parts[0].replace('|', ' ')} : ${formatToPeso(value)}`}
+                        {`${display}: ${formatToPeso(value)}`}
                       </li>
                     );
                   })}
@@ -303,7 +309,7 @@ const DVTemplate = ({document}) => {
               <p className='text-customFontColor font-medium w-3/5'>RO</p>
             </div>
             <div className='w-full h-auto flex items-start justify-center'>
-              <p className='text-gray-500 w-2/5'>Amount Due</p>
+              <p className='text-gray-500 w-2/5'>Net Amount Due</p>
               {
                 document?.activeTab === 'To Payment' && (
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatTotal_val)}`}</p>
