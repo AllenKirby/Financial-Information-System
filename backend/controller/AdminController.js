@@ -505,6 +505,8 @@ const downloadDV = async(req, res) => {
   const { data } = req.body
 
   try {
+    console.log('downloading...')
+    console.log(data)
     const templatePath = path.join(__dirname, '..', 'templates', data.ORSBURS ? 'DVwithBUR.xlsx' : 'DV.xlsx'); 
     const workbook = await XlsxPopulate.fromFileAsync(templatePath);
 
@@ -534,7 +536,7 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("C13").value(data.address)
     workbook.sheet('Sheet1').cell("A16").value(data.particular)
     workbook.sheet('Sheet1').cell("K17").value(data.RC)
-    workbook.sheet('Sheet1').cell("Q17").value(data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q17").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("C28").value(ASA).style("wrapText", true)
     workbook.sheet('Sheet1').cell("C25").value(data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("C26").value(data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
@@ -546,9 +548,10 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("Q30").value(amount_due)
     workbook.sheet('Sheet1').cell("A36").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A37").value(data.NF_office)
-    workbook.sheet('Sheet1').cell("Q43").value(total_val)
-    workbook.sheet('Sheet1').cell("N41").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("N42").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q43").value(amount_due)
+    workbook.sheet('Sheet1').cell("N40").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q41").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q42").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("K45").value(`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} Pesos`)
     workbook.sheet('Sheet1').cell("B40").value(combinedAccTitle).style({
       wrapText: true, 
@@ -566,6 +569,7 @@ const downloadDV = async(req, res) => {
 
     //BIR
     workbook.sheet('Sheet1').cell("P81").value(data.fund)
+    workbook.sheet('Sheet1').cell("P85").value(data.DVBIR)
     workbook.sheet('Sheet1').cell("P83").value(convertDate(data.date))
     workbook.sheet('Sheet1').cell("P91").value(data.ORSBURS)   
     workbook.sheet('Sheet1').cell("A95").value(data.birParticular)   
@@ -579,16 +583,20 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("A115").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A116").value(data.NF_office)
     workbook.sheet('Sheet1').cell("K123").value(`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} Pesos`)
+    workbook.sheet('Sheet1').cell("B123").value(data.cashAvailable ? '✓' : '')
+    workbook.sheet('Sheet1').cell("B124").value(data.debitAccount ? '✓' : '')
+    workbook.sheet('Sheet1').cell("B125").value(data.supportingDocuments ? '✓' : '')
 
     //BUR
     if(data.ORSBURS) {
       workbook.sheet('Sheet1').cell("D164").value(data.payee)
       workbook.sheet('Sheet1').cell("D168").value(data.address)
-      workbook.sheet('Sheet1').cell("P160").value(`Serial No.: ${convertDate(data.date)}`)
+      workbook.sheet('Sheet1').cell("P160").value(`Serial No.: ${data.DV}`)
       workbook.sheet('Sheet1').cell("P162").value(`Fund Cluster: ${data.fund}`)
       workbook.sheet('Sheet1').cell("P161").value(`Date: ${convertDate(data.date)}`)
-      workbook.sheet('Sheet1').cell("P173").value(total_val)
-      workbook.sheet('Sheet1').cell("P187").value(amount_due)
+      workbook.sheet('Sheet1').cell("P173").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      workbook.sheet('Sheet1').cell("P187").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      // workbook.sheet('Sheet1').cell("P187").value(amount_due)
       workbook.sheet('Sheet1').cell("D173").value(data.particular)
       workbook.sheet('Sheet1').cell("A173").value(data.RC)
     }
