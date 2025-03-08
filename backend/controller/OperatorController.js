@@ -7,7 +7,9 @@ const {
     setNotification,
     setHistoryLogs,
     getDateTime ,
-    getUsers
+    getUsers,
+    addCommentsForBUR,
+    updateStatusBUR
 } = require('./MultiAccess/Functions');
 const { messaging } = require('firebase-admin');
 const { parse } = require('dotenv');
@@ -1808,6 +1810,94 @@ const add_imo_balance = async(req, res) => {
     }
 }
 
+const createBUR = async(req, res) => { 
+    const data = req.body
+    const name = req.user.name
+    const dateTimeCollection = getDateTime();
+
+    const createdBy = `${name} at ${dateTimeCollection}`
+    const finalData = {
+        ...data,
+        createdBy,
+        createdAt: dateTimeCollection,
+        status: 'Drafting'
+    }
+
+    try {
+        await db.collection('BURRecords').doc().set(finalData);
+        res.status(200).json({message: "Successfully add BUR"})
+    } catch (error) {
+        console.log(err)
+        res.status(500).json({message: "Error on creating BUR"})
+    }
+}
+
+const deleteBUR = async(req, res) => {
+    const { id } = req.params
+
+    try{
+
+        const docRef = db.collection('BURRecords').doc(id);
+
+        await docRef.delete();
+        res.status(200).json({ message: 'Document successfully deleted' })
+    }
+    catch(error){
+        console.error("Error deleting documents: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const updateBUR = async(req, res) => {
+    const { id } = req.params
+    const data = req.body
+
+
+    const dateTimeCollection = getDateTime();
+    const burData = {
+        ...data,
+        updatedAt: dateTimeCollection
+    }
+
+    try {
+        const docref = db.collection('BURRecords').doc(id)
+        await docref.update(burData)
+
+        res.status(200).json({message: 'BUR has been updated'})
+    } catch (error) {
+        console.error("Error updating document: ", error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+}
+
+const submitToBO = async (req, res) => {
+    const {BUR, payee, remarks} = req.body;
+    const dispName = req.user.name;
+
+    const dateTimeCollection = getDateTime();
+    const notifMessage1 = "The Budget Utilization Request for"
+    const notifMessage2 = "has been passed by"
+    const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
+    const submittedBy = `${dispName}|${dateTimeCollection }`
+    const logs = `${payee}!${BUR}!Submitted By ${dispName}!${dateTimeCollection}!Under Review`
+    const comment = {dispName, remarks, dateTimeCollection}
+
+    try {
+        await updateStatusBUR(BUR, 'Under Review', 'submittedBy', submittedBy)
+        const listOfOpAcc = await getUsers('2');
+        await setNotification(listOfOpAcc, dataCollection, notifMessage1, notifMessage2, BUR)
+        if(remarks) {
+            await addCommentsForBUR(BUR, comment)
+        }
+        await setHistoryLogs(dateTimeCollection, logs)
+
+        res.status(200).json({message: 'BUR has been transfer'});
+    }catch(error){
+        console.log('error passing records: ', error)
+        res.status(500).json({success: false, message: `error passing records: ${error}`});
+    }
+}
+
 module.exports = {
     opReturnDocu, 
     transferDocument,
@@ -1827,5 +1917,9 @@ module.exports = {
     add_imo_balance,
     addNewUtility,
     deleteASA_COB,
-    add_ASA_cashFO
+    add_ASA_cashFO,
+    createBUR,
+    deleteBUR,
+    updateBUR,
+    submitToBO
 }

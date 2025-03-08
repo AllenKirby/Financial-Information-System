@@ -26,7 +26,9 @@ const {getAllLogs,
        updateFundCluster,
        updateResCen,
        updateNameAndOffice,
-       updateTaxType
+       updateTaxType,
+       approveBUR,
+       returnBURRecordTo
         } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
@@ -35,6 +37,10 @@ adminRouter.post('/downloadDV', downloadDV)
 adminRouter.get('/getAllDV', getAllLogs)
 //adminRouter.get('/approvedDV', readAdmin_records)
 adminRouter.patch('/approveDocu/:id', approveDV)
+adminRouter.patch('/approveBUR/:id', approveBUR)
+adminRouter.post('/returnRecords', returnRecordTo)
+adminRouter.post('/returnBURRecords', returnBURRecordTo)
+
 //FUND CLUSTER
 adminRouter.post('/addNewFundCluster', addFundCluster)
 adminRouter.get('/getFundCluster', getFundCluster)
@@ -51,7 +57,6 @@ adminRouter.delete('/deleteNameAndOffice/:field_key', deleteNameAndOffice)
 adminRouter.post('/addTaxType', addTaxType)
 adminRouter.get('/getTaxType', getTaxType)
 adminRouter.delete('/deleteTax/:field_key', deleteTax)
-adminRouter.post('/returnRecords', returnRecordTo)
 adminRouter.patch('/updateFundCluster/:id', updateFundCluster)
 adminRouter.patch('/updateResCen/:id', updateResCen)
 adminRouter.patch('/updateNameOffice/:id', updateNameAndOffice)

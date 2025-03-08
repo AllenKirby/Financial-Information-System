@@ -14,9 +14,9 @@ export const AuthRole = () => {
       }else if (user.role === '2') {
         navigate('/head/dashboard');
       }else if (user.role === '3') {
-        navigate('/operator/disbursementrecords');
+        navigate('/operator/records/disbursementrecords');
       } else if (user.role === '4') {
-        navigate('/editor/disbursementrecords');
+        navigate('/editor/records/disbursementrecords');
       }else if (user.role === '0') {
         navigate('/superadmin/usermanagement');
       }else{

@@ -12,6 +12,7 @@ const UserLogs = React.lazy(() => import('../SuperAdminComponents/UserLogs'));
 const AccessControlLogs = React.lazy(() => import('../SuperAdminComponents/AccessControlLogs'));
 const DVRegisterItems = React.lazy(() => import('../EditorComponents/DVRegisterItems'));
 const ItemPayroll = React.lazy(() => import('../Shared/ItemPayroll'))
+const BURRecordsItem = React.lazy(() => import('../Shared/BURRecordsItem'))
 
 const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counter = 0, modal = () => {} , total = 0}) => {
 
@@ -34,7 +35,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
     <div className='w-full h-full flex flex-col'>
         <div className={`${paginationFor === 'ControlBook' ? 'relative p-2 w-full flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 border-2 rounded-lg overflow-y-auto' : ' w-full flex-1 overflow-y-auto'}`}>
             <Suspense fallback={paginationFor === 'ControlBook' ? <LoadingForControlBook/> : <Loading/>}>
-                {Object.entries(currentItems).map(([key, document]) => {
+                {Object.entries(currentItems).map(([key, document], index) => {
                     if(paginationFor === 'DV') return <DocumentDetails key={key} index={key} documents={document[1]} type={type} activeTab={activeTab} />
                     if(paginationFor === 'HistoryLogs') return <HistoryLogsItem key={key} log={document} index={key}/>
                     if(paginationFor === 'ControlBook') return <Folder key={key} controlBook={document[1]} ASANo={document[0]}/>
@@ -42,6 +43,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                     if(paginationFor === 'AccessControl') return <AccessControlLogs key={key} index={key} log={document}/>
                     if(paginationFor === 'payrollRecords') return <ItemPayroll key={key} index={key} log={document} modal={modal}/>
                     if(paginationFor === 'DVRegister') return <DVRegisterItems key={key} index={key} DV={document} counter={counter} modal={modal}/>
+                    if(paginationFor === 'BUR') return <BURRecordsItem key={index} index={index} BUR={document[1]} activeTab={activeTab}/>
                 })}
             </Suspense>
         </div>

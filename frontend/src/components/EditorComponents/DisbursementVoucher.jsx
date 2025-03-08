@@ -16,12 +16,16 @@ import { usePreparerHook } from '../../hooks/usePreparerHook'
 import { useInitialStateDV } from '../../hooks/useInitialStateDV'
 
 import {useSelector} from 'react-redux'
+import { useFundingHook } from '../../hooks/useFundingHook'
+import { useLocation } from 'react-router-dom'
 
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
    //hooks
    const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee,add_payroll_records, isLoading, error} = usePreparerHook()
+   const { handleBURCreation, handleBURUpdate, isLoading: isLoadingBUR, error: errorBUR } = useFundingHook()
    const {getDVno} = useInitialStateDV()
    const { user } = useAuthContext() 
+   const location = useLocation()
 
   const [payeeData, setPayeeData] = useState({ 
     payee: '', 
@@ -57,7 +61,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [BURAmount, setBURAmount] = useState([{title:'',  amount: ''}]);
   const [BURData, setBURData] = useState({
     payee: '', 
-    address: '', 
     office: 'NIA Region IV-A',
     No: '',
     GAA: '',
@@ -71,7 +74,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
-  const [activeTab, setActiveTab] = useState(user?.role === '4' ? 'To Payment' : 'To Release')
+  const [activeTab, setActiveTab] = useState('')
 
   //payee
   const [payeeOptions, setPayeeOptions] = useState({});
@@ -146,10 +149,38 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       }else if(document.activeTab === 'Meralco'){
         setMeralco({meralcoVAT: document.meralcoVAT, meralcoNONVAT: document.meralcoNONVAT})
         setActiveTab('Meralco')
+      } else if (document.activeTab === 'BUR') {
+        setBURData({
+          payee: document.payee,
+          office: 'NIA Region IV-A',
+          No: document.No,
+          GAA: document.GAA,
+          MFOPAP: document.MFOPAP,
+          uacsCode: document.uacsCode,
+          NFNameB: document.NFNameB,
+          NFOfficeB: document.NFNameB
+        })
+        setPayeeData({...payeeData, RC: document.resCenter, NF_name: document.NFNameA, NF_office: document.NFOfficeA, particular: document.particular})
+        setBURAmount([...document.amount])
       }
-
     }
   }, [document, flag]);
+
+  useEffect(() => {
+    if(user?.role === '4' ) {
+      if(location.pathname === '/editor/records/disbursementrecords'){
+        setActiveTab('To Payment')
+      } else {
+        setActiveTab("BUR")
+      }
+    } else {
+      if(location.pathname === '/operator/records/disbursementrecords'){
+        setActiveTab('To Release')
+      } else {
+        setActiveTab("BUR")
+      }
+    }
+  }, [user, permission, location])
 
   const formatDateforUpdate = (rawDate) => {
     if (typeof rawDate === 'string') {
@@ -308,15 +339,23 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     return updatedPayeeData
   }
 
+  const getAddress = (payee) => {
+    if(payee === 'Quezon IMO') return 'Lucena City, Quezon'
+    if(payee === 'Laguna-Rizal IMO') return 'Pila, Laguna'
+    if(payee === 'Cavite-Batangas IMO') return 'Naic, Cavite'
+  } 
+
   const dataBURData = () => {
     const finalData = {
       ...BURData,
+      address: getAddress(BURData.payee),
       date: payeeData.date,
       resCenter: payeeData.RC,
       particular: payeeData.particular,
       NFNameA: payeeData.NF_name,
       NFOfficeA: payeeData.NF_office,
-      amount: BURAmount
+      amount: BURAmount,
+      activeTab: activeTab
     }
     return finalData
   }
@@ -335,8 +374,24 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }
 
-  const createBUR = () => {
-    console.log(dataBURData())
+  const createBUR = async() => {
+    const res = await handleBURCreation(dataBURData())
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "BUR Successfully Added!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+      modal()
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: {errorBUR},
+        icon: "error",
+        confirmButtonColor: "#FF0000"
+      });
+    }
   }
 
   const [payrollItems, setPayrollItems ] = useState({particular: '', amount: ''})
@@ -528,6 +583,35 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleUpdate = async(e) => {
     e.preventDefault()
 
+    if(activeTab === 'To Payment') {
+      await handleUpdateDV()
+    } else if(activeTab === 'BUR') {
+      console.log('dsdsafdsfdsgfdgft')
+      await updateBUR()
+    }
+  }
+
+  const updateBUR = async() => {
+    const res = await handleBURUpdate(dataBURData(), document.id)
+    if(res){
+      Swal.fire({
+        title: "Saved",
+        text: "BUR Successfully Updated!",
+        icon: "success",
+        confirmButtonColor: "#009933"
+      });
+      modal()
+    } else {
+      Swal.fire({
+        title: "Error",
+        text: {errorBUR},
+        icon: "error",
+        confirmButtonColor: "#FF0000"
+      });
+    }
+  }
+
+  const handleUpdateDV = async() => {
     const updatedPayeeData = {
       ...payeeData,
       TT_formula1: gross.value2,
@@ -728,51 +812,55 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         </div>
         <div className='w-full h-auto py-1'>
           <div className='flex items-start gap-3 px-3'>
-            {(permission?.data?.permission && permission?.data?.roleName === 'Funding' || user?.role === '4') && ( 
-              <button type='button' 
-                onClick={() => setActiveTab('To Payment')} 
-                className={`${activeTab === 'To Payment' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                disabled={flag}>
-                To Payment
-              </button>
-            )}
-            {(permission?.data?.permission && permission?.data?.roleName === 'Preparer' || user?.role === '3') && (
-              <button type='button' 
-                onClick={() => setActiveTab('To Release')} 
-                className={`${activeTab === 'To Release' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                disabled={flag}>
-                To Release
-              </button>
-            )}
-            {user?.role === '4' && (
+            {!(location.pathname === '/operator/records/burrecords' || location.pathname === '/editor/records/burrecords') && (
               <>
-                <button type='button' 
-                  onClick={() => setActiveTab('GSIS')} 
-                  className={`${activeTab === 'GSIS' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                  disabled={flag}>
-                    GSIS
-                </button>
-                <button type='button' 
-                  onClick={() => setActiveTab('Meralco')} 
-                  className={`${activeTab === 'Meralco' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                  disabled={flag}>
-                    Meralco
-                </button>
-                <button type='button' 
-                  onClick={() => setActiveTab('Others')} 
-                  className={`${activeTab === 'Others' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                  disabled={flag}>
-                    Others
-                </button>
-                <button type='button' 
-                  onClick={() => setActiveTab('Payroll')} 
-                  className={`${activeTab === 'Payroll' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
-                  disabled={flag}>
-                    Payroll
-                </button>
+                {(permission?.data?.permission && permission?.data?.roleName === 'Funding' || user?.role === '4') && ( 
+                  <button type='button' 
+                    onClick={() => setActiveTab('To Payment')} 
+                    className={`${activeTab === 'To Payment' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                    disabled={flag}>
+                    To Payment
+                  </button>
+                )}
+                {( permission?.data?.permission && permission?.data?.roleName === 'Preparer' || user?.role === '3' && location.pathname === '/operator/records/disbursementrecords') && (
+                  <button type='button' 
+                    onClick={() => setActiveTab('To Release')} 
+                    className={`${activeTab === 'To Release' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                    disabled={flag}>
+                    To Release
+                  </button>
+                )}
+                {(user?.role === '4' || permission?.data?.permission && permission?.data?.roleName === 'Funding') && (
+                  <>
+                    <button type='button' 
+                      onClick={() => setActiveTab('GSIS')} 
+                      className={`${activeTab === 'GSIS' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                      disabled={flag}>
+                        GSIS
+                    </button>
+                    <button type='button' 
+                      onClick={() => setActiveTab('Meralco')} 
+                      className={`${activeTab === 'Meralco' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                      disabled={flag}>
+                        Meralco
+                    </button>
+                    <button type='button' 
+                      onClick={() => setActiveTab('Others')} 
+                      className={`${activeTab === 'Others' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                      disabled={flag}>
+                        Others
+                    </button>
+                    <button type='button' 
+                      onClick={() => setActiveTab('Payroll')} 
+                      className={`${activeTab === 'Payroll' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
+                      disabled={flag}>
+                        Payroll
+                    </button>
+                  </>
+                )}
               </>
             )}
-            {user?.role === '3' && (
+            {(user?.role === '3' && location.pathname === '/operator/records/burrecords' || permission?.data?.permission && permission?.data?.roleName === 'Preparer' && location.pathname === '/editor/records/burrecords') && (
               <button type='button' 
                 onClick={() => setActiveTab('BUR')} 
                 className={`${activeTab === 'BUR' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
@@ -876,8 +964,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       BURData.payee === 'Cavite-Batangas IMO' ? 'Naic, Cavite' :
                       BURData.payee === 'Quezon IMO' ? 'Lucena, Quezon' :
                       BURData.address || ''
-                    }
-                    onChange={(e) => setBURData({...BURData, address: e.target.value})}>
+                    }>
                     <option value="" disabled>Select</option>
                     <option value="Pila, Laguna">Pila, Laguna</option>
                     <option value="Naic, Cavite">Naic, Cavite</option>
@@ -1622,7 +1709,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             >Save</button>
         </div>
       </div>
-      {isLoading && (
+      {isLoading || isLoadingBUR && (
         <LargeLoader/>
       )}
     </form>

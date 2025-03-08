@@ -13,6 +13,17 @@ const addComments = async(DV, comment) => {
     }
 }
 
+const addCommentsForBUR = async(BUR, comment) => {
+    try {
+        const docref = db.collection('BURRecords').doc(BUR)
+        await docref.update({
+            comments: admin.firestore.FieldValue.arrayUnion(comment)
+        })
+    } catch (error) {
+       console.log('Error adding comment: ', error) 
+    }
+}
+
 const setNotification = async (destination_uids, dataCollection, notifMessage1, notifMessage2, DV) => {
     
     try{
@@ -88,10 +99,21 @@ const getDateTime = () => {
     return `${dateCollection} ${timeCollection}`;
 }
 
+const updateStatusBUR = async (BUR, status, action, DTPassed) => {
+    const docref = db.collection('BURRecords').doc(BUR);
+
+    await docref.update({
+        [action]: DTPassed,
+        status: status
+    });
+};
+
 module.exports = {
     addComments,
     setNotification,
     setHistoryLogs,
     getUsers,
-    getDateTime
+    getDateTime,
+    addCommentsForBUR,
+    updateStatusBUR
 }

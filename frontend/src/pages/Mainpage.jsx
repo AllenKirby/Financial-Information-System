@@ -26,6 +26,9 @@ import ComparisonView from "../components/AdminComponents/ComparisonView"
 import Logs from "../components/SuperAdminComponents/Logs";
 import DVRegister from "../components/EditorComponents/DVRegister";
 import PayrollRecords from "../components/Shared/PayrollRecords";
+import BURRecords from "../components/Shared/BURRecords";
+import Records from "../components/Shared/Records";
+import ViewBUR from "../components/Shared/ViewBUR";
 
 const Mainpage = () => {
 
@@ -33,18 +36,31 @@ const Mainpage = () => {
     createRoutesFromElements(
       <Route>
         <Route index element={<AuthRole/>} />
+        {/* Approver */}
         <Route path="/admin" element={<PrivateRoute allowedRoles={['1']}><AdminPage/></PrivateRoute>}>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['1']}><Dashboard/></PrivateRoute>}/>
-          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}>
-            <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
+          <Route path="records" element={<PrivateRoute allowedRoles={['1']}><Records/></PrivateRoute>}>
+            <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['1']}><DisbursementRecordsAdmin/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewDocument/></PrivateRoute>}/>
+            </Route>
+            <Route path="burrecords" element={<PrivateRoute allowedRoles={['1']}><BURRecords/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['1']}><ViewBUR/></PrivateRoute>}/>
+            </Route>
           </Route>
           <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['1']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="editform" element={<PrivateRoute allowedRoles={['1']}><Editform/></PrivateRoute>}/>
           <Route path="comparison" element={<PrivateRoute allowedRoles={['1']}><ComparisonView/></PrivateRoute>}/>
         </Route>
+        {/* Preparer */}
         <Route path="/editor" element={<PrivateRoute allowedRoles={['4']}><EditorPage/></PrivateRoute>}> 
-          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
-            <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
+          <Route path="records" element={<PrivateRoute allowedRoles={['4']}><Records/></PrivateRoute>}>
+            <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['4']}><DisbursementRecords/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
+            </Route>
+            <Route path="payrollrecords" element={<PrivateRoute allowedRoles={['4']}><PayrollRecords/></PrivateRoute>}/>
+            <Route path="burrecords" element={<PrivateRoute allowedRoles={['4']}><BURRecords/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewBUR/></PrivateRoute>}/>
+            </Route>
           </Route>
           <Route path="controlbook" element={<PrivateRoute allowedRoles={['4']}><ControlBook/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewControlBook/></PrivateRoute>}/>
@@ -53,11 +69,17 @@ const Mainpage = () => {
           <Route path="dvregister" element={<PrivateRoute allowedRoles={['4']}><DVRegister/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['4']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-          <Route path="payroll-records" element={<PrivateRoute allowedRoles={['4']}><PayrollRecords/></PrivateRoute>}/>
         </Route>
+        {/* Funding */}
         <Route path="/operator" element={<PrivateRoute allowedRoles={['3']}><OperatorPage/></PrivateRoute>}>
-          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
-            <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
+          <Route path="records" element={<PrivateRoute allowedRoles={['3']}><Records/></PrivateRoute>}>
+            <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['3']}><Disbursementrecords/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
+            </Route>
+            <Route path="payrollrecords" element={<PrivateRoute allowedRoles={['3']}><PayrollRecords/></PrivateRoute>}/>
+            <Route path="burrecords" element={<PrivateRoute allowedRoles={['3']}><BURRecords/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewBUR/></PrivateRoute>}/>
+            </Route>
           </Route>
           <Route path="controlbook" element={<PrivateRoute allowedRoles={['3']}><ControlBook/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewControlBook/></PrivateRoute>}/> 
@@ -66,18 +88,24 @@ const Mainpage = () => {
           <Route path="dvregister" element={<PrivateRoute allowedRoles={['3']}><DVRegister/></PrivateRoute>}>
             <Route path=":id" element={<PrivateRoute allowedRoles={['3']}><ViewDocument/></PrivateRoute>}/>
           </Route>
-          <Route path="payroll-records" element={<PrivateRoute allowedRoles={['3']}><PayrollRecords/></PrivateRoute>}/>
         </Route>
+        {/* Budget Officer */}
         <Route path="/head" element={<PrivateRoute allowedRoles={['2']}><HeadPage/></PrivateRoute>}>
           <Route path="dashboard" element={<PrivateRoute allowedRoles={['2']}><Dashboard/></PrivateRoute>}/>
-          <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['2']}><DisbursementRecordsHead/></PrivateRoute>}>
-            <Route path=":id" element={<PrivateRoute allowedRoles={['2']}><ViewDocument/></PrivateRoute>}/>
+          <Route path="records" element={<PrivateRoute allowedRoles={['2']}><Records/></PrivateRoute>}>
+            <Route path="disbursementrecords" element={<PrivateRoute allowedRoles={['2']}><DisbursementRecordsHead/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['2']}><ViewDocument/></PrivateRoute>}/>
+            </Route>
+            <Route path="burrecords" element={<PrivateRoute allowedRoles={['2']}><BURRecords/></PrivateRoute>}>
+              <Route path=":id" element={<PrivateRoute allowedRoles={['2']}><ViewBUR/></PrivateRoute>}/>
+            </Route>
           </Route>
           <Route path="disbursementlogs" element={<PrivateRoute allowedRoles={['2']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="historylogs" element={<PrivateRoute allowedRoles={['2']}><HistoryLogs/></PrivateRoute>}/>
           <Route path="editform" element={<PrivateRoute allowedRoles={['2']}><Editform/></PrivateRoute>}/>
           <Route path="comparison" element={<PrivateRoute allowedRoles={['2']}><ComparisonView/></PrivateRoute>}/>
         </Route>
+        {/* Super Admin */}
         <Route path="/superadmin" element={<PrivateRoute allowedRoles={['0']}><SuperAdminPage/></PrivateRoute>}>
           <Route path="usermanagement" element={<PrivateRoute allowedRoles={['0']}><UserManagement /></PrivateRoute>}/>
           <Route path="accesscontrol" element={<PrivateRoute allowedRoles={['0']}><AccessControl /></PrivateRoute>}/>
@@ -93,7 +121,7 @@ const Mainpage = () => {
   );
 
   return (
-    <main className="w-full h-svh flex items-center justify-center font-sans text-customFontColor">
+    <main className="w-full h-svh md:h-dvh lg:h-lvh flex items-center justify-center font-sans text-customFontColor">
       <RouterProvider router={router} />
     </main>
   )

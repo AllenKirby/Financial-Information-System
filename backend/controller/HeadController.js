@@ -5,6 +5,7 @@ const {
     setNotification,
     setHistoryLogs,
     getDateTime,
+    updateStatusBUR,
     getUsers } = require('./MultiAccess/Functions')
 
 const returnRecordTo = async(req, res) => {
@@ -134,9 +135,68 @@ const addCertified = async(req, res) => {
     }
 }
 
+const returnBURTo = async(req, res) => {
+    const {BUR, payee, returnTo, remarks} = req.body;
+    const dispName = req.user.name;
+    
+    const dateTimeCollection = getDateTime();
+    const notifMessage1 = "The Budget Utilization Request for"
+    const notifMessage2 = "has been returned by"
+    const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
+    const returnedBy = `${dispName}|${dateTimeCollection}`
+    const comment = {dispName, remarks, dateTimeCollection}
+    const logs = `${payee}!${BUR}!Returned By ${dispName}!${dateTimeCollection}!Returned`
+    
+    try{
+        await updateStatusBUR(BUR, 'Returned|3', 'returnedBy', returnedBy)
+        const listOfAcc = await getUsers(returnTo);
+        await setNotification(listOfAcc, dataCollection, notifMessage1, notifMessage2, BUR)
+        if(remarks) {
+            await addComments(BUR, comment)
+        }
+        await setHistoryLogs(dateTimeCollection, logs)
+
+        res.status(200).json({message: 'BUR has been returned'});
+
+    }catch(error){
+        console.log(`Error returning BUR: ${error}`);
+        res.status(500).json({ message: "Internal Error" });
+    }
+}
+
+const submitToApprover = async (req, res) => {
+    const {BUR, payee, remarks} = req.body;
+    const dispName = req.user.name;
+
+    const dateTimeCollection = getDateTime();
+    const notifMessage1 = "The Budget Utilization Request for"
+    const notifMessage2 = "has been passed by"
+    const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
+    const reviewedBy = `${dispName}|${dateTimeCollection }`
+    const logs = `${payee}!${BUR}!Reviewed By ${dispName}!${dateTimeCollection}!For Approval`
+    const comment = {dispName, remarks, dateTimeCollection}
+
+    try {
+        await updateStatusBUR(BUR, 'For Approval', 'reviewedBy', reviewedBy)
+        const listOfOpAcc = await getUsers('1');
+        await setNotification(listOfOpAcc, dataCollection, notifMessage1, notifMessage2, BUR)
+        if(remarks) {
+            await addCommentsForBUR(BUR, comment)
+        }
+        await setHistoryLogs(dateTimeCollection, logs)
+
+        res.status(200).json({message: 'BUR has been transfer'});
+    }catch(error){
+        console.log('error passing records: ', error)
+        res.status(500).json({success: false, message: `error passing records: ${error}`});
+    }
+}
+
 module.exports = { 
     returnRecordTo, 
     transferDocument,
     getPermission,
-    addCertified
+    addCertified,
+    returnBURTo,
+    submitToApprover
 }

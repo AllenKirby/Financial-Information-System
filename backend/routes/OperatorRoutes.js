@@ -24,7 +24,11 @@ const {
     add_imo_balance,
     addNewUtility,
     deleteASA_COB,
-    add_ASA_cashFO
+    add_ASA_cashFO,
+    createBUR,
+    deleteBUR,
+    updateBUR,
+    submitToBO
 } = require('../controller/OperatorController');
 
 OperatorRouter.use(setRole([3]))
@@ -48,5 +52,9 @@ OperatorRouter.patch('/add-imo/:id', add_imo_balance)
 OperatorRouter.post('/addNewUtility/:id', addNewUtility)
 OperatorRouter.delete('/deleteASA_COB/:id', deleteASA_COB)
 OperatorRouter.post('/add_ASA_cashFO', add_ASA_cashFO)
+OperatorRouter.post('/createBUR', createBUR)
+OperatorRouter.delete('/deleteBUR/:id', deleteBUR)
+OperatorRouter.patch('/updateBUR/:id', updateBUR)
+OperatorRouter.post('/passBUR', submitToBO)
 
 module.exports = OperatorRouter
