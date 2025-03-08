@@ -96,6 +96,32 @@ const Header = ({ currentPage, sidebar}) => {
     }
   }
 
+  const sortByNotificationDescending = (data) => {
+    const sortedArray = data.sort((a, b) => {
+      const [dateTimeA, , ] = a.data.split("|")
+      const [dateTimeB, , ] = b.data.split("|")
+      return Date.parse(dateTimeA) - Date.parse(dateTimeB)
+    })
+
+    return sortedArray.reverse()
+  };
+
+  const convertRole = (role) => {
+    switch(role) {
+      case '1':
+        return 'Approver'
+      case '2':
+        return 'Budget Officer'
+      case '3':
+        return 'Funding'
+      case '4':
+        return 'Preparer'
+      case '0':
+        return 'Super Admin'
+      default: 
+        return ''
+    }
+  }
 
   return (
     <header className="w-full h-auto flex px-2 relative bg-white">
@@ -137,8 +163,8 @@ const Header = ({ currentPage, sidebar}) => {
             <p className={`font-bold text-sm lg:text-base xl:text-base 2xl:text-base truncate ${fontColor}`}>
               {user?.name || "User"}
             </p>
-            <p className="text-xs lg:text-sm xl:text-sm 2xl:text-base truncate text-gray-500">
-              {user?.uemail || "email@gmail.com"}
+            <p className="text-xs lg:text-sm xl:text-sm 2xl:text-base truncate font-medium text-gray-500">
+              {convertRole(user?.role)}
             </p>
           </div>
         </div>
@@ -156,7 +182,7 @@ const Header = ({ currentPage, sidebar}) => {
             <h3 className={`font-semibold text-xl my-2 ${fontColor}`}>Notifications</h3>
               <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
                 {notifications.length > 0 ?( 
-                  notifications.map((notification)=> (
+                  sortByNotificationDescending(notifications).map((notification)=> (
                     <Notification key={notification.key} notification={notification} markAsRead={markAsRead} />
                   ))): (
                     <div className='w-full h-full flex items-center justify-center'>

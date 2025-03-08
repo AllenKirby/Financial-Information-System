@@ -1,21 +1,68 @@
 import PropTypes from 'prop-types';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { useState, useEffect } from "react";
+import Swal from "sweetalert2";
 
 import bgImage from '../../assets/images/NIAimg.png';
+
 import { MdLogout } from "react-icons/md";
 import { IoIosClose } from "react-icons/io";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import Swal from "sweetalert2";
+import { FiBook} from "react-icons/fi";
+import { MdOutlineHistory } from "react-icons/md";
+import { FaRegFile } from "react-icons/fa";
+import { LuFiles } from "react-icons/lu";
+//import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import { TbLayoutDashboard } from "react-icons/tb";
+import { TbEdit } from "react-icons/tb";
+import { PiUsersThreeBold } from "react-icons/pi";
+import { TbUserShield } from "react-icons/tb";
+import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 import { useAuthHook } from '../../hooks/useAuthHook';
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useSelector } from 'react-redux';
 
-const Navbar = ({ items, flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
+const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
   const { logout } = useAuthHook();
   const { user } = useAuthContext();
   const [fontColor, setFontColor] = useState('');
   const [hideText, setHideText] = useState('')
+  const permission = useSelector((state) => state.permission)
+  const [activeTab, setActiveTab] = useState('')
+  const [recordsFlag, setRecordsFlag] = useState(false)
+  const [activeSubTab, setActiveSubTab] = useState('DV')
+  const location = useLocation()
+
+  useEffect(() => {
+    if(user?.role !== '0') {
+      if(user?.role === '3' || user?.role === '4') return  setActiveTab('records')
+      if(user?.role === '2' || user?.role === '1') return setActiveTab('dashboard')
+    } else {
+      setActiveTab('usermanagement')
+    }
+  }, [user])
+
+  useEffect(() => {
+    setActiveSubTab(location.pathname)
+  }, [location])
+
+  const getRole = () => {
+    switch(user?.role) {
+      case '0':
+        return 'superadmin'
+      case '1':
+        return 'admin'
+      case '2':
+        return 'head'
+      case '3':
+        return 'operator'
+      case '4':
+        return 'editor'
+      default:
+        return ''
+    }
+  }
 
   const handleLogout = () => {
     Swal.fire({
@@ -67,7 +114,109 @@ const Navbar = ({ items, flag, sidebar = () => {}, sidebarMobile = () => {} }) =
       </div>
       <div className='flex flex-col items-start justify-between w-full h-[92%] lg:h-[90%]'>
         <div className="w-full flex flex-col p-2">
-          {items.map((item) => (
+          {user?.role !== '0' && (
+            <>
+              {(user?.role === '2' || user?.role === '1') && (
+                <NavLink 
+                  onClick={() => setActiveTab('dashboard')} 
+                  to={`/${getRole()}/dashboard`} 
+                  className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'dashboard' ? `${fontColor}` : ''}`}>
+                    <TbLayoutDashboard size={20}/>Dashboard
+                </NavLink>
+              )}
+              
+              <button 
+                onClick={() => {setRecordsFlag(!recordsFlag); setActiveTab('records');}} 
+                className={`w-full h-fit flex items-center justify-between px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'records' ? `${fontColor}` : ''}`}>
+                  <span className='flex items-center justify-center gap-3'><FaRegFile size={20}/>Records</span> {recordsFlag ? <IoIosArrowUp size={20}/> : <IoIosArrowDown size={20}/> }
+              </button>
+              {recordsFlag && (
+                <div className='w-full flex flex-col items-center justify-start text-gray-500 font-bold px-7 text-sm'>
+                  <NavLink 
+                    to={`/${getRole()}/records/disbursementrecords`} 
+                    className={`${activeSubTab === `/${getRole()}/records/disbursementrecords` ? `${fontColor} rounded-md` : ''} w-full border-l-2 py-2 px-3`}>
+                      DV
+                  </NavLink>
+                  
+                  {(user?.role !== '4' || permission?.data?.permission && permission?.data?.roleName === 'Preparer') && (
+                    <NavLink 
+                      to={`/${getRole()}/records/burrecords`} 
+                      className={`${activeSubTab === `/${getRole()}/records/burrecords` ? `${fontColor} rounded-md` : ''} w-full border-l-2 py-2 px-3`}>
+                        BUR
+                    </NavLink>
+                  )}
+                  
+                  {(user?.role === '4' || user?.role === '3') && (
+                    <NavLink 
+                      to={`/${getRole()}/records/payrollrecords`} 
+                      className={`${activeSubTab === `/${getRole()}/records/payrollrecords` ? `${fontColor} rounded-md` : ''} w-full border-l-2 py-2 px-3`}>
+                        Payroll
+                    </NavLink>
+                  )}
+                </div>
+              )}
+              
+              {(user?.role === '3' || user?.role === '4') && (
+                <NavLink 
+                  onClick={() => setActiveTab('dvregister')} 
+                  to={`/${getRole()}/dvregister`} 
+                  className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'dvregister' ? `${fontColor}` : ''}`}>
+                    <LuFiles size={20}/>DV Register
+                </NavLink>
+              )}
+              
+              {(user?.role === '3' || permission?.data?.permission && permission?.data?.roleName === 'Preparer') && (
+                <NavLink 
+                  onClick={() => setActiveTab('controlbook')} 
+                  to={`/${getRole()}/controlbook`} 
+                  className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'controlbook' ? `${fontColor}` : ''}`}>
+                    <FiBook size={20}/>Control Book
+                </NavLink>
+              )}
+              
+              {(user?.role === '1' || permission?.data?.permission && permission?.data?.roleName === 'Budget Officer') && (
+                <NavLink 
+                  onClick={() => setActiveTab('editform')} 
+                  to={`/${getRole()}/editform`} 
+                  className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'editform' ? `${fontColor}` : ''}`}>
+                    <TbEdit size={20}/>Edit Form
+                </NavLink>
+              )}
+              
+              <NavLink 
+                onClick={() => setActiveTab('logs')} 
+                to={`/${getRole()}/disbursementlogs`} 
+                className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'logs' ? `${fontColor}` : ''}`}>
+                  <MdOutlineHistory size={20}/>Logs
+              </NavLink>
+            </>
+          )}
+
+          {user?.role === '0' && (
+            <>
+              <NavLink 
+                onClick={() => setActiveTab('usermanagement')} 
+                to={`/${getRole()}/usermanagement`} 
+                className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'usermanagement' ? `${fontColor}` : ''}`}>
+                  <PiUsersThreeBold size={20}/>User Management
+              </NavLink>
+
+              <NavLink 
+                onClick={() => setActiveTab('accesscontrol')} 
+                to={`/${getRole()}/accesscontrol`} 
+                className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'accesscontrol' ? `${fontColor}` : ''}`}>
+                  <TbUserShield size={20}/>Access Control
+              </NavLink>
+
+              <NavLink 
+                onClick={() => setActiveTab('logs')} 
+                to={`/${getRole()}/logs`} 
+                className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'logs' ? `${fontColor}` : ''}`}>
+                  <MdOutlineHistory size={20}/>Activity Logs
+              </NavLink>
+            </>
+          )}
+          {/* {items.map((item) => (
             <NavLink
               onClick={sidebarMobile}
               key={item.label}
@@ -79,7 +228,7 @@ const Navbar = ({ items, flag, sidebar = () => {}, sidebarMobile = () => {} }) =
               {item.icon}
               <span className={`${hideText}`}>{item.label}</span>
             </NavLink>
-          ))}
+          ))} */}
         </div>
         <div className="w-full flex items-center justify-center p-2">
           <button

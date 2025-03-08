@@ -230,10 +230,10 @@ const ViewDocument = () => {
             <IoMdArrowRoundBack size={20}/>
         </button>
         <div className="flex items-center justify-center gap-2">
-          {idStatus.status === 'Approved' && (
+          {(idStatus.status === 'Approved' && user?.role === '4' || permission?.data.permission && permission?.data.roleName === 'Funding') && (
             <button
               onClick={handleDownload}
-              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' ? 'bg-BOGreen border-BOGreen hover:text-BOGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
+              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${user?.role === '4' ? 'bg-preparerPrimary border-preparerPrimary hover:text-preparerPrimary' : 'bg-fundingBlueGreen border-fundingBlueGreen hover:text-fundingBlueGreen'} border-2 hover:bg-white text-white transition-all duration-150`}
               >
             <PiExport size={20} /> <span className="hidden sm:block ">Export</span>
           </button>)}
@@ -318,7 +318,7 @@ const ViewDocument = () => {
               onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
               className={`w-auto px-5 py-2 rounded-lg bg-preparerPrimary border-2 border-preparerPrimary hover:bg-white hover:text-preparerPrimary text-white transition-all duration-150`}
               >
-              <RxPaperPlane size={20} className="block lg:hidden"/><span className="lg:text-xl xl:text-base 2xl:text-2xl hidden lg:block">Submit</span>
+              <RxPaperPlane size={20} className="block lg:hidden"/><span className="hidden lg-landscape:block">Submit</span>
             </button>
           )}
 
@@ -327,7 +327,7 @@ const ViewDocument = () => {
               onClick={() => openModal('SubmitFunding')}
               className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen border-2 border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen text-white transition-all duration-150`}
               >
-              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className=" hidden lg-landscape:block">Submit</span>
             </button>
           )}
 
@@ -336,7 +336,7 @@ const ViewDocument = () => {
               onClick={() => openModal('SubmitBO')}
               className={`w-auto px-5 py-2 rounded-lg bg-BOGreen border-2 border-BOGreen hover:bg-white hover:text-BOGreen text-white transition-all duration-150`}
               >
-              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Submit</span>
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className=" hidden lg-landscape:block">Submit</span>
             </button>
           )}
 
@@ -345,7 +345,7 @@ const ViewDocument = () => {
               onClick={approve}
               className={` w-auto px-5 py-2 border-2 rounded-lg ${isLoadingApprover ? 'bg-gray-200 text-gray-500' : user?.role === '1' ? 'bg-customgreen border-customgreen hover:bg-white hover:text-customgreen' : 'bg-BOGreen border-BOGreen hover:bg-white hover:text-BOGreen'} text-white transition-all duration-150`}
               >
-              <IoMdCheckmark size={20} className="block lg-landscape:hidden"/><span className="xl:text-lg 2xl:text-2xl hidden lg-landscape:block">Approve</span>
+              <IoMdCheckmark size={20} className="block lg-landscape:hidden"/><span className=" hidden lg-landscape:block">Approve</span>
             </button>
           )}
         </div>

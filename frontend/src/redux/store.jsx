@@ -8,6 +8,7 @@ import AllVouchersReducer from './AllVouchersRedux'
 import ResetPasswordRequestsReducer from "./ResetPasswordRequests"
 import ChangePassFlagReducer from "./ChangePasswordFlagRedux"
 import DVUsersReducer from "./DVUsersRedux"
+import BURRecordsReducer from "./BURRecordsRedux"
 
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // Using local storage
@@ -20,16 +21,16 @@ const persistConfig = {
 
   const rootReducer = combineReducers({
     permission: permissionReducer,
-        records: RecordsReducer,
-        controlBook: ControlBookReducer,
-        testforecast: TestForecastedReducer,
-        totalexpense: TotalExpenseReducer,
-        vouchers: AllVouchersReducer,
-        request: ResetPasswordRequestsReducer,
-        changePass: ChangePassFlagReducer,
-        dvrecords: DVUsersReducer
+      records: RecordsReducer,
+      controlBook: ControlBookReducer,
+      testforecast: TestForecastedReducer,
+      totalexpense: TotalExpenseReducer,
+      vouchers: AllVouchersReducer,
+      request: ResetPasswordRequestsReducer,
+      changePass: ChangePassFlagReducer,
+      dvrecords: DVUsersReducer,
+      burRecords: BURRecordsReducer
   });
-
   const persistedReducer = persistReducer(persistConfig, rootReducer);
   
 

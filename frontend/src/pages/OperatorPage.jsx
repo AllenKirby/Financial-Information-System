@@ -1,23 +1,21 @@
 import { Outlet, useLocation } from "react-router-dom"
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { firestore } from "../config/firebase-config";
 
 import Navbar from "../components/Shared/Navbar"
 import Header from "../components/Shared/Header"
 
 import { useState, useEffect } from "react"
-import { FiBook } from "react-icons/fi";
-import { FaRegFile } from "react-icons/fa";
-import { MdOutlineHistory } from "react-icons/md";
-import { LuFiles } from "react-icons/lu";
-import { RiMoneyDollarCircleLine } from "react-icons/ri";
 
 import { useFundingHook } from "../hooks/useFundingHook"
 
-import {useDispatch, useSelector} from 'react-redux'
+import {useDispatch} from 'react-redux'
 import { setPermission } from '../redux/PermissionRedux'
 import { setDVRecords } from '../redux/DVUsersRedux'
 import { setVouchers } from "../redux/AllVouchersRedux";
 
 import {initializeSocket } from "../socketService/socketService";
+import { setBURs } from "../redux/BURRecordsRedux";
 
 const OperatorPage = () => {
   const page = useLocation()
@@ -27,19 +25,12 @@ const OperatorPage = () => {
   const { retrieveControlBooks } = useFundingHook()
   // const [status, setStatus] = useState([])
   const dispatch = useDispatch()
-  const permission = useSelector((state) => state.permission)
+  //const permission = useSelector((state) => state.permission)
   //const apiURL = import.meta.env.VITE_API_URL
   //const cb = useSelector((state) => state.controlBook)
-  const navItems = [
-    { label: 'Records', path: '/operator/disbursementrecords', icon: <FaRegFile size={20} /> },
-    { label: 'Control Book', path: '/operator/controlbook', icon: <FiBook size={20 } /> },
-    ...(permission?.data.permission ? [{ label: 'DV Register', path: '/operator/dvregister', icon: <LuFiles size={22} /> }] : []),
-    { label: 'Logs', path: '/operator/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
-    { label: 'Payroll Records', path: '/operator/payroll-records', icon: <RiMoneyDollarCircleLine size={22} /> },
-  ]
 
   useEffect(() => {
-    if(page.pathname === "/operator/disbursementrecords"){
+    if(page.pathname === "/operator/records/disbursementrecords" || page.pathname === "/operator/records/burrecords" || page.pathname === "/operator/records/payrollrecords"){
       setLocation('Records')
     }else if(page.pathname === "/operator/dashboard"){
       setLocation('Dashboard')
@@ -55,61 +46,27 @@ const OperatorPage = () => {
   }, [page.pathname])
 
   useEffect(() => {
-    
-    console.log('FETHCHNG')
     const unsubscribe = retrieveControlBooks(dispatch)
-    
-
     return () => {
       if(unsubscribe){
-        console.log('unsub on operatorpage')
         unsubscribe()
       }
     }
   }, []) 
 
-  // useEffect(() => {
-  //   const docRef = doc(firestore, 'Roles', 'Funding'); 
-  //   const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
-  //   if (docSnapshot.exists()) {
-  //     const documentData = { data: { ...docSnapshot.data() } };
-
-  //     dispatch(setPermission(documentData));
-  //   } else {
-  //     console.log('No such document!');
-  //   }
-  //   });
-
-  //   return () => unsubscribe()   
-  // }, [dispatch])
-
-  // useEffect(() => {
-  //   if(permission?.data?.permission){
-  //     setStatus(['Drafting', 'In Review', 'Returned|3', 'Returned|4'])
-  //   }
-  //   else{
-  //     setStatus(['In Review', 'Returned|3'])
-  //   }
-  // }, [permission])
-
-  // useEffect(() => {
-  //   // if (!status.length) return;  
-  //   const status = permission?.data?.permission ? ['Drafting', 'In Review', 'Returned|3', 'Returned|4'] : ['In Review', 'Returned|3']
-  //   const q = query(collection(firestore, 'records'), where('status', 'in', status ? status : ['In Review', 'Returned|3']));
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const newDocuments = {documents: snapshot.docs.reduce((acc, doc) => {
-  //       acc[doc.id] = {data: {...doc.data()}};
-  //       return acc;
-  //     }, {})};
-      
-  //     dispatchContext({type: 'SET_OPDOCUMENTS', payload: newDocuments})
-  //   })
-
-  //   return () => unsubscribe()
-
-  // }, [user, dispatchContext, apiURL, documents, permission?.data?.permission])
-  // permission.data.permission 
-
+  useEffect(() => {
+    const collectionRef = collection(firestore, 'BURRecords');
+    const q = query(collectionRef, where("status", "in", ["Drafting", "Returned|3"]));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const documents = snapshot.docs.map(doc => ({
+        id: doc.id, 
+        ...doc.data()
+      }));
+      dispatch(setBURs(documents));
+    });
+  
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const {socket, isInitialized} = initializeSocket()
@@ -146,12 +103,12 @@ const OperatorPage = () => {
       {mobileSidebar && (
         <aside className={`${mobileSidebar ? 'w-full' : 'w-0'} z-30 block lg:hidden absolute top-0 left-0 h-full transition-all duration-100`}>
           <div className="relative w-3/4 h-full z-40 bg-white">
-            <Navbar items={navItems} flag={navbarExpand} sidebarMobile={collapseMobileSidebar}/>
+            <Navbar flag={navbarExpand} sidebarMobile={collapseMobileSidebar}/>
           </div>
         </aside>
       )}
       <aside className={`${navbarExpand ? 'absolute lg:relative hidden lg:w-1/6' : 'w-[78px]'} hidden lg:block h-full transition-all duration-100`}>
-        <Navbar items={navItems} flag={navbarExpand} sidebar={collapseSideBar}/>
+        <Navbar flag={navbarExpand} sidebar={collapseSideBar}/>
       </aside>
       <section className={`h-full ${navbarExpand ? 'w-full sm:w-full md:w-full lg:w-5/6 xl:w-5/6 2xl:w-5/6' : 'w-full'}`}>
         <section className="h-[8%] lg:h-[10%] w-full flex items-center justify-center border-b-2">

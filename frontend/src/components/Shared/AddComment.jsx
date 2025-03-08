@@ -11,20 +11,18 @@ import { useApproverHook } from '../../hooks/useApproverHook';
 
 import LargeLoader from '../Loaders/LargeLoader';
 
-const AddComment = ({idStatus, doc, modal, type, ASA}) => {
+const AddComment = ({idStatus = {}, doc, modal, type, ASA = {}}) => {
     const [comment, setComment] = useState('')
     const [color, setColor] = useState({bg: '', border: '', font: ''})
 
     const { submitDoc, isLoading: isLoadingPreparer, error: errorPreparer } = usePreparerHook();
-    const { returnDoc, transferToHead, isLoading: isLoadingFunding, error: errorFunding } = useFundingHook();
-    const { submitToAdmin, returnDocFromHeader, isLoading: isLoadingBO, error: errorBO } = useBudgetOfficerHook();
-    const { returnDocFromAdmin, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook();
+    const { returnDoc, transferToHead, submitBURToBO,isLoading: isLoadingFunding, error: errorFunding } = useFundingHook();
+    const { submitToAdmin, returnDocFromHeader, returnBUR, submitBURToAdmin, isLoading: isLoadingBO, error: errorBO } = useBudgetOfficerHook();
+    const { returnDocFromAdmin, returnBURFromAdmin, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook();
 
     const { user } = useAuthContext()
 
     const isLoading = isLoadingPreparer || isLoadingFunding || isLoadingBO || isLoadingApprover;
-
-
 
     useEffect(() => {
       if(user && user.role){
@@ -127,8 +125,6 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
           }
         });
     }
-
-    console.log(doc.DV)
 
     const handleSubmitForOp = async() => {
       if(ASA) {
@@ -316,6 +312,154 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
         });
     }
 
+    const handleSubmitBUR = async() => {
+      const data = {
+        BUR: doc.id,
+        payee: doc.payee,
+        remarks: comment
+      }
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#009933",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Submit it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const res = await submitBURToBO(data)
+          if (res) {
+            Swal.fire({
+              title: "Submitted!",
+              text: "BUR has been submit.",
+              icon: "success",
+            });
+            window.history.back()
+          }
+          else{
+            Swal.fire({
+              title: "Error!",
+              text: {errorFunding},
+              icon: "error",
+            });
+          }
+        }
+      });
+    }
+
+    const handleReturnBUR = (backToRole) => {
+      const data = {
+        BUR: doc.id,
+        payee: doc.payee,
+        returnTo: backToRole,
+        remarks: comment
+      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#009933",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, Return it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const res = await returnBUR(data)
+          if (res) {
+            Swal.fire({
+              title: "Returned!",
+              text: "BUR has been returned.",
+              icon: "success",
+            });
+            window.history.back()
+          }
+          else{
+            Swal.fire({
+              title: "Error!",
+              text: {errorBO},
+              icon: "error",
+            });
+          }
+        }
+      });
+  }
+
+  const submitBURToApprover = async() => {
+    const data = {
+      BUR: doc.id,
+      payee: doc.payee,
+      remarks: comment
+    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Submit it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await submitBURToAdmin(data)
+        if (res) {
+          Swal.fire({
+            title: "Submitted!",
+            text: "BURhas been submit.",
+            icon: "success",
+          });
+          window.history.back()
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {errorBO},
+            icon: "error",
+          });
+        }
+      }
+    });
+  }
+
+  const returnBURfromApprover = (backToRole) => {
+    const data = {
+      BUR: doc.id,
+      payee: doc.payee,
+      returnTo: backToRole,
+      remarks: comment
+    }
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#009933",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Return it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const res = await returnBURFromAdmin(data)
+        if (res) {
+          Swal.fire({
+            title: "Returned!",
+            text: "BUR has been returned.",
+            icon: "success",
+          });
+          window.history.back()
+        }
+        else{
+          Swal.fire({
+            title: "Error!",
+            text: {errorApprover},
+            icon: "error",
+          });
+        }
+      }
+    });
+  }
+
     const sortFunctions = (e) => {
       e.preventDefault()
       switch(type) {
@@ -345,6 +489,21 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
           break;
         case 'ReturnToBOFromAdmin':
           handleReturnFromAdmin('2');
+          break;
+        case 'SubmitBURToBO':
+          handleSubmitBUR();
+          break;
+        case 'ReturnBURFromBO':
+          handleReturnBUR('3')
+          break;
+        case 'SubmitBURToApprover':
+          submitBURToApprover();
+          break;
+        case 'ReturnToFundingFromApprover':
+          returnBURfromApprover('3');
+          break;
+        case 'ReturnToBOFromApprover':
+          returnBURfromApprover('2');
           break;
         default:
           return console.log('Cannot specify the function')
@@ -387,11 +546,11 @@ const AddComment = ({idStatus, doc, modal, type, ASA}) => {
 }
 
 AddComment.propTypes = {
-    idStatus: PropTypes.object.isRequired,
+    idStatus: PropTypes.object,
     doc: PropTypes.object.isRequired,
     modal: PropTypes.func.isRequired,
     type: PropTypes.string.isRequired,
-    ASA: PropTypes.string,
+    ASA: PropTypes.object,
     permission: PropTypes.bool.isRequired
   }
 

@@ -1,26 +1,20 @@
 import { Outlet, useLocation } from "react-router-dom";
 import { useFundingHook } from "../hooks/useFundingHook";
 import { useEffect, useState } from "react";
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { firestore } from "../config/firebase-config";
 
 import {useDispatch, useSelector} from 'react-redux'
 import {setPermission} from '../redux/PermissionRedux'
 import {setVouchers} from '../redux/AllVouchersRedux' 
 import { setDVRecords } from '../redux/DVUsersRedux'
+import { setBURs } from "../redux/BURRecordsRedux";
 
 //Components
 import Navbar from "../components/Shared/Navbar"
 import Header from "../components/Shared/Header";
 
-//Icons
-import { FiBook} from "react-icons/fi";
-import { MdOutlineHistory } from "react-icons/md";
-import { FaRegFile } from "react-icons/fa";
-import { LuFiles } from "react-icons/lu";
-import { RiMoneyDollarCircleLine } from "react-icons/ri";
-
 import { initializeSocket } from "../socketService/socketService";
-
-
 
 const EditorPage = () => {
   const page = useLocation()
@@ -31,20 +25,9 @@ const EditorPage = () => {
   //const apiURL = import.meta.env.VITE_API_URL
   const permission = useSelector((state) => state.permission)
   const { retrieveControlBooks } = useFundingHook()
-  
-
-  const navItems = [
-    { label: 'Records', path: '/editor/disbursementrecords', icon: <FaRegFile size={20} /> } ,
-    ...(permission?.data?.permission 
-      ? [{ label: 'Control Book', path: '/editor/controlbook', icon: <FiBook size={20} /> }] 
-      : []),
-    { label: 'DV Register', path: '/editor/dvregister', icon: <LuFiles size={22} /> },
-    { label: 'Logs', path: '/editor/disbursementlogs', icon: <MdOutlineHistory size={22} /> },
-    { label: 'Payroll Records', path: '/editor/payroll-records', icon: <RiMoneyDollarCircleLine size={22} /> }
-  ];
 
   useEffect(() => {
-    if(page.pathname === "/editor/disbursementrecords"){
+    if(page.pathname === "/editor/records/disbursementrecords" || page.pathname === "/editor/records/payrollrecords" || page.pathname === "/editor/records/burrecords"){
       setLocation('Records')
     } else if(page.pathname === "/editor/dashboard"){
       setLocation('Dashboard')
@@ -70,23 +53,21 @@ const EditorPage = () => {
     }
   }, [permission]) 
 
-  // useEffect(() => {
-  //   const status = permission?.data?.permission 
-  //   ? ['Drafting', 'Returned|4', 'In Review', 'Returned|3'] 
-  //   : ['Drafting', 'Returned|4'];
-
-  //   const q = query(collection(firestore, 'records'),where('status', 'in', status ? status : ['Drafting', 'Returned|4'] ));
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const updatedDocuments = snapshot.docs.reduce((acc, doc) => {
-  //       acc[doc.id] = {...doc.data()}
-  //       return acc;
-  //     }, {});
-
-  //     dispatchContext({ type: 'SET_DOCUMENTS', payload: updatedDocuments });
-  //   })
-
-  //   return () => unsubscribe()   
-  // }, [dispatchContext, permission])
+  useEffect(() => {
+    if(permission?.data?.permission) {
+      const collectionRef = collection(firestore, 'BURRecords');
+      const q = query(collectionRef, where("status", "in", ["Drafting", "Returned|3"]));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const documents = snapshot.docs.map(doc => ({
+          id: doc.id, 
+          ...doc.data()
+        }));
+        dispatch(setBURs(documents));
+      });
+    
+      return () => unsubscribe();
+    }
+    }, []);
 
   useEffect(() => {
     const {socket, isInitialized} = initializeSocket()
@@ -163,12 +144,12 @@ const EditorPage = () => {
       {mobileSidebar && (
         <aside className={`${mobileSidebar ? 'w-full' : 'w-0'} z-30 block lg:hidden absolute top-0 left-0 h-full transition-all duration-100`}>
           <div className="relative w-3/4 h-full z-40 bg-white">
-            <Navbar items={navItems} flag={navbarExpand} sidebarMobile={collapseMobileSidebar}/>
+            <Navbar flag={navbarExpand} sidebarMobile={collapseMobileSidebar}/>
           </div>
         </aside>
       )}
       <aside className={`${navbarExpand ? 'absolute lg:relative hidden lg:w-1/6' : 'w-[78px]'} hidden lg:block h-full transition-all duration-100`}>
-        <Navbar items={navItems} flag={navbarExpand} sidebar={collapseSideBar}/>
+        <Navbar flag={navbarExpand} sidebar={collapseSideBar}/>
       </aside>
       <section className={`h-full ${navbarExpand ? 'w-full sm:w-full md:w-full lg:w-5/6 xl:w-5/6 2xl:w-5/6' : 'w-full'}`}>
         <section className="h-[8%] lg:h-[10%] w-full flex items-center justify-center border-b-2">

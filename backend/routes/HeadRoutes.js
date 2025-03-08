@@ -5,7 +5,9 @@ const { //readHead_records,
         returnRecordTo, 
         transferDocument, 
         getPermission ,
-        addCertified
+        addCertified,
+        returnBURTo,
+        submitToApprover
 } = require('../controller/HeadController')
 
 HeadRouter.use(setRole([2]))
@@ -15,6 +17,8 @@ HeadRouter.post('/return_record', returnRecordTo)
 HeadRouter.post('/passToAdmin', transferDocument)
 HeadRouter.get('/getPermission', getPermission)
 HeadRouter.patch('/addCertified/:id', addCertified)
+HeadRouter.post('/returnBUR', returnBURTo)
+HeadRouter.post('/passBURToAdmin', submitToApprover)
 
 
 module.exports = HeadRouter;

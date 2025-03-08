@@ -12,7 +12,8 @@ const {
     getDateTime,
     getUsers,
     setNotification,
-    addComments
+    addComments,
+    updateStatusBUR
   } = require('./MultiAccess/Functions');
 const { merge } = require('../routes/AdminRoutes');
 
@@ -837,6 +838,63 @@ const updateTaxType = async(req, res) => {
   }
 }
 
+const approveBUR = async(req, res) => {
+  const BUR = req.params.id
+  const dispName = req.user.name;
+  const {payee}= req.body.data
+
+  const dateTimeCollection = getDateTime();
+  const logs = `${payee}!${BUR}!Approved By ${dispName}!${dateTimeCollection}!Approved`
+
+  try{
+    const docRef = db.collection('BURRecords').doc(BUR);
+    
+    const docSnapshot = await docRef.get();
+    if (!docSnapshot.exists) {
+      return res.status(404).json({ message: 'BUR not found' });
+    }
+
+    await docRef.update({
+      approvedBy: `${dispName}|${dateTimeCollection}`,
+      status: 'Approved',
+    });
+    await setHistoryLogs(dateTimeCollection, logs)
+    res.status(200).json({message: 'BUR Approved Successfully'})
+  }catch(error){
+    console.log('Error Approving BUR',error)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const returnBURRecordTo = async(req, res) => {
+  const {BUR, payee, returnTo, remarks} = req.body;
+  const dispName = req.user.name;
+
+  const dateTimeCollection = getDateTime();
+  const notifMessage1 = "The Budget Utilization Request for"
+  const notifMessage2 = "has been returned by"
+  const dataCollection = `${dateTimeCollection}|${payee}|${dispName}`
+  const returnedBy = `${dispName}|${dateTimeCollection}`
+  const comment = {dispName, remarks, dateTimeCollection}
+  const logs = `${payee}!${BUR}!Returned By ${dispName}!${dateTimeCollection}!Returned`
+  
+  try{
+    await updateStatusBUR(BUR, `Returned|${returnTo}`, 'returnedBy', returnedBy)
+      const listOfAcc = await getUsers(returnTo);
+      await setNotification(listOfAcc, dataCollection, notifMessage1, notifMessage2, BUR)
+      if(remarks) {
+          await addComments(BUR, comment)
+      }
+      await setHistoryLogs(dateTimeCollection, logs)
+
+      res.status(200).json({message: 'BUR has been returned'});
+
+  }catch(error){
+      console.log(`Error retrieving passed records: ${error}`);
+      res.status(500).json({ message: "Internal Error" });
+  }
+}
+
 module.exports = {
   getAllLogs,
   //readAdmin_records,
@@ -860,5 +918,7 @@ module.exports = {
   updateFundCluster,
   updateResCen,
   updateNameAndOffice,
-  updateTaxType
+  updateTaxType,
+  approveBUR,
+  returnBURRecordTo
 };

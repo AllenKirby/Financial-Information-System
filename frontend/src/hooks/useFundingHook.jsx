@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { firestore } from "../config/firebase-config"
 import { collection, query, onSnapshot, doc, getDocs } from "firebase/firestore"
@@ -545,6 +545,86 @@ export const useFundingHook = () => {
             console.log(error)
         }
     }
+
+    const handleBURCreation = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const response = await axios.post(`${apiURL}/operator/createBUR`, data, {
+                withCredentials: true
+            })
+
+            if(response.status === 200) {
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const handleBURDeletion = async(id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const response = await axios.delete(`${apiURL}/operator/deleteBUR/${id}`, {
+                withCredentials: true
+            })
+
+            if(response.status === 200) {
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const handleBURUpdate = async(data, id) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const response = await axios.patch(`${apiURL}/operator/updateBUR/${id}`, data, {
+                withCredentials: true
+            })
+
+            if(response.status === 200) {
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
+
+    const submitBURToBO = async(data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const response = await axios.post(`${apiURL}/operator/passBUR/`, data, {
+                withCredentials: true
+            })
+
+            if(response.status === 200) {
+                setIsLoading(false)
+                return true
+            }
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(error)
+        }
+    }
       
     return {
         returnDoc, 
@@ -568,6 +648,10 @@ export const useFundingHook = () => {
         AddNewUtility,
         deleteASA_COB,
         add_ASA_cashFO,
+        handleBURCreation,
+        handleBURDeletion,
+        handleBURUpdate,
+        submitBURToBO,
         isLoading, 
         error
     }
