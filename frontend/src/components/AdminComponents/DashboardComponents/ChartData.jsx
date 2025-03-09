@@ -5,7 +5,7 @@ import { collection, onSnapshot} from "firebase/firestore";
 import LineGraph from "./LineGraph";
 
 
-const ChartData = ({customYear}) => {
+const ChartData = ({customYear, value}) => {
     const apiURL = import.meta.env.VITE_API_URL
     const [, setValues] = useState({});
     const [records, setRecords] = useState({});
@@ -14,19 +14,19 @@ const ChartData = ({customYear}) => {
     const [, setQuarterlyTotalData] = useState({});
     const [, setCategorizedData] = useState({});
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        const unsubscribe = onSnapshot(
-            collection(firestore, "AmountRecord"),
-            (snapshot) => {
-                const docs = {};
-                snapshot.forEach((doc) => (docs[doc.id] = doc.data()));
-                setRecords(docs);
-            },
-            (error) => console.error("Error listening to collection:", error)
-        );
-        return () => unsubscribe();
-    }, []);
+    //     const unsubscribe = onSnapshot(
+    //         collection(firestore, "AmountRecord"),
+    //         (snapshot) => {
+    //             const docs = {};
+    //             snapshot.forEach((doc) => (docs[doc.id] = doc.data()));
+    //             setRecords(docs);
+    //         },
+    //         (error) => console.error("Error listening to collection:", error)
+    //     );
+    //     return () => unsubscribe();
+    // }, []);
 
     useEffect(() => {
         getValues();
@@ -139,7 +139,7 @@ const ChartData = ({customYear}) => {
 
     return (
         <div className="w-full h-full flex flex-col">
-           <LineGraph chartData={graphData} customYear={customYear}/>
+           <LineGraph chartData={graphData} customYear={customYear} test_values={value}/>
            {/* <BarChart BarChartData={categorizedData}/> */}
         </div>
     );

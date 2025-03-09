@@ -64,9 +64,27 @@ const getRecords = async(req, res) => {
   }
 }
 
+const multiTestExpense = async(req, res) => {
+  try{
+    const awsAPI_URL = process.env.AWS_API_URL
+    const {frequency, expense, steps} = req.body
+    const data = {
+      expenses: expense,
+      steps: steps,
+      frequency: frequency
+    }
+    const response = await axios.post(`${awsAPI_URL}/multi-test-forecast`, data);
+    res.status(200).json(response.data)
+  }catch(error){
+    console.log('error sending test expense', error)
+    res.status(500)
+  }
+}
+
 module.exports = {
     getForecastedValues,
     getPercentageForMonth,
     sendTestExpense,
-    getRecords
+    getRecords,
+    multiTestExpense
 }

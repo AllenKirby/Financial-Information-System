@@ -1,7 +1,8 @@
 import NumOfRecords from "./DashboardComponents/NumOfRecords"
-import ChartData from "./DashboardComponents/ChartData"
-import Summary from './DashboardComponents/Summary'
-import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation" 
+// import ChartData from "./DashboardComponents/ChartData"
+// import Summary from './DashboardComponents/Summary'
+// import BudgetRecommendation from "./DashboardComponents/BudgetRecommendation" 
+import Tables from "./Tables"
 import FundClusterModal from "./DashboardComponents/FundClusterModal"
 import ComparisonView from "./ComparisonView"
 
@@ -60,19 +61,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-        <div className="w-full flex-1 gap-3 py-3">
-          <div className="w-full h-96 border-2 rounded-lg p-2">
-            <ChartData customYear={'2024'}/>
-          </div>
-          <div className="w-full h-auto flex flex-col md:flex-row items-start justify-center gap-2 my-2">
-            <div className="w-full md:w-1/2 h-full">
-              <Summary/>
-            </div>
-            <div className="w-full md:w-1/2 h-full">
-              <BudgetRecommendation/>
-            </div>
-          </div>
-        </div>
+        <Tables/>
       </div>
       {fundCluster && (
         <>

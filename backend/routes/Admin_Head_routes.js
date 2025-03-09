@@ -8,7 +8,8 @@ const setRole = require('../middleware/Role')
 const {getForecastedValues,
        getPercentageForMonth,
        sendTestExpense,
-       getRecords
+       getRecords,
+       multiTestExpense
       } = require('../controller/MultiAccess/AdminHeadController')
 
 admin_Head_Router.use(setRole([1,2]))
@@ -18,5 +19,6 @@ admin_Head_Router.get('/getForecastedValues', getForecastedValues)
 admin_Head_Router.post('/getPercentageForMonth', getPercentageForMonth)
 admin_Head_Router.post('/sendTestExpense', sendTestExpense)
 admin_Head_Router.get('/getRecords', getRecords)
+admin_Head_Router.post('/multiTestExpense', multiTestExpense)
 
 module.exports = admin_Head_Router;
