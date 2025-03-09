@@ -18,10 +18,10 @@ const ComparisonView = ({modal}) => {
         </div>
         <div className="w-full flex-1 gap-3 py-2 overflow-y-auto">
             <div className="border-2 h-full rounded-lg p-2 mb-2">
-                <ChartData customYear={'2024'} />
+                <ChartData customYear={'2025'} />
             </div>
             <div className="border-2 h-full rounded-lg p-2">
-                <ChartData customYear={'2023'} />
+                <ChartData customYear={'2024'} />
             </div>
         </div>
     </section>

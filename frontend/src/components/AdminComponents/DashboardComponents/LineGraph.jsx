@@ -6,7 +6,7 @@ import { useAuthContext } from '../../../hooks/useAuthContext'
 import { useDispatch } from "react-redux";
 import { setExpense } from "../../../redux/TotalExpenseRedux";
 
-const LineGraph = ({ chartData, customYear }) => {
+const LineGraph = ({ chartData, customYear, test_values=[{ monthYear: ``, amount: 0 }]}) => {
     const [year, setYear] = useState(customYear);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
@@ -15,7 +15,7 @@ const LineGraph = ({ chartData, customYear }) => {
 
     const testData = useSelector((state) => state.testforecast)
 
-    console.log(chartData)
+    console.log(test_values)
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -25,7 +25,29 @@ const LineGraph = ({ chartData, customYear }) => {
     };
 
     const getYear = () => {
+        // if(Object.keys(test_values).length > 0){
+        //     chartData = { 
+        //         ...chartData, 
+        //         2024: { ...chartData[2024], '2024-12': 0},
+        //         2025: {'2025-01': 0, '2025-02': 0}
+        //     };
+        // }else{
+        //     chartData = { 
+        //         ...chartData, 
+        //         2024: { ...chartData[2024], '2024-12': 0},
+        //         2025: {'2025-01': 0, '2025-02': 0}
+        //     };
+        // }
+
+        // this run for default value
+        chartData = { 
+            ...chartData, 
+            2024: { ...chartData[2024], '2024-12': 0},
+            2025: {'2025-01': 0, '2025-02': 0}
+        };
+        console.log('running... GET YEAR')
         const keys = chartData ? Object.keys(chartData) : [];
+        console.log(chartData)
         return keys.sort((a, b) => b.localeCompare(a));
     };
 
@@ -62,6 +84,17 @@ const LineGraph = ({ chartData, customYear }) => {
     });
 
     useEffect(() => {
+        // add the value here from budget recommendation
+        // chartData = { ...chartData, 2024: { ...chartData[2024], '2024-12': 0, '2025-01': 0, '2025-02': 500000 } };
+        // console.log(test_values);
+        test_values.forEach(({ monthYear, amount }) => {
+            const [year, month] = monthYear.split("-");
+            if (!chartData[year]) {
+                chartData[year] = {};
+            }
+            chartData[year][monthYear] = parseFloat(amount);
+        });
+
         dispatch(setExpense(chartData))
         const getXAxis = () => (chartData[year] ? Object.keys(chartData[year]) : []);
         const getvalues = () => (chartData[year] ? Object.values(chartData[year]) : []);
@@ -81,16 +114,16 @@ const LineGraph = ({ chartData, customYear }) => {
         if(Object.keys(testData.sampleoutcome).length === 0){
             //default
             const forecastedData = JSON.parse(sessionStorage.getItem('forecasted')) || {};
-            forecastXAxis = forecastedData.monthly && year == '2024' ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
-            forecastValues = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
-            UpperBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
-            LowerBounds = forecastedData.monthly && year == '2024' ? Object.values(forecastedData.monthly).map(data => data.lower < 0 ? 0 : data.lower) : [];
+            forecastXAxis = forecastedData.monthly && year == customYear ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
+            forecastValues = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
+            UpperBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
+            LowerBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.lower < 0 ? 0 : data.lower) : [];
         }else{
             //test
-            forecastXAxis = testData.sampleoutcome && year == '2024' ? Object.keys(testData.sampleoutcome).map(date => date.slice(0,7)) : [];
-            forecastValues = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
-            UpperBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
-            LowerBounds = testData.sampleoutcome && year == '2024' ? Object.values(testData.sampleoutcome).map(data => data.lower < 0 ? 0 : data.lower) : [];
+            forecastXAxis = testData.sampleoutcome && year == customYear ? Object.keys(testData.sampleoutcome).map(date => date.slice(0,7)) : [];
+            forecastValues = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
+            UpperBounds = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
+            LowerBounds = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.lower < 0 ? 0 : data.lower) : [];
         }
 
 
@@ -120,6 +153,7 @@ const LineGraph = ({ chartData, customYear }) => {
         const filteredXAxis = combinedXAxis.filter(date => 
             (!startDate || date >= startDate) && (!endDate || date <= endDate)
         );
+        console.log(filteredXAxis)
         const filteredActualData = actualData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
         const filteredForecastData = forecastData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
         const filteredUpperBoundData = upperBoundData.slice(combinedXAxis.indexOf(filteredXAxis[0]), combinedXAxis.indexOf(filteredXAxis[filteredXAxis.length - 1]) + 1);
@@ -157,7 +191,7 @@ const LineGraph = ({ chartData, customYear }) => {
                 stroke: { curve: 'smooth', width: [2, 2, 0] } 
             }
         }));
-    }, [chartData, year, startDate, endDate, testData]);
+    }, [chartData, year, startDate, endDate, testData, test_values]);
 
     
 
