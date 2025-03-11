@@ -56,6 +56,7 @@ const ViewDocument = () => {
 
 
   const modal = () => {
+    console.log('qwe')
     setIsModalOpen(!isModalOpen)
   } 
 

@@ -167,19 +167,20 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   }, [document, flag]);
 
   useEffect(() => {
-    if(user?.role === '4' ) {
-      if(location.pathname === '/editor/records/disbursementrecords'){
-        setActiveTab('To Payment')
-      } else {
-        setActiveTab("BUR")
-      }
-    } else {
-      if(location.pathname === '/operator/records/disbursementrecords'){
-        setActiveTab('To Release')
-      } else {
-        setActiveTab("BUR")
-      }
-    }
+    // fix the cause
+    // if(user?.role === '4' ) {
+    //   if(location.pathname === '/editor/records/disbursementrecords'){
+    //     setActiveTab('To Payment')
+    //   } else {
+    //     setActiveTab("BUR")
+    //   }
+    // } else {
+    //   if(location.pathname === '/operator/records/disbursementrecords'){
+    //     setActiveTab('To Release')
+    //   } else {
+    //     setActiveTab("BUR")
+    //   }
+    // }
   }, [user, permission, location])
 
   const formatDateforUpdate = (rawDate) => {
@@ -1129,8 +1130,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                   <input 
                     className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                     type="text" 
-                    disabled={true}
+                    // disabled={true}
                     value={payeeData.DV}
+                    onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
                     required  />
                 </div>
               ) : (
