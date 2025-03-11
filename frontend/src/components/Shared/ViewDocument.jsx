@@ -12,6 +12,7 @@ import { BsArrowLeft } from "react-icons/bs";
 import DisbursementVoucher from '../EditorComponents/DisbursementVoucher';
 import LargeLoader from "../Loaders/LargeLoader";
 import DVTemplate from "./DVTemplate";
+import OtherTemplate from "./OthersTemplate";
 import FundingModal from "../OperatorComponents/FundingModal";
 import AddComment from "./AddComment";
 import Comments from "./Comments";
@@ -71,6 +72,10 @@ const ViewDocument = () => {
   const isBOModalOpen = () => {
     setBOModal(!BOModal)
   }
+
+  useEffect(() => {
+    console.log(doc)
+  }, [doc])
 
   // useEffect(() => {
   //   if(user && user.role === '1'){
@@ -351,7 +356,16 @@ const ViewDocument = () => {
         </div>
       </div>
       <div className="w-full flex-1 overflow-y-auto">
-        <DVTemplate document={doc}/>
+        {
+          doc?.activeTab !== 'Others' && (
+            <DVTemplate document={doc}/>
+          )
+        }
+        {
+          doc?.activeTab === 'Others' && (
+            <OtherTemplate document={doc}/>
+          )
+        }
         <div className="w-full h-auto">
           <div className="px-2 my-2">
             <h1 className="text-lg font-bold">Comments({doc?.comments ? doc.comments?.length : 0})</h1>
