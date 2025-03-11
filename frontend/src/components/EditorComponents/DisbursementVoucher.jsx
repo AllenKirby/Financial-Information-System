@@ -418,7 +418,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const Create = async() => {
     let updatedPayeeData
-    if(activeTab === 'To Payment'){
+    if(activeTab === 'To Payment' || activeTab === 'Others'){
       updatedPayeeData = dataForDV()
     }else if(activeTab === 'GSIS'){
       updatedPayeeData = dataForGSIS()
@@ -437,6 +437,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       tax: payeeData.TT_tax,
       cost: payeeData.TT_cost
     }
+    console.log(data)
     if(data.payee_data.accCode.length <= 1){
       console.log('hekllo')
       console.log(pData)
@@ -1028,7 +1029,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       const formattedValue = limitedValue.replace(/(\d{3})(?=\d)/g, "$1-");
                       setPayeeData({...payeeData, TIN: formattedValue})
                     }} 
-                    required  />
+                    required={activeTab === 'To Payment'? true : false}  />
                 </div>
                 ) : (
                   <div className='w-full sm:w-1/2 mt-2'>
@@ -1675,7 +1676,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 maxLength="500"
               />
             </div>
-            {activeTab !== 'BUR' && (
+            {(activeTab !== 'BUR' && activeTab !== 'Others') && (
               <>
                 <h1 className="font-semibold text-lg mt-2 text-gray-500">BIR Information</h1>
                 <div className='w-full h-auto mt-2'>

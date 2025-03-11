@@ -31,6 +31,16 @@ const formatDate = (rawDate) => {
 
 
 const createDV = async (req, res) => {
+    const activateTab = req.body.payee_data.activeTab
+    if(activateTab === 'To Payment'){
+        await forDV(req, res)
+    }else{
+        await forOthers(req, res)
+    }
+
+}
+
+const forDV = async (req, res) => {
     const {payee, TIN, address, fund, date, DV, MOP, specifiedMOP, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
     const {birParticular} = req.body.bir_data
     const createdBy = req.user.name
@@ -107,7 +117,51 @@ const createDV = async (req, res) => {
             error: error.message 
         });
     }
+}
 
+const forOthers = async(req, res) => {
+    const {payee, TIN, address, fund, date, DV, MOP, specifiedMOP, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
+    const {birParticular} = req.body.bir_data
+    const createdBy = req.user.name
+
+    const DVnoKey = `DVno${fund.replace(/\s/g, '')}`
+    const finalizeDVNo = await getOrigNumberOfCopies_no_BIR(DVnoKey, origNumber, DV, template)
+    const DVKey = `${finalizeDVNo.DV}|${fund.replace(/\s/g, '')}`
+
+    const dateTimeCollection = getDateTime();
+    const createdByDetails = `${createdBy} at ${dateTimeCollection}`
+
+    const payeeData = req.body.payee_data
+
+    newDvData = {
+        ...payeeData,
+        date: formatDate(date),
+        DV: finalizeDVNo.DV,
+        DVKey: DVKey,
+        createdAt: dateTimeCollection,
+        createdBy: createdByDetails,
+        status: 'Drafting',
+    }
+
+    const keysNotToEncrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber']
+    const encryptedDvData = encryptObj(newDvData, {keysNotToEncrypt})
+
+    try{
+        await db.collection('records').doc(encryptedDvData.DVKey).set(encryptedDvData);
+
+        // addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
+        // addOnClusterAmount(amount, fund, date)
+
+        return res.status(200).json({message: 'Disbursement Voucher has been created'});
+
+    }catch(error){
+        console.log(`Error in saving data of payee and BIR: ${error}`)
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Error in saving data of payee and BIR', 
+            error: error.message 
+        });
+    }
 }
 
 const updateStatus = async (DV, dTPassed) => {
@@ -332,6 +386,39 @@ const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
             const dvData = {
                 DV: `${template}${incrementedByOne}`,
                 BIR: `${template}${incrementedByTwo}`
+            }
+
+            return dvData;
+        })
+        
+    }catch(error){
+        console.log(`Error on get_ORIG_NumberOfCopies(editor controller) ${error}`)
+        return 0
+    }
+}
+
+const getOrigNumberOfCopies_no_BIR = async(dvno, givenNo, DV, template) => {
+    try{
+        const today = new Date();
+        const year = today.getFullYear();
+        const docRef = db.collection('NumOfRecords').doc(year.toString());
+        return await db.runTransaction(async(transaction) => {
+            const doc = await transaction.get(docRef);
+            if (!doc.exists) {
+                throw new Error('Document does not exist!');
+            }
+
+            const data = doc.data();
+            const currentNoOfCopies = data[dvno] || givenNo
+
+            
+            const incrementedByOne = (parseInt(currentNoOfCopies, 10) + 1).toString().padStart(4, '0');
+
+            transaction.update(docRef, {
+                [dvno]: incrementedByOne
+            });
+            const dvData = {
+                DV: `${template}${incrementedByOne}`
             }
 
             return dvData;
