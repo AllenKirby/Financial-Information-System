@@ -46,8 +46,10 @@ const forDV = async (req, res) => {
     const createdBy = req.user.name
     
     const DVnoKey = `DVno${fund.replace(/\s/g, '')}`
+    console.log(DV)
     const finalizeDVNo = await getOrigNumberOfCopies(DVnoKey, origNumber, DV, template)
     const DVKey = `${finalizeDVNo.DV}|${fund.replace(/\s/g, '')}`
+    console.log(finalizeDVNo)
 
     const dateTimeCollection = getDateTime();
     const createdByDetails = `${createdBy} at ${dateTimeCollection}`
@@ -367,16 +369,16 @@ const getOrigNumberOfCopies = async(dvno, givenNo, DV, template) => {
                 throw new Error('Document does not exist!');
             }
 
+            let currentNoOfCopies
             const data = doc.data();
-            const currentNoOfCopies = data[dvno] || givenNo
+            try{
+                const customDV = DV.split('-')[3]
+                currentNoOfCopies = parseInt(customDV, 10) > parseInt(givenNo, 10) ? customDV : givenNo
+            }catch{
+                currentNoOfCopies = data[dvno] || givenNo
+            }
 
-            // let incrementedByTwo;
-            // if (currentNoOfCopies === givenNo) {
-            //     incrementedByTwo = (parseInt(givenNo, 10) + 2).toString().padStart(4, '0');
-            // } else {
-            //     incrementedByTwo = (parseInt(currentNoOfCopies, 10) + 2).toString().padStart(4, '0');
-            // }
-            // const minusOne = (parseInt(input, 10) - 1).toString().padStart(4, '0');
+
             const incrementedByTwo = (parseInt(currentNoOfCopies, 10) + 2).toString().padStart(4, '0');
             const incrementedByOne = (parseInt(currentNoOfCopies, 10) + 1).toString().padStart(4, '0');
 

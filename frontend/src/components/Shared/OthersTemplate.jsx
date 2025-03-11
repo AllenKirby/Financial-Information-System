@@ -146,6 +146,14 @@ const OtherTemplate = ({document}) => {
                     ))}
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
+                    <p className='text-gray-500 w-2/5'>Breakdown Amounts</p>
+                    {document?.optionalAmount.map((title, index) => (
+                        <>
+                        <li key={`title-${index}`} className='text-customFontColor font-semibold truncate w-3/5'>{title ? title : '--'}</li>
+                        </>
+                    ))}
+                </div>
+                <div className='w-full h-auto flex items-start justify-center'>
                     <p className='text-gray-500 w-2/5'>Particulars</p>
                     <p className='text-customFontColor font-semibold break-words w-3/5'>{document?.particular}</p>
                 </div>
