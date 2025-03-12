@@ -129,7 +129,7 @@ const AddNewFieldOffice = (props) => {
                     setErrorFlag(false)
                 }
             }
-            setFieldOfficeData({...fieldOfficeData, ASA: value})
+            setFieldOfficeData({...fieldOfficeData, ASA: raw_value})
         }
     }
 

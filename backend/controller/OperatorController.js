@@ -1257,6 +1257,7 @@ const appendDataToSheet = async (req, res) => {
             //items
             const items = parseFloat(controlBook.data().items || 0)
 
+            console.log(updatedBudget, leftBudget, parseASA)
             if(updatedBudget < 0){
                 throw Error("Insufficient amount.")
             }
@@ -1339,7 +1340,7 @@ const appendDataToSheet = async (req, res) => {
 
             //items
             const items = parseFloat(controlBook.data().items || 0)
-
+            
             if(updatedBudget < 0){
                 throw Error("Insufficient amount.")
             }
@@ -1570,13 +1571,14 @@ const updateASA_COB = async(req, res) => {
 
 const deleteFieldOffice = async(req, res) => {
     const { id } = req.params
-    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA, tabStatus] = id.split('!')
+    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA, tabStatus, cash] = id.split('!')
     
     const ASAid = `${ASANo}!${cluster}`
     const documentID = `${docId}!${docIdCluster}`
 
     const data = {
         RO: RO,
+        cash: cash,
         projectID: documentID,
         projectName: projectName,
         tabStatus: tabStatus

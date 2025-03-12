@@ -48,8 +48,8 @@ const FieldOffices = (props) => {
 
   const deleteFO = async(e) => {
     e.stopPropagation()
-    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}`
-    
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}!${fieldOffice.cash}`
+    console.log(id)
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
