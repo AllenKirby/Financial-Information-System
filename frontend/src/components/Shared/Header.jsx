@@ -159,7 +159,7 @@ const Header = ({ currentPage, sidebar}) => {
           <div className="bg-gray-300 w-12 h-12 rounded-full flex items-center justify-center">
             <p className='font-bold'>{avatar(user?.name)}</p>
           </div> 
-          <div className="flex flex-col justify-center">
+          <div className="flex flex-col justify-center pr-5">
             <p className={`font-bold text-sm lg:text-base xl:text-base 2xl:text-base truncate ${fontColor}`}>
               {user?.name || "User"}
             </p>

@@ -246,6 +246,7 @@ const LineGraph = ({ chartData, customYear, test_values=[{ monthYear: ``, amount
 LineGraph.propTypes = {
     chartData: PropTypes.object.isRequired,
     customYear: PropTypes.string.isRequired,
+    test_values: PropTypes.array
 };
 
 export default LineGraph;

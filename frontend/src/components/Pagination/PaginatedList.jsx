@@ -56,6 +56,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                         <p className='w-1/3 text-center'>{total.ADAfirst}</p> 
                         <p className='w-1/3 text-center'>{total.ADAsecond}</p> 
                         <p className='w-1/3 text-center'>{total.cash}</p> 
+                        <p className='w-1/3 text-center'>{total.bir}</p> 
                     </div>
                 )}
                 {counter === 5 && ( 

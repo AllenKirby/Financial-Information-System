@@ -6,7 +6,6 @@ import { ResCenter } from "./editFormComponents/ResCenter";
 import { IoIosArrowDown } from "react-icons/io";
 import { useRef, useState } from "react";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import Templates from "./editFormComponents/Templates";
 
 const Editform = () => {
     const accountCodeRef = useRef(null)
@@ -14,7 +13,6 @@ const Editform = () => {
     const resCenRef = useRef(null)
     const nameOfficeRef = useRef(null)
     const taxTypeRef = useRef(null)
-    const templates = useRef(null)
 
     const { user } = useAuthContext()
 
@@ -107,20 +105,6 @@ const Editform = () => {
                     <div ref={taxTypeRef} className="overflow-hidden transition-all duration-500" style={{height: flag.taxType ? `${taxTypeRef.current.scrollHeight}px` : "0px",}}>
                         <div className="p-2">
                             <TaxType/>
-                        </div>
-                    </div>
-                </div>
-                <div className="w-full h-auto border-b-2 py-2 my-1 transition-all duration-150">
-                    <div onClick={() => setFlag({...flag, DVTemplates: !flag.DVTemplates})} className="w-full h-auto flex items-center justify-between cursor-pointer">
-                        <p className="text-lg font-bold">Disbursement Voucher Templates</p>
-                        <IoIosArrowDown
-                            size={20}
-                            className={`transition-transform duration-300 ${flag.taxType ? "rotate-180" : ""}`}
-                        />
-                    </div>
-                    <div ref={templates} className="overflow-hidden transition-all duration-500" style={{height: flag.DVTemplates ? `${templates.current.scrollHeight}px` : "0px",}}>
-                        <div className="p-2">
-                            <Templates/>
                         </div>
                     </div>
                 </div>

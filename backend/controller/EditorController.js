@@ -423,7 +423,7 @@ const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateSt
 }
 
 const downloadDVRegister = async(req, res) => {
-    const {DV, header} = req.body
+    const {DV, header, total} = req.body
     try {
         const templatePath = path.join(__dirname, '..', 'templates', 'DVRegister.xlsx'); 
         const workbook = await XlsxPopulate.fromFileAsync(templatePath);
@@ -432,6 +432,7 @@ const downloadDVRegister = async(req, res) => {
         workbook.sheet('Sheet1').cell(`B2`).value(header.month)
         DV.forEach((item,) => {
             const [ DV1, DV2, DV3, DV4 ] = item.DV.split('-')
+
             workbook.sheet('Sheet1').cell(`A${startingCell}`).value(item.PRNoDate)
             workbook.sheet('Sheet1').cell(`B${startingCell}`).value(item.PRNo)
             workbook.sheet('Sheet1').cell(`C${startingCell}`).value(item.PONODate)
@@ -445,29 +446,32 @@ const downloadDVRegister = async(req, res) => {
             workbook.sheet('Sheet1').cell(`K${startingCell}`).value(DV4)
             workbook.sheet('Sheet1').cell(`L${startingCell}`).value(item.payee)
             workbook.sheet('Sheet1').cell(`M${startingCell}`).value(item.particular)
-            item.ASANo.map((ASA,) => 
-                workbook.sheet('Sheet1').cell(`N${startingCell}`).value(ASA)
-            )
-            item.projectName.map((project,) => 
-                workbook.sheet('Sheet1').cell(`O${startingCell}`).value(project)
-            )
-            item.category.map((category,) => 
-                workbook.sheet('Sheet1').cell(`P${startingCell}`).value(category)
-            )
-            item.ASAAmount.map((ASAAmount,) => 
-                workbook.sheet('Sheet1').cell(`Q${startingCell}`).value(ASAAmount)
-            )
+            workbook.sheet('Sheet1').cell(`N${startingCell}`).value(item.ASANo.join('\n'))
+            workbook.sheet('Sheet1').cell(`O${startingCell}`).value(item.projectName.join('\n'))
+            workbook.sheet('Sheet1').cell(`P${startingCell}`).value(item.category.join('\n'))
+            workbook.sheet('Sheet1').cell(`Q${startingCell}`).value(item.ASAAmount.join('\n'))
             workbook.sheet('Sheet1').cell(`R${startingCell}`).value(item.ADAfirst)
             workbook.sheet('Sheet1').cell(`S${startingCell}`).value(item.ADASecond)
             workbook.sheet('Sheet1').cell(`T${startingCell}`).value(item.cash)
-            workbook.sheet('Sheet1').cell(`U${startingCell}`).value(item.ASATotal)
-            workbook.sheet('Sheet1').cell(`V${startingCell}`).value(item.ASAReleases)
-            workbook.sheet('Sheet1').cell(`W${startingCell}`).value(item.cashTotal)
-            workbook.sheet('Sheet1').cell(`X${startingCell}`).value(item.cashReleases)
-            workbook.sheet('Sheet1').cell(`Y${startingCell}`).value(item.checkDate)
-            workbook.sheet('Sheet1').cell(`Z${startingCell}`).value(item.checkNo)
+            workbook.sheet('Sheet1').cell(`U${startingCell}`).value(item.net)
+            workbook.sheet('Sheet1').cell(`V${startingCell}`).value(item.ASATotal)
+            workbook.sheet('Sheet1').cell(`W${startingCell}`).value(item.ASAReleases.join('\n'))
+            workbook.sheet('Sheet1').cell(`X${startingCell}`).value(item.cashTotal)
+            workbook.sheet('Sheet1').cell(`Y${startingCell}`).value(item.cashReleases)
+            workbook.sheet('Sheet1').cell(`Z${startingCell}`).value(item.checkDate)
+            workbook.sheet('Sheet1').cell(`AA${startingCell}`).value(item.checkNo)
             startingCell++
         })
+
+        workbook.sheet('Sheet1').cell(`Q${startingCell}`).value(total.ASA)
+        workbook.sheet('Sheet1').cell(`R${startingCell}`).value(total.ADAfirst)
+        workbook.sheet('Sheet1').cell(`S${startingCell}`).value(total.ADAsecond)
+        workbook.sheet('Sheet1').cell(`T${startingCell}`).value(total.cash)
+        workbook.sheet('Sheet1').cell(`U${startingCell}`).value(total.bir)
+        workbook.sheet('Sheet1').cell(`V${startingCell}`).value(total.ASATotal)
+        workbook.sheet('Sheet1').cell(`W${startingCell}`).value(total.ASAReleases)
+        workbook.sheet('Sheet1').cell(`X${startingCell}`).value(total.cashTotal)
+        workbook.sheet('Sheet1').cell(`Y${startingCell}`).value(total.cashReleases)
 
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');

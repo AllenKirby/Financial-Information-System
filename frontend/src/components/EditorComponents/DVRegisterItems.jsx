@@ -58,6 +58,8 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
     return formatToPeso(sum)
   }
 
+  console.log(DV[1].data)
+
   return (
     <div onClick={() => navigate(`${DV[1]?.data?.DVKey}|${getStatus(DV[1]?.data?.status)}|${'0'}`)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full sm:pl-10 sm:pr-5 h-auto cursor-pointer my-1 rounded-lg p-2 flex flex-row items-center justify-center text-sm`}>
       <div className='w-full flex flex-col sm:flex-row items-center justify-center'>
@@ -81,50 +83,57 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
         )}
         {counter === 3 && (
           <div className='w-5/6 flex flex-col sm:flex-row'>
-            <p className='w-full sm:w-1/4 flex items-center justify-center sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA No.: </span>{ASA.join('\n') || '--'}</p>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Project Name: </span>{project.join('\n') || '--'}</p>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Category: </span>{category.join('\n') || '--'}</p>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
+            <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
               <div className='flex flex-col'>
-                {asaAmount.map((item, index) => 
-                  <p key={index}>{formatToPeso(item)}</p>
-                ) || '--'}
+                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? ASA.map((item, index) => 
+                  <p key={index}>{item}</p>
+                ) : '--'}
               </div>
-            </p>
+            </div>
+            <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
+              <div className='flex flex-col'>
+                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? project.map((item, index) => 
+                  <p key={index}>{item}</p>
+                ) : '--'}
+              </div>
+            </div>
+            <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
+              <div className='flex flex-col'>
+                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? category.map((item, index) => 
+                  <p key={index}>{item}</p>
+                ) : '--'}
+              </div>
+            </div>
+            <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
+              <div className='flex flex-col'>
+                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? asaAmount.map((item, index) => 
+                  <p key={index}>{formatToPeso(item)}</p>
+                ) : '--'}
+              </div>
+            </div>
           </div>
         )}
         {counter === 4 && (
           <div className='w-5/6 flex flex-col sm:flex-row'>
             <p className='w-full sm:w-1/3 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA-1st: </span>{DV[1].data.ADAfirst ? formatToPeso(DV[1].data.ADAfirst) : '--'}</p>
             <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ADA-2nd: </span>{DV[1].data.ADASecond ? formatToPeso(DV[1].data.ADASecond) : '--'}</p>
-            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>  
-              <div className='flex flex-col'>
-                  <p>{formatToPeso(adue)}</p>
-                  <p>{formatToPeso(floatTotal_val)}</p>
-              </div>
-            </p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>{formatToPeso(adue)}</p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BIR-Others: </span>{formatToPeso(floatTotal_val)}</p>
           </div>
         )}
         {counter === 5 && (
           <div className='w-5/6 flex'>
-            <p className='w-full sm:w-1/4 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA Total: </span>{sumOfASA(ASAamount)}</p>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'>
+            <p className='w-full sm:w-1/4 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA Total: </span>{(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? sumOfASA(ASAamount) : '--'}</p>
+            <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'>
               <span className='font-normal block sm:hidden'>ASA Releases: </span>
               <div className="flex flex-col">
-                {ASAamount.map((amount, index) => (
+                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? ASAamount.map((amount, index) => (
                   <p key={index}>{formatToPeso(amount)}</p>
-                ))}
-              </div>
-            </p>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash Totals: </span>{sumOfASA(ASAamount)}</p>
-            <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'>
-              <span className='font-normal block sm:hidden'>Cash Releases: </span>
-              <div className="flex flex-col">
-                {ASAamount.map((amount, index) => (
-                  <p key={index}>{formatToPeso(amount)}</p>
-                ))}
+                )) : '--'}
               </div>
             </div>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash Totals: </span>{sumOfASA(ASAamount)}</p>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash Releases: </span>{formatToPeso(DV[1].data.amount)}</p>
           </div>
         )}
         {counter === 6 && (

@@ -79,6 +79,7 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
   };
 
   useEffect(() => {
+    console.log(hideText, flag)
     if(flag){
       setHideText('block')
     }else {
@@ -121,16 +122,16 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                   onClick={() => setActiveTab('dashboard')} 
                   to={`/${getRole()}/dashboard`} 
                   className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'dashboard' ? `${fontColor}` : ''}`}>
-                    <TbLayoutDashboard size={20}/>Dashboard
+                    <TbLayoutDashboard size={20}/><span className={`${hideText}`}>Dashboard</span>
                 </NavLink>
               )}
               
               <button 
                 onClick={() => {setRecordsFlag(!recordsFlag); setActiveTab('records');}} 
                 className={`w-full h-fit flex items-center justify-between px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'records' ? `${fontColor}` : ''}`}>
-                  <span className='flex items-center justify-center gap-3'><FaRegFile size={20}/>Records</span> {recordsFlag ? <IoIosArrowUp size={20}/> : <IoIosArrowDown size={20}/> }
+                  <span className='flex items-center justify-center gap-3'><FaRegFile size={20}/><span className={`${hideText}`}>Records</span></span> {recordsFlag ? <IoIosArrowUp size={20}/> : <IoIosArrowDown size={20}/> }
               </button>
-              {recordsFlag && (
+              {recordsFlag || flag && (
                 <div className='w-full flex flex-col items-center justify-start text-gray-500 font-bold px-7 text-sm'>
                   <NavLink 
                     to={`/${getRole()}/records/disbursementrecords`} 
@@ -161,7 +162,7 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                   onClick={() => setActiveTab('dvregister')} 
                   to={`/${getRole()}/dvregister`} 
                   className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'dvregister' ? `${fontColor}` : ''}`}>
-                    <LuFiles size={20}/>DV Register
+                    <LuFiles size={20}/><span className={`${hideText}`}>DV Register</span>
                 </NavLink>
               )}
               
@@ -170,7 +171,7 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                   onClick={() => setActiveTab('controlbook')} 
                   to={`/${getRole()}/controlbook`} 
                   className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'controlbook' ? `${fontColor}` : ''}`}>
-                    <FiBook size={20}/>Control Book
+                    <FiBook size={20}/><span className={`${hideText}`}>Control Book</span>
                 </NavLink>
               )}
               
@@ -179,7 +180,7 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                   onClick={() => setActiveTab('editform')} 
                   to={`/${getRole()}/editform`} 
                   className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'editform' ? `${fontColor}` : ''}`}>
-                    <TbEdit size={20}/>Edit Form
+                    <TbEdit size={20}/><span className={`${hideText}`}>Edit Form</span>
                 </NavLink>
               )}
               
@@ -187,7 +188,7 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                 onClick={() => setActiveTab('logs')} 
                 to={`/${getRole()}/disbursementlogs`} 
                 className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'logs' ? `${fontColor}` : ''}`}>
-                  <MdOutlineHistory size={20}/>Logs
+                  <MdOutlineHistory size={20}/><span className={`${hideText}`}>Logs</span>
               </NavLink>
             </>
           )}
@@ -198,21 +199,21 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                 onClick={() => setActiveTab('usermanagement')} 
                 to={`/${getRole()}/usermanagement`} 
                 className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'usermanagement' ? `${fontColor}` : ''}`}>
-                  <PiUsersThreeBold size={20}/>User Management
+                  <PiUsersThreeBold size={20}/><span className={`${hideText}`}>User Management</span>
               </NavLink>
 
               <NavLink 
                 onClick={() => setActiveTab('accesscontrol')} 
                 to={`/${getRole()}/accesscontrol`} 
                 className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'accesscontrol' ? `${fontColor}` : ''}`}>
-                  <TbUserShield size={20}/>Access Control
+                  <TbUserShield size={20}/><span className={`${hideText}`}>Access Control</span>
               </NavLink>
 
               <NavLink 
                 onClick={() => setActiveTab('logs')} 
                 to={`/${getRole()}/logs`} 
                 className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'logs' ? `${fontColor}` : ''}`}>
-                  <MdOutlineHistory size={20}/>Activity Logs
+                  <MdOutlineHistory size={20}/><span className={`${hideText}`}>Activity Logs</span>
               </NavLink>
             </>
           )}

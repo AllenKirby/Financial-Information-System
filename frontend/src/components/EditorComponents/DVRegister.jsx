@@ -32,6 +32,7 @@ const DVRegister = () => {
         ADAfirst: 0, 
         ADAsecond: 0, 
         cash: 0, 
+        bir: 0,
         ASATotal: 0, 
         ASAReleases: 0, 
         cashTotal: 0, 
@@ -128,8 +129,6 @@ const DVRegister = () => {
         }
     }
 
-    console.log(sortTimeCreatedDesc())
-
     const increment = () => {
         setCounter(prevCounter => prevCounter + 1)
     }
@@ -153,14 +152,43 @@ const DVRegister = () => {
         }
 
         const dataDV = Object.entries(documents).map(([, data]) => {
-            const { PRNoDate, PRNo, PONODate, PONO, BURDate, ADAfirst, ADASecond, checkDate, checkNo, ORSBURS, date, DV,
-                payee, particular, ASA, amount
+            const { 
+                PRNoDate, 
+                PRNo, 
+                PONODate, 
+                PONO, 
+                BURDate, 
+                ADAfirst, 
+                ADASecond, 
+                checkDate, 
+                checkNo, 
+                ORSBURS, 
+                date, 
+                DV,
+                payee, 
+                particular, 
+                ASA, 
+                amount,
+                TT_formula1,
+                TT_formula2
              } = data.data
+             let ASANo;
+             let projectName;
+             let category;
+             let ASAAmount;
 
-             const ASANo = Object.keys(ASA).map((item,) => item.split('!')[0].replace("|", ' '))
-             const projectName = Object.keys(ASA).map((item,) => item.split(',')[1].split('>')[0])
-             const category = Object.keys(ASA).map((item,) => item.split(',')[1].split('>')[1])
-             const ASAAmount = Object.values(ASA).map((item,) => item)
+             if(ASA){
+                ASANo = Object.keys(ASA).map((item,) => item.split('!')[0].replace("|", ' '))
+                projectName = Object.keys(ASA).map((item,) => item.split(',')[1].split('>')[0])
+                category = Object.keys(ASA).map((item,) => item.split(',')[1].split('>')[1])
+                ASAAmount = Object.values(ASA).map((item,) => item)
+            }
+
+             const val1 = eval(amount + TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            const val2 = eval(amount + TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
+
+            const adue = amount - tval
             return {
                 PRNoDate, 
                 PRNo, 
@@ -172,17 +200,18 @@ const DVRegister = () => {
                 DV,
                 payee, 
                 particular,
-                ASANo,
-                projectName,
-                category,
-                ASAAmount,
+                ASANo: ORSBURS ? ASANo : '',
+                projectName: ORSBURS ? projectName : '',
+                category: ORSBURS ? category : '',
+                ASAAmount: ORSBURS ? ASAAmount : '',
                 ADAfirst, 
                 ADASecond,
-                cash: amount,
-                ASATotal: 0,
-                ASAReleases: 0,
-                cashTotal: 0,
-                cashReleases: 0,
+                cash: adue,
+                net: tval,
+                ASATotal: ORSBURS ? amount : '',
+                ASAReleases: ORSBURS ? ASAAmount : '',
+                cashTotal: amount,
+                cashReleases: amount,
                 checkDate, 
                 checkNo
             }
@@ -190,26 +219,63 @@ const DVRegister = () => {
 
         const data= {
             DV: dataDV,
-            header: header
+            header: header,
+            total: total
         }
 
         await exportDVRegister(data)
     }
 
+    // console.log(Object.entries(documents).map((item,) => {
+    //     if(item[1].data.ORSBURS) {
+    //         return Object.values(item[1].data.ASA)
+    //     } else {
+    //         return 0
+    //     }
+    // }))
+
     const sumOfASA = () => {
-        const ASA = Object.entries(documents).map((item,) => Object.values(item[1].data.ASA))
+        const ASA = Object.entries(documents).map((item,) => {
+            if(item[1].data.ORSBURS) {
+                return Object.values(item[1].data.ASA)
+            } else {
+                return 0
+            }
+        })
         const innerSums = ASA.map((arr) => arr.reduce((sum, num) => sum + Number(num), 0));
         return innerSums.reduce((sum, num) => sum + num, 0);
     }
 
+    const sumOfGross = () => {
+        const ASA = Object.entries(documents).map((item,) => {
+            const val1 = eval(item[1].data.amount + item[1].data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            const val2 = eval(item[1].data.amount + item[1].data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
+
+            return item[1].data.amount - tval
+        })
+        return ASA.reduce((sum, num) => sum + num, 0);
+    }
+
+    const sumOfNet = () => {
+        const ASA = Object.entries(documents).map((item,) => {
+            const val1 = eval(item[1].data.amount + item[1].data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            const val2 = eval(item[1].data.amount + item[1].data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
+
+            return tval
+        })
+        return ASA.reduce((sum, num) => sum + num, 0);
+    }
+
     const sumOfADAFirst = () => {
-        const ADAFirst = Object.entries(documents).map((item,) => item[1].data.ADAfirst)
-        return ADAFirst.reduce((sum, num) => sum + Number(num), 0);
+        const ADAFirst = Object.entries(documents).map((item,) => parseFloat(item[1].data.ADAfirst))
+        return ADAFirst.reduce((sum, num) => sum + Number(num), 0) ? ADAFirst.reduce((sum, num) => sum + Number(num), 0) : 0;
     }
 
     const sumOfADASecond = () => {
         const ADASecond = Object.entries(documents).map((item,) => item[1].data.ADASecond)
-        return ADASecond.reduce((sum, num) => sum + Number(num), 0);
+        return ADASecond.reduce((sum, num) => sum + Number(num), 0) ? ADASecond.reduce((sum, num) => sum + Number(num), 0) : 0;
     }
 
     const sumOfCash = () => {
@@ -217,17 +283,28 @@ const DVRegister = () => {
         return cash.reduce((sum, num) => sum + num, 0);
     }
 
+    // const sumOfCashTotal = () => {
+    //     const cashTotal = Object.entries(documents).filter((item,) => !item[1].data.ORSBURS)
+    //     if(cashTotal.length > 0) {
+    //         const total = cashTotal.map(item => item[1].data.amount)
+    //         return total.reduce((sum, num) => sum + num, 0);
+    //     } else {
+    //         return 0
+    //     }
+    // }
+
     useEffect(() => {
         //ASA
         setTotal({
             ASA: formatToPeso(sumOfASA()),
             ADAfirst: formatToPeso(sumOfADAFirst()), 
             ADAsecond: formatToPeso(sumOfADASecond()), 
-            cash: formatToPeso(sumOfCash()),  
+            cash: formatToPeso(sumOfGross()),  
+            bir: formatToPeso(sumOfNet()),  
             ASATotal: formatToPeso(sumOfASA()),
             ASAReleases: formatToPeso(sumOfASA()), 
-            cashTotal: formatToPeso(sumOfASA()), 
-            cashReleases: formatToPeso(sumOfASA())
+            cashTotal: formatToPeso(sumOfCash()), 
+            cashReleases: formatToPeso(sumOfCash())
         })
     }, [documents])
 
@@ -328,9 +405,10 @@ const DVRegister = () => {
                                     <p className="py-2 text-center font-semibold">RO Payroll</p>
                                 </div>
                                 <div className="w-full flex">
-                                    <p className="w-1/3 py-2 text-center font-semibold">ADA-1st </p>
-                                    <p className="w-1/3 py-2 text-center font-semibold">ADA-2nd</p>
-                                    <p className="w-1/3 py-2 text-center font-semibold">Cash</p>
+                                    <p className="w-1/4 py-2 text-center font-semibold">ADA-1st </p>
+                                    <p className="w-1/4 py-2 text-center font-semibold">ADA-2nd</p>
+                                    <p className="w-1/4 py-2 text-center font-semibold">Cash</p>
+                                    <p className="w-1/4 py-2 text-center font-semibold">BIR-Others</p>
                                 </div>
                             </div>
                         )}
