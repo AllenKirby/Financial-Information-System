@@ -131,27 +131,33 @@ const OtherTemplate = ({document}) => {
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
                     <p className='text-gray-500 w-2/5'>Account Title</p>
-                    {document?.accTitle.map((title, index) => (
-                        <>
-                        <li key={`title-${index}`} className='text-customFontColor font-semibold truncate w-3/5'>{title}</li>
-                        </>
-                    ))}
+                    <ul className='flex flex-col w-3/5'>
+                        {(document?.accTitle || []).map((title, index) => (
+                            <li key={`item-${index}`} className='text-customFontColor font-semibold truncate'>
+                                {title} {document?.additionalLabels?.[index] || ''}
+                            </li>
+                        ))}
+                    </ul>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
                     <p className='text-gray-500 w-2/5'>Account Code</p>
-                    {document?.accCode.map((code, index) => (
-                        <>
-                        <li key={`code-${index}`} className='text-customFontColor font-semibold w-3/5'>{code}</li>
-                        </>
-                    ))}
+                    <div className='flex flex-col w-3/5'>
+                        {document?.accCode.map((code, index) => (
+                            <>
+                            <li key={`code-${index}`} className='text-customFontColor font-semibold'>{code}</li>
+                            </>
+                        ))}
+                    </div>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
                     <p className='text-gray-500 w-2/5'>Breakdown Amounts</p>
-                    {document?.optionalAmount.map((title, index) => (
-                        <>
-                        <li key={`title-${index}`} className='text-customFontColor font-semibold truncate w-3/5'>{title ? title : '--'}</li>
-                        </>
-                    ))}
+                    <div className='flex flex-col w-3/5'>
+                        {document?.optionalAmount.map((title, index) => (
+                            <>
+                            <li key={`title-${index}`} className='text-customFontColor font-semibold truncate'>{title ? formatToPeso(title) : '--'}</li>
+                            </>
+                        ))}
+                    </div>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
                     <p className='text-gray-500 w-2/5'>Particulars</p>
