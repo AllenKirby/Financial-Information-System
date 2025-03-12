@@ -17,10 +17,11 @@ import { combineReducers } from 'redux';
 const persistConfig = {
     key: 'root',
     storage,
+    whitelist: ['records', 'vouchers', 'burRecords']
   };
 
   const rootReducer = combineReducers({
-    permission: permissionReducer,
+      permission: permissionReducer,
       records: RecordsReducer,
       controlBook: ControlBookReducer,
       testforecast: TestForecastedReducer,

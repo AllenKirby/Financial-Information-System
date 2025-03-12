@@ -24,18 +24,35 @@ const Notification = ({ notification, markAsRead }) => {
   }, [notification]);
 
   const openNotif = (DV) =>{
+    console.log(DV.split('|')[0])
     if(user.role === '3'){
       const document = DVRecords.documents[DV].data
-      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+      if(notification.message1.includes('Disbursement')) {
+        navigate(`records/disbursementrecords/${DV}|${document.status}|${user.role}`)
+      } else {
+        navigate(`records/burrecords/${DV.split('|')[0]}`)
+      }
     }else if(user.role === '4'){
       const document = DVRecords[DV]
-      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+      if(notification.message1.includes('Disbursement')) {
+        navigate(`records/disbursementrecords/${DV}|${document.status}|${user.role}`)
+      } else {
+        navigate(`records/burrecords/${DV.split('|')[0]}`)
+      }
     }else if(user.role === '2'){
       const document = DVRecords[DV].data
-      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+      if(notification.message1.includes('Disbursement')) {
+        navigate(`records/disbursementrecords/${DV}|${document.status}|${user.role}`)
+      } else {
+        navigate(`records/burrecords/${DV.split('|')[0]}`)
+      }
     }else if(user.role === '1'){
       const document = DVRecords[DV].data
-      navigate(`disbursementrecords/${DV}|${document.status}|${user.role}`)
+      if(notification.message1.includes('Disbursement')) {
+        navigate(`records/disbursementrecords/${DV}|${document.status}|${user.role}`)
+      } else {
+        navigate(`records/burrecords/${DV.split('|')[0]}`)
+      }
     }
   }
 
@@ -44,6 +61,8 @@ const Notification = ({ notification, markAsRead }) => {
 
     return parse(dateTime, 'MMMM dd, yyyy hh:mm:ss a', new Date());
   }
+
+  //console.log(notification.data.split('|')[3])
   
   return (
     <li className='my-1 bg-white p-2 rounded-md cursor-pointer text-gray-500 hover:bg-slate-100' 
