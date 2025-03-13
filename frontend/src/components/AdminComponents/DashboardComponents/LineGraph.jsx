@@ -191,7 +191,7 @@ const LineGraph = ({ chartData, customYear, test_values=[{ monthYear: ``, amount
                 stroke: { curve: 'smooth', width: [2, 2, 0] } 
             }
         }));
-    }, [chartData, year, startDate, endDate, testData, test_values]);
+    }, [chartData, year, startDate, endDate, testData]);
 
     
 

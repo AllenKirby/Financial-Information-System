@@ -210,7 +210,6 @@ const BudgetRecommendation = ({onNewValue}) => {
     }
 
     const [num, setNum] = useState(0)
-
     return (
         <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto text-gray-500 ">
             <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-xl my-2`}>Budget Recommendation</h1>
