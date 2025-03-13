@@ -7,7 +7,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 const ComparisonView = ({modal}) => {
     const { user }  = useAuthContext()
-
+    
   return (
     <section className="w-2/3 h-2/3 rounded-lg flex flex-col bg-white p-3 text-gray-500">
         <div className="w-full h-auto flex items-center justify-between">

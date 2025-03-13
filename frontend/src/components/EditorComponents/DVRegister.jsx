@@ -242,6 +242,8 @@ const DVRegister = () => {
                 return 0
             }
         })
+        if(!ASA) return
+
         const innerSums = ASA.map((arr) => arr.reduce((sum, num) => sum + Number(num), 0));
         return innerSums.reduce((sum, num) => sum + num, 0);
     }
