@@ -101,6 +101,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   useEffect(() => {
     if (flag && document) {
+      console.log(document.activeTab)
       setPayeeData((prevData) => {
         const updatedData = {
           ...prevData,
@@ -141,7 +142,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           accCode: document.accCode && document.accCode[index] ? document.accCode[index] : '',
           amount: document.optionalAmount && document.optionalAmount[index] ? document.optionalAmount[index] : '',
         }));
-  
+
         setFormFields(initialFormFields);
       }else if(document.activeTab === 'GSIS'){
         setGSIS({stamp: document.stamp, dst: document.dst, vat12: document.vat12})
@@ -162,26 +163,54 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         })
         setPayeeData({...payeeData, RC: document.resCenter, NF_name: document.NFNameA, NF_office: document.NFOfficeA, particular: document.particular})
         setBURAmount([...document.amount])
+      } else if (document.activeTab === 'Others'){
+        setActiveTab('Others')
+        const initialFormFields = (document.accTitle || []).map((title, index) => ({
+          accCategory: document.accCategory && document.accCategory[index] ? document.accCategory[index] : '',
+          accTitle: title || '',
+          accCode: document.accCode && document.accCode[index] ? document.accCode[index] : '',
+          amount: document.optionalAmount && document.optionalAmount[index] ? document.optionalAmount[index] : '',
+        }));
+
+        setFormFields(initialFormFields);
       }
     }
   }, [document, flag]);
 
   useEffect(() => {
     // fix the cause
-    // if(user?.role === '4' ) {
-    //   if(location.pathname === '/editor/records/disbursementrecords'){
-    //     setActiveTab('To Payment')
-    //   } else {
-    //     setActiveTab("BUR")
-    //   }
-    // } else {
-    //   if(location.pathname === '/operator/records/disbursementrecords'){
-    //     setActiveTab('To Release')
-    //   } else {
-    //     setActiveTab("BUR")
-    //   }
-    // }
-  }, [user, permission, location])
+    const path = location.pathname.split('/')[1]
+    if(user?.role === '4') {
+      if(path === 'editor'){
+        console.log(1)
+        if(Object.keys(document).length > 0){
+          console.log(document)
+          setActiveTab(document.activeTab)
+        }else{
+          console.log(3)
+          setActiveTab('To Payment')
+        }
+        console.log(4)
+      } else {
+        console.log(5)
+        setActiveTab("BUR")
+      }
+    } else {
+      if(path === 'operator'){
+        console.log(1)
+        if(Object.keys(document).length > 0){
+          console.log(document)
+          setActiveTab(document.activeTab)
+        }else{
+          console.log(3)
+          setActiveTab('To Release')
+        }
+        console.log(4)
+      } else {
+        setActiveTab("BUR")
+      }
+    }
+  }, [user, permission])
 
   const formatDateforUpdate = (rawDate) => {
     if (typeof rawDate === 'string') {
