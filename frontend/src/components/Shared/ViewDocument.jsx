@@ -41,6 +41,7 @@ const ViewDocument = () => {
   const [fundingModal, setFundingModal] = useState(false)
   const [BOModal, setBOModal] = useState(false)
   const [returnFlag, setReturnFlag] = useState(false)
+  const [submitFlag, setSubmitFlag] = useState(false)
 
   //contexts
   const { user } = useAuthContext()
@@ -318,7 +319,7 @@ const ViewDocument = () => {
             </button>
           )}
 
-          {idStatus.type === '4' && (
+          {/* {idStatus.type === '4' && (
             <button
               //onClick={permission.data.permission ? handleSubmitForOp : handleSubmit}
               onClick={() => openModal(permission?.data?.permission ? 'SubmitFunding' : 'SubmitPreparer')}
@@ -326,6 +327,23 @@ const ViewDocument = () => {
               >
               <RxPaperPlane size={20} className="block lg:hidden"/><span className="hidden lg-landscape:block">Submit</span>
             </button>
+          )} */}
+          {idStatus.type === '4' && (
+            <div className="w-auto h-auto relative">
+              <button onClick={() => setSubmitFlag(!submitFlag)} className={`w-auto px-5 py-2 rounded-lg bg-preparerPrimary border-2 border-preparerPrimary hover:bg-white hover:text-preparerPrimary text-white transition-all duration-150`}
+                >
+                <RxPaperPlane size={20} className="block lg:hidden"/><span className="hidden lg-landscape:block">Submit</span>
+              </button>
+              {submitFlag && (
+                <>
+                  <div className="fixed inset-0 z-0" onClick={() => setSubmitFlag(!submitFlag)}/>
+                  <div className='absolute w-24 sm:w-28 md:w-32 lg:w-full bg-white right-0 top-12 z-0 p-1 border-[1px] text-xs lg:text-sm'>
+                    <div onClick={() => openModal('SubmitPreparer')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Funding</div>
+                    <div onClick={() => openModal('SubmitFunding')} className='text-center mt-1 hover:bg-slate-100 cursor-pointer py-1 text-sm'>Budget Officer</div>
+                  </div>
+                </>
+              )}
+            </div>
           )}
 
           {idStatus.type === '3' && (
