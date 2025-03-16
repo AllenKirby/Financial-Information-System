@@ -31,13 +31,59 @@ const formatDate = (rawDate) => {
 
 
 const createDV = async (req, res) => {
-    const activateTab = req.body.payee_data.activeTab
-    if(activateTab === 'To Payment'){
+    const activeTab = req.body.payee_data.activeTab
+    if(activeTab === 'To Payment'){
         await forDV(req, res)
-    }else{
+    }else if(activeTab === 'Others'){
         await forOthers(req, res)
+    }else if(activeTab === 'To Release'){
+        await forReleasing(req, res)
+    }else{
+        console.log('No active tab available.')
+        res.status(500).json({error: 'No active tab available.'})
     }
 
+}
+
+const forReleasing = async(req, res) => {
+    const {payee, TIN, address, fund, date, DV, MOP, specifiedMOP, origNumber, template, RC, NF_name, NF_office,TT_tax, TT_formula1, TT_formula2, TT_cost, accCategory, accTitle, accCode,optionalAmount, amount, particular} = req.body.payee_data;
+    const createdBy = req.user.name
+
+    const DVnoKey = `DVno${fund.replace(/\s/g, '')}`
+    const finalizeDVNo = await getOrigNumberOfCopies_no_BIR(DVnoKey, origNumber, DV, template)
+    const DVKey = `${finalizeDVNo.DV}|${fund.replace(/\s/g, '')}`
+
+    const dateTimeCollection = getDateTime();
+    const createdByDetails = `${createdBy} at ${dateTimeCollection}`
+
+    const payeeData = req.body.payee_data
+
+    newDvData = {
+        ...payeeData,
+        date: formatDate(date),
+        DV: finalizeDVNo.DV,
+        DVKey: DVKey,
+        createdAt: dateTimeCollection,
+        createdBy: createdByDetails,
+        status: 'In Review',
+    }
+
+    const keysNotToEncrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber']
+    const encryptedDvData = encryptObj(newDvData, {keysNotToEncrypt})
+
+    try{
+        await db.collection('records').doc(encryptedDvData.DVKey).set(encryptedDvData);
+
+        return res.status(200).json({message: 'Disbursement Voucher has been created'});
+
+    }catch(error){
+        console.log(`Error in saving data of payee and BIR: ${error}`)
+        return res.status(500).json({ 
+            success: false, 
+            message: 'Error in saving data of payee and BIR', 
+            error: error.message 
+        });
+    }
 }
 
 const forDV = async (req, res) => {

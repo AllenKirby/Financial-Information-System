@@ -19,6 +19,8 @@ import {useSelector} from 'react-redux'
 import { useFundingHook } from '../../hooks/useFundingHook'
 import { useLocation } from 'react-router-dom'
 
+// import {retrieveProjectName} from '../../hooks/useFundingHook'
+
 const DisbursementVoucher = ({modal, document = {}, flag}) => {
    //hooks
    const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee,add_payroll_records, isLoading, error} = usePreparerHook()
@@ -59,6 +61,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [meralco, setMeralco] = useState({meralcoVAT: 0, meralcoNONVAT: 0})
   const [formFields, setFormFields] = useState([{accCategory:'', accTitle: '', accCode: '', amount: '', labels: '' }]);
   const [BURAmount, setBURAmount] = useState([{title:'',  amount: ''}]);
+  const [BudgetFields, setBudgetFields] = useState([{ASA: '', ASAproject: '', amount: ''}])
   const [BURData, setBURData] = useState({
     payee: '', 
     office: 'NIA Region IV-A',
@@ -235,6 +238,12 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }, [])
 
+  // useEffect(() => {
+  //   if(activeTab === 'To Release'){
+      
+  //   }
+  // }, [activeTab])
+
   const handleChangePayee = (e) => {
     const target = e.target.value.toUpperCase()
     console.log(target)
@@ -326,6 +335,23 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     };
     return updatedPayeeData
 
+  }
+
+  const dataToRelease = () => {
+
+    const updatedPayeeData = {
+      ...payeeData,
+      payee: BURData.payee,
+      address: getAddress(BURData.payee),
+      TT_formula1: gross.value2,
+      TT_formula2: gross.value3,
+      ASA_number: BudgetFields.map(arr => Object.values(arr)[0]),
+      ASA_project: BudgetFields.map(arr => Object.values(arr)[1]),
+      ASA_amount: BudgetFields.map(arr => Object.values(arr)[2]),
+      activeTab: activeTab
+      
+    };
+    return updatedPayeeData
   }
 
   const dataForGSIS = () => {
@@ -454,6 +480,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       updatedPayeeData = dataForGSIS()
     }else if(activeTab === 'Meralco'){
       updatedPayeeData = dataForMeralco()
+    }else if(activeTab === 'To Release'){
+      updatedPayeeData = dataToRelease()
     }
     const data = {
       payee_data: updatedPayeeData,
@@ -472,7 +500,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       console.log('hekllo')
       console.log(pData)
       // console.log(payeeOptions[payeeKey])
-      if(!deepEqual(pData, payeeOptions[payeeKey])){
+      if(!deepEqual(pData, payeeOptions[payeeKey]) && activeTab !== 'To Release'){
+        console.log('saving payee data')
         savePayeeData(pData)
       }
       const res = await createDisbursement(data)
@@ -548,9 +577,10 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     
     const fetchAccountCode = async () => {
       const storedFormData = sessionStorage.getItem('FormData');
-      let form = storedFormData ? JSON.parse(storedFormData) : await getFormData()
+      // let form = storedFormData ? JSON.parse(storedFormData) : await getFormData()
+      let form = await getFormData()
       
-      console.log(form.fundCluster)
+      console.log(form)
 
       setFundCluster(Object.values(form.fundCluster))
       setRc(Object.values(form.ResponsibilityCenter))
@@ -705,6 +735,29 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   // }
 
 
+  const addNewBudgetField = () => {
+    setBudgetFields([...BudgetFields, {ASA: '', ASAproject: '', amount: ''}])
+  }
+
+  const removeBudgetField = (index) => {
+    const updatedFields = BudgetFields.filter((_, i) => i !== index);
+    setBudgetFields(updatedFields);
+  };
+
+  const handleBudgetFieldChange = (index, field, value) => {
+    const updatedFields = [...BudgetFields];
+    updatedFields[index][field] = value;
+    setBudgetFields(updatedFields);
+  };
+
+  const handleBudgetButtonClick = (index) => {
+    if (index === formFields.length - 1) {
+      addNewBudgetField();
+    } else {
+      removeBudgetField(index);
+    }
+  };
+
   const addNewField = () => {
     setFormFields([...formFields, { accCategory:'',accTitle: '', accCode: '', amount: '', labels: '' }]);
   };
@@ -835,6 +888,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   };
 
+  const [numindex, setNumindex] = useState(0)
+
   return (
     <form onSubmit={(e) => flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
       <div className='w-full h-auto'>
@@ -938,13 +993,13 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
            )
         }
         {
-          activeTab != 'Payroll' && (
+          activeTab !== 'Payroll' && (
           <div className='w-full h-full py-3 px-5'>
           <h1 className="font-semibold text-lg text-gray-500">Personal/Payee Information</h1>
           <div className="w-full h-auto mt-2">
             <div className='w-full relative'>
               <label className='text-gray-500'>Payee</label>
-              {activeTab !== 'BUR' ? (
+              {(activeTab !== 'BUR' && activeTab !== 'To Release') ? (
                 <>
                   <input
                     className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
@@ -985,7 +1040,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               )}
             </div>
             <div className='w-full flex flex-col sm:flex-row  gap-2'>
-              {activeTab === 'BUR' ? (
+              {(activeTab === 'BUR' || activeTab === 'To Release') ? (
                 <div className='w-full sm:w-1/2 mt-2'>
                   <label>Address</label>
                   <select 
@@ -1372,6 +1427,88 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               </div>
             </div>
           </div>
+          {activeTab === 'To Release' && (
+            <div className='w-full h-auto'>
+              <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial Details</h1>
+              {BudgetFields.map((field, index) => (
+                <div key={index} className="w-full h-auto flex flex-col mt-2">
+                  <div className="w-full flex flex-col sm:flex-row gap-2">
+                    <div className="w-full sm:w-1/2">
+                      <label className="text-gray-500">ASA no.</label>
+                      <select
+                        value={field.ASA}
+                        onChange={(e) => {
+                          console.log(e.target.value)
+                          handleBudgetFieldChange(index, 'ASA', e.target.value)}}
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}>
+                        <option value="" disabled>Select</option>
+                        {Object.entries(ASANo).length > 0 ? (
+                            Object.entries(ASANo).map(([key, value]) => (
+                                <option key={key} value={key}>
+                                    {key.split('!')[0].replace('|', ' ')}
+                                </option>
+                            ))
+                        ) : (
+                          <option value="" disabled>
+                              No options available
+                          </option>
+                        )}
+                      </select>
+                    </div>
+
+                    <div className="w-full sm:w-1/2">
+                      <label className="text-gray-500">Project Name</label>
+                      <select
+                        value={field.ASAproject}
+                        onChange={(e) => handleBudgetFieldChange(index, 'ASAproject', e.target.value)} 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}>
+                      <option value="" disabled>Select</option>
+                      {ASANo[field.ASA]?.length > 0 ? (
+                        ASANo[field.ASA].map((item, index) => (
+                          <option key={index} value={item.projectID}>
+                              {item.projectName}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                      )}
+                      </select>
+                    </div>
+
+                    
+                    <div className="w-full sm:w-1/2">
+                      <label className="text-gray-500">Amount</label>
+                      <input
+                        value={field.amount}
+                        onChange={(e) => handleBudgetFieldChange(index, 'amount', e.target.value)} 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`} />
+                    </div>
+                    {numindex === index && (
+                      <button onClick={() => {
+                        addNewBudgetField()
+                        setNumindex((prev) => prev + 1)
+                        }} 
+                        className="px-4 bg-blue-500 text-white rounded-md ">
+                        +
+                      </button>
+                    )}
+                    {numindex > index && (
+                      <button onClick={() => {
+                        removeBudgetField(index)
+                        setNumindex((prev) => prev - 1)
+                        }} className="px-4 bg-blue-500 text-white rounded-md ">
+                        -
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+
           {(activeTab === 'To Payment' || activeTab === 'Others') && (
             <div className='w-full h-auto'>
               <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial/Payment Details</h1>
@@ -1707,7 +1844,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 maxLength="500"
               />
             </div>
-            {(activeTab !== 'BUR' && activeTab !== 'Others') && (
+            {(activeTab !== 'BUR' && activeTab !== 'Others' && activeTab !== 'To Release') && (
               <>
                 <h1 className="font-semibold text-lg mt-2 text-gray-500">BIR Information</h1>
                 <div className='w-full h-auto mt-2'>
