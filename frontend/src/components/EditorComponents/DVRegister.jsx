@@ -226,14 +226,6 @@ const DVRegister = () => {
         await exportDVRegister(data)
     }
 
-    // console.log(Object.entries(documents).map((item,) => {
-    //     if(item[1].data.ORSBURS) {
-    //         return Object.values(item[1].data.ASA)
-    //     } else {
-    //         return 0
-    //     }
-    // }))
-
     const sumOfASA = () => {
         const ASA = Object.entries(documents).map((item,) => {
             if(item[1].data.ORSBURS) {
@@ -328,7 +320,7 @@ const DVRegister = () => {
             </div>
         </div>
         <div className="w-full h-fit flex flex-col items-center justify-between gap-2">
-            <div className="w-full flex items-center justify-end gap-2">
+            <div className="w-[99%] overflow-x-auto h-auto flex items-center justify-end gap-2">
                 <label>Start:</label>
                 <input
                     type="date"
@@ -341,14 +333,14 @@ const DVRegister = () => {
                     value={date.end}
                     onChange={(e) => setDate({...date, end: e.target.value})}
                     className={`${user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 text-sm w-40 px-4 py-1 rounded-md border-2`}/>
-                <button onClick={exportDV} disabled={isLoading} className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white px-5 py-2 rounded-lg flex items-center justify-center gap-2`}><PiExport size={20}/>Export</button>
+                <button onClick={exportDV} disabled={isLoading} className={`${user?.role === '4' ? 'bg-preparerPrimary' : 'bg-fundingBlueGreen'} text-white px-5 py-2 rounded-lg flex items-center justify-center gap-2`}><PiExport size={20}/><span className="hidden sm:block">Export</span></button>
             </div>
             <div className="w-full flex items-center justify-between">
                 <div className="w-fit flex items-center justify-center gap-1 text-sm sm:text-base">
                     <button onClick={() => setActiveTabs('501 COB')} className={`${activeTab === '501 COB' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 COB</button>
                     <button onClick={() => setActiveTabs('501 LFP')} className={`${activeTab === '501 LFP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 LFP</button>
                     <button onClick={() => setActiveTabs('501 CARP')} className={`${activeTab === '501 CARP' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>501 CARP</button>
-                    <button onClick={() => setActiveTabs('Contract Farming')} className={`${activeTab === 'Farming Support Services Program' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>Farming Support Services Program</button>
+                    <button onClick={() => setActiveTabs('Farming Support Services Program')} className={`${activeTab === 'Farming Support Services Program' ? 'text-preparerPrimary border-b-2 border-preparerPrimary' : ''} px-1 py-2 hover:text-preparerPrimary hover:border-b-2 hover:border-preparerPrimary transition-all duration-100`}>Farming Support Services Program</button>
                 </div>
                 <div className="w-fit">
                     <div className='relative w-auto hidden sm:block'>

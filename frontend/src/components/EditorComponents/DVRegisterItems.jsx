@@ -58,15 +58,13 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
     return formatToPeso(sum)
   }
 
-  console.log(DV[1].data)
-
   return (
     <div onClick={() => navigate(`${DV[1]?.data?.DVKey}|${getStatus(DV[1]?.data?.status)}|${'0'}`)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full sm:pl-10 sm:pr-5 h-auto cursor-pointer my-1 rounded-lg p-2 flex flex-row items-center justify-center text-sm`}>
       <div className='w-full flex flex-col sm:flex-row items-center justify-center'>
         <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>DV NO.: </span>{DV[1]?.data.DV}</p>
         {counter === 1 && (
           <>
-            <p className='w-full sm:w-1/6 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>PR No. Date: </span>{DV[1].data.PRNoDate ? DV[1].data.PRNoDate : '--'}</p>
+            <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>PR No. Date: </span>{DV[1].data.PRNoDate ? DV[1].data.PRNoDate : '--'}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>PR NO.: </span>{DV[1].data.PRNo ? DV[1].data.PRNo : '--'}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>PO No. Date: </span>{DV[1].data.PONODate ? DV[1].data.PONODate : '--'}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>PO No.: </span>{DV[1].data.PONO ? DV[1].data.PONO : '--'}</p>
@@ -75,7 +73,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
         )}
         {counter === 2 && (
           <>
-            <p className='w-full sm:w-1/6 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BUR No.: </span>{DV[1]?.data?.ORSBURS?.split("-")[3] || '--'}</p>
+            <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BUR No.: </span>{DV[1]?.data?.ORSBURS?.split("-")[3] || '--'}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>DV Date.: </span>{DV[1]?.data.date}</p>
             <p className='w-full sm:w-1/6 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Payee: </span>{DV[1]?.data?.payee}</p>
             <p className='w-full sm:w-2/6 flex items-center justify-start text-sm gap-2 font-semibold text-wrap flex-r'><span className='font-normal block sm:hidden'>Particulars: </span>{DV[1]?.data.particular}</p>
@@ -115,7 +113,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
         )}
         {counter === 4 && (
           <div className='w-5/6 flex flex-col sm:flex-row'>
-            <p className='w-full sm:w-1/3 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA-1st: </span>{DV[1].data.ADAfirst ? formatToPeso(DV[1].data.ADAfirst) : '--'}</p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA-1st: </span>{DV[1].data.ADAfirst ? formatToPeso(DV[1].data.ADAfirst) : '--'}</p>
             <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ADA-2nd: </span>{DV[1].data.ADASecond ? formatToPeso(DV[1].data.ADASecond) : '--'}</p>
             <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>{formatToPeso(adue)}</p>
             <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BIR-Others: </span>{formatToPeso(floatTotal_val)}</p>
@@ -123,7 +121,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
         )}
         {counter === 5 && (
           <div className='w-5/6 flex'>
-            <p className='w-full sm:w-1/4 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA Total: </span>{(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? sumOfASA(ASAamount) : '--'}</p>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA Total: </span>{(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? sumOfASA(ASAamount) : '--'}</p>
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'>
               <span className='font-normal block sm:hidden'>ASA Releases: </span>
               <div className="flex flex-col">
@@ -138,7 +136,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
         )}
         {counter === 6 && (
           <div className='w-5/6 flex'>
-            <p className='w-full sm:w-1/4 flex items-center justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Check Date: </span>{DV[1].data.checkDate ? DV[1].data.checkDate : '--'}</p>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Check Date: </span>{DV[1].data.checkDate ? DV[1].data.checkDate : '--'}</p>
             <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Check No.: </span>{DV[1].data.checkNo ? DV[1].data.checkNo : '--'}</p>
           </div>
         )}

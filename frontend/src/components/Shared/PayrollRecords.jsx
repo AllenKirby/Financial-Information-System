@@ -25,14 +25,6 @@ const PayrollRecords = () => {
     setIsModalOpen(!isModalOpen)
   }
 
-  const getData = (log) => {
-    console.log()
-  }
-
-  useEffect(() => {
-    console.log(payrollRecords)
-  }, [payrollRecords])
-
   return (
     <div className="w-full h-full flex flex-col p-3 rounded-t-lg">
         <div className="w-full h-auto rounded-t-lg hidden sm:block">

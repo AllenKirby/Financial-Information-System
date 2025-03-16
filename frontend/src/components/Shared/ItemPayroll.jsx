@@ -21,20 +21,22 @@ const ItemPayroll = ({log, index}) => {
     }
     return (
       <div onClick={() => navigate(``)} className={`${index % 2 == 0 ? 'bg-white' : 'bg-offWhite'} flex flex-col sm:flex-row w-full p-3 rounded-lg mt-1`}>
-          <>
-            <p className="w-full sm:w-2/5 text-sm text-left px-2 truncate font-semibold flex gap-2"><span className="font-bold block sm:hidden">Date:</span>{log[0]}</p>
-            <p className="w-full sm:w-1/5 text-sm text-left sm:text-center px-2 flex gap-2"><span className="font-bold block sm:hidden">Amount:</span>{formatToPeso(log[1].amount)}</p>
-            <p className="w-full sm:w-2/5 text-sm text-left sm:text-center px-2 flex gap-2"><span className="font-bold block sm:hidden">Particular:</span>{log[1].particular}</p>
+        <>
+          <p className="w-full sm:w-2/5 text-sm text-left px-2 truncate flex gap-2"><span className="font-bold block sm:hidden">Date:</span>{log[0]}</p>
+          <p className="w-full sm:w-1/5 text-sm flex items-center justify-start sm:justify-center font-semibold px-2 gap-2"><span className="font-bold block sm:hidden">Amount:</span>{formatToPeso(log[1].amount)}</p>
+          <p className="w-full sm:w-2/5 text-sm flex items-center justify-start sm:justify-center px-2 gap-2"><span className="font-bold block sm:hidden">Particular:</span>{log[1].particular}</p>
+          <div className="w-full sm:w-fit flex items-center justify-center">
             <button onClick={modal} className="w-fit"><IoMdAdd size={20}/></button>
+          </div>
+        </>
+        {isModalOpen && (
+          <>
+            <div className="fixed inset-0 z-20 bg-black opacity-50" />
+            <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
+              <PayrollModal modal={modal} log={log}/>
+            </div>
           </>
-          {isModalOpen && (
-            <>
-              <div className="fixed inset-0 z-20 bg-black opacity-50" />
-              <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-center">
-                <PayrollModal modal={modal} log={log}/>
-              </div>
-            </>
-          )}
+        )}
       </div>
     )
   }

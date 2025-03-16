@@ -169,7 +169,6 @@ export const useFundingHook = () => {
     const retrieveChosenCB = (id, callback) => {
 
         if (!id) {
-            console.error("Error: ID is missing or invalid.");
             return () => {};
         }
 
@@ -346,7 +345,6 @@ export const useFundingHook = () => {
                 };
             })
         }
-        console.log(transformed)
         return transformed
     }
     
@@ -473,7 +471,6 @@ export const useFundingHook = () => {
         setIsLoading(true)
         setError(null)
         try {
-            console.log(data)
             const res = await axios.patch(`${apiURL}/operator/change-status/${data.id}`, data, {
                 withCredentials: true
             })

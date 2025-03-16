@@ -33,15 +33,15 @@ const BURRecordsItem = ({BUR, index, activeTab}) => {
       };
 
   return (
-    <div onClick={() => navigate(`${BUR?.id}`)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full my-1 h-fit cursor-pointer px-2 rounded-md flex items-center justify-center p-2`}>
-        <p className={`${activeTab ? 'w-1/4' : 'w-2/4'} text-sm font-semibold text-gray-500`}>{BUR?.payee}</p>
-        <p className='w-1/4 text-sm text-gray-500 text-center'>{BUR?.GAA}</p>
-        <p className='w-1/4 text-xs font-semibold text-center'><span className={`${getStatusColor(BUR?.status)} px-2 py-1 rounded-md`}>{BUR?.status?.includes('Returned') ? BUR?.status?.split("|")[0] : BUR?.status}</span></p>
-        {activeTab === 'Drafting' && (<p className='w-1/4 text-sm text-gray-500 text-center'>{formatDistanceToNow(formatDateTime(BUR?.createdAt), { addSuffix: true })}</p>)}
-        {activeTab === 'Returned' && (<p className='w-1/4 text-sm text-gray-500 text-center'>{formatDistanceToNow(formatDateTime(BUR?.returnedBy?.split("|")[1]), { addSuffix: true })}</p>)}
-        {activeTab === 'Under Review' && (<p className='w-1/4 text-sm text-gray-500 text-center'>{formatDistanceToNow(formatDateTime(BUR?.submittedBy?.split("|")[1]), { addSuffix: true })}</p>)}
-        {activeTab === 'For Approval' && (<p className='w-1/4 text-sm text-gray-500 text-center'>{formatDistanceToNow(formatDateTime(BUR?.reviewedBy?.split("|")[1]), { addSuffix: true })}</p>)}
-        {activeTab === 'Approved' && (<p className='w-1/4 text-sm text-gray-500 text-center'>{formatDistanceToNow(formatDateTime(BUR?.approvedBy?.split("|")[1]), { addSuffix: true })}</p>)}
+    <div onClick={() => navigate(`${BUR?.id}`)} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full my-1 h-fit cursor-pointer px-2 rounded-md flex flex-col sm:flex-row items-center justify-start sm:justify-center gap-2 p-2`}>
+      <p className={`w-full ${activeTab ? 'sm:w-1/4' : 'sm:w-2/4'} text-sm flex items-center justify-start gap-2 font-semibold text-gray-500`}><span className='block sm:hidden'>Payee:</span>{BUR?.payee}</p>
+      <p className='w-full sm:w-1/4 text-sm text-gray-500 flex items-center justify-start sm:justify-center gap-2 text-center'><span className='block sm:hidden'>GAA:</span>{BUR?.GAA}</p>
+      <p className='w-full sm:w-1/4 text-xs text-gray-500 font-semibold flex items-center justify-start sm:justify-center gap-2 text-center'><span className='block sm:hidden'>Status:</span><span className={`${getStatusColor(BUR?.status)} px-2 py-1 rounded-md`}>{BUR?.status?.includes('Returned') ? BUR?.status?.split("|")[0] : BUR?.status}</span></p>
+      {activeTab === 'Drafting' && (<p className='w-full sm:w-1/4 text-sm text-gray-500 text-center flex items-center justify-start gap-2'><span className='block sm:hidden'>Time Created:</span>{formatDistanceToNow(formatDateTime(BUR?.createdAt), { addSuffix: true })}</p>)}
+      {activeTab === 'Returned' && (<p className='w-full sm:w-1/4 text-sm text-gray-500 text-center flex items-center justify-start gap-2'><span className='block sm:hidden'>Time Returned:</span>{formatDistanceToNow(formatDateTime(BUR?.returnedBy?.split("|")[1]), { addSuffix: true })}</p>)}
+      {activeTab === 'Under Review' && (<p className='w-full sm:w-1/4 text-sm text-gray-500 text-center flex items-center justify-start gap-2'><span className='block sm:hidden'>Time Transferred:</span>{formatDistanceToNow(formatDateTime(BUR?.submittedBy?.split("|")[1]), { addSuffix: true })}</p>)}
+      {activeTab === 'For Approval' && (<p className='w-full sm:w-1/4 text-sm text-gray-500 text-center flex items-center justify-start gap-2'><span className='block sm:hidden'>Time Transferred:</span>{formatDistanceToNow(formatDateTime(BUR?.reviewedBy?.split("|")[1]), { addSuffix: true })}</p>)}
+      {activeTab === 'Approved' && (<p className='w-full sm:w-1/4 text-sm text-gray-500 text-center flex items-center justify-start gap-2'><span className='block sm:hidden'>Time Transferred:</span>{formatDistanceToNow(formatDateTime(BUR?.approvedBy?.split("|")[1]), { addSuffix: true })}</p>)}
     </div>
   )
 }

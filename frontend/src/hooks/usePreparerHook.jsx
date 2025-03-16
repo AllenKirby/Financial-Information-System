@@ -139,7 +139,6 @@ export const usePreparerHook = () => {
             })
             if(res.status === 200){
                 const response = res.data.document
-                console.log(response)
                 // sessionStorage.setItem('FormData', JSON.stringify(arr));
                 return response
             }
@@ -200,7 +199,6 @@ export const usePreparerHook = () => {
             })
             if(res.status === 200){
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch (error) {

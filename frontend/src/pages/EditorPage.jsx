@@ -44,7 +44,6 @@ const EditorPage = () => {
 
   useEffect(() => {
     const fetch = async() => {
-      console.log('start getting control books')
       const unsubscribe = retrieveControlBooks(dispatch)
       return () => unsubscribe;
     }

@@ -17,8 +17,6 @@ const DVTemplate = ({document}) => {
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
 
-  console.log(document)
-
   //GSIS computation
   const gross_gsis = (parseFloat(document?.amount) || 0) + (parseFloat(document?.stamp) || 0) + (parseFloat(document?.dst) || 0) + (parseFloat(document?.vat12) || 0)
   const amountDue_gsis = gross_gsis - (parseFloat(val1) || 0)

@@ -82,7 +82,7 @@ const BURRecords = () => {
       </div>
       <div className="w-full h-full p-2">
         <div className="w-full h-full flex flex-col">
-          <div className="w-full h-fit py-2 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 font-bold text-sm">
+          <div className="w-full h-fit py-2 bg-gray-100 rounded-lg hidden sm:flex items-center justify-center text-gray-400 font-bold text-sm">
             <div className={`${activeTabs ? 'w-1/4' : 'w-2/4'} px-4`}>Payee</div>
             <div className="w-1/4 text-center">GAA</div>
             <div className="w-1/4 text-center">Status</div>

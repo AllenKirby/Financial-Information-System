@@ -101,7 +101,6 @@ const AddControlBook = (props) => {
         const data = {
             data: controlBookData
         }
-        console.log(data)
         if(errorFlag) {
             Swal.fire({
                 title: "Error",

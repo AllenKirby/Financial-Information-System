@@ -60,15 +60,12 @@ const ViewControlBook = () => {
 
   const [fieldoffices, setFieldOffices] = useState({})
   useEffect(() => {
-    console.log(id)
     if (!id) return;
-    console.log('FETHICHNG field offices')
     const unsubscribe = retrieveChosenCB(id, (data) => {
       setFieldOffices(data)
     })
     return () => {
       if(unsubscribe){
-        console.log('unsub on fieldOffices')
         unsubscribe()
       }
     }
@@ -77,7 +74,6 @@ const ViewControlBook = () => {
 
   useEffect(() => {
     const COB = ControlBook.data.FundCluster
-    console.log(COB)
     if(COB === '501 COB'){
       setCluster(COB)
     }
@@ -120,9 +116,7 @@ const ViewControlBook = () => {
       IMO_budget: IMO
     }
     setEditIMO(!editIMO)
-    console.log(prevIMO, IMO)
     if(!editIMO && (parseFloat(prevIMO) !== parseFloat(IMO))){
-      console.log('changed')
       await addIMO(data, id)
     }
   }
@@ -240,48 +234,45 @@ const ViewControlBook = () => {
                     {
                       cluster === '501 COB' && (
                         <button 
-                          onClick={(e) => {
+                          onClick={() => {
                             modal()
                             setChoice('utility')
                           }} 
                           className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
                           <div className="flex flex-row items-center justify-center gap-2">
-                            <IoAddOutline size={30}/>
                             <p className="font-semibold lg:text-base 2xl:text-lg">{'New Utility'}</p>
                           </div>
                         </button>
                       )
                     }
                     <button 
-                    onClick={(e) => {
+                    onClick={() => {
                       modal()
                       setChoice('project')
                     }} 
                     className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} w-1/2 sm:w-full h-full border-2 rounded-lg p-2 flex items-center justify-center text-white hover:bg-white transition-all duration-150`}>
                       <div className="flex flex-row items-center justify-center gap-2">
-                        <IoAddOutline size={30}/>
                         <p className="font-semibold lg:text-base 2xl:text-lg">{'New Project'}</p>
                       </div>
                     </button>
-
-                    {cluster !== '501 COB' && (
-                      <button onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
+                    <div className="flex items-center justify-center gap-2">
+                      {cluster !== '501 COB' && (
+                        <button onClick={tabModal} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
+                          <div className="flex flex-row items-center justify-center gap-2">
+                            <p className="font-semibold lg:text-sm 2xl:text-lg">Add Category</p>
+                          </div>
+                        </button>
+                      )}
+                      <button onClick={IMO_BALANCE} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
                         <div className="flex flex-row items-center justify-center gap-2">
-                          <IoAddOutline size={30}/>
-                          <p className="font-semibold lg:text-base 2xl:text-lg">Add Tab</p>
+                          <p className="font-semibold lg:text-sm 2xl:text-lg">{editIMO ? 'Edit IMO Balance' : 'Save changes '}</p>
                         </div>
                       </button>
-                    )}
-                    <button onClick={IMO_BALANCE} className={`${user?.role === '3' ? 'border-fundingBlueGreen text-fundingBlueGreen hover:bg-fundingBlueGreen' : 'border-preparerPrimary text-preparerPrimary hover:bg-preparerPrimary'} w-1/2 sm:w-full h-full rounded-lg p-2 flex border-2 items-center justify-center hover:text-white transition-all duration-150`}>
-                      <div className="flex flex-row items-center justify-center gap-2">
-                        <p className="font-semibold lg:text-base 2xl:text-lg">{editIMO ? 'Edit IMO Balance' : 'Save changes '}</p>
-                      </div>
-                    </button>
-                    
+                    </div>  
                   </div>
                 </div>
               </div>
-              <div className="w-full h-auto bg-gray-100 rounded-lg mt-2 py-1 pr-6 hidden lg:flex items-center justify-center">
+              <div className="w-full h-auto bg-gray-100 rounded-lg mt-2 py-1 pr-4 hidden lg:flex items-center justify-center">
                 <div className="w-[95%] text-sm h-full flex items-center justify-center">
                   <div className="w-1/4 h-full py-1 flex items-center justify-center">
                     <p className="font-semibold">Field Office</p>
@@ -294,10 +285,10 @@ const ViewControlBook = () => {
                       <p className="font-semibold">ASA</p>
                     </div> */}
                     <div className="w-full h-auto flex items-center justify-center">
-                      <div className="w-1/3 text-center ">
+                      <div className="w-1/2 text-center ">
                         <p className="font-semibold">Beginning</p>
                       </div>
-                      <div className="w-full text-center ">
+                      <div className="w-1/2 text-center ">
                         <p className="font-semibold">Utilized</p>
                       </div>
                       {/* <div className="w-1/3 text-center">
@@ -310,10 +301,10 @@ const ViewControlBook = () => {
                       <p className="font-semibold">Cash</p>
                     </div> */}
                     <div className="w-full h-auto flex items-center justify-center">
-                      <div className="w-1/3 text-center">
+                      <div className="w-1/2 text-center">
                         <p className="font-semibold">Beginning</p>
                       </div>
-                      <div className="w-full text-center">
+                      <div className="w-1/2 text-center">
                         <p className="font-semibold">Disbursed</p>
                       </div>
                       {/* <div className="w-1/3 text-center">
