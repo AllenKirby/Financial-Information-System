@@ -245,7 +245,8 @@ const ViewDocument = () => {
             <PiExport size={20} /> <span className="hidden sm:block ">Export</span>
           </button>)}
 
-          {idStatus.type === '3' && idStatus.status === 'In Review' && (
+          {/* here to release */}
+          {idStatus.type === '3' && idStatus.status === 'In Review' && doc?.activeTab !== 'To Release' && (
             <button
               onClick={() => openModal('ReturnDV')}
               className="w-auto px-5 rounded-lg py-3 sm:py-2.5 text-red-500 font-semibold transition-all duration-150 flex items-center justify-center gap-2"
@@ -285,7 +286,8 @@ const ViewDocument = () => {
             </div>
           )}
           
-          {(idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
+          {/* here to release */}
+          {(doc?.activeTab === 'To Release' ||idStatus.type === '4' || idStatus.type === '3' && permission?.data?.permission) && (
             <button
               onClick={delDV}
               className={`w-auto px-5 rounded-lg py-2.5 text-red-500 hover:bg-white hover:text-red-500 hover:white transtion-all duration-150`}
