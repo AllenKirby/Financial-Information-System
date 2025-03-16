@@ -90,18 +90,20 @@ export const useApproverHook = () => {
     }
 
     const addNewNameAndOffice = async (name, office, key) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const data = {
                 name: name,
                 office: office,
                 key: key
             }
-            console.log(data)
             const res = await axios.post(`${apiURL}/admin/addNameAndOffice`, data, {
                 withCredentials: true
             })
 
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
         }catch(error){
@@ -126,11 +128,14 @@ export const useApproverHook = () => {
     }
 
     const deleteNameAndOffice = async (field_key) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const res = await axios.delete(`${apiURL}/admin/deleteNameAndOffice/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
             return false
@@ -141,6 +146,8 @@ export const useApproverHook = () => {
     }
 
     const addNewRC = async (newRC, randKey) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const data = {
                 RC: newRC,
@@ -152,6 +159,7 @@ export const useApproverHook = () => {
             })
 
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
         }catch(error){
@@ -176,11 +184,14 @@ export const useApproverHook = () => {
     }
 
     const deleteRC = async (field_key) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const res = await axios.delete(`${apiURL}/admin/deleteRC/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
             return false
@@ -191,6 +202,8 @@ export const useApproverHook = () => {
     }
 
     const addTax = async (tax, title, formula1, formula2, key) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const data = {
                 tax: tax,
@@ -205,6 +218,7 @@ export const useApproverHook = () => {
             })
 
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
         }catch(error){
@@ -229,11 +243,14 @@ export const useApproverHook = () => {
     }
 
     const deleteTax = async (field_key) => {
+        setIsLoading(true)
+        setError(null)
         try{
             const res = await axios.delete(`${apiURL}/admin/deleteTax/${field_key}`, {
                 withCredentials: true
             })
             if(res.status === 200){
+                setIsLoading(false)
                 return true
             }
             return false
@@ -258,10 +275,8 @@ export const useApproverHook = () => {
     } 
 
     const downloadDV = async (data) => {
-        console.log('Click again')
         setIsLoading(true)
         setError(null)
-        console.log(data)
         try {
             let res
             if(data.activeTab === 'To Payment'){
@@ -325,7 +340,6 @@ export const useApproverHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch (error) {
@@ -345,7 +359,6 @@ export const useApproverHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch (error) {
@@ -369,7 +382,6 @@ export const useApproverHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch (error) {
@@ -395,7 +407,6 @@ export const useApproverHook = () => {
             })
             if(res.status === 200) {
                 setIsLoading(false)
-                console.log(res.data)
                 return true
             }
         } catch (error) {

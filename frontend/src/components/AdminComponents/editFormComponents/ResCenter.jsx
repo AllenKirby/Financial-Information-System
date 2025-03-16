@@ -18,7 +18,7 @@ export const ResCenter = () => {
     const [key, setKey] = useState('')
 
     useEffect(() => {
-        if(!updateFlag) {
+        if(!showInput_RC) {
             setInputValue_RC("")
         }
     }, [updateFlag, inputValue_RC, showInput_RC])
@@ -27,22 +27,24 @@ export const ResCenter = () => {
         if(flag) { 
             setInputValue_RC(rescen)
             setKey(key)
-            setUpdateFlag(!updateFlag)
+            setUpdateFlag(true)  // Ensure update mode is set
         } else {
-            setUpdateFlag(!updateFlag)
+            setInputValue_RC("");  // Clear input when adding a new entry
+            setKey("");         // Reset key to avoid unintended updates
+            setUpdateFlag(false);  // Ensure we enter create mode
         }
         setShowInput_RC(!showInput_RC);
-    }
+    };
 
     const handleInputChange_RC = (e) => {
         setInputValue_RC(e.target.value); // Update input field value
     };
 
-    const handleSubmitRC = (e) => {
+    const handleSubmitRC = async(e) => {
        e.preventDefault()
         if (inputValue_RC.trim() !== "") {
             const randomKey = Math.random().toString(36).substring(2, 15);
-            addNewRC(inputValue_RC, randomKey)
+            await addNewRC(inputValue_RC, randomKey)
             setInputValue_RC(""); // Clear input after submission
             setShowInput_RC(false); // Hide input after submission
             setArrRC(prev => {

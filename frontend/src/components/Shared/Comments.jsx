@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 const Comments = ({comment}) => {
 
   const avatar = (name) => {
-    console.log(name)
     if(name){
       const nameSplit = name.split(' ')
       const initial =  `${nameSplit[0].charAt(0)}${nameSplit[1].charAt(0)}`

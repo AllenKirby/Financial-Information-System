@@ -18,7 +18,6 @@ const CertifiedModal = ({modal, data}) => {
 
     const handleSubmit = async(e) => {
         e.preventDefault()
-        console.log(certified)
         const res = await addCertified(certified, data.DVKey)
 
         if(res){

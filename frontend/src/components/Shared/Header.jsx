@@ -21,6 +21,10 @@ const Header = ({ currentPage, sidebar}) => {
 
   const notifs = (n) => setUnreadNotifs(n)
 
+  const showNotif = () => {
+    setShowNotifications(!showNotifications)
+  }
+
   const parseInputDate = (input) => {
     const [datePart, timePart] = input.split('|'); // Split into date and time parts
     const formattedDate = `${datePart} ${timePart}`; // Combine date and time
@@ -141,12 +145,12 @@ const Header = ({ currentPage, sidebar}) => {
                 {showNotifications ? (
                   <IoMdNotifications 
                     className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
-                    onClick={() => setShowNotifications(!showNotifications)}/>
+                    onClick={showNotif}/>
                   )
                 :(
                   <IoMdNotificationsOutline 
                     className="bg-white cursor-pointer text-[25px] md:text-[30px] lg:text-[30px] xl:text-[25px] 2xl:text-[30px]"
-                    onClick={() => setShowNotifications(!showNotifications)}/>
+                    onClick={showNotif}/>
                 )}
               </div>
               <div className={`absolute -top-2 right-0 p-1 w-auto h-auto ${unreadNotifs > 0 ? 'bg-red-500 text-white': 'bg-gray-300'} rounded-full flex items-center justify-center`}>
@@ -177,13 +181,13 @@ const Header = ({ currentPage, sidebar}) => {
       {/* Notifications Dropdown */}
       {showNotifications && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(!showNotifications)}></div>
-          <div className="absolute shadow-lg shadow-gray-400 top-[60px] z-40 md:right-2 lg:right-2 w-full md:w-1/2 lg:w-1/3 bg-white border-[1px] p-4 rounded-lg">
+          <div className="fixed inset-0 z-30" onClick={showNotif}></div>
+          <div className="absolute shadow-lg shadow-gray-400 top-[60px] z-40 right-0 md:right-2 lg:right-2 w-full md:w-1/2 lg:w-1/3 bg-white border-[1px] p-4 rounded-lg">
             <h3 className={`font-semibold text-xl my-2 ${fontColor}`}>Notifications</h3>
               <ul className='h-96 rounded-md p-1 flex flex-col overflow-y-auto'>
                 {notifications.length > 0 ?( 
                   sortByNotificationDescending(notifications).map((notification)=> (
-                    <Notification key={notification.key} notification={notification} markAsRead={markAsRead} />
+                    <Notification key={notification.key} notification={notification} markAsRead={markAsRead} onClose={showNotif}/>
                   ))): (
                     <div className='w-full h-full flex items-center justify-center'>
                       <li className='text-center'>No Notifications found</li>

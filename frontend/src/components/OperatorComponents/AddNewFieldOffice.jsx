@@ -20,8 +20,6 @@ const AddNewFieldOffice = (props) => {
     const [recordedASA, setRecordedASA] = useState(0)
     const [allowCluster, setAllowCluster] = useState(false)
     
-    console.log('herr')
-    
     const { AddFieldOffice, updateFieldOffice,AddNewUtility, isLoading, error } = useFundingHook()
 
     useEffect(() => {
@@ -32,7 +30,6 @@ const AddNewFieldOffice = (props) => {
     }, [])
 
     useEffect(() => {
-        console.log(props)
         if(flag && fieldOffice) {
             setFieldOfficeData({
                 projectName: fieldOffice.projectName || '', 
@@ -49,8 +46,6 @@ const AddNewFieldOffice = (props) => {
     }, [flag, fieldOffice]) 
 
     useEffect(() => {
-        //getting all of the used amount per project then organized by their respective tab status
-        console.log(test)
         const arrOne = Object.entries(test)
         let data = {}
         for(let i = 0; i < arrOne.length; i++){
@@ -99,7 +94,6 @@ const AddNewFieldOffice = (props) => {
             // limit = totalAmount - avaialable
             const available = usedAmount - parseFloat(recordedASA)
             const limit = totalAmount - available
-            console.log(value, limit)
             if(value > limit){
                 setErrorFlag(true)
             }else{
@@ -116,7 +110,6 @@ const AddNewFieldOffice = (props) => {
             const remaining = parseFloat(remainingASA) - parseFloat(IMO_budget)
 
             if(Cluster === '501 COB'){
-                console.log(`${value} > ${remaining} `,value > remaining)
                 if(value > remaining){
                     setErrorFlag(true)
                 }else{
@@ -165,7 +158,6 @@ const AddNewFieldOffice = (props) => {
 
     const addnewProject = async() => {
         const data = handleData()
-        console.log(data)
         if(errorFlag) {
             Swal.fire({
                 title: "Error",
@@ -196,7 +188,6 @@ const AddNewFieldOffice = (props) => {
 
     const addnewUtility = async() => {
         const data = handleData()
-        console.log(data)
         if(errorFlag) {
             Swal.fire({
                 title: "Error",
@@ -228,10 +219,8 @@ const AddNewFieldOffice = (props) => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         if(Choice === 'utility'){
-            console.log("adding utility")
             addnewUtility()
         }else if(Choice === 'project'){
-            console.log("adding new project")
             addnewProject()
         }
     }
@@ -268,7 +257,6 @@ const AddNewFieldOffice = (props) => {
 
     const formatNumberWithCommas = (value) => {
         if (!value) return "";
-        console.log(flag)
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
       };
     

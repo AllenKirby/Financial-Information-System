@@ -592,7 +592,7 @@ const downloadDV = async(req, res) => {
     if(data.ORSBURS) {
       workbook.sheet('Sheet1').cell("D164").value(data.payee)
       workbook.sheet('Sheet1').cell("D168").value(data.address)
-      workbook.sheet('Sheet1').cell("P160").value(`Serial No.: ${data.DV}`)
+      workbook.sheet('Sheet1').cell("P160").value(`Serial No.: ${data.ORSBURS}`)
       workbook.sheet('Sheet1').cell("P162").value(`Fund Cluster: ${data.fund}`)
       workbook.sheet('Sheet1').cell("P161").value(`Date: ${convertDate(data.date)}`)
       workbook.sheet('Sheet1').cell("P173").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))

@@ -29,19 +29,46 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
   const [fontColor, setFontColor] = useState('');
   const [hideText, setHideText] = useState('')
   const permission = useSelector((state) => state.permission)
-  const [activeTab, setActiveTab] = useState('')
   const [recordsFlag, setRecordsFlag] = useState(false)
   const [activeSubTab, setActiveSubTab] = useState('DV')
-  const location = useLocation()
+  const location = useLocation();
+const [activeTab, setActiveTab] = useState(() => {
+  return localStorage.getItem('activeTab') || 'dashboard'; // Default tab if none is set
+});
 
-  useEffect(() => {
-    if(user?.role !== '0') {
-      if(user?.role === '3' || user?.role === '4') return  setActiveTab('records')
-      if(user?.role === '2' || user?.role === '1') return setActiveTab('dashboard')
-    } else {
-      setActiveTab('usermanagement')
-    }
-  }, [user])
+// Function to determine the default tab based on user level
+const getDefaultTab = (level) => {
+  switch (level) {
+    case 0:
+      return 'user-management';
+    case 1:
+    case 2:
+      return 'dashboard';
+    case 3:
+    case 4:
+      return 'records';
+    default:
+      return 'dashboard'; // Default fallback
+  }
+};
+
+// Sync activeTab with user login level
+useEffect(() => {
+  if (user?.level !== undefined) {
+    const defaultTab = getDefaultTab(user.level);
+    setActiveTab(defaultTab);
+    localStorage.setItem('activeTab', defaultTab);
+  }
+}, [user]);
+
+// Update activeTab when navigating
+useEffect(() => {
+  const path = location.pathname.split('/')[2]; 
+  if (path) {
+    setActiveTab(path);
+    localStorage.setItem('activeTab', path);
+  }
+}, [location, activeTab]);
 
   useEffect(() => {
     setActiveSubTab(location.pathname)
@@ -79,7 +106,6 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
   };
 
   useEffect(() => {
-    console.log(hideText, flag)
     if(flag){
       setHideText('block')
     }else {
@@ -131,7 +157,7 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
                 className={`w-full h-fit flex items-center justify-between px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'records' ? `${fontColor}` : ''}`}>
                   <span className='flex items-center justify-center gap-3'><FaRegFile size={20}/><span className={`${hideText}`}>Records</span></span> {recordsFlag ? <IoIosArrowUp size={20}/> : <IoIosArrowDown size={20}/> }
               </button>
-              {recordsFlag || flag && (
+              {recordsFlag && (
                 <div className='w-full flex flex-col items-center justify-start text-gray-500 font-bold px-7 text-sm'>
                   <NavLink 
                     to={`/${getRole()}/records/disbursementrecords`} 
@@ -185,9 +211,9 @@ const Navbar = ({flag, sidebar = () => {}, sidebarMobile = () => {} }) => {
               )}
               
               <NavLink 
-                onClick={() => setActiveTab('logs')} 
+                onClick={() => setActiveTab('disbursementlogs')} 
                 to={`/${getRole()}/disbursementlogs`} 
-                className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'logs' ? `${fontColor}` : ''}`}>
+                className={`w-full h-fit flex items-center justify-start gap-3 px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'disbursementlogs' ? `${fontColor}` : ''}`}>
                   <MdOutlineHistory size={20}/><span className={`${hideText}`}>Logs</span>
               </NavLink>
             </>

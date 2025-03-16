@@ -12,7 +12,6 @@ export const useInitialStateDV = () => {
 
             if(res.status === 200){
                 const resData = res.data.data
-                console.log(resData)
                 sessionStorage.setItem('pendingDVNumbers', JSON.stringify(resData))
                 return resData
             }else{
@@ -50,7 +49,6 @@ export const useInitialStateDV = () => {
             })
             if(res.status === 200){
                 const origBur = res.data.currentBUR
-                console.log(parseInt(origBur, 10))
                 const increamentedData = (parseInt(origBur, 10) + 1).toString().padStart(4, '0')
                 const today = new Date()
                 const bur = `501-${today.getFullYear()}-${today.getMonth()+1}-${increamentedData}`

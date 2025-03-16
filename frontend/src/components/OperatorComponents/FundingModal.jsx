@@ -40,11 +40,9 @@ const FundingModal = ({modal, data, fundCluster}) => {
             }
             setBUR(primaryBUR)
             setOrigBUR(origBur)
-            console.log(fundCluster)
             const unsubscribe = await retrieveProjectName(setASANo)
 
             if(Boolean(data)){
-                console.log('update this')
                 getPrevBudget()
                 await getData()
             }
@@ -61,10 +59,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
             ors: await data.ORSBURS,
         });
     }
-
-    useEffect(() => {
-        console.log(ASANo)
-    }, [ASANo])
 
     const[needUpdate, setNeedUpdate] = useState(false)
     useEffect(() => {
@@ -105,16 +99,13 @@ const FundingModal = ({modal, data, fundCluster}) => {
         const neededAmount = parseFloat(data.amount)
         let res = true;
         if(isToggled){
-            console.log('with bur')
             if(data.activeTab === 'Others'){
-                console.log('others activte tab')
                 res = await updateASA_ORS(fundingData, DVNo)
             }else{
                 res = neededAmount != budget ? false : await updateASA_ORS(fundingData, DVNo)
             }
             
         }else{
-            console.log("without bur")
             if(data.activeTab === 'Others'){
                 await updateCASH(fundingData, DVNo)
             }else{
@@ -155,7 +146,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     const getPrevBudget = () => {
         const newBudget = data.ASA ? Object.values(data.ASA).reduce((acc, val) => acc + val, 0) : 0
-        console.log(newBudget)
         setBudget(newBudget)
     }
 
@@ -164,7 +154,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     //this function works for new ASA
     const handleChangeBoxAmount = (checked, key, projectID, amount, projectName) => {
-        console.log(`${key}/${projectID}`)
         const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
         if (checked) {
 
@@ -242,7 +231,6 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     //pending
     const handleChangeBoxAmountCASH = (checked, key, projectID, amount, projectName) => {
-        console.log(`${key}/${projectID}`)
         // const exactAmount = parseFloat(data.amount) < amount + budget ? amount - (amount + budget - parseFloat(data.amount)) : amount;
         const exactAmount = amount - (amount + budget - parseFloat(data.amount))
         if (checked) {

@@ -46,7 +46,6 @@ export const NameAndOffice = () => {
     };
 
     const handleSubmit = async (e) => {
-        console.log('submit')
         e.preventDefault()
         const input = name+office
         const randomKey = input.replace(/[^a-zA-Z0-9]/g, "");
@@ -64,7 +63,6 @@ export const NameAndOffice = () => {
 
     const handleUpdate = async (e) => {
         e.preventDefault()
-        console.log('updating')
         await updateNameOffice(key, name, office)
         setName('');
         setOffice('');
@@ -124,7 +122,7 @@ export const NameAndOffice = () => {
         <div className="w-full h-auto flex flex-col rounded-lg">
             <div className="w-full h-auto flex items-center justify-between px-2 py-1 rounded-lg bg-gray-200 text-gray-500">
                 <h1 className='hidden sm:block w-5/12 text-sm text-left font-bold px-2'>Name</h1>
-                <h1 className='hidden sm:block w-5/12 text-sm text-left font-bold px-2'>Office</h1>
+                <h1 className='hidden sm:block w-5/12 text-sm text-center font-bold px-2'>Office</h1>
                 <div className="w-2/12 flex justify-center items-center">
                     <button 
                         className='text-2xl rounded-full'
@@ -159,7 +157,7 @@ export const NameAndOffice = () => {
             )}
             <div className="flex-1 overflow-y-auto">
                 {Object.entries(entries).map(([key, entry], index) => (
-                    <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto rounded-lg px-4 flex flex-col sm:flex-row`}>
+                    <div key={index} className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'} w-full h-auto rounded-lg px-4 py-2 flex flex-col sm:flex-row`}>
                         <p className="w-full sm:w-5/12 flex justify-start">{entry.name}</p>
                         <p className="w-full sm:w-5/12 flex justify-start sm:justify-center">{entry.office}</p>
                         <div className="w-full sm:w-2/12 flex justify-start sm:justify-center">
