@@ -31,7 +31,6 @@ const Folder = ({ASANo, controlBook}) => {
     }
 
     const deleteCB = async (e) => {
-      console.log(ASANo)
       e.stopPropagation()
         Swal.fire({
             title: "Are you sure?",

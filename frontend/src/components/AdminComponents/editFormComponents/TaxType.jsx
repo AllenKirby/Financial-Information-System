@@ -25,7 +25,7 @@ export const TaxType = () => {
     const [key, setKey] = useState('')
 
     useEffect(() => {
-        if(!updateFlag) {
+        if(!showInput) {
             setTax('')
             setCost('')
             setValue1('')
@@ -40,12 +40,17 @@ export const TaxType = () => {
             setValue1(Value1)
             setValue2(Value2)
             setKey(key)
-            setUpdateFlag(!updateFlag)
+            setUpdateFlag(true)  
         } else {
-            setUpdateFlag(!updateFlag)
+            setTax("")
+            setCost("")
+            setValue1("")
+            setValue2("")
+            setKey("")   
+            setUpdateFlag(false); 
         }
-        setShowInput(!showInput)
-    }
+        setShowInput(!showInput);
+    };
 
     const capitalize = (str) => {
         if (!str) return "";

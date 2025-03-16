@@ -51,7 +51,6 @@ const AdminPage = () => {
         const updatedDocuments = {...documents, ...doc};
         const filteredDV = filterApproverDocu(updatedDocuments)
         dispatch(setDVRecords(filteredDV))
-        console.log(filteredDV)
         dispatch(setVouchers(doc))
         //contextDispatch({ type: 'SET_ADMINDOCUMENTS', payload: filteredDV });
         setDocuments(updatedDocuments);

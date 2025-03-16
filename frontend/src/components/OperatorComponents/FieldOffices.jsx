@@ -49,7 +49,6 @@ const FieldOffices = (props) => {
   const deleteFO = async(e) => {
     e.stopPropagation()
     const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}!${fieldOffice.cash}`
-    console.log(id)
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -60,7 +59,6 @@ const FieldOffices = (props) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-          console.log('deleting FO')
           const res = await deleteFieldOffice(id)
         if (res) {
           Swal.fire({
@@ -93,7 +91,6 @@ const FieldOffices = (props) => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        console.log('deleting ASA')
           const res = await deleteASA_COB(id)
         if (res) {
           Swal.fire({
@@ -137,10 +134,10 @@ const FieldOffices = (props) => {
           </div>
 
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
-            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/2 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(fieldOffice.RO)}</p>
             </div>
-            <div className='w-full lg:w-full flex items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/2 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Utilized:</span><p className='font-semibold'>{formatToPeso(fieldOffice.FO)}</p>
             </div>
             {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
@@ -153,10 +150,10 @@ const FieldOffices = (props) => {
             <p>Cash</p>
           </div>
           <div className='w-3/4 lg:w-full flex flex-col sm:flex-row items-center justify-start lg:justify-center gap-2'>
-            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/2 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Beginning:</span> <p className='font-semibold'>{formatToPeso(beginning)}</p>
             </div>
-            <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>
+            <div className='w-full lg:w-1/2 flex items-center justify-start lg:justify-center gap-2'>
               <span className='block lg:hidden'>Disbursed:</span><p className='font-semibold'>{formatToPeso(disbursed)}</p>
             </div>
             {/* <div className='w-full lg:w-1/3 flex items-center justify-start lg:justify-center gap-2'>

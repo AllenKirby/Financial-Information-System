@@ -36,7 +36,6 @@ const ControlBook = () => {
   useEffect(() => {
    if(controlBooks && Object.entries(controlBooks).length > 0) {
     const filteredResults = Object.entries(controlBooks).filter(([, controlBook]) => controlBook.cbStatus === CBStatus)
-    console.log(filteredResults)
     const filteredFundCluster = filteredResults.filter((document ,) =>
         document[1]?.FundCluster?.toLowerCase().includes(filter.toLowerCase())
       )

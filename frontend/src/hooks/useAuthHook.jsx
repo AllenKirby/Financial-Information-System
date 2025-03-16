@@ -93,7 +93,6 @@ export const useAuthHook = () => {
             withCredentials: true
           });
           if(response.status === 200){
-            console.log('logouted')
             dispatch(resetChangePassFlag())
             dispatchAuth({type: 'LOGOUT', payload: null})
             dispatch(setDVRecords(null))

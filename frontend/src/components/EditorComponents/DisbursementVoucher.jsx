@@ -104,7 +104,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   useEffect(() => {
     if (flag && document) {
-      console.log(document.activeTab)
       setPayeeData((prevData) => {
         const updatedData = {
           ...prevData,
@@ -185,30 +184,21 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     const path = location.pathname.split('/')[1]
     if(user?.role === '4') {
       if(path === 'editor'){
-        console.log(1)
         if(Object.keys(document).length > 0){
-          console.log(document)
           setActiveTab(document.activeTab)
         }else{
-          console.log(3)
           setActiveTab('To Payment')
         }
-        console.log(4)
       } else {
-        console.log(5)
         setActiveTab("BUR")
       }
     } else {
       if(path === 'operator'){
-        console.log(1)
         if(Object.keys(document).length > 0){
-          console.log(document)
           setActiveTab(document.activeTab)
         }else{
-          console.log(3)
           setActiveTab('To Release')
         }
-        console.log(4)
       } else {
         setActiveTab("BUR")
       }
@@ -246,7 +236,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleChangePayee = (e) => {
     const target = e.target.value.toUpperCase()
-    console.log(target)
     setPayeeData({...payeeData, payee: target.toUpperCase()})
 
     if (target && payeeOptions) {
@@ -419,7 +408,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if(activeTab === "Payroll"){
-      console.log('get')
       await forPayrollCreation()
     }
     if(activeTab === 'BUR') {
@@ -452,7 +440,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const [payrollItems, setPayrollItems ] = useState({particular: '', amount: ''})
   const forPayrollCreation = async () => {
-    console.log('this')
     const res = await add_payroll_records(payrollItems)
     if(res){
       Swal.fire({
@@ -495,13 +482,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       tax: payeeData.TT_tax,
       cost: payeeData.TT_cost
     }
-    console.log(data)
     if(data.payee_data.accCode.length <= 1){
-      console.log('hekllo')
-      console.log(pData)
-      // console.log(payeeOptions[payeeKey])
       if(!deepEqual(pData, payeeOptions[payeeKey]) && activeTab !== 'To Release'){
-        console.log('saving payee data')
         savePayeeData(pData)
       }
       const res = await createDisbursement(data)
@@ -577,9 +559,9 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     
     const fetchAccountCode = async () => {
       const storedFormData = sessionStorage.getItem('FormData');
+
       // let form = storedFormData ? JSON.parse(storedFormData) : await getFormData()
       let form = await getFormData()
-      
       console.log(form)
 
       setFundCluster(Object.values(form.fundCluster))
@@ -647,7 +629,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     if(activeTab === 'To Payment') {
       await handleUpdateDV()
     } else if(activeTab === 'BUR') {
-      console.log('dsdsafdsfdsgfdgft')
       await updateBUR()
     }
   }
@@ -1133,7 +1114,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
           <div className="w-full h-auto flex flex-col py-2">
             <div className='w-full flex flex-col sm:flex-row items-center justify-center gap-2'>
               {activeTab !== 'BUR' ? (
-                <div className="flex flex-col w-full sm:w-2/6">
+                <div className="flex flex-col w-full sm:w-4/6">
                   <label className='text-gray-500'>Fund Cluster</label>
                   <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                     onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
@@ -1878,7 +1859,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
             >Save</button>
         </div>
       </div>
-      {isLoading || isLoadingBUR && (
+      {(isLoading || isLoadingBUR) && (
         <LargeLoader/>
       )}
     </form>

@@ -51,7 +51,6 @@ export const useBudgetOfficerHook = () => {
     }
 
     const addCertified = async(data, id) => {
-        console.log(data)
         setError(null)
         setIsLoading(true)
         try {
@@ -92,7 +91,6 @@ export const useBudgetOfficerHook = () => {
     const submitBURToAdmin = async(data) => {
         setIsLoading(true)
         setError(null)
-        console.log('submitting')
         try {
             const res = await axios.post(`${apiURL}/head/passBURToAdmin`,data, {
                 withCredentials: true

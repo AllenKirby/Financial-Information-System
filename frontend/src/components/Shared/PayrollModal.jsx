@@ -37,7 +37,6 @@ const PayrollModal = ({modal, log = {}}) => {
         particular: log[1].particular,
         date_id: log[0]
     }
-    console.log(data)
     const res = await add_ASA_cashFO(data)
   }
 

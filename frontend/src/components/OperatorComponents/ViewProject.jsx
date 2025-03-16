@@ -40,11 +40,6 @@ const ViewProject = (props) => {
     })
   }, [ASANo, projectName])
 
-
-  useEffect(() => {
-    console.log(dvData)
-  }, [dvData])
-
   return (
     <section onClick={(e) => e.stopPropagation()} className="w-3/4 h-3/4 bg-white rounded-lg z-50">
         <div className="w-full h-auto py-3 px-4 flex items-center justify-between border-b-2">

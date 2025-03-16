@@ -29,22 +29,25 @@ import LargeLoader from '../../Loaders/LargeLoader'
         if(flag) { 
             setInputValue(fundCluster)
             setKey(key)
-            setUpdateFlag(!updateFlag)
+            setUpdateFlag(true)  // Ensure update mode is set
         } else {
-            setUpdateFlag(!updateFlag)
+            setInputValue("");  // Clear input when adding a new entry
+            setKey("");         // Reset key to avoid unintended updates
+            setUpdateFlag(false);  // Ensure we enter create mode
         }
         setShowInput(!showInput);
     };
+    
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value); // Update input field value
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async(e) => {
         e.preventDefault()
         if (inputValue.trim() !== "") {
             const randomKey = Math.random().toString(36).substring(2, 15);
-            addNewFundCluster(inputValue, randomKey)
+            await addNewFundCluster(inputValue, randomKey)
             setInputValue(""); // Clear input after submission
             setShowInput(false); // Hide input after submission
             setArrFund(prev => {

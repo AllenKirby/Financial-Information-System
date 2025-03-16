@@ -72,7 +72,7 @@ const NumOfRecords = ({modal, downloadPNG, comparison}) => {
               <div className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} h-2/3 text-4xl font-bold`}>{recordx.DVnoContractFarming !== '0000' ? recordx?.DVnoContractFarming?.replace(/^0+/, '') : '0'}</div>
             </div>
             <div className="rounded-lg flex flex-col gap-2 overflow-hidden p-2">
-              <button onClick={comparison} className={`${user?.role === '1' ? 'bg-customgreen border-customgreen hover:bg-white hover:text-customgreen' : 'bg-BOGreen'} text-white border-2 w-full py-2 flex items-center justify-center gap-2 rounded-lg text-sm transition-all duration-150`}><BiGitCompare size={20}/>Compare Graph</button>
+              <button onClick={comparison} className={`${user?.role === '1' ? 'bg-customgreen border-customgreen hover:bg-white hover:text-customgreen' : 'bg-BOGreen border-BOGreen hover:bg-white hover:text-BOGreen'} text-white border-2 w-full py-2 flex items-center justify-center gap-2 rounded-lg text-sm transition-all duration-150`}><BiGitCompare size={20}/>Compare Graph</button>
               <button onClick={downloadPNG} className="bg-blue-500 border-2 border-blue-500 hover:bg-white hover:text-blue-500 text-white w-full py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition-all duration-150"><MdOutlineFileDownload size={20}/>Download PNG</button>
             </div>
         </div>
