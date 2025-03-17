@@ -9,6 +9,7 @@ const getForecastedValues = async(req, res) => {
       const data = {
         steps: 12
       }
+      console.log(awsAPI_URL)
       const response = await axios.post(`${awsAPI_URL}/forecast`, data);
      
       res.status(200).json(response.data)
@@ -27,6 +28,7 @@ const getPercentageForMonth = async(req, res) => {
       year: year,
       amount: amount
     }
+    console.log(awsAPI_URL)
     const response = await axios.post(`${awsAPI_URL}/clasify`, data);
     res.status(200).json(response.data)
 
@@ -45,6 +47,7 @@ const sendTestExpense = async (req, res) => {
       new_expense: expense,
       steps: steps
     }
+    console.log(awsAPI_URL)
     const response = await axios.post(`${awsAPI_URL}/test-forecast`, data);
     res.status(200).json(response.data)
   }catch(error){
@@ -56,7 +59,8 @@ const sendTestExpense = async (req, res) => {
 const getRecords = async(req, res) => {
   try {
     const awsAPI_URL = process.env.AWS_API_URL
-    const response = await axios.get(`${awsAPI_URL}/records`);
+    // const response = await axios.get(`${awsAPI_URL}/records`);
+    const response = await axios.get('http://127.0.0.1:8000/records');
     res.status(200).json(response.data)
   } catch(error) {
     console.log('error sending records', error)
@@ -73,6 +77,7 @@ const multiTestExpense = async(req, res) => {
       steps: steps,
       frequency: frequency
     }
+    console.log(awsAPI_URL)
     const response = await axios.post(`${awsAPI_URL}/multi-test-forecast`, data);
     res.status(200).json(response.data)
   }catch(error){

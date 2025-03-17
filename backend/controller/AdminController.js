@@ -567,6 +567,8 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B45").value(data.cashAvailable ? '✓' : '')
     workbook.sheet('Sheet1').cell("B46").value(data.debitAccount ? '✓' : '')
     workbook.sheet('Sheet1').cell("B47").value(data.supportingDocuments ? '✓' : '')
+    workbook.sheet('Sheet1').cell("C51").value('JEMMELA ANNE V. MASICAT')
+    workbook.sheet('Sheet1').cell("M51").value('ROBERTO J. DELA CRUZ')
 
     //BIR
     workbook.sheet('Sheet1').cell("P81").value(data.fund)
@@ -587,6 +589,8 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B123").value(data.cashAvailable ? '✓' : '')
     workbook.sheet('Sheet1').cell("B124").value(data.debitAccount ? '✓' : '')
     workbook.sheet('Sheet1').cell("B125").value(data.supportingDocuments ? '✓' : '')
+    workbook.sheet('Sheet1').cell("C129").value('JEMMELA ANNE V. MASICAT')
+    workbook.sheet('Sheet1').cell("M129").value('ROBERTO J. DELA CRUZ')
 
     //BUR
     if(data.ORSBURS) {
