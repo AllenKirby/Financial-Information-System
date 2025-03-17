@@ -166,7 +166,7 @@ const ViewBUR = () => {
               <BsArrowLeft size={20}/> <span className="hidden sm:block ">Return to Funding</span>
             </button>
           )}
-          {user?.role === '3' || permission?.data?.permission && permission?.data?.roleName === 'Preparer' && (
+          {(user?.role === '3' || permission?.data?.permission && permission?.data?.roleName === 'Preparer') && (
             <>
               {selectedBUR?.status === 'Drafting' && (
                 <button 
@@ -186,9 +186,9 @@ const ViewBUR = () => {
           {(user?.role === '3' || user?.role === '2' && !permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' || permission?.data?.permission && permission?.data?.roleName === 'Preparer') && (
             <button
               onClick={() => openModal(user?.role === '3' ? 'SubmitBURToBO' : 'SubmitBURToApprover')}
-              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen border-2 border-fundingBlueGreen hover:bg-white hover:text-fundingBlueGreen text-white transition-all duration-150`}
+              className={`w-auto px-5 py-2 rounded-lg bg-fundingBlueGreen border-2 border-fundingBlueGreen flex items-center justify-center hover:bg-white hover:text-fundingBlueGreen text-white transition-all duration-150`}
               >
-              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span>Submit</span>
+              <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="hidden lg-landscape:block">Submit</span>
             </button>
           )}
           {(user?.role === '1' || user?.role === '2' && permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' && selectedBUR?.status === 'Under Review' || selectedBUR?.status === 'For Approval') && (
@@ -249,7 +249,7 @@ const ViewBUR = () => {
               <p className='text-gray-500 w-2/5'>Amount</p>
               <div className="w-3/5 flex flex-col">
                 {projects?.map((item, index) => (
-                  <li key={index} className='text-customFontColor font-medium'>{`${item?.title} - ${formatToPeso(item?.amount)}`}</li>
+                  <li key={index} className='text-customFontColor font-medium'>{`${item?.title}:  ${formatToPeso(item?.amount)}`}</li>
                 ))}
               </div>
             </div>

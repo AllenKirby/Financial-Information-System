@@ -21,7 +21,7 @@ import { useLocation } from 'react-router-dom'
 
 // import {retrieveProjectName} from '../../hooks/useFundingHook'
 
-const DisbursementVoucher = ({modal, document = {}, flag}) => {
+const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
    //hooks
    const {createDisbursement, updateDV, getFormData,savePayeeData,loadPayee,add_payroll_records, isLoading, error} = usePreparerHook()
    const { handleBURCreation, handleBURUpdate, isLoading: isLoadingBUR, error: errorBUR } = useFundingHook()
@@ -77,7 +77,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   //const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
-  const [activeTab, setActiveTab] = useState('')
+  const [activeTab, setActiveTab] = useState(tab)
 
   //payee
   const [payeeOptions, setPayeeOptions] = useState({});
@@ -101,6 +101,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   
   //redux
   const permission = useSelector((state) => state.permission)
+  console.log(activeTab)
 
   useEffect(() => {
     if (flag && document) {
@@ -153,6 +154,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
         setMeralco({meralcoVAT: document.meralcoVAT, meralcoNONVAT: document.meralcoNONVAT})
         setActiveTab('Meralco')
       } else if (document.activeTab === 'BUR') {
+        setActiveTab(document.activeTab)
         setBURData({
           payee: document.payee,
           office: 'NIA Region IV-A',
@@ -179,31 +181,31 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
     }
   }, [document, flag]);
 
-  useEffect(() => {
-    // fix the cause
-    const path = location.pathname.split('/')[1]
-    if(user?.role === '4') {
-      if(path === 'editor'){
-        if(Object.keys(document).length > 0){
-          setActiveTab(document.activeTab)
-        }else{
-          setActiveTab('To Payment')
-        }
-      } else {
-        setActiveTab("BUR")
-      }
-    } else {
-      if(path === 'operator'){
-        if(Object.keys(document).length > 0){
-          setActiveTab(document.activeTab)
-        }else{
-          setActiveTab('To Release')
-        }
-      } else {
-        setActiveTab("BUR")
-      }
-    }
-  }, [user, permission])
+  // useEffect(() => {
+  //   // fix the cause
+  //   // const path = location.pathname.split('/')[1]
+  //   // if(user?.role === '4') {
+  //   //   if(path === 'editor'){
+  //   //     if(Object.keys(document).length > 0){
+  //   //       setActiveTab(document.activeTab)
+  //   //     }else{
+  //   //       setActiveTab('To Payment')
+  //   //     }
+  //   //   } else {
+  //   //     setActiveTab("BUR")
+  //   //   }
+  //   // } else {
+  //   //   if(path === 'operator'){
+  //   //     if(Object.keys(document).length > 0){
+  //   //       setActiveTab(document.activeTab)
+  //   //     }else{
+  //   //       setActiveTab('To Release')
+  //   //     }
+  //   //   } else {
+  //   //     setActiveTab("BUR")
+  //   //   }
+  //   // }
+  // }, [user, permission])
 
   const formatDateforUpdate = (rawDate) => {
     if (typeof rawDate === 'string') {
@@ -399,7 +401,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
       particular: payeeData.particular,
       NFNameA: payeeData.NF_name,
       NFOfficeA: payeeData.NF_office,
-      amount: BURAmount,
+      amount: BURAmount.filter(obj => obj.title !== "" && obj.amount !== ""),
       activeTab: activeTab
     }
     return finalData
@@ -625,7 +627,6 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 
   const handleUpdate = async(e) => {
     e.preventDefault()
-
     if(activeTab === 'To Payment') {
       await handleUpdateDV()
     } else if(activeTab === 'BUR') {
@@ -872,7 +873,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
   const [numindex, setNumindex] = useState(0)
 
   return (
-    <form onSubmit={(e) => flag && user.role === '4' ? handleUpdate(e) : handleSubmit(e)} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
+    <form onSubmit={(e) => flag ? handleUpdate(e) : handleSubmit(e)} action="" className="bg-white w-full h-full sm:w-4/6 lg:w-3/6 flex flex-col justify-between">
       <div className='w-full h-auto'>
         <div className='w-full h-auto px-3 py-3'>
           <h1 className={`${user.role === '4' ? 'text-preparerPrimary' : 'text-fundingBlueGreen'} text-xl 2xl:text-3xl font-bold`}>{flag ? 'Update Disbursement Voucher' : 'Create Disbursement Voucher'}</h1>
@@ -1259,7 +1260,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                 <div className='w-full'>
                   {BURAmount.map((item, index) => (
                     <div key={index} className='w-full flex flex-col sm:flex-row items-end justify-center gap-2'>
-                      <div className='w-1/2 flex flex-col'>
+                      <div className='w-full sm:w-1/2 flex flex-col'>
                         <label>Title</label>
                         <input 
                           value={item.title} 
@@ -1267,7 +1268,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                           type="text"
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`} />
                       </div>
-                      <div className='w-1/2 flex flex-col'>
+                      <div className='w-full sm:w-1/2 flex flex-col'>
                         <label>Amount</label>
                         <input 
                           value={item.amount} 
@@ -1413,7 +1414,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
               <h1 className="font-semibold text-lg mt-2 text-gray-500">Financial Details</h1>
               {BudgetFields.map((field, index) => (
                 <div key={index} className="w-full h-auto flex flex-col mt-2">
-                  <div className="w-full flex flex-col sm:flex-row gap-2">
+                  <div className="w-full flex flex-col sm:flex-row items-end justify-center gap-2">
                     <div className="w-full sm:w-1/2">
                       <label className="text-gray-500">ASA no.</label>
                       <select
@@ -1471,7 +1472,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                         addNewBudgetField()
                         setNumindex((prev) => prev + 1)
                         }} 
-                        className="px-4 bg-blue-500 text-white rounded-md ">
+                        className="px-4 bg-blue-500 text-white rounded-md h-fit p-2 my-0.5">
                         +
                       </button>
                     )}
@@ -1479,7 +1480,7 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
                       <button onClick={() => {
                         removeBudgetField(index)
                         setNumindex((prev) => prev - 1)
-                        }} className="px-4 bg-blue-500 text-white rounded-md ">
+                        }} className="px-4 bg-blue-500 text-white rounded-md h-fit p-2 my-0.5">
                         -
                       </button>
                     )}
@@ -1868,7 +1869,8 @@ const DisbursementVoucher = ({modal, document = {}, flag}) => {
 DisbursementVoucher.propTypes = {
   modal: PropTypes.func.isRequired,
   flag: PropTypes.bool.isRequired,
-  document: PropTypes.object
+  document: PropTypes.object,
+  tab: PropTypes.string.isRequired
 }
 
 export default DisbursementVoucher;

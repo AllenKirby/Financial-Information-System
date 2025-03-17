@@ -267,17 +267,17 @@ const DVTemplate = ({document}) => {
               <p className='text-gray-500 w-2/5'>Particulars</p>
               <p className='text-customFontColor font-semibold break-words w-3/5'>{document?.particular}</p>
             </div>
-            <table className="w-full table-auto border-collapse">
-              <thead>
+            <table className="w-full table-auto border-collapse my-3">
+              <thead className='bg-gray-100'>
                   <tr>
-                  <th className="text-left text-gray-500 border-b p-2">Account Title</th>
-                  <th className="text-left text-gray-500 border-b p-2">Account Code</th>
-                  <th className="text-left text-gray-500 border-b p-2">Breakdown Amount</th>
+                  <th className="text-left text-gray-500 p-2">Account Title</th>
+                  <th className="text-left text-gray-500 p-2">Account Code</th>
+                  <th className="text-left text-gray-500 p-2">Breakdown Amount</th>
                   </tr>
               </thead>
               <tbody>
                   {(document?.accTitle || []).map((title, index) => (
-                  <tr key={`row-${index}`} className="border-b">
+                  <tr key={`row-${index}`} className={`text-sm ${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
                       <td className="text-customFontColor p-2 break-words max-w-xs">
                       {title} {document?.additionalLabels?.[index] || ''}
                       </td>
