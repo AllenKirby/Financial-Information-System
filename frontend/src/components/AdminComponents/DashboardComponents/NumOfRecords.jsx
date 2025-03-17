@@ -38,7 +38,7 @@ const NumOfRecords = ({modal, downloadPNG, comparison}) => {
         // }
         // getRecords()
         const year = new Date().getFullYear()
-        const numberRecordsCollection = doc(firestore, 'NumberOfRecords', year.toString())
+        const numberRecordsCollection = doc(firestore, 'NumOfRecords', year.toString())
         const unsubscribe = onSnapshot(numberRecordsCollection, (snapshot) => {
             if(snapshot.exists()){
                 const snapData = snapshot.data()

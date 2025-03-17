@@ -95,15 +95,17 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
         let LowerBounds;
         if (Object.keys(testData.sampleoutcome).length === 0) {
             const forecastedData = JSON.parse(sessionStorage.getItem('forecasted')) || {};
-            forecastXAxis = forecastedData.monthly && year === customYear ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
-            forecastValues = forecastedData.monthly && year === customYear ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
-            UpperBounds = forecastedData.monthly && year === customYear ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
-            LowerBounds = forecastedData.monthly && year === customYear ? Object.values(forecastedData.monthly).map(data => data.lower < 0 ? 0 : data.lower) : [];
+            // forecastXAxis = forecastedData.monthly && year == customYear ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
+            forecastXAxis = forecastedData.monthly && year == customYear ? Object.keys(forecastedData.monthly) : [];
+            forecastValues = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
+            UpperBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
+            LowerBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.lower < 0 ? 0 : data.lower) : [];
+            console.log(year === customYear)
         } else {
-            forecastXAxis = testData.sampleoutcome && year === customYear ? Object.keys(testData.sampleoutcome).map(date => date.slice(0, 7)) : [];
-            forecastValues = testData.sampleoutcome && year === customYear ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
-            UpperBounds = testData.sampleoutcome && year === customYear ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
-            LowerBounds = testData.sampleoutcome && year === customYear ? Object.values(testData.sampleoutcome).map(data => data.lower < 0 ? 0 : data.lower) : [];
+            forecastXAxis = testData.sampleoutcome && year == customYear ? Object.keys(testData.sampleoutcome).map(date => date.slice(0, 7)) : [];
+            forecastValues = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
+            UpperBounds = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
+            LowerBounds = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.lower < 0 ? 0 : data.lower) : [];
         }
 
         // Combine actual and forecasted data
