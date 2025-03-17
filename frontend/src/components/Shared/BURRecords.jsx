@@ -63,7 +63,7 @@ const BURRecords = () => {
         </div>
         <div className="flex items-center justify-center gap-2">
           {(user?.role === '3' || user?.role === '4') && (
-            <button onClick={modal} className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm 2xl:text-base bg-preparerPrimary text-white ">
+            <button onClick={modal} className={`${user?.role === '3' ? 'bg-fundingBlueGreen' : 'bg-preparerPrimary'} flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm 2xl:text-base text-white`}>
               <IoAdd size={20} className='font-bold'/> <span className='hidden lg:block'>New</span>
             </button>
           )}
@@ -114,7 +114,7 @@ const BURRecords = () => {
         <>
           <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
           <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-end">
-            <DisbursementVoucher modal={modal} flag={false}/>
+            <DisbursementVoucher modal={modal} flag={false} tab="BUR"/>
           </div>
         </>
       )}

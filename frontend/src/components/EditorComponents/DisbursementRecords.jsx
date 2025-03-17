@@ -192,7 +192,7 @@ const DisbursementRecords = () => {
           <>
             <div className="fixed inset-0 z-20 bg-black opacity-50" onClick={modal} />
             <div className="fixed z-30 left-0 top-0 w-full h-full flex items-center justify-end">
-              <DisbursementVoucher modal={modal} flag={false}/>
+              <DisbursementVoucher modal={modal} flag={false} tab='To Payment'/>
             </div>
           </>
         )}

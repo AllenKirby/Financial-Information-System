@@ -69,7 +69,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
                 )}
             </div>
         )}
-        <div className='w-full h-auto py-3 bg-white flex items-center justify-center'>
+        <div className='w-full h-auto py-3 bg-white flex items-center justify-end'>
             <div className='w-auto'>
                 <Pagination totalPages={totalPages} currentPage={currentPage} onPageChange={handlePageChange} />
             </div>

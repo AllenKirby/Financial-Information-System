@@ -51,14 +51,14 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                 disabled={currentPage === 1}
                 className="w-auto h-auto border-2 border-gray-300 rounded-lg cursor-pointer"
             >
-                <GrFormPrevious size={30} />
+                <GrFormPrevious size={25} />
             </button>
             <div className="flex gap-1">
                 {pages.map((page) => (
                     <button
                         key={page}
                         onClick={() => onPageChange(page)}
-                        className={`py-1 px-3 rounded-lg ${
+                        className={`py-1 px-3 rounded-md w-10 ${
                             page === currentPage
                                 ? `${bgColor} text-white`
                                 : 'text-customFontColor border-2'
@@ -75,7 +75,7 @@ const Pagination = ({ totalPages, currentPage, onPageChange }) => {
                     currentPage >= totalPages ? 'text-gray-300' : 'text-customFontColor'
                 }`}
             >
-                <GrFormNext size={30} />
+                <GrFormNext size={25} />
             </button>
         </div>
     );
