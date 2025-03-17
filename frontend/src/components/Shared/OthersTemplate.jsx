@@ -130,39 +130,33 @@ const OtherTemplate = ({document}) => {
                     <p className='text-customFontColor font-semibold w-3/5'>{document?.NF_office}</p>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
-                    <p className='text-gray-500 w-2/5'>Account Title</p>
-                    <ul className='flex flex-col w-3/5'>
-                        {(document?.accTitle || []).map((title, index) => (
-                            <li key={`item-${index}`} className='text-customFontColor font-semibold truncate'>
-                                {title} {document?.additionalLabels?.[index] || ''}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                <div className='w-full h-auto flex items-start justify-center'>
-                    <p className='text-gray-500 w-2/5'>Account Code</p>
-                    <div className='flex flex-col w-3/5'>
-                        {document?.accCode.map((code, index) => (
-                            <>
-                            <li key={`code-${index}`} className='text-customFontColor font-semibold'>{code}</li>
-                            </>
-                        ))}
-                    </div>
-                </div>
-                <div className='w-full h-auto flex items-start justify-center'>
-                    <p className='text-gray-500 w-2/5'>Breakdown Amounts</p>
-                    <div className='flex flex-col w-3/5'>
-                        {document?.optionalAmount.map((title, index) => (
-                            <>
-                            <li key={`title-${index}`} className='text-customFontColor font-semibold truncate'>{title ? formatToPeso(title) : '--'}</li>
-                            </>
-                        ))}
-                    </div>
-                </div>
-                <div className='w-full h-auto flex items-start justify-center'>
                     <p className='text-gray-500 w-2/5'>Particulars</p>
                     <p className='text-customFontColor font-semibold break-words w-3/5'>{document?.particular}</p>
                 </div>
+                <table className="w-full table-auto border-collapse">
+                    <thead>
+                        <tr>
+                        <th className="text-left text-gray-500 border-b p-2">Account Title</th>
+                        <th className="text-left text-gray-500 border-b p-2">Account Code</th>
+                        <th className="text-left text-gray-500 border-b p-2">Breakdown Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {(document?.accTitle || []).map((title, index) => (
+                        <tr key={`row-${index}`} className="border-b">
+                            <td className="text-customFontColor p-2 truncate">
+                            {title} {document?.additionalLabels?.[index] || ''}
+                            </td>
+                            <td className="text-customFontColor p-2">
+                            {document?.accCode?.[index] || '--'}
+                            </td>
+                            <td className="text-customFontColor p-2 truncate">
+                            {document?.optionalAmount?.[index] ? formatToPeso(document.optionalAmount[index]) : '--'}
+                            </td>
+                        </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
             <div className='flex flex-col'>
                 <div className='w-full py-1'>

@@ -77,7 +77,7 @@ const ReportRows = ({reportData, fieldoffices}) => {
         <tr>
             <td className='border-2 border-black'> </td>
             <td className='border-2 border-black font-bold'>{reportData.description}</td>
-            <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.TotalASA)}</td>
+            <td className='border-2 border-black text-right font-bold'>{formatToPeso(parseFloat(reportData.TotalASA) - parseFloat(reportData.IMO_budget))}</td>
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.prevMonthRO || 0)}</td>
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(reportData.prevMonthFO || 0)}</td>
             <td className='border-2 border-black text-right font-bold'>{formatToPeso(data.previousTotal || 0)}</td>
@@ -121,7 +121,7 @@ const ReportRows = ({reportData, fieldoffices}) => {
                   return (
                     <tr key={index}>
                       <td className='border-2 border-black'></td>
-                      <td className='border-2 border-black'>{key.split(',')[1]}</td>
+                      <td className='border-2 border-black'>{key.split(',')[1].split('>')[0]}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].ASA || 0)}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].prevMonthRO || 0)}</td>
                       <td className='border-2 border-black text-right'>{formatToPeso(fieldoffices[key].prevMonthFO || 0)}</td>
