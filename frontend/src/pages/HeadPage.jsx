@@ -112,7 +112,6 @@ const HeadPage = () => {
     if(isInitialized){
       socket.on('head:firestore:update', (doc) => {
         //dispatchContext({ type: 'SET_HEADDOCUMENTS', payload: doc });
-        console.log(doc)
         dispatch(setDVRecords(doc))
       })
       socket.on('headPermission:firestore:update', (doc) => {

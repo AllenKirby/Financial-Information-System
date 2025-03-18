@@ -4,9 +4,7 @@ export const DVUsersRedux = createSlice({
     name: 'dvrecords',
     initialState: null,
     reducers: {
-        setDVRecords: (state, action) => {
-            return {...state, ...action.payload}
-        },
+        setDVRecords: (_, action) => action.payload,
         deleteDVrecords: (state, action) => {
             const uid = action.payload;
             const newState = { ...state }; 
