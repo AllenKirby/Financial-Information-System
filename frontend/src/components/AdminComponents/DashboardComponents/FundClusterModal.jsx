@@ -10,8 +10,6 @@ const FundClusterModal = ({fundCluster, modal, vouchers}) => {
     const [filteredVouchers, setFilteredVouchers] = useState({})
     const [selectedVoucher, setSelectedVoucher] = useState(null)
 
-    console.log(vouchers)
-
     useEffect(() => {
         if(vouchers && Object.entries(vouchers).length > 0) {
             const result = Object.entries(vouchers).filter(([,voucher]) => voucher.data.fund === fundCluster)
