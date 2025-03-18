@@ -502,6 +502,27 @@ const getNumberOfRecords = async (req, res) => {
   }
 }
 
+const getUniqueList = (data) => {
+  const seen = new Set();
+
+  const uniqueNames = Object.keys(data.ASA)
+    .map(key => key.split('!')[0])       
+    .filter(name => {
+      if (seen.has(name)) return false;  
+      seen.add(name);
+      return true;
+    });
+
+  return uniqueNames.join("\r\n").replace(/\|/g, ' ');
+}
+
+const getDecimal = (num) => {
+  const decimalPart = num % 1;
+  const numerator = Math.round(decimalPart * 100);
+  // const result = `${numerator}/100`;
+  return numerator
+}
+
 const downloadDV = async(req, res) => {
   const { data } = req.body
 
@@ -517,15 +538,20 @@ const downloadDV = async(req, res) => {
     const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
     const total_val = tval.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
+    const floatTotal_val_decimal = getDecimal(floatTotal_val)
     
     const adue = data.amount - tval
     const amount_due = adue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
+    const floatAmountDue_decimal = getDecimal(floatAmountDue)
 
     const combinedAccTitle = data.accTitle.join("\n");
     const combinedAccCode = data.accCode.join("\n");
   
-    const ASA = Object.keys(data.ASA).map(key => key.split('!')[0]).join("\r\n").replace(/\|/g, ' ').replace(/\//g, ' ').replace(/\,/g, ' ');
+
+    // const ASA = Object.keys(data.ASA).map(key => key.split('!')[0]).join("\r\n").replace(/\|/g, ' ').replace(/\//g, ' ').replace(/\,/g, ' ');
+    const ASA = getUniqueList(data)
+    console.log(ASA)
 
     //payee
     workbook.sheet('Sheet1').cell("P2").value(data.fund)
@@ -539,8 +565,8 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("K17").value(data.RC)
     workbook.sheet('Sheet1').cell("Q17").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("C28").value(ASA).style("wrapText", true)
-    workbook.sheet('Sheet1').cell("C25").value(data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("C26").value(data.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("C25").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("C26").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("E25").value(data.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - '))
     workbook.sheet('Sheet1').cell("E26").value(data.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - '))
     workbook.sheet('Sheet1').cell("G25").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
@@ -553,7 +579,7 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("N40").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("Q41").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("Q42").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("K45").value(`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} Pesos`)
+    workbook.sheet('Sheet1').cell("K45").value(`${toWords(floatAmountDue).charAt(0).toUpperCase() + toWords(floatAmountDue).slice(1)} Pesos${floatAmountDue_decimal > 0 ? ` and ${floatAmountDue_decimal}/100` : ''}`)
     workbook.sheet('Sheet1').cell("B40").value(combinedAccTitle).style({
       wrapText: true, 
       verticalAlignment: "top",
@@ -569,6 +595,7 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B47").value(data.supportingDocuments ? '✓' : '')
     workbook.sheet('Sheet1').cell("C51").value('JEMMELA ANNE V. MASICAT')
     workbook.sheet('Sheet1').cell("M51").value('ROBERTO J. DELA CRUZ')
+    workbook.sheet('Sheet1').cell("K59").value('LBP 0242-1107-57')
 
     //BIR
     workbook.sheet('Sheet1').cell("P81").value(data.fund)
@@ -585,12 +612,13 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B120").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
     workbook.sheet('Sheet1').cell("A115").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A116").value(data.NF_office)
-    workbook.sheet('Sheet1').cell("K123").value(`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} Pesos`)
+    workbook.sheet('Sheet1').cell("K123").value(`${toWords(floatTotal_val).charAt(0).toUpperCase() + toWords(floatTotal_val).slice(1)} Pesos${floatTotal_val_decimal > 0 ? ` and ${floatTotal_val_decimal}/100` : ''}`)
     workbook.sheet('Sheet1').cell("B123").value(data.cashAvailable ? '✓' : '')
     workbook.sheet('Sheet1').cell("B124").value(data.debitAccount ? '✓' : '')
     workbook.sheet('Sheet1').cell("B125").value(data.supportingDocuments ? '✓' : '')
     workbook.sheet('Sheet1').cell("C129").value('JEMMELA ANNE V. MASICAT')
     workbook.sheet('Sheet1').cell("M129").value('ROBERTO J. DELA CRUZ')
+    workbook.sheet('Sheet1').cell("K137").value('LBP 0242-1107-57')
 
     //BUR
     if(data.ORSBURS) {
