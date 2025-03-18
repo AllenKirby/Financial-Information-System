@@ -59,8 +59,7 @@ const sendTestExpense = async (req, res) => {
 const getRecords = async(req, res) => {
   try {
     const awsAPI_URL = process.env.AWS_API_URL
-    // const response = await axios.get(`${awsAPI_URL}/records`);
-    const response = await axios.get('http://127.0.0.1:8000/records');
+    const response = await axios.get(`${awsAPI_URL}/records`);
     res.status(200).json(response.data)
   } catch(error) {
     console.log('error sending records', error)
