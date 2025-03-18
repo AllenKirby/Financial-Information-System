@@ -551,6 +551,7 @@ const downloadDV = async(req, res) => {
 
     // const ASA = Object.keys(data.ASA).map(key => key.split('!')[0]).join("\r\n").replace(/\|/g, ' ').replace(/\//g, ' ').replace(/\,/g, ' ');
     const ASA = getUniqueList(data)
+    const ASANO = `ASA No. ${ASA}`
     console.log(ASA)
 
     //payee
@@ -564,7 +565,7 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("A16").value(data.particular)
     workbook.sheet('Sheet1').cell("K17").value(data.RC)
     workbook.sheet('Sheet1').cell("Q17").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("C28").value(ASA).style("wrapText", true)
+    workbook.sheet('Sheet1').cell("C28").value(ASANO).style("wrapText", true)
     workbook.sheet('Sheet1').cell("C25").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("C26").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("E25").value(data.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - '))
@@ -593,8 +594,10 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B45").value(data.cashAvailable ? '✓' : '')
     workbook.sheet('Sheet1').cell("B46").value(data.debitAccount ? '✓' : '')
     workbook.sheet('Sheet1').cell("B47").value(data.supportingDocuments ? '✓' : '')
-    workbook.sheet('Sheet1').cell("C51").value('JEMMELA ANNE V. MASICAT')
-    workbook.sheet('Sheet1').cell("M51").value('ROBERTO J. DELA CRUZ')
+    workbook.sheet('Sheet1').cell("C51").value(data.accountingHead_name)
+    workbook.sheet('Sheet1').cell("C53").value(data.accountingHead_office)
+    workbook.sheet('Sheet1').cell("M51").value(data.agencyHead_name)
+    workbook.sheet('Sheet1').cell("M53").value(data.agencyHead_office)
     workbook.sheet('Sheet1').cell("K59").value('LBP 0242-1107-57')
 
     //BIR
@@ -616,9 +619,17 @@ const downloadDV = async(req, res) => {
     workbook.sheet('Sheet1').cell("B123").value(data.cashAvailable ? '✓' : '')
     workbook.sheet('Sheet1').cell("B124").value(data.debitAccount ? '✓' : '')
     workbook.sheet('Sheet1').cell("B125").value(data.supportingDocuments ? '✓' : '')
-    workbook.sheet('Sheet1').cell("C129").value('JEMMELA ANNE V. MASICAT')
-    workbook.sheet('Sheet1').cell("M129").value('ROBERTO J. DELA CRUZ')
+    workbook.sheet('Sheet1').cell("C129").value(data.accountingHead_name)
+    workbook.sheet('Sheet1').cell("C131").value(data.accountingHead_office)
+    workbook.sheet('Sheet1').cell("M129").value(data.agencyHead_name)
+    workbook.sheet('Sheet1').cell("M131").value(data.agencyHead_office)
     workbook.sheet('Sheet1').cell("K137").value('LBP 0242-1107-57')
+    workbook.sheet('Sheet1').cell("C103").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("C104").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("E103").value(data.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - '))
+    workbook.sheet('Sheet1').cell("E104").value(data.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - '))
+    workbook.sheet('Sheet1').cell("G103").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("G104").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
 
     //BUR
     if(data.ORSBURS) {

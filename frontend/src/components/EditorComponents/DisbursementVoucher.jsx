@@ -54,6 +54,13 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
     additionalCode: [], 
     amount: 0, 
     particular: '',
+    accountingHead_name: '',
+    accountingHead_office: '',
+    agencyHead_name: '',
+    agencyHead_office: '',
+    PR_No: '',
+    PO_No: '',
+    IAR_No: '',
     // ASA_No_ref: ''
     })
 
@@ -126,6 +133,13 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
           RC: document.RC || '',
           amount: document.amount || 0,
           particular: document.particular || '',
+          accountingHead_name: document.accountingHead_name || '',
+          accountingHead_office: document.accountingHead_office || '',
+          agencyHead_name: document.agencyHead_name || '',
+          agencyHead_office: document.agencyHead_office || '',
+          PR_No: document.PR_No || '',
+          PO_No: document.PO_No || '',
+          IAR_No: document.IAR_No || '',
           // ASA_No_ref: document.ASA_No_ref || ''
         };
         return updatedData;
@@ -1384,6 +1398,116 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     </div>
                   </div>
                 </div>
+
+                {/* Head, Accounting Unit */}
+                <div className="w-full flex flex-row gap-2">
+                  <div className='w-1/2 flex flex-col'>
+                    <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Head, Accounting Unit</label>
+                    <label className="text-gray-500">Name</label>
+                    <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      onChange={(e) => {
+                        const selectedOption = e.target.options[e.target.selectedIndex];
+                        setPayeeData({...payeeData, accountingHead_name: e.target.value, accountingHead_office: selectedOption.getAttribute('office')})
+                      }}
+                      value={payeeData.accountingHead_name}
+                      //disabled={isDisabled && !permission.data.permission}
+                      required
+                    >
+                      <option value="" disabled>Select</option>
+                      {Object.entries(nameOffice).length > 0 ? (
+                          Object.entries(nameOffice).map(([key, value]) => (
+                              <option key={key} value={value[0]} office={value[1]}>
+                                  {value[0]}
+                              </option>
+                          ))
+                      ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                  <div className='w-1/2 flex items-end'>
+                    <div className='w-full flex flex-col items-start justify-center'>
+                      <label className='font-medium text-gray-500'>Position</label>
+                      <label className='w-full px-4 py-2 text-gray-500'>{payeeData.accountingHead_office ? payeeData.accountingHead_office : 'None'}</label>
+                    </div>
+                  </div>
+                </div>
+
+
+                {/* Agency Head */}
+                <div className="w-full flex flex-row gap-2">
+                  <div className='w-1/2 flex flex-col'>
+                    <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Agency Head</label>
+                    <label className="text-gray-500">Name</label>
+                    <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                      onChange={(e) => {
+                        const selectedOption = e.target.options[e.target.selectedIndex];
+                        setPayeeData({...payeeData, agencyHead_name: e.target.value, agencyHead_office: selectedOption.getAttribute('office')})
+                      }}
+                      value={payeeData.agencyHead_name}
+                      //disabled={isDisabled && !permission.data.permission}
+                      required
+                    >
+                      <option value="" disabled>Select</option>
+                      {Object.entries(nameOffice).length > 0 ? (
+                          Object.entries(nameOffice).map(([key, value]) => (
+                              <option key={key} value={value[0]} office={value[1]}>
+                                  {value[0]}
+                              </option>
+                          ))
+                      ) : (
+                        <option value="" disabled>
+                            No options available
+                        </option>
+                      )}
+                    </select>
+                  </div>
+                  <div className='w-1/2 flex items-end'>
+                    <div className='w-full flex flex-col items-start justify-center'>
+                      <label className='font-medium text-gray-500'>Position</label>
+                      <label className='w-full px-4 py-2 text-gray-500'>{payeeData.agencyHead_office ? payeeData.agencyHead_office : 'None'}</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label className='text-gray-500'>PR No.</label>
+                  <input 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    type="text" 
+                    // disabled={true}
+                    value={payeeData.PR_No}
+                    onChange={(e) => setPayeeData({...payeeData, PR_No: e.target.value})}
+                    // required  
+                    />
+                </div>
+
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label className='text-gray-500'>PO No.</label>
+                  <input 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    type="text" 
+                    // disabled={true}
+                    value={payeeData.PO_No}
+                    onChange={(e) => setPayeeData({...payeeData, PO_No: e.target.value})}
+                    // required  
+                    />
+                </div>
+
+                <div className='w-full sm:w-1/2 mt-2'>
+                  <label className='text-gray-500'>IAR No.</label>
+                  <input 
+                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                    type="text" 
+                    // disabled={true}
+                    value={payeeData.IAR_No}
+                    onChange={(e) => setPayeeData({...payeeData, IAR_No: e.target.value})}
+                    // required  
+                    />
+                </div>
+
                 {activeTab === 'BUR' && (
                   <div className="flex flex-row w-full gap-2">
                     <div className='w-1/2 flex flex-col'>
