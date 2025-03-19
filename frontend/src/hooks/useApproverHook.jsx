@@ -294,6 +294,11 @@ export const useApproverHook = () => {
                     responseType: 'blob',
                     withCredentials: true
                 })
+            }else if(data.activeTab === 'Others'){
+                res = await axios.post(`${apiURL}/admin/downloadGSISRefund`, {data}, {
+                    responseType: 'blob',
+                    withCredentials: true
+                })
             }
             const url = window.URL.createObjectURL(new Blob([res.data]));
             const link = document.createElement('a');

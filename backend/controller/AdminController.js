@@ -16,6 +16,7 @@ const {
     updateStatusBUR
   } = require('./MultiAccess/Functions');
 const { merge } = require('../routes/AdminRoutes');
+const { Console } = require('console');
 
 const getAllLogs = async(req, res) => {
   try{
@@ -523,6 +524,72 @@ const getDecimal = (num) => {
   return numerator
 }
 
+const downloadGSIS_Refund = async(req, res) => {
+  const { data } = req.body
+  try{
+    const templatePath = path.join(__dirname, '..', 'templates', data.ORSBURS ? 'GSISRefund.xlsx' : 'GSISRefund.xlsx'); 
+    const workbook = await XlsxPopulate.fromFileAsync(templatePath);
+
+    const amount = parseFloat(data.amount)
+    const amount_decimal = getDecimal(amount)
+
+    const checkBoxData = {cell: ''}
+    switch(data.MOP.toLowerCase()){
+      case 'others':
+        checkBoxData.cell = 'N9'
+        checkBoxData.specified = `Others (Please specify) - ${data.specifiedMOP}`
+        break;
+      case 'ada':
+        checkBoxData.cell = 'K9'
+        break
+      case 'commercial check':
+        checkBoxData.cell = 'G9'
+        break
+      case 'mds check':
+        checkBoxData.cell = 'D9'
+        break
+      default:
+        checkBoxData.cell = 'N9'
+        break
+
+    }
+    console.log(data.specifiedMOP, data.MOP)
+
+
+    workbook.sheet('Sheet1').cell(checkBoxData.cell).value('✓')
+    workbook.sheet('Sheet1').cell("O9").value(checkBoxData.specified ? checkBoxData.specified : 'Others (Please specify)')
+    workbook.sheet('Sheet1').cell("P2").value(data.fund)
+    workbook.sheet('Sheet1').cell("P4").value(convertDate(data.date))
+    workbook.sheet('Sheet1').cell("P6").value(data.DV)
+    workbook.sheet('Sheet1').cell("C11").value(data.payee)
+    workbook.sheet('Sheet1').cell("K12").value(`${data.TIN ? `${data.TT_tax} ${data.TIN}` : 'N/A'}`)
+    workbook.sheet('Sheet1').cell("P12").value(data.ORSBURS)
+    workbook.sheet('Sheet1').cell("C13").value(data.address)
+    workbook.sheet('Sheet1').cell("A16").value(data.particular)
+    workbook.sheet('Sheet1').cell("K17").value(data.RC)
+    workbook.sheet('Sheet1').cell("Q17").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q30").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("A36").value(data.NF_name)
+    workbook.sheet('Sheet1').cell("A37").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("M41").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q42").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("K44").value(`${toWords(amount).charAt(0).toUpperCase() + toWords(amount).slice(1)} Pesos${amount_decimal > 0 ? ` and ${amount_decimal}/100` : ''}`)
+    workbook.sheet('Sheet1').cell("C50").value(data.accountingHead_name)
+    workbook.sheet('Sheet1').cell("C52").value(data.accountingHead_office)
+    workbook.sheet('Sheet1').cell("M50").value(data.agencyHead_name)
+    workbook.sheet('Sheet1').cell("M52").value(data.agencyHead_office)
+    workbook.sheet('Sheet1').cell("K58").value('LBP 0242-1107-57')
+
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
+    await workbook.outputAsync({ type: "nodebuffer" }).then(buffer => res.send(buffer));
+  }catch(err){
+    console.log('error on downloading gsis refund/remittance', err.message)
+    res.status(500).json({ success: false, error: err.message });
+  }
+}
+
 const downloadDV = async(req, res) => {
   const { data } = req.body
 
@@ -971,5 +1038,6 @@ module.exports = {
   updateNameAndOffice,
   updateTaxType,
   approveBUR,
-  returnBURRecordTo
+  returnBURRecordTo,
+  downloadGSIS_Refund
 };
