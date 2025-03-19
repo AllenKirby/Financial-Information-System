@@ -55,7 +55,7 @@ const BudgetRecommendation = ({onNewValue}) => {
         }
     };
 
-    const fetchPercentages = async (forecastValue, month = 11, year = 2024) => {
+    const fetchPercentages = async (forecastValue, month = 4, year = 2025) => {
         // const storedProportions = sessionStorage.getItem("proportions");
         // if (storedProportions) {
         //     const parsedProportions = JSON.parse(storedProportions);

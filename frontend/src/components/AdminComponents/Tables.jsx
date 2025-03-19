@@ -6,9 +6,10 @@ import { useState } from "react"
 const Tables = () => {
     const currentYear = new Date().getFullYear()
     const currentMonth = String(new Date().getMonth() + 1).padStart(2, "0");
+    const currentDay = String(new Date().getDay()).padStart(2, "0");
 
     const [whatIf_value, setWhatIf_value] = useState([
-      { monthYear: `${currentYear}-${currentMonth}`, amount: 0 }
+      { monthYear: `${currentYear}-${currentMonth}-${currentDay}`, amount: 0 }
   ]);
     const year = new Date().getFullYear()
     return (
