@@ -49,7 +49,7 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
 
   const adue = DV[1].data.amount - tval
 
-  const ASAamount = Object.values(DV[1].data.ASA)
+  const ASAamount = DV[1].data.ASA ? Object.values(DV[1].data.ASA) : [];
   const sumOfASA = (ASA) => {
     let sum = 0
     for(let i = 0; i < ASA.length; i++) {

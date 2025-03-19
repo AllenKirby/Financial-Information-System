@@ -237,7 +237,7 @@ const ViewDocument = () => {
             <IoMdArrowRoundBack size={20}/>
         </button>
         <div className="flex items-center justify-center gap-2">
-          {(idStatus.status === 'Approved' && user?.role === '4' || permission?.data.permission && permission?.data.roleName === 'Funding') && (
+          {((idStatus.status === 'Approved' && user?.role === '4' || user?.role === '1') || permission?.data.permission && permission?.data.roleName === 'Funding') && (
             <button
               onClick={handleDownload}
               className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${user?.role === '4' ? 'bg-preparerPrimary border-preparerPrimary hover:text-preparerPrimary' : 'bg-fundingBlueGreen border-fundingBlueGreen hover:text-fundingBlueGreen'} border-2 hover:bg-white text-white transition-all duration-150`}

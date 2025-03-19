@@ -228,17 +228,9 @@ const DVRegister = () => {
 
     const sumOfASA = () => {
 
-        // const ASA = Object.entries(documents)
-        //     .filter(([_, item]) => item.data.ORSBURS && Array.isArray(item.data.ASA))
-        //     .map(([_, item]) => Object.values(item.data.ASA).map(Number));
-
-        const ASA = Object.entries(documents).map((item,) => {
-            if(item[1].data.ORSBURS) {
-                return Object.values(item[1].data.ASA)
-            } else {
-                return 0
-            }
-        })
+        const ASA = Object.entries(documents)
+            .filter(([_, item]) => item.data.ORSBURS && Array.isArray(item.data.ASA))
+            .map(([_, item]) => Object.values(item.data.ASA).map(Number));
 
         if (ASA.length === 0) return 0;
 
