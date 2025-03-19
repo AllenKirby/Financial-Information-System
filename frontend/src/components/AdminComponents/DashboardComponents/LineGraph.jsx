@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import { useAuthContext } from '../../../hooks/useAuthContext';
 import { useDispatch } from "react-redux";
 import { setExpense } from "../../../redux/TotalExpenseRedux";
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { firestore } from "../../../config/firebase-config";
 
 const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amount: 0 }] }) => {
     const [year, setYear] = useState(customYear);
@@ -25,8 +27,8 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
     const getYear = () => {
         chartData = { 
             ...chartData, 
-            2024: { ...chartData[2024], '2024-12': 0 },
-            2025: { '2025-01': 0, '2025-02': 0 }
+            2024: { ...chartData[2024], '2024-12-31': 0 },
+            2025: { '2025-01-31': 0, '2025-02-28': 0 }
         };
         const keys = chartData ? Object.keys(chartData) : [];
         return keys.sort((a, b) => b.localeCompare(a));
@@ -65,6 +67,20 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
     });
 
     useEffect(() => {
+        const collectionRef = collection(firestore, 'NumOfRecords');
+        // const q = query(collectionRef, where("status", "in", ["Drafting", "Returned|3"]));
+        // const unsubscribe = onSnapshot(q, (snapshot) => {
+        //     const documents = snapshot.docs.map(doc => ({
+        //     id: doc.id, 
+        //     ...doc.data()
+        //     }));
+        //     // dispatch(setBURs(documents));
+        // });
+        
+        // return () => unsubscribe();
+    }, [])
+
+    useEffect(() => {
         // Add test values to chartData
         test_values.forEach(({ monthYear, amount }) => {
             const [year, month] = monthYear.split("-");
@@ -73,7 +89,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
             }
             chartData[year][monthYear] = parseFloat(amount);
         });
-
+        console.log(chartData)
         dispatch(setExpense(chartData));
 
         // Get data for the selected year
@@ -100,7 +116,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
             forecastValues = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
             UpperBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
             LowerBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.lower < 0 ? 0 : data.lower) : [];
-            console.log(year === customYear)
+            console.log(forecastedData)
         } else {
             forecastXAxis = testData.sampleoutcome && year == customYear ? Object.keys(testData.sampleoutcome).map(date => date.slice(0, 7)) : [];
             forecastValues = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
