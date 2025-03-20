@@ -67,17 +67,16 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
     });
 
     useEffect(() => {
-        const collectionRef = collection(firestore, 'NumOfRecords');
-        // const q = query(collectionRef, where("status", "in", ["Drafting", "Returned|3"]));
-        // const unsubscribe = onSnapshot(q, (snapshot) => {
-        //     const documents = snapshot.docs.map(doc => ({
-        //     id: doc.id, 
-        //     ...doc.data()
-        //     }));
-        //     // dispatch(setBURs(documents));
-        // });
+        const collectionRef = collection(firestore, 'YearlyRecords');
+        const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
+            const documentsObj = snapshot.docs.reduce((acc, doc) => {
+                acc[doc.id] = doc.data();
+                return acc;
+            }, {});
+            console.log(documentsObj)
+        });
         
-        // return () => unsubscribe();
+        return () => unsubscribe();
     }, [])
 
     useEffect(() => {

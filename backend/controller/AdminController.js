@@ -382,6 +382,8 @@ const addYearlyAmount = async(dateString, fund, amount) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const field = `${year}-${month}`;
+  const day =  String(new Date().getDate()).padStart(2, '0');
+  const complete_date = `${field}-${day}`
 
   const clusterMapping = {
     "501 COB": "COB",
@@ -391,24 +393,32 @@ const addYearlyAmount = async(dateString, fund, amount) => {
   };
 
   const cluster_mapped = clusterMapping[fund]
+  const cluster_mapped_date = `${cluster_mapped}_dates`
 
 
-  const ref = db.collection("YearlyRecords").doc(String(year))
+  const ref = db.collection("YearlyRecords").doc(field)
   const doc = await ref.get()
 
   const data = doc.exists ? doc.data() : {};
-  const curr_value = data[field]?.[cluster_mapped] || 0;
+  const curr_value = data[cluster_mapped] || 0;
   const newValue = parseFloat(curr_value) + parseFloat(amount);
+
+  const curr_value_date = data[cluster_mapped_date]?.[complete_date] || 0
+  const newValue_date = parseFloat(curr_value_date) + parseFloat(amount)
 
   try{
     await ref.set(
       {
-        [field]: {
-          [cluster_mapped]: newValue
-        }
+        [cluster_mapped]: newValue
       },
       {merge: true}
     )
+
+    await ref.set({
+      [cluster_mapped_date]: {
+        [complete_date]: newValue_date
+      }
+    }, {merge: true})
     console.log(`Successfully updated ${field} for ${cluster}.`);
   }catch(err){
     console.log(err, 'error on adding yearlt amount')
