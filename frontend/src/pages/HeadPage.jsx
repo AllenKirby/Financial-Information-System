@@ -15,8 +15,6 @@ import { setBURs } from "../redux/BURRecordsRedux"
 //import { useAuthContext } from "../hooks/useAuthContext"
 import {initializeSocket } from "../socketService/socketService";
 
-
-
 const HeadPage = () => {
   const page = useLocation()
   const [location, setLocation] = useState('')
@@ -59,6 +57,7 @@ const HeadPage = () => {
 
   useEffect(() => {
     const status = permission?.data?.permission ? ["Under Review", "Returned|2", "For Approval", "Approved"] : ["Under Review", "Returned|2"]
+    console.log(status)
     const collectionRef = collection(firestore, 'BURRecords');
     const q = query(collectionRef, where("status", "in", status));
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -70,7 +69,7 @@ const HeadPage = () => {
     });
   
     return () => unsubscribe();
-  }, []);
+  }, [permission]);
 
   useEffect(() => {
       if(page.pathname === "/head/records/disbursementrecords" || page.pathname === "/head/records/burrecords") {

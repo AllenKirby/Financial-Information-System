@@ -13,6 +13,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { MdDelete  } from "react-icons/md";
 import { IoMdArrowRoundBack  } from "react-icons/io";
 import { BsArrowLeft } from "react-icons/bs";
+import { PiExport } from "react-icons/pi";
 
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -32,7 +33,7 @@ const ViewBUR = () => {
   const permission = useSelector((state) => state.permission)
 
   const {handleBURDeletion, isLoading, error} = useFundingHook()
-  const { approveBUR, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook()
+  const { approveBUR, downloadBUR, isLoading: isLoadingApprover, error: errorApprover } = useApproverHook()
 
   const modal = () => setIsModalOpen(!isModalOpen)
 
@@ -191,11 +192,19 @@ const ViewBUR = () => {
               <RxPaperPlane size={20} className="block lg-landscape:hidden"/><span className="hidden lg-landscape:block">Submit</span>
             </button>
           )}
-          {(user?.role === '1' || user?.role === '2' && permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' && selectedBUR?.status === 'Under Review' || selectedBUR?.status === 'For Approval') && (
+          {(selectedBUR?.status === 'For Approval' || permission?.data?.permission && permission?.data?.roleName === 'Budget Officer' && selectedBUR?.status === 'Under Review') && (
             <button
               onClick={approve}
               className={`w-auto px-5 py-2 rounded-lg ${user?.role === '2' ? 'bg-fundingBlueGreen border-fundingBlueGreen hover:text-fundingBlueGreen' : 'bg-customgreen border-customgreen hover:text-customgreen'} border-2 hover:bg-white text-white transition-all duration-150`}
               >Approve
+            </button>
+          )}
+          {selectedBUR?.status === 'Approved' && (
+              <button
+                onClick={() => downloadBUR(selectedBUR)}
+                className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${user?.role === '1' ? 'bg-customgreen border-customgreen hover:text-customgreen' : 'bg-BOGreen border-BOGreen hover:text-BOGreen'}  border-2 hover:bg-white text-white transition-all duration-150`}
+                >
+              <PiExport size={20} /> <span className="hidden sm:block ">Export</span>
             </button>
           )}
         </div>

@@ -227,6 +227,21 @@ const ViewDocument = () => {
     });
   }
 
+  const buttonColor = () => {
+    switch(user?.role) {
+      case '1':
+        return 'bg-customgreen border-customgreen hover:text-customgreen'
+      case '2':
+        return 'bg-BOGreen border-BOGreen hover:text-BOGreen'
+      case '3':
+        return 'bg-fundingBlueGreen border-fundingBlueGreen hover:text-fundingBlueGreen'
+      case '4':
+        return 'bg-preparerPrimary border-preparerPrimary hover:text-preparerPrimary'
+      default: 
+        return 'bg-black border-black hover:text-black'
+    }
+  }
+
   return (
     <section className="w-full sm:w-3/4 lg:w-3/5 h-full sm:h-5/6 flex flex-col bg-white sm:rounded-lg">
       <div className="w-full h-auto flex items-center justify-between px-3 py-2 border-b-2">
@@ -240,7 +255,7 @@ const ViewDocument = () => {
           {((idStatus.status === 'Approved' && user?.role === '4' || user?.role === '1') || permission?.data.permission && permission?.data.roleName === 'Funding') && (
             <button
               onClick={handleDownload}
-              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${user?.role === '4' ? 'bg-preparerPrimary border-preparerPrimary hover:text-preparerPrimary' : 'bg-fundingBlueGreen border-fundingBlueGreen hover:text-fundingBlueGreen'} border-2 hover:bg-white text-white transition-all duration-150`}
+              className={`w-auto px-5 py-2 rounded-lg flex items-center justify-center gap-2 ${buttonColor()} border-2 hover:bg-white text-white transition-all duration-150`}
               >
             <PiExport size={20} /> <span className="hidden sm:block ">Export</span>
           </button>)}
