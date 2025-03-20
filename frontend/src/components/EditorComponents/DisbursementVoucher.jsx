@@ -108,7 +108,6 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
   
   //redux
   const permission = useSelector((state) => state.permission)
-  console.log(activeTab)
 
   useEffect(() => {
     if (flag && document) {
@@ -1274,15 +1273,15 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                 <div className='w-full'>
                   {BURAmount.map((item, index) => (
                     <div key={index} className='w-full flex flex-col sm:flex-row items-end justify-center gap-2'>
-                      <div className='w-full sm:w-1/2 flex flex-col'>
-                        <label>Title</label>
+                      <div className='w-full sm:w-3/5 flex flex-col'>
+                        <label>Project</label>
                         <input 
                           value={item.title} 
                           onChange={(e) => handleFieldChangeBUR(index, 'title', e.target.value)}
                           type="text"
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`} />
                       </div>
-                      <div className='w-full sm:w-1/2 flex flex-col'>
+                      <div className='w-full sm:w-2/5 flex flex-col'>
                         <label>Amount</label>
                         <input 
                           value={item.amount} 
@@ -1400,113 +1399,117 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                 </div>
 
                 {/* Head, Accounting Unit */}
-                <div className="w-full flex flex-row gap-2">
-                  <div className='w-1/2 flex flex-col'>
-                    <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Head, Accounting Unit</label>
-                    <label className="text-gray-500">Name</label>
-                    <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      onChange={(e) => {
-                        const selectedOption = e.target.options[e.target.selectedIndex];
-                        setPayeeData({...payeeData, accountingHead_name: e.target.value, accountingHead_office: selectedOption.getAttribute('office')})
-                      }}
-                      value={payeeData.accountingHead_name}
-                      //disabled={isDisabled && !permission.data.permission}
-                      required
-                    >
-                      <option value="" disabled>Select</option>
-                      {Object.entries(nameOffice).length > 0 ? (
-                          Object.entries(nameOffice).map(([key, value]) => (
-                              <option key={key} value={value[0]} office={value[1]}>
-                                  {value[0]}
+               {activeTab !== 'BUR' && ( 
+                  <>
+                      <div className="w-full flex flex-row gap-2">
+                        <div className='w-1/2 flex flex-col'>
+                          <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Head, Accounting Unit</label>
+                          <label className="text-gray-500">Name</label>
+                          <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                            onChange={(e) => {
+                              const selectedOption = e.target.options[e.target.selectedIndex];
+                              setPayeeData({...payeeData, accountingHead_name: e.target.value, accountingHead_office: selectedOption.getAttribute('office')})
+                            }}
+                            value={payeeData.accountingHead_name}
+                            //disabled={isDisabled && !permission.data.permission}
+                            required
+                          >
+                            <option value="" disabled>Select</option>
+                            {Object.entries(nameOffice).length > 0 ? (
+                                Object.entries(nameOffice).map(([key, value]) => (
+                                    <option key={key} value={value[0]} office={value[1]}>
+                                        {value[0]}
+                                    </option>
+                                ))
+                            ) : (
+                              <option value="" disabled>
+                                  No options available
                               </option>
-                          ))
-                      ) : (
-                        <option value="" disabled>
-                            No options available
-                        </option>
-                      )}
-                    </select>
-                  </div>
-                  <div className='w-1/2 flex items-end'>
-                    <div className='w-full flex flex-col items-start justify-center'>
-                      <label className='font-medium text-gray-500'>Position</label>
-                      <label className='w-full px-4 py-2 text-gray-500'>{payeeData.accountingHead_office ? payeeData.accountingHead_office : 'None'}</label>
+                            )}
+                          </select>
+                        </div>
+                        <div className='w-1/2 flex items-end'>
+                          <div className='w-full flex flex-col items-start justify-center'>
+                            <label className='font-medium text-gray-500'>Position</label>
+                            <label className='w-full px-4 py-2 text-gray-500'>{payeeData.accountingHead_office ? payeeData.accountingHead_office : 'None'}</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-full flex flex-row gap-2">
+                        <div className='w-1/2 flex flex-col'>
+                          <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Agency Head</label>
+                          <label className="text-gray-500">Name</label>
+                          <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                            onChange={(e) => {
+                              const selectedOption = e.target.options[e.target.selectedIndex];
+                              setPayeeData({...payeeData, agencyHead_name: e.target.value, agencyHead_office: selectedOption.getAttribute('office')})
+                            }}
+                            value={payeeData.agencyHead_name}
+                            //disabled={isDisabled && !permission.data.permission}
+                            required
+                          >
+                            <option value="" disabled>Select</option>
+                            {Object.entries(nameOffice).length > 0 ? (
+                                Object.entries(nameOffice).map(([key, value]) => (
+                                    <option key={key} value={value[0]} office={value[1]}>
+                                        {value[0]}
+                                    </option>
+                                ))
+                            ) : (
+                              <option value="" disabled>
+                                  No options available
+                              </option>
+                            )}
+                          </select>
+                        </div>
+                        <div className='w-1/2 flex items-end'>
+                          <div className='w-full flex flex-col items-start justify-center'>
+                            <label className='font-medium text-gray-500'>Position</label>
+                            <label className='w-full px-4 py-2 text-gray-500'>{payeeData.agencyHead_office ? payeeData.agencyHead_office : 'None'}</label>
+                          </div>
+                        </div>
+                      </div>
+                  </>
+                )}
+                {activeTab !== 'BUR' && (
+                  <div className='w-full flex items-center justify-start sm:justify-center gap-2'>
+                    <div className='w-full sm:w-1/3 mt-2'>
+                      <label className='text-gray-500'>PR No.</label>
+                      <input 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                        type="text" 
+                        // disabled={true}
+                        value={payeeData.PR_No}
+                        onChange={(e) => setPayeeData({...payeeData, PR_No: e.target.value})}
+                        // required  
+                        />
+                    </div>
+
+                    <div className='w-full sm:w-1/3 mt-2'>
+                      <label className='text-gray-500'>PO No.</label>
+                      <input 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                        type="text" 
+                        // disabled={true}
+                        value={payeeData.PO_No}
+                        onChange={(e) => setPayeeData({...payeeData, PO_No: e.target.value})}
+                        // required  
+                        />
+                    </div>
+
+                    <div className='w-full sm:w-1/3 mt-2'>
+                      <label className='text-gray-500'>IAR No.</label>
+                      <input 
+                        className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
+                        type="text" 
+                        // disabled={true}
+                        value={payeeData.IAR_No}
+                        onChange={(e) => setPayeeData({...payeeData, IAR_No: e.target.value})}
+                        // required  
+                        />
                     </div>
                   </div>
-                </div>
-
-
-                {/* Agency Head */}
-                <div className="w-full flex flex-row gap-2">
-                  <div className='w-1/2 flex flex-col'>
-                    <label  className="font-semibold text-lg mt-3 mb-2 text-gray-500">Agency Head</label>
-                    <label className="text-gray-500">Name</label>
-                    <select className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      onChange={(e) => {
-                        const selectedOption = e.target.options[e.target.selectedIndex];
-                        setPayeeData({...payeeData, agencyHead_name: e.target.value, agencyHead_office: selectedOption.getAttribute('office')})
-                      }}
-                      value={payeeData.agencyHead_name}
-                      //disabled={isDisabled && !permission.data.permission}
-                      required
-                    >
-                      <option value="" disabled>Select</option>
-                      {Object.entries(nameOffice).length > 0 ? (
-                          Object.entries(nameOffice).map(([key, value]) => (
-                              <option key={key} value={value[0]} office={value[1]}>
-                                  {value[0]}
-                              </option>
-                          ))
-                      ) : (
-                        <option value="" disabled>
-                            No options available
-                        </option>
-                      )}
-                    </select>
-                  </div>
-                  <div className='w-1/2 flex items-end'>
-                    <div className='w-full flex flex-col items-start justify-center'>
-                      <label className='font-medium text-gray-500'>Position</label>
-                      <label className='w-full px-4 py-2 text-gray-500'>{payeeData.agencyHead_office ? payeeData.agencyHead_office : 'None'}</label>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='w-full sm:w-1/2 mt-2'>
-                  <label className='text-gray-500'>PR No.</label>
-                  <input 
-                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    type="text" 
-                    // disabled={true}
-                    value={payeeData.PR_No}
-                    onChange={(e) => setPayeeData({...payeeData, PR_No: e.target.value})}
-                    // required  
-                    />
-                </div>
-
-                <div className='w-full sm:w-1/2 mt-2'>
-                  <label className='text-gray-500'>PO No.</label>
-                  <input 
-                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    type="text" 
-                    // disabled={true}
-                    value={payeeData.PO_No}
-                    onChange={(e) => setPayeeData({...payeeData, PO_No: e.target.value})}
-                    // required  
-                    />
-                </div>
-
-                <div className='w-full sm:w-1/2 mt-2'>
-                  <label className='text-gray-500'>IAR No.</label>
-                  <input 
-                    className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                    type="text" 
-                    // disabled={true}
-                    value={payeeData.IAR_No}
-                    onChange={(e) => setPayeeData({...payeeData, IAR_No: e.target.value})}
-                    // required  
-                    />
-                </div>
+                )}
 
                 {activeTab === 'BUR' && (
                   <div className="flex flex-row w-full gap-2">
@@ -1515,11 +1518,24 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                       <label className="text-gray-500">Name</label>
                       <select 
                         value={BURData.NFNameB}
-                        onChange={(e) => setBURData({...BURData, NFNameB: e.target.value.split('|')[0], NFOfficeB: e.target.value.split('|')[1]})}
+                        onChange={(e) => {
+                          const selectedOption = e.target.options[e.target.selectedIndex];
+                          setBURData({...payeeData, NFNameB: e.target.value, NFOfficeB: selectedOption.getAttribute('office')})
+                        }}
                         className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                       >
                         <option value="" disabled>Select</option>
-                        <option value="Adelia I. Lopez|Financial Planning Specialist B">Adelia I. Lopez</option>
+                        {Object.entries(nameOffice).length > 0 ? (
+                            Object.entries(nameOffice).map(([key, value]) => (
+                                <option key={key} value={value[0]} office={value[1]}>
+                                    {value[0]}
+                                </option>
+                            ))
+                        ) : (
+                          <option value="" disabled>
+                              No options available
+                          </option>
+                        )}
                       </select>
                     </div>
                     <div className='w-1/2 flex items-end'>

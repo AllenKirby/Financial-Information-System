@@ -810,6 +810,39 @@ const downloadGSIS = async(req, res) => {
   }
 }
 
+const downloadBUR = async(req, res) => {
+  const { data } = req.body
+  try {
+    const templatePath = path.join(__dirname, '..', 'templates', 'BUR.xlsx'); 
+    const workbook = await XlsxPopulate.fromFileAsync(templatePath);
+
+    workbook.sheet('Sheet1').cell("D6").value(data.payee)
+    workbook.sheet('Sheet1').cell("D8").value(data.office)
+    workbook.sheet('Sheet1').cell("D10").value(data.address)
+    workbook.sheet('Sheet1').cell("P2").value(`No.: ${data.No}`)
+    workbook.sheet('Sheet1').cell("P3").value(`GAA: ${data.GAA}`)
+    workbook.sheet('Sheet1').cell("P4").value(`Date: ${convertDate(data.date)}`)
+    workbook.sheet('Sheet1').cell("P29").value(parseFloat(data.amount.map(amount => amount.amount).reduce((acc, num) => acc + num, 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell('P24').value(data.amount.map(amount => amount.amount).join('\n'))
+    workbook.sheet('Sheet1').cell('F24').value(data.amount.map(title => title.title).join('\n'))
+    workbook.sheet('Sheet1').cell("D15").value(data.particular)
+    workbook.sheet('Sheet1').cell("A15").value(data.resCenter)
+    workbook.sheet('Sheet1').cell("L15").value(data.MFOPAP)
+    workbook.sheet('Sheet1').cell("N15").value(data.uacsCode)
+    workbook.sheet('Sheet1').cell("E38").value(data.NFNameA)
+    workbook.sheet('Sheet1').cell("E39").value(data.NFOfficeA)
+    workbook.sheet('Sheet1').cell("O38").value(data.NFNameB)
+    workbook.sheet('Sheet1').cell("O39").value(data.NFOfficeB)
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
+    await workbook.outputAsync({ type: "nodebuffer" }).then(buffer => res.send(buffer));
+  } catch (error) {
+    console.log('error downloading BUR', error)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
 const convertDate = (dateString) => {
   const date = new Date(dateString);
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -1049,5 +1082,6 @@ module.exports = {
   updateTaxType,
   approveBUR,
   returnBURRecordTo,
-  downloadGSIS_Refund
+  downloadGSIS_Refund,
+  downloadBUR
 };

@@ -29,12 +29,14 @@ const {getAllLogs,
        updateTaxType,
        approveBUR,
        returnBURRecordTo,
-       downloadGSIS_Refund
+       downloadGSIS_Refund,
+       downloadBUR
         } = require('../controller/AdminController');
 
 adminRouter.use(setRole([1]))
 adminRouter.post('/downloadGSIS', downloadGSIS)
 adminRouter.post('/downloadDV', downloadDV)
+adminRouter.post('/downloadBUR', downloadBUR)
 adminRouter.post('/downloadGSISRefund', downloadGSIS_Refund)
 adminRouter.get('/getAllDV', getAllLogs)
 //adminRouter.get('/approvedDV', readAdmin_records)

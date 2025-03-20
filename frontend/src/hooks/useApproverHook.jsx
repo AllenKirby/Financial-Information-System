@@ -315,6 +315,30 @@ export const useApproverHook = () => {
             console.log(errorMessage)
         }
     }
+
+    const downloadBUR = async (data) => {
+        setIsLoading(true)
+        setError(null)
+        try {
+            const res = await axios.post(`${apiURL}/admin/downloadBUR`, {data}, {
+                    responseType: 'blob',
+                    withCredentials: true
+                })
+            const url = window.URL.createObjectURL(new Blob([res.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `${data.payee}.xlsx`); // File name
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setIsLoading(false)
+        } catch (error) {
+            setIsLoading(false)
+            const errorMessage = error.response?.data?.message || error.message || "An error occurred";
+            setError(errorMessage);
+            console.log(errorMessage)
+        }
+    }
     
     const returnDocFromAdmin = async (data) => {
         setError(null)
@@ -483,6 +507,7 @@ export const useApproverHook = () => {
     updateTaxType,
     approveBUR,
     returnBURFromAdmin,
+    downloadBUR,
     isLoading, 
     error
     }
