@@ -76,7 +76,6 @@ const multiTestExpense = async(req, res) => {
       steps: steps,
       frequency: frequency
     }
-    console.log(awsAPI_URL)
     const response = await axios.post(`${awsAPI_URL}/multi-test-forecast`, data);
     res.status(200).json(response.data)
   }catch(error){

@@ -12,7 +12,8 @@ const BudgetRecommendation = ({onNewValue}) => {
     const monthnow = new Date().getMonth()
     const currentMonth = String(monthnow + 1).padStart(2, "0");
     const curYear = new Date().getFullYear()
-    const currentMonth2 = `${curYear}-${currentMonth}`
+    const lastDay = new Date(curYear, currentMonth, 0).getDate();
+    const currentMonth2 = `${curYear}-${currentMonth}-${lastDay}`
     const currentYear = new Date().getFullYear()
     const [forecastedValues, setForecastedValues] = useState({});
     const [remainingMonths, setRemainingMonths] = useState([]);
@@ -130,7 +131,11 @@ const BudgetRecommendation = ({onNewValue}) => {
     };
 
     const handleTest = async () => {
-        const formattedExpenses = expenses.map(({ monthYear, amount }) => [`${monthYear}-01`, parseFloat(amount)]);
+        const formattedExpenses = expenses.map(({ monthYear, amount }) => {
+            const [year, month, _] = monthYear.split("-");
+            const lastDay = new Date(year, month, 0).getDate();
+            return [`${monthYear}`, parseFloat(amount)];
+        });
         console.log(formattedExpenses)
         console.log(expenses)
         onNewValue(expenses)
@@ -192,7 +197,7 @@ const BudgetRecommendation = ({onNewValue}) => {
         }
     }
 
-    const handleReset  =async() => {
+    const handleReset = async() => {
         try{
             onNewValue([{ monthYear: currentMonth2, amount: 0 }])
             const forecast = await fetchForecastedValues();
@@ -230,7 +235,7 @@ const BudgetRecommendation = ({onNewValue}) => {
                         />
                         <select 
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border-2 rounded-md p-2 w-2/6`}
-                            // value={selectedMonth}
+                            value={expense.monthYear}
                             onChange={(e) => {
                                 updateExpense(index, "monthYear", e.target.value)
                             }}
@@ -244,8 +249,9 @@ const BudgetRecommendation = ({onNewValue}) => {
                                     <>
                                         {Array.from({ length: 12 }, (_, monthIndex) => {
                                             const month = (monthIndex + 1).toString().padStart(2, "0");
+                                            const lastDay = new Date(year, monthIndex + 1, 0).getDate();
                                             return (
-                                                <option key={`${year}-${month}`} value={`${year}-${month}`}>
+                                                <option key={`${year}-${month}-${lastDay}`} value={`${year}-${month}-${lastDay}`}>
                                                     {new Date(year, monthIndex).toLocaleString("default", { month: "long" })} {year}
                                                 </option>
                                             );

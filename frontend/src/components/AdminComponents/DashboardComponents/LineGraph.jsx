@@ -1,9 +1,8 @@
 import ReactApexChart from 'react-apexcharts';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 import { useAuthContext } from '../../../hooks/useAuthContext';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setExpense } from "../../../redux/TotalExpenseRedux";
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { firestore } from "../../../config/firebase-config";
@@ -28,7 +27,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
         chartData = { 
             ...chartData, 
             2024: { ...chartData[2024], '2024-12-31': 0 },
-            2025: { '2025-01-31': 0, '2025-02-28': 0 }
+            2025: { '2025-02-28': 0, '2025-01-31': 0 }
         };
         const keys = chartData ? Object.keys(chartData) : [];
         return keys.sort((a, b) => b.localeCompare(a));
@@ -66,6 +65,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
         }
     });
 
+    const [firebaseData, setFirebaseData] = useState({})
     useEffect(() => {
         const collectionRef = collection(firestore, 'YearlyRecords');
         const unsubscribe = onSnapshot(collectionRef, (snapshot) => {
@@ -74,21 +74,52 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
                 return acc;
             }, {});
             console.log(documentsObj)
+            const merged = mergeDateAmount(documentsObj)
+            setFirebaseData(merged)
         });
         
         return () => unsubscribe();
     }, [])
 
+    const mergeDateAmount = (data) => {
+        const mergedDates = {};
+
+        Object.values(data).forEach(category => {
+            Object.keys(category).forEach(key => {
+                if (key.endsWith("_dates")) {
+                    Object.entries(category[key]).forEach(([date, value]) => {
+                        mergedDates[date] = (mergedDates[date] || 0) + value;
+                    });
+                }
+            });
+        });
+
+        return mergedDates
+    }
+
+    const mergeData = (prevData, newData) => {
+        Object.entries(newData).forEach(([date, value]) => {
+            const year = date.split("-")[0];
+    
+            if (!prevData[year]) {
+                prevData[year] = {};
+            }
+    
+            prevData[year][date] = (prevData[year][date] || 0) + value;
+        });
+    };
+
     useEffect(() => {
         // Add test values to chartData
         test_values.forEach(({ monthYear, amount }) => {
-            const [year, month] = monthYear.split("-");
+            const [year, month, lastDay] = monthYear.split("-");
             if (!chartData[year]) {
                 chartData[year] = {};
             }
             chartData[year][monthYear] = parseFloat(amount);
         });
         console.log(chartData)
+        mergeData(chartData, firebaseData)
         dispatch(setExpense(chartData));
 
         // Get data for the selected year
@@ -110,7 +141,6 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
         let LowerBounds;
         if (Object.keys(testData.sampleoutcome).length === 0) {
             const forecastedData = JSON.parse(sessionStorage.getItem('forecasted')) || {};
-            // forecastXAxis = forecastedData.monthly && year == customYear ? Object.keys(forecastedData.monthly).map(date => date.slice(0, 7)) : [];
             forecastXAxis = forecastedData.monthly && year == customYear ? Object.keys(forecastedData.monthly) : [];
             forecastValues = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.forecast) : [];
             UpperBounds = forecastedData.monthly && year == customYear ? Object.values(forecastedData.monthly).map(data => data.upper) : [];
@@ -183,7 +213,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
                 stroke: { curve: 'smooth', width: [2, 2, 0] } 
             }
         }));
-    }, [chartData, year, startDate, endDate, testData]);
+    }, [chartData, year, startDate, endDate, testData, firebaseData]);
 
     return (
         <div className="w-full h-full">
