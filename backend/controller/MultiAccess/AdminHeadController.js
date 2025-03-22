@@ -28,7 +28,7 @@ const getPercentageForMonth = async(req, res) => {
       year: year,
       amount: amount
     }
-    console.log(awsAPI_URL)
+    console.log(req.body)
     const response = await axios.post(`${awsAPI_URL}/clasify`, data);
     res.status(200).json(response.data)
 

@@ -184,12 +184,12 @@ const ViewControlBook = () => {
                   )}
                 </div>
               </div>
-              <div className="px-5">
+              {/* <div className="px-5">
                 <button 
                   className={`${user?.role === '3' ? 'border-fundingBlueGreen bg-fundingBlueGreen hover:text-fundingBlueGreen' : 'border-preparerPrimary bg-preparerPrimary hover:text-preparerPrimary'} text-white px-5 py-2 rounded-lg 2xl:text-lg border-2 hover:bg-white transition-all duration-150`}
                   onClick={showReport}
                   ><FiFileText className="block sm:hidden"/> <span className="hidden sm:block">Generate Report</span></button>
-              </div>
+              </div> */}
             </div>
             <div className="w-full h-[90%] flex flex-col">
               <div className="w-full h-auto flex flex-col sm:flex-row gap-2">

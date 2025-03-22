@@ -12,6 +12,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const { user } = useAuthContext();
+    const [currentLineGraph, setCurrentLineGraph] = useState('all')
     const dispatch = useDispatch();
 
     const testData = useSelector((state) => state.testforecast);
@@ -25,8 +26,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
 
     const getYear = () => {
         chartData = { 
-            ...chartData, 
-            2024: { ...chartData[2024], '2024-12-31': 0 },
+            ...chartData,
             2025: { '2025-02-28': 0, '2025-01-31': 0 }
         };
         const keys = chartData ? Object.keys(chartData) : [];
@@ -111,7 +111,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
 
     useEffect(() => {
         // Add test values to chartData
-        console.log(startDate, endDate)
+        console.log(chartData)
         test_values.forEach(({ monthYear, amount }) => {
             const [year, month, lastDay] = monthYear.split("-");
             if (!chartData[year]) {
@@ -144,6 +144,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
             const forecastedData = JSON.parse(sessionStorage.getItem('forecasted')) || {};
         
             if (year === 'Custom') {
+                console.log(chartData)
                 const mergedData = { ...forecastedData };
                 Object.entries(chartData).forEach(([year, months]) => {
                     Object.entries(months).forEach(([date, value]) => {
@@ -167,14 +168,28 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
             }
         } else {
             if (year === 'Custom') {
-                console.log('eldse')
+                console.log(chartData)
                 
-                forecastXAxis = Object.keys(testData.sampleoutcome).filter(date => date.slice(0, 7) >= startDate && date.slice(0, 7) <= endDate);
-                forecastValues = forecastXAxis.map(date => testData.sampleoutcome?.[date]?.forecast || 0);
-                UpperBounds = forecastXAxis.map(date => testData.sampleoutcome?.[date]?.upper || 0);
-                LowerBounds = forecastXAxis.map(date => Math.max(testData.sampleoutcome?.[date]?.lower || 0, 0));
+                const mergedData_test = { 
+                    ...testData, 
+                    sampleoutcome: testData.sampleoutcome 
+                        ? { ...testData.sampleoutcome } 
+                        : {} 
+                };
+
+                Object.entries(chartData).forEach(([year, months]) => {
+                    Object.entries(months).forEach(([date, value]) => {
+                        if (!mergedData_test.sampleoutcome[date]) {
+                            mergedData_test.sampleoutcome[date] = { forecast: value, lower: null, upper: null };
+                        }
+                    });
+                });
+                forecastXAxis = Object.keys(mergedData_test.sampleoutcome).filter(date => date >= startDate && date <= endDate);
+                forecastValues = forecastXAxis.map(date => mergedData_test.sampleoutcome?.[date]?.forecast || 0);
+                UpperBounds = forecastXAxis.map(date => mergedData_test.sampleoutcome?.[date]?.upper || 0);
+                LowerBounds = forecastXAxis.map(date => Math.max(mergedData_test.sampleoutcome?.[date]?.lower || 0, 0));
             } else {
-                forecastXAxis = testData.sampleoutcome && year == customYear ? Object.keys(testData.sampleoutcome).map(date => date.slice(0, 7)) : [];
+                forecastXAxis = testData.sampleoutcome && year == customYear ? Object.keys(testData.sampleoutcome) : [];
                 forecastValues = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.forecast) : [];
                 UpperBounds = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => data.upper) : [];
                 LowerBounds = testData.sampleoutcome && year == customYear ? Object.values(testData.sampleoutcome).map(data => Math.max(data.lower, 0)) : [];
@@ -242,7 +257,7 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
                 stroke: { curve: 'smooth', width: [2, 2, 0] } 
             }
         }));
-    }, [chartData, year, startDate, endDate, testData, firebaseData]);
+    }, [chartData, year, startDate, endDate, testData, firebaseData, currentLineGraph]);
 
     return (
         <div className="w-full h-full">
@@ -253,15 +268,24 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
                 <div className='flex items-center justify-center gap-2'>
                     {year === 'Custom' && (
                         <div className='flex gap-2'>
+                            <button 
+                            onClick={() => {
+                                setStartDate('')
+                                setEndDate('')
+                            }}
+                            className="text-white bg-red-500 hover:bg-red-900 focus:ring-2 focus:ring-red-300 transition-all px-3 py-2 rounded-lg text-xs font-medium"
+                            >✕ Clear</button>
                             <input
                                 type="date"
                                 value={startDate}
+                                min="2021-01-01"
                                 onChange={(e) => setStartDate(e.target.value)}
                                 placeholder="Start Date"
                                 className={`text-xs py-2 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}
                             />
                             <input
                                 type="date"
+                                // min="2021-01-31"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
                                 placeholder="End Date"
@@ -269,6 +293,16 @@ const LineGraph = ({ chartData, customYear, test_values = [{ monthYear: ``, amou
                             />
                         </div>
                     )}
+                    {/* <select 
+                        value={currentLineGraph} onChange={(e) => setCurrentLineGraph(e.target.value)}
+                        className={`py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}>
+                        
+                        <option value={'lfp'}>LFP</option>
+                        <option value={'cob'}>COB</option>
+                        <option value={'carp'}>CARP</option>
+                        <option value={'cf'}>Farming Support Services Program</option>
+                        <option value={'all'}>All</option>
+                    </select> */}
                     <select 
                         value={year} onChange={(e) => setYear(e.target.value)}
                         className={`py-1 rounded-lg border-2 px-2 ${user?.role === '1' ? 'focus:outline-customgreen' : 'focus:outline-BOGreen'}`}>
