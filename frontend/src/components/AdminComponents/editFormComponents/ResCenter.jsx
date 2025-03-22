@@ -106,7 +106,7 @@ export const ResCenter = () => {
     return (
         <div className="w-full h-auto flex flex-col rounded-lg">
             <div className="w-full h-auto flex items-center justify-between px-2 py-1 rounded-lg bg-gray-200 text-gray-500">
-                <h1 className='w-5/6 text-sm text-left font-bold px-2'>Fund Cluster</h1>
+                <h1 className='w-5/6 text-sm text-left font-bold px-2'>Responsibility Center</h1>
                 <div className="w-1/6 flex justify-center items-center">
                     <button 
                         className='text-2xl rounded-full'
