@@ -69,7 +69,7 @@ const Login = () => {
             } else {
                 Swal.fire({
                     title: "Error",
-                    text: {error},
+                    text: 'Please enter a valid email',
                     icon: "error",
                 });
             }
