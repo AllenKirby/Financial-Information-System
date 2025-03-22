@@ -227,16 +227,16 @@ const DVRegister = () => {
     }
 
     const sumOfASA = () => {
-
-        const ASA = Object.entries(documents)
-            .filter(([_, item]) => item.data.ORSBURS && Array.isArray(item.data.ASA))
-            .map(([_, item]) => Object.values(item.data.ASA).map(Number));
-
+        const ASA = Object.entries(documents).filter(([, item]) => item.data.ORSBURS)
         if (ASA.length === 0) return 0;
-
-        const innerSums = ASA.map((arr) => arr.reduce((sum, num) => sum + Number(num), 0));
-        return innerSums.reduce((sum, num) => sum + num, 0);
-    }
+        const amounts = ASA.map(item => Object.values((item[1].data.ASA)))
+        if (amounts.length === 0) return 0;
+        return amounts.flat() // Flatten array
+        .map(Number) // Convert strings to numbers
+        .reduce((acc, num) => acc + num, 0); // Sum up numbers
+    };
+    
+    console.log(sumOfASA());
 
     const sumOfGross = () => {
         const ASA = Object.entries(documents).map((item,) => {
