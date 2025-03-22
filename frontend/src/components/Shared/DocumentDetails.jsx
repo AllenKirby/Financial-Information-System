@@ -143,7 +143,7 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
   
       {!(activeTab === 'Returned' || !activeTab || activeTab === 'Approved' || activeTab === 'Drafting' && permission?.data.permission && permission?.data?.roleName === 'Funding' || activeTab === 'In Review' && permission?.data.permission && permission?.data?.roleName === 'Preparer'|| type === '2' && activeTab === 'For Approval') && 
         <h2 className="sm:text-xs 2xl:text-sm font-light flex items-center justify-start sm:justify-center gap-2 w-full sm:w-1/6">
-          <span className="font-bold block sm:hidden">Time Transferred:</span> {formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true })} 
+          <span className="font-bold block sm:hidden">Time Transferred:</span> {getDateTime() ? formatDistanceToNow(formatDateTime(getDateTime()), { addSuffix: true }) : '--'}
         </h2>
       }
 

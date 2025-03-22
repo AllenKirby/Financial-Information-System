@@ -152,12 +152,13 @@ useEffect(() => {
                 </NavLink>
               )}
               
-              <button 
-                onClick={() => {setRecordsFlag(!recordsFlag); setActiveTab('records');}} 
+              <NavLink 
+                to={`/${getRole()}/records/disbursementrecords`} 
+                //onClick={() => {setRecordsFlag(!recordsFlag); setActiveTab('records');}} 
                 className={`w-full h-fit flex items-center justify-between px-5 py-3 my-1 text-gray-500 font-bold text-sm sm:text-base md:text-lg lg:text-sm 2xl:text-lg rounded-md ${activeTab === 'records' ? `${fontColor}` : ''}`}>
-                  <span className='flex items-center justify-center gap-3'><FaRegFile size={20}/><span className={`${hideText}`}>Records</span></span> {recordsFlag ? <IoIosArrowUp size={20}/> : <IoIosArrowDown size={20}/> }
-              </button>
-              {recordsFlag && (
+                  <span className='flex items-center justify-center gap-3'><FaRegFile size={20}/><span className={`${hideText}`}>Records</span></span>
+              </NavLink>
+              {/* {recordsFlag && (
                 <div className='w-full flex flex-col items-center justify-start text-gray-500 font-bold px-7 text-sm'>
                   <NavLink 
                     to={`/${getRole()}/records/disbursementrecords`} 
@@ -181,7 +182,7 @@ useEffect(() => {
                     </NavLink>
                   )}
                 </div>
-              )}
+              )} */}
               
               {(user?.role === '3' || user?.role === '4') && (
                 <NavLink 
