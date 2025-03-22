@@ -931,12 +931,12 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                       disabled={flag}>
                         Others
                     </button>
-                    <button type='button' 
+                    {/* <button type='button' 
                       onClick={() => setActiveTab('Payroll')} 
                       className={`${activeTab === 'Payroll' ? user?.role === '4' ? 'border-b-2 text-preparerPrimary border-preparerPrimary font-semibold' : 'border-b-2 text-fundingBlueGreen border-fundingBlueGreen font-semibold' : ''} text-base 2xl:text-lg w-auto h-auto py-2 text-gray-500`}
                       disabled={flag}>
                         Payroll
-                    </button>
+                    </button> */}
                   </>
                 )}
               </>

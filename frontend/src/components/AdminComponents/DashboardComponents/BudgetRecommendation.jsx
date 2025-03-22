@@ -23,7 +23,7 @@ const BudgetRecommendation = ({onNewValue}) => {
                                             ]);
     const {user} = useAuthContext()
     const [items, setItems] = useState({proportions: {}, value: 0})
-    const [dateSTR, setDateSTR] = useState({date: 0, year: 0})
+    const [dateSTR, setDateSTR] = useState({date: monthnow, year: curYear})
     
 
     const addExpense = () => {
@@ -215,6 +215,23 @@ const BudgetRecommendation = ({onNewValue}) => {
     }
 
     const [num, setNum] = useState(0)
+
+    const formatNumberWithCommas = (value) => {
+        if (!value) return "";
+        return Number(value).toLocaleString("en-US");
+    }
+
+    const handleAmountChange = (index, field, val) => {
+        let rawValue = val.replace(/,/g, "");
+    
+        if (rawValue === "" || isNaN(rawValue)) {
+            
+            updateExpense(index, field, rawValue);
+            return;
+        }
+        updateExpense(index, field, rawValue);
+    };
+
     return (
         <div className="w-full h-full border-2 rounded-lg p-2 overflow-y-auto text-gray-500 ">
             <h1 className={`${user?.role === '1' ? 'text-customgreen' : 'text-BOGreen'} font-bold text-xl my-2`}>Budget Recommendation</h1>
@@ -222,28 +239,26 @@ const BudgetRecommendation = ({onNewValue}) => {
                 expenses.map((expense, index) => (
                     <div key={index} className="flex items-center space-x-4 mb-4">
                         <input
-                            type="number"
+                            type="text"
                             placeholder="Expense"
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border-2 rounded-md p-2 w-2/6`}
-                            // value={expense === 0 ? '': expense}
-                            // onChange={(e) => {
-                            //     setExpense(e.target.value)
-                            // }}
-                            value={expense.amount}
-                            onChange={(e) => updateExpense(index, "amount", e.target.value)}
-                            
+                            value={expense.amount !== "" ? formatNumberWithCommas(expense.amount) : ""}
+                            onChange={(e) => handleAmountChange(index, "amount", e.target.value)}
                         />
                         <select 
                             className={`${user?.role === '1' ? 'outline-customgreen' : 'outline-BOGreen'} border-2 rounded-md p-2 w-2/6`}
                             value={expense.monthYear}
                             onChange={(e) => {
                                 updateExpense(index, "monthYear", e.target.value)
+                                const [year, month, day] = e.target.value.split('-')
+                                setDateSTR({date: month, year: year})
+                                console.log(year, month)
                             }}
                         >
                             <option value="" disabled>
                                 Select a month
                             </option>
-                            {Array.from({ length: 2 }, (_, yearIndex) => {
+                            {Array.from({ length: 1 }, (_, yearIndex) => {
                                 const year = new Date().getFullYear() + yearIndex;
                                 return (
                                     <>
