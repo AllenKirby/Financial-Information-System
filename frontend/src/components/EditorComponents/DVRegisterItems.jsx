@@ -1,15 +1,14 @@
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom';
-
 import { MdOutlineEdit } from "react-icons/md";
 
 const DVRegisterItems = ({DV, index, counter, modal}) => {
-    const navigate = useNavigate()
-    const ASA = Object.entries(DV[1]?.data?.ASA ?? {}).map(([key,]) => key.split('|')[0])
-    const project = Object.entries(DV[1]?.data?.ASA ?? {}).map(([key,]) => key.split(',')[1].split('>')[0])
-    const category = Object.entries(DV[1]?.data?.ASA ?? {}).map(([key,]) => key.split(',')[1].split('>')[1])
-    const asaAmount = Object.entries(DV[1]?.data?.ASA ?? {}).map(([, asa]) => asa)
-    //console.log(Object.entries(DV[1]?.data?.ASA ?? {}).map(([, asa]) => asa))
+  const navigate = useNavigate()
+  const ASA = Object.entries(DV[1]?.data?.ASA ?? {}).map(([key,]) => key.split('|')[0])
+  const project = Object.entries(DV[1]?.data?.ASA ?? {}).map(([key,]) => key.split(',')[1].split('>')[0])
+  const category = Object.entries(DV[1]?.data?.ASA ?? {}).map(([key,]) => key.split(',')[1].split('>')[1])
+  const asaAmount = Object.entries(DV[1]?.data?.ASA ?? {}).map(([, asa]) => asa)
+  //console.log(Object.entries(DV[1]?.data?.ASA ?? {}).map(([, asa]) => asa))
 
     const formatToPeso = (value) => {
         return new Intl.NumberFormat('en-PH', {
@@ -83,28 +82,28 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
           <div className='w-5/6 flex flex-col sm:flex-row'>
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
               <div className='flex flex-col'>
-                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? ASA.map((item, index) => 
+                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? ASA.map((item, index) => 
                   <p key={index}>{item}</p>
                 ) : '--'}
               </div>
             </div>
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
               <div className='flex flex-col'>
-                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? project.map((item, index) => 
+                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? project.map((item, index) => 
                   <p key={index}>{item}</p>
                 ) : '--'}
               </div>
             </div>
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
               <div className='flex flex-col'>
-                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? category.map((item, index) => 
+                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? category.map((item, index) => 
                   <p key={index}>{item}</p>
                 ) : '--'}
               </div>
             </div>
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold truncate'><span className='font-normal block sm:hidden'>ASA Amount: </span>
               <div className='flex flex-col'>
-                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? asaAmount.map((item, index) => 
+                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? asaAmount.map((item, index) => 
                   <p key={index}>{formatToPeso(item)}</p>
                 ) : '--'}
               </div>
@@ -121,11 +120,11 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
         )}
         {counter === 5 && (
           <div className='w-5/6 flex'>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA Total: </span>{(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? sumOfASA(ASAamount) : '--'}</p>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA Total: </span>{(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? sumOfASA(ASAamount) : '--'}</p>
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'>
               <span className='font-normal block sm:hidden'>ASA Releases: </span>
               <div className="flex flex-col">
-                {(DV[1].data.activeTab === 'To Payment' && DV[1].data.ORSBURS) ? ASAamount.map((amount, index) => (
+                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? ASAamount.map((amount, index) => (
                   <p key={index}>{formatToPeso(amount)}</p>
                 )) : '--'}
               </div>

@@ -306,7 +306,7 @@ const AddNewFieldOffice = (props) => {
             </div>
             { Cluster != '501 COB' &&
                 (<div className="w-full mt-2">
-                    <label>Select Tab</label>
+                    <label>Select Category</label>
                     <select 
                         disabled={flag}
                         required

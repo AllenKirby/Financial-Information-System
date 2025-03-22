@@ -87,7 +87,7 @@ const AddTab = (props) => {
         <form
             onSubmit={handleSubmit} 
             className="w-full md:w-2/4 lg:w-1/4 h-auto bg-white p-3 rounded-lg">
-            <h1 className='text-fundingBlueGreen px-3 text-2xl font-semibold'>ADD TAB</h1>
+            <h1 className='text-fundingBlueGreen px-3 text-2xl font-semibold'>Add Category</h1>
             {
                 tabs.map((tab, index) => (
                     <div key={index} className='w-full h-auto p-3 flex gap-2'>
