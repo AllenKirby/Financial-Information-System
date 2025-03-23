@@ -127,7 +127,8 @@ const AddComment = ({idStatus = {}, doc, modal, type, ASA = {}}) => {
     }
 
     const handleSubmitForOp = async() => {
-      if(ASA.length > 0 || (doc.ASA_amount.length > 0 && doc.ASA_number.length > 0 && doc.ASA_project.length > 0 )) {
+      console.log(ASA)
+      if(ASA) {
         const data = {
           DV: idStatus.id,
           payee: doc.payee,
