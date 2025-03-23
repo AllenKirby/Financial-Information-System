@@ -173,7 +173,7 @@ const DocumentDetails = ({ index, documents, type, activeTab }) => {
 
       {(type === '1' && activeTab === 'Approved' || type === '2' && activeTab === 'Approved') && (
         <h2 className="sm:text-xs 2xl:text-sm w-full sm:w-1/6 flex items-center justify-start sm:justify-center font-light">
-          <span className="font-bold block sm:hidden">Time Approved:</span> {formatDistanceToNow(formatDateTime(docu?.approvedBy), { addSuffix: true })}
+          <span className="font-bold block sm:hidden">Time Approved:</span> {formatDistanceToNow(formatDateTime(docu?.approvedBy?.split('|')[1]), { addSuffix: true })}
         </h2>
       )}
     </div>

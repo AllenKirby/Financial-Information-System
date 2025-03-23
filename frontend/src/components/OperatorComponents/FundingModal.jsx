@@ -98,6 +98,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
         }
         const neededAmount = parseFloat(data.amount)
         let res = true;
+        budget = parseFloat(budget.toFixed(2))
         if(isToggled){
             if(data.activeTab === 'Others'){
                 res = await updateASA_ORS(fundingData, DVNo)
@@ -123,7 +124,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
             modal()
         } else {
             Swal.fire({
-                title: "Error",
+                title: "Not enough",
                 text: {error},
                 icon: "error",
                 confirmButtonColor: "#009933"
@@ -133,7 +134,7 @@ const FundingModal = ({modal, data, fundCluster}) => {
 
     const [balances, setBalances] = useState({})
     const [, setAddControlBook] = useState(false)
-    const [budget, setBudget] = useState(0)
+    let [budget, setBudget] = useState(0)
     const [CBAmount, setCBAmount] = useState({})
     const enoughBalance = (totalAmount, balance, key) => {
         const totalBalance = balances.length === 0 ? 0 : Object.values(balances).reduce((val, item) => val + parseFloat(item), 0)

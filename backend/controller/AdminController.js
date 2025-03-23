@@ -361,7 +361,7 @@ const approveDV = async(req, res) => {
     }
 
     await docRef.update({
-      approvedBy: dateTimeCollection,
+      approvedBy: `${dispName}|${dateTimeCollection}`,
       status: 'Approved',
     });
     await setHistoryLogs(dateTimeCollection, logs)
@@ -383,7 +383,7 @@ const addYearlyAmount = async(dateString, fund, amount) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const field = `${year}-${month}`;
-  const day =  String(new Date().getDate()).padStart(2, '0');
+  const day =  String(date.getDate()).padStart(2, '0');
   const complete_date = `${field}-${day}`
 
   const clusterMapping = {
@@ -420,7 +420,7 @@ const addYearlyAmount = async(dateString, fund, amount) => {
         [complete_date]: newValue_date
       }
     }, {merge: true})
-    console.log(`Successfully updated ${field} for ${cluster}.`);
+    console.log(`Successfully updated ${field}`);
   }catch(err){
     console.log(err, 'error on adding yearlt amount')
   }
@@ -457,40 +457,44 @@ const addOnClusterAmount = async (amount, cluster, dateString, operation='add') 
 }
 
 const CategoryOnMonth = async (amount, optionalAmount, accCategory) => {
+  console.log(accCategory)
   const year = new Date().getFullYear();
   const month = String(new Date().getMonth() + 1).padStart(2, '0');
   const docRef = db.collection('MonthCategory2').doc(`${year}-${month}`);
 
-  if (optionalAmount.length === 1 && optionalAmount[0] === ''){
+  // Fetch document data once to reduce reads
+  const docSnapshot = await docRef.get();
+  const existingData = docSnapshot.exists ? docSnapshot.data() : {};
+
+  const updates = {};
+
+  if (optionalAmount.length === 1 && optionalAmount[0] === '') {
+    // Case when there is only one amount
     const [category, subcategory] = accCategory[0].split('|');
     const fieldKey = `${category}|${subcategory}`;
-    const float_amount = parseFloat(amount)
+    const float_amount = parseFloat(amount) || 0;
 
-    const docSnapshot = await docRef.get();
-    const existingData = docSnapshot.exists ? docSnapshot.data() : {};
     const existingAmount = parseFloat(existingData[fieldKey] || 0);
+    const newAmount = Math.max(existingAmount + float_amount, 0);
 
-    const newAmount = existingAmount + float_amount
-    await docRef.set({ [fieldKey]: newAmount < 0 ? 0 : newAmount }, { merge: true });
-    
-  }else{
-      const updates = {};
-      for (let i = 0; i< accCategory.length; i++){
-          const [category, subcategory] = accCategory[i].split('|')
-          const fieldKey = `${category}|${subcategory}`;
-          const subAmount = parseFloat(optionalAmount[i]);
+    updates[fieldKey] = newAmount;
+  } else {
+    // Case when multiple amounts are provided
+    accCategory.forEach((cat, i) => {
+      const [category, subcategory] = cat.split('|');
+      const fieldKey = `${category}|${subcategory}`;
+      const subAmount = parseFloat(optionalAmount[i]) || 0;
 
-          const docSnapshot = await docRef.get()
-          const existingData = docSnapshot.exists ? docSnapshot.data() : {}
-          const existingAmount = parseFloat(existingData[fieldKey] || 0);
+      const existingAmount = parseFloat(existingData[fieldKey] || 0);
+      const newAmount = Math.max(existingAmount + subAmount, 0);
 
-          const newAmount = existingAmount + subAmount
-          updates[fieldKey] = newAmount < 0 ? 0 : newAmount;
-      }
-      await docRef.set(updates, { merge: true });
+      updates[fieldKey] = newAmount;
+    });
   }
 
-}
+  await docRef.set(updates, { merge: true });
+};
+
 
 const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateString, operation = 'add') => {
   try{
