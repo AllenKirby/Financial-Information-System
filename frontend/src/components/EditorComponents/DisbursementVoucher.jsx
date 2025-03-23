@@ -1471,7 +1471,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                       </div>
                   </>
                 )}
-                {activeTab !== 'BUR' && (
+                {(activeTab !== 'BUR' && activeTab !== 'Meralco' && activeTab !== 'GSIS' && activeTab !== 'Others') && (
                   <div className='w-full flex items-center justify-start sm:justify-center gap-2'>
                     <div className='w-full sm:w-1/3 mt-2'>
                       <label className='text-gray-500'>PR No.</label>

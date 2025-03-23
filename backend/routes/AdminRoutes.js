@@ -30,14 +30,17 @@ const {getAllLogs,
        approveBUR,
        returnBURRecordTo,
        downloadGSIS_Refund,
-       downloadBUR
+       downloadBUR,
+       downloadMeralco
         } = require('../controller/AdminController');
+const { admin } = require('../config/firebase');
 
 adminRouter.use(setRole([1]))
 adminRouter.post('/downloadGSIS', downloadGSIS)
 adminRouter.post('/downloadDV', downloadDV)
 adminRouter.post('/downloadBUR', downloadBUR)
 adminRouter.post('/downloadGSISRefund', downloadGSIS_Refund)
+adminRouter.post('/downloadMeralco', downloadMeralco)
 adminRouter.get('/getAllDV', getAllLogs)
 //adminRouter.get('/approvedDV', readAdmin_records)
 adminRouter.patch('/approveDocu/:id', approveDV)
