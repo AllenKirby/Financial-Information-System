@@ -151,7 +151,7 @@ export const ResCenter = () => {
                             </div>
                         ))
                     ) : (
-                        <div>No fund clusters available</div>
+                        <div>No Responsibility Center available</div>
                     )}
                     
                 </div>

@@ -114,7 +114,7 @@ const forDV = async (req, res) => {
         status: 'Drafting',
     }
 
-    const keysNotToEncrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber']
+    const keysNotToEncrypt = ['status', 'DV', 'DVKey', 'template', 'origNumber', 'createdAt', 'createdBy']
     const encryptedDvData = encryptObj(newDvData, {keysNotToEncrypt})
 
     // dvData = {
@@ -581,16 +581,18 @@ const downloadDVRegister = async(req, res) => {
             workbook.sheet('Sheet1').cell(`K${startingCell}`).value(DV4)
             workbook.sheet('Sheet1').cell(`L${startingCell}`).value(item.payee)
             workbook.sheet('Sheet1').cell(`M${startingCell}`).value(item.particular)
-            workbook.sheet('Sheet1').cell(`N${startingCell}`).value(item.ASANo.join('\n'))
-            workbook.sheet('Sheet1').cell(`O${startingCell}`).value(item.projectName.join('\n'))
-            workbook.sheet('Sheet1').cell(`P${startingCell}`).value(item.category.join('\n'))
-            workbook.sheet('Sheet1').cell(`Q${startingCell}`).value(item.ASAAmount.join('\n'))
+            if(item.ASANo && item.projectName && item.category && item.ASAAmount){
+                workbook.sheet('Sheet1').cell(`N${startingCell}`).value(item.ASANo.join('\n'))
+                workbook.sheet('Sheet1').cell(`O${startingCell}`).value(item.projectName.join('\n'))
+                workbook.sheet('Sheet1').cell(`P${startingCell}`).value(item.category.join('\n'))
+                workbook.sheet('Sheet1').cell(`Q${startingCell}`).value(item.ASAAmount.join('\n'))
+                workbook.sheet('Sheet1').cell(`W${startingCell}`).value(item.ASAReleases.join('\n'))
+            }
             workbook.sheet('Sheet1').cell(`R${startingCell}`).value(item.ADAfirst)
             workbook.sheet('Sheet1').cell(`S${startingCell}`).value(item.ADASecond)
             workbook.sheet('Sheet1').cell(`T${startingCell}`).value(item.cash)
             workbook.sheet('Sheet1').cell(`U${startingCell}`).value(item.net)
             workbook.sheet('Sheet1').cell(`V${startingCell}`).value(item.ASATotal)
-            workbook.sheet('Sheet1').cell(`W${startingCell}`).value(item.ASAReleases.join('\n'))
             workbook.sheet('Sheet1').cell(`X${startingCell}`).value(item.cashTotal)
             workbook.sheet('Sheet1').cell(`Y${startingCell}`).value(item.cashReleases)
             workbook.sheet('Sheet1').cell(`Z${startingCell}`).value(item.checkDate)
