@@ -771,73 +771,219 @@ const downloadDV = async(req, res) => {
 
 const downloadGSIS = async(req, res) => {
   const { data } = req.body
-
+  console.log(data)
   try {
     const templatePath = path.join(__dirname, '..', 'templates', 'GSIS.xlsx'); 
     const workbook = await XlsxPopulate.fromFileAsync(templatePath);
-
-    const combinedAccTitle = data.accTitle.join("\n");
-    const combinedAccCode = data.accCode.join("\n");
 
     //GSIS computation
     const val1 = eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
     const gross_gsis = (parseFloat(data.amount) || 0) + (parseFloat(data.stamp) || 0) + (parseFloat(data.dst) || 0) + (parseFloat(data.vat12) || 0)
     const amountDue_gsis = gross_gsis - (parseFloat(val1) || 0)
 
+    const amountDue_gsis_decimal = getDecimal(amountDue_gsis)
+    const val1_decimal = getDecimal(parseFloat(val1))
+
+    const checkBoxData = {cell: ''}
+    switch(data.MOP.toLowerCase()){
+      case 'others':
+        checkBoxData.cell = 'N9'
+        checkBoxData.specified = `Others (Please specify) - ${data.specifiedMOP}`
+        break;
+      case 'ada':
+        checkBoxData.cell = 'K9'
+        break
+      case 'commercial check':
+        checkBoxData.cell = 'G9'
+        break
+      case 'mds check':
+        checkBoxData.cell = 'D9'
+        break
+      default:
+        checkBoxData.cell = 'N9'
+        break
+
+    }
+
+    const ASA = getUniqueList(data)
     //payee
+    workbook.sheet('Sheet1').cell(checkBoxData.cell).value('✓')
+    workbook.sheet('Sheet1').cell("O9").value(checkBoxData.specified ? checkBoxData.specified : 'Others (Please specify)')
     workbook.sheet('Sheet1').cell("P2").value(data.fund)
     workbook.sheet('Sheet1').cell("P4").value(convertDate(data.date))
     workbook.sheet('Sheet1').cell("P6").value(data.DV)
     workbook.sheet('Sheet1').cell("C11").value(data.payee)
-    workbook.sheet('Sheet1').cell("K12").value(`${data.TT_tax} ${data.TIN}`)
+    workbook.sheet('Sheet1').cell("K12").value(`${data.TIN ? `${data.TT_tax} ${data.TIN}` : 'N/A'}`)
     workbook.sheet('Sheet1').cell("P12").value(data.ORSBURS)
     workbook.sheet('Sheet1').cell("C13").value(data.address)
     workbook.sheet('Sheet1').cell("B17").value(data.particular)
     workbook.sheet('Sheet1').cell("K17").value(data.RC)
     workbook.sheet('Sheet1').cell("Q17").value(gross_gsis.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     // workbook.sheet('Sheet1').cell("D37").value(data.ASA.replace('|', ' ').replace('/', ' ').replace(',', ' '))
-    workbook.sheet('Sheet1').cell("G23").value(data.amount)
-    workbook.sheet('Sheet1').cell("G24").value(data.stamp)
-    workbook.sheet('Sheet1').cell("G25").value(data.dst)
-    workbook.sheet('Sheet1').cell("G26").value(data.vat12)
+    workbook.sheet('Sheet1').cell("G23").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("G24").value(parseFloat(data.stamp).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("G25").value(parseFloat(data.dst).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("G26").value(parseFloat(data.vat12).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("G27").value(gross_gsis)
-    workbook.sheet('Sheet1').cell("G30").value(val1)
+    workbook.sheet('Sheet1').cell("G30").value(val1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q30").value(val1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("Q39").value(amountDue_gsis)
-    workbook.sheet('Sheet1').cell("C30").value(data.amount)
+    workbook.sheet('Sheet1').cell("C30").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("A45").value(data.NF_name)
     workbook.sheet('Sheet1').cell("A46").value(data.NF_office)
-    workbook.sheet('Sheet1').cell("N49").value(amountDue_gsis)
+    workbook.sheet('Sheet1').cell("N49").value(val1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
     workbook.sheet('Sheet1').cell("Q51").value(amountDue_gsis)
-    workbook.sheet('Sheet1').cell("K53").value(`${toWords(amountDue_gsis).charAt(0).toUpperCase() + toWords(amountDue_gsis).slice(1)} pesos`)
-    workbook.sheet('Sheet1').cell("B40").value(combinedAccTitle).style({
-      wrapText: true, 
-      verticalAlignment: "top",
-    });
-    workbook.sheet('Sheet1').cell("K40").value(combinedAccCode).style({
-      wrapText: true, 
-      verticalAlignment: "top",
-    });
+    workbook.sheet('Sheet1').cell("K53").value(`${toWords(amountDue_gsis).charAt(0).toUpperCase() + toWords(amountDue_gsis).slice(1)} pesos${amountDue_gsis_decimal > 0 ? ` and ${amountDue_gsis_decimal}/100` : ''}`)
     workbook.sheet('Sheet1').cell("B53").value(data.cashAvailable ? '✓' : '')
     workbook.sheet('Sheet1').cell("B54").value(data.debitAccount ? '✓' : '')
     workbook.sheet('Sheet1').cell("B55").value(data.supportingDocuments ? '✓' : '')
+    workbook.sheet('Sheet1').cell("C59").value(data.accountingHead_name)
+    workbook.sheet('Sheet1').cell("C61").value(data.accountingHead_office)
+    workbook.sheet('Sheet1').cell("M59").value(data.agencyHead_name)
+    workbook.sheet('Sheet1').cell("M61").value(data.agencyHead_office)
+    workbook.sheet('Sheet1').cell("D35").value(data.PR_No)
+    workbook.sheet('Sheet1').cell("D36").value(data.PO_No)
+    workbook.sheet('Sheet1').cell("D37").value(ASA)
     // workbook.sheet('Sheet1').cell("B41").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
     // workbook.sheet('Sheet1').cell("B42").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)
 
     //BIR
-    workbook.sheet('Sheet1').cell("P88").value(data.fund)
-    workbook.sheet('Sheet1').cell("P90").value(convertDate(data.date))
-    workbook.sheet('Sheet1').cell("P91").value(data.DV)   
-    workbook.sheet('Sheet1').cell("P98").value(data.ORSBURS)
-    workbook.sheet('Sheet1').cell("A102").value(data.birParticular)   
-    workbook.sheet('Sheet1').cell("Q103").value(amountDue_gsis)   
-    workbook.sheet('Sheet1').cell("Q116").value(amountDue_gsis)  
-    workbook.sheet('Sheet1').cell("N126").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("N127").value(eval(data.amount + data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
-    workbook.sheet('Sheet1').cell("Q128").value(amountDue_gsis)
-    workbook.sheet('Sheet1').cell("B126").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
-    workbook.sheet('Sheet1').cell("B127").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)  
-    workbook.sheet('Sheet1').cell("A122").value(data.NF_name)
-    workbook.sheet('Sheet1').cell("A123").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("P92").value(data.fund)
+    workbook.sheet('Sheet1').cell("P94").value(convertDate(data.date))
+    workbook.sheet('Sheet1').cell("P96").value(data.DV)   
+    workbook.sheet('Sheet1').cell("P102").value(data.ORSBURS)
+    workbook.sheet('Sheet1').cell("A106").value(data.birParticular)   
+    workbook.sheet('Sheet1').cell("Q107").value(val1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))   
+    workbook.sheet('Sheet1').cell("Q120").value(val1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))  
+    workbook.sheet('Sheet1').cell("N130").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("Q132").value(val1.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('Sheet1').cell("B130").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
+    workbook.sheet('Sheet1').cell("A126").value(data.NF_name)
+    workbook.sheet('Sheet1').cell("A127").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("C140").value(data.accountingHead_name)
+    workbook.sheet('Sheet1').cell("C141").value(data.accountingHead_office)
+    workbook.sheet('Sheet1').cell("M140").value(data.NF_name)
+    workbook.sheet('Sheet1').cell("M141").value(data.NF_office)
+    workbook.sheet('Sheet1').cell("K134").value(`${toWords(parseFloat(val1)).charAt(0).toUpperCase() + toWords(parseFloat(val1)).slice(1)} pesos${val1_decimal > 0 ? ` and ${val1_decimal}/100` : ''}`)
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
+    await workbook.outputAsync({ type: "nodebuffer" }).then(buffer => res.send(buffer));
+  } catch (error) {
+    console.log('error downloading DV', error)
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+const downloadMeralco = async(req, res) => {
+  const { data } = req.body
+  // console.log(data)
+
+  try {
+    console.log(data)
+
+    const templatePath = path.join(__dirname, '..', 'templates', 'Meralco.xlsx'); 
+    const workbook = await XlsxPopulate.fromFileAsync(templatePath);
+
+    const checkBoxData = {cell: ''}
+    switch(data.MOP.toLowerCase()){
+      case 'others':
+        checkBoxData.cell = 'N9'
+        checkBoxData.specified = `Others (Please specify) - ${data.specifiedMOP}`
+        break;
+      case 'ada':
+        checkBoxData.cell = 'K9'
+        break
+      case 'commercial check':
+        checkBoxData.cell = 'G9'
+        break
+      case 'mds check':
+        checkBoxData.cell = 'D9'
+        break
+      default:
+        checkBoxData.cell = 'N9'
+        break
+
+    }
+
+    const taxAmount = (parseFloat(data.meralcoVAT) * 0.05) + ((parseFloat(data.meralcoNONVAT) + parseFloat(data.meralcoVAT)) * 0.02)
+    const newAmount = parseFloat(data.amount) - taxAmount
+    console.log(newAmount, data.amount, taxAmount)
+    const newAmount_decimal = getDecimal(newAmount)
+    const taxAmount_decimal = getDecimal(taxAmount)
+
+    const ASA = getUniqueList(data)
+    const ASANO = `ASA No. ${ASA}`
+    console.log(ASA)
+
+    //payee
+    workbook.sheet('meralcobir').cell(checkBoxData.cell).value('✓')
+    workbook.sheet('meralcobir').cell("O9").value(checkBoxData.specified ? checkBoxData.specified : 'Others (Please specify)')
+    workbook.sheet('meralcobir').cell("P2").value(data.fund)
+    workbook.sheet('meralcobir').cell("P4").value(convertDate(data.date))
+    workbook.sheet('meralcobir').cell("P6").value(data.DV)
+    workbook.sheet('meralcobir').cell("C11").value(data.payee)
+    workbook.sheet('meralcobir').cell("K12").value(`${data.TT_tax} ${data.TIN}`)
+    workbook.sheet('meralcobir').cell("P12").value(data.ORSBURS)
+    workbook.sheet('meralcobir').cell("C13").value(data.address)
+    workbook.sheet('meralcobir').cell("B17").value(data.particular)
+    workbook.sheet('meralcobir').cell("K17").value(data.RC)
+    workbook.sheet('meralcobir').cell("Q17").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("D36").value(ASA).style("wrapText", true)
+    workbook.sheet('meralcobir').cell("C29").value(parseFloat(data.meralcoVAT).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("C30").value(parseFloat(data.meralcoVAT).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("E30").value(parseFloat(data.meralcoNONVAT).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("C58").value(data.accountingHead_name)
+    workbook.sheet('meralcobir').cell("C60").value(data.accountingHead_office)
+    workbook.sheet('meralcobir').cell("M58").value(data.agencyHead_name)
+    workbook.sheet('meralcobir').cell("M60").value(data.agencyHead_office)
+    workbook.sheet('meralcobir').cell("K145").value('LBP 0242-1107-57')
+    workbook.sheet('meralcobir').cell("K66").value('LBP 0242-1107-57')
+    workbook.sheet('meralcobir').cell("K52").value(`${toWords(parseFloat(newAmount)).charAt(0).toUpperCase() + toWords(parseFloat(newAmount)).slice(1)} pesos${newAmount_decimal > 0 ? ` and ${newAmount_decimal}/100` : ''}`)
+    workbook.sheet('meralcobir').cell("B52").value(data.cashAvailable ? '✓' : '')
+    workbook.sheet('meralcobir').cell("B53").value(data.debitAccount ? '✓' : '')
+    workbook.sheet('meralcobir').cell("B54").value(data.supportingDocuments ? '✓' : '')
+    workbook.sheet('meralcobir').cell("A44").value(data.NF_name)
+    workbook.sheet('meralcobir').cell("A45").value(data.NF_office)
+
+    //BIR
+    workbook.sheet('meralcobir').cell("P89").value(data.fund)
+    workbook.sheet('meralcobir').cell("P91").value(convertDate(data.date))
+    workbook.sheet('meralcobir').cell("P93").value(data.DV)   
+    workbook.sheet('meralcobir').cell("P99").value(data.ORSBURS)
+    workbook.sheet('meralcobir').cell("A103").value(data.birParticular)   
+    workbook.sheet('meralcobir').cell("Q104").value(taxAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))   
+    workbook.sheet('meralcobir').cell("Q117").value(taxAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))  
+    // workbook.sheet('meralcobir').cell("N130").value(eval(data.amount + data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("Q129").value(taxAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("B127").value(`Due to BIR (${cutFormula(data.TT_formula1)})`)
+    workbook.sheet('meralcobir').cell("B128").value(`Due to BIR (${cutFormula(data.TT_formula2)})`)
+    workbook.sheet('meralcobir').cell("N127").value((parseFloat(data.meralcoVAT) * 0.05).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("N128").value(parseFloat((data.meralcoNONVAT) * 0.02).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+    workbook.sheet('meralcobir').cell("A123").value(data.NF_name)
+    workbook.sheet('meralcobir').cell("A124").value(data.NF_office)
+    workbook.sheet('meralcobir').cell("C137").value(data.accountingHead_name)
+    workbook.sheet('meralcobir').cell("C138").value(data.accountingHead_office)
+    workbook.sheet('meralcobir').cell("M137").value(data.agencyHead_name)
+    workbook.sheet('meralcobir').cell("M138").value(data.agencyHead_office)
+    workbook.sheet('meralcobir').cell("K131").value(`${toWords(parseFloat(taxAmount)).charAt(0).toUpperCase() + toWords(parseFloat(taxAmount)).slice(1)} pesos${taxAmount_decimal > 0 ? ` and ${taxAmount_decimal}/100` : ''}`)
+    workbook.sheet('meralcobir').cell("B131").value(data.cashAvailable ? '✓' : '')
+    workbook.sheet('meralcobir').cell("B132").value(data.debitAccount ? '✓' : '')
+    workbook.sheet('meralcobir').cell("B133").value(data.supportingDocuments ? '✓' : '')
+
+    // //BUR
+    if(data.ORSBURS) {
+      workbook.sheet('meralcobir').cell("D169").value(data.payee)
+      workbook.sheet('meralcobir').cell("D173").value(data.address)
+      workbook.sheet('meralcobir').cell("P165").value(`Serial No.: ${data.ORSBURS}`)
+      workbook.sheet('meralcobir').cell("P166").value(`Fund Cluster: ${data.fund}`)
+      workbook.sheet('meralcobir').cell("P167").value(`Date: ${convertDate(data.date)}`)
+      workbook.sheet('meralcobir').cell("P178").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      workbook.sheet('meralcobir').cell("P192").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      // workbook.sheet('Sheet1').cell("P187").value(amount_due)
+      workbook.sheet('meralcobir').cell("D178").value(data.particular)
+      workbook.sheet('meralcobir').cell("A178").value(data.RC)
+    }
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');
@@ -1121,5 +1267,6 @@ module.exports = {
   approveBUR,
   returnBURRecordTo,
   downloadGSIS_Refund,
-  downloadBUR
+  downloadBUR,
+  downloadMeralco
 };

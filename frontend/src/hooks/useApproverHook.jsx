@@ -290,7 +290,7 @@ export const useApproverHook = () => {
                     withCredentials: true
                 })
             }else if(data.activeTab === 'Meralco'){
-                res = await axios.post(`${apiURL}/admin/downloadDV`, {data}, {
+                res = await axios.post(`${apiURL}/admin/downloadMeralco`, {data}, {
                     responseType: 'blob',
                     withCredentials: true
                 })

@@ -16,6 +16,7 @@ const DVTemplate = ({document}) => {
   const amount_due = adue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
+  console.log(document?.amount, tval)
 
   //GSIS computation
   const gross_gsis = (parseFloat(document?.amount) || 0) + (parseFloat(document?.stamp) || 0) + (parseFloat(document?.dst) || 0) + (parseFloat(document?.vat12) || 0)
@@ -25,8 +26,9 @@ const DVTemplate = ({document}) => {
   const meralcoVatAndNonvat = (parseFloat(document?.meralcoVAT) || 0) + (parseFloat(document?.meralcoNONVAT) || 0)
   const meralcoTax5 = eval(document?.meralcoVAT + document?.TT_formula1)
   const meralcoTax2 = eval(meralcoVatAndNonvat + document?.TT_formula2)
-  const meralcoGross = parseFloat(document?.meralcoVAT || 0) + parseFloat(document?.meralcoNONVAT || 0) + parseFloat(document?.amount || 0)
+  const meralcoGross = parseFloat(document?.meralcoVAT || 0) + parseFloat(document?.meralcoNONVAT || 0)
   const meralcoTax = parseFloat(meralcoTax5 || 0) + parseFloat(meralcoTax2 || 0)
+  console.log(meralcoTax)
   const meralcoAmountDue = meralcoGross - meralcoTax
 
 
@@ -360,13 +362,18 @@ const DVTemplate = ({document}) => {
             <div className='w-full h-auto flex items-start justify-center'>
               <p className='text-gray-500 w-2/5'>Net Amount Due</p>
               {
-                document?.activeTab === 'To Payment' && (
+                (document?.activeTab !== 'GSIS' && document?.activeTab !== 'Meralco') && (
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(floatTotal_val)}`}</p>
                 )
               }
               {
                 document?.activeTab === 'GSIS' && (
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(val1)}`}</p>
+                )
+              }
+              {
+                document?.activeTab === 'Meralco' && (
+                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(meralcoTax)}`}</p>
                 )
               }
             </div>
@@ -417,10 +424,21 @@ const DVTemplate = ({document}) => {
               <p className='w-2/5'>Amount:</p>
               <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
             </div>
-            <div className='w-full h-auto flex items-start justify-center'>
-              <p className='w-2/5'>Amount Due:</p>
-              <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>
-            </div>
+            
+            {document?.activeTab === 'Meralco' && (
+              <div className='w-full h-auto flex items-start justify-center'>
+                <p className='w-2/5'>Amount Due:</p>
+                <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(meralcoAmountDue)}`}</p>
+              </div>
+            )}
+            {document?.activeTab !== 'Meralco' && (
+              <div className='w-full h-auto flex items-start justify-center'>
+                <p className='w-2/5'>Amount Due:</p>
+                <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>
+              </div>
+            )}
+            
+            
           </div>
         )}
         <div className='flex flex-col'>

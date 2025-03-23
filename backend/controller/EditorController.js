@@ -32,7 +32,7 @@ const formatDate = (rawDate) => {
 
 const createDV = async (req, res) => {
     const activeTab = req.body.payee_data.activeTab
-    if(activeTab === 'To Payment' || activeTab === 'GSIS'){
+    if(activeTab === 'To Payment' || activeTab === 'GSIS' || activeTab === 'Meralco'){
         await forDV(req, res)
     }else if(activeTab === 'Others'){
         await forOthers(req, res)
