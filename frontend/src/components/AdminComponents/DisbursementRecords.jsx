@@ -26,7 +26,8 @@ const DisbursementRecords = () => {
     setFilter(value)
     setFilterFlag(!filterFlag)
   }
-  
+    console.log(DVRecords)
+
   useEffect(() => {
     if (DVRecords && Object.keys(DVRecords).length > 0) {
       if(!activeTabs) {

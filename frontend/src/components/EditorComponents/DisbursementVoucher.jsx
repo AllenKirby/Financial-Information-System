@@ -84,7 +84,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
   //const [operatorInput, setOperatorInput] = useState({ors: '', asa: ''})
   const [optionalAmount, setOptionalAmount] = useState(true)
   const [accountOptions, setAccountOptions] = useState([]);
-  const [activeTab, setActiveTab] = useState(tab)
+  const [activeTab, setActiveTab] = useState(flag ? document.activeTab : tab)
 
   //payee
   const [payeeOptions, setPayeeOptions] = useState({});
@@ -108,6 +108,8 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
   
   //redux
   const permission = useSelector((state) => state.permission)
+
+  console.log(tab)
 
   useEffect(() => {
     if (flag && document) {
@@ -668,6 +670,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
   }
 
   const handleUpdateDV = async() => {
+    console.log('updating')
     const updatedPayeeData = {
       ...payeeData,
       TT_formula1: gross.value2,
