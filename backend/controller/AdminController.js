@@ -367,6 +367,7 @@ const approveDV = async(req, res) => {
     await setHistoryLogs(dateTimeCollection, logs)
     await addOnClusterAmount(amount, fund, date)
     await addOnCategoryPerMonth(amount, optionalAmount, accCategory, date)
+    await CategoryOnMonth(amount, optionalAmount, accCategory)
     await addYearlyAmount(date, fund, amount)
     
     res.status(200).json({message: 'Document Approved Successfully'})
@@ -455,8 +456,45 @@ const addOnClusterAmount = async (amount, cluster, dateString, operation='add') 
   }
 }
 
+const CategoryOnMonth = async (amount, optionalAmount, accCategory) => {
+  const year = new Date().getFullYear();
+  const month = String(new Date().getMonth() + 1).padStart(2, '0');
+  const docRef = db.collection('MonthCategory2').doc(`${year}-${month}`);
+
+  if (optionalAmount.length === 1 && optionalAmount[0] === ''){
+    const [category, subcategory] = accCategory[0].split('|');
+    const fieldKey = `${category}|${subcategory}`;
+    const float_amount = parseFloat(amount)
+
+    const docSnapshot = await docRef.get();
+    const existingData = docSnapshot.exists ? docSnapshot.data() : {};
+    const existingAmount = parseFloat(existingData[fieldKey] || 0);
+
+    const newAmount = existingAmount + float_amount
+    await docRef.set({ [fieldKey]: newAmount < 0 ? 0 : newAmount }, { merge: true });
+    
+  }else{
+      const updates = {};
+      for (let i = 0; i< accCategory.length; i++){
+          const [category, subcategory] = accCategory[i].split('|')
+          const fieldKey = `${category}|${subcategory}`;
+          const subAmount = parseFloat(optionalAmount[i]);
+
+          const docSnapshot = await docRef.get()
+          const existingData = docSnapshot.exists ? docSnapshot.data() : {}
+          const existingAmount = parseFloat(existingData[fieldKey] || 0);
+
+          const newAmount = existingAmount + subAmount
+          updates[fieldKey] = newAmount < 0 ? 0 : newAmount;
+      }
+      await docRef.set(updates, { merge: true });
+  }
+
+}
+
 const addOnCategoryPerMonth = async (amount, optionalAmount, accCategory, dateString, operation = 'add') => {
   try{
+      console.log(amount, optionalAmount, accCategory, dateString, operation)
       const today = new Date(dateString);
       const year = today.getFullYear();
       const month = String(today.getMonth() + 1).padStart(2, '0');

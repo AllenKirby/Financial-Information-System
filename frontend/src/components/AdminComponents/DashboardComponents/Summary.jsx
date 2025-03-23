@@ -18,11 +18,16 @@ const BudgetRecommendation = () => {
       });
     const [years, setYears] = useState({})
     const [month, setMonth] = useState({})
+    const [yearmonth, setYearMonth] = useState({})
     const [yearlyExpense, setYearlyExpense] = useState({})
 
     const [forecasted_data, setForecasted_data] = useState({})
 
     const [monthCategory, setMonthCategory] = useState({})
+
+    useEffect(() => {
+      console.log(monthCategory)
+    }, [monthCategory])
 
       const toggleSection = (section) => {
         setOpenSections((prev) => ({
@@ -38,6 +43,13 @@ const BudgetRecommendation = () => {
         }));
       };
 
+      const toggleYearMonth = (value) => {
+        setYearMonth((prev) => ({
+          ...prev,
+          [value]: !prev[value], 
+        }))
+      }
+
       const toggleMonth = (month) => {
         setMonth((prev) => ({
             ...prev,
@@ -49,7 +61,7 @@ const BudgetRecommendation = () => {
 
     useEffect(() => {
         const unsubscribe = onSnapshot(
-          collection(firestore, "MonthCategory"),
+          collection(firestore, "MonthCategory2"),
           (snapshot) => {
             if (snapshot.empty) {
               setData({});
@@ -59,30 +71,9 @@ const BudgetRecommendation = () => {
             const parsedData = {};
       
             snapshot.forEach((doc) => {
-              const monthId = doc.id; // e.g., "2024-11"
-              const fields = doc.data(); // All fields in the document
-      
-              const [year] = monthId.split("-"); // Extract the year from "2024-11"
-      
-              // Ensure the year key exists
-              if (!parsedData[year]) {
-                parsedData[year] = {};
-              }
-      
-              // Initialize the month object under the year
-              if (!parsedData[year][monthId]) {
-                parsedData[year][monthId] = {};
-              }
-      
-              // Process each field in the document
-              Object.entries(fields).forEach(([key, value]) => {
-                const [category, subcategory] = key.split("|"); // Split "category|subcategory"
-                if (!parsedData[year][monthId][category]) {
-                  parsedData[year][monthId][category] = {}; // Initialize category object
-                }
-                parsedData[year][monthId][category][subcategory] = value; // Assign subcategory value
-              });
+              parsedData[doc.id] = doc.data();
             });
+
             setMonthCategory(parsedData);
           },
           (error) => {
@@ -197,85 +188,41 @@ const BudgetRecommendation = () => {
           </div>
         )}
       </div>
-      <div className="w-full h-auto border rounded-lg p-4 transition-all duration-300">
-        <div
-          className="flex justify-between items-center cursor-pointer"
-          onClick={() => toggleSection("monitoring")}
-        >
-          <h2 className="font-bold text-lg">Variances - <span className="font-normal italic">2024</span></h2>
-          <span className={`${openSections.monitoring ? 'rotate-180' : ''} transition-all duration-300`}><IoIosArrowDown size={20}/></span>
-        </div>
-        {openSections.monitoring && (
-          <div className="mt-4">
-            <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
-              {Object.keys(monthCategory["2024"] || {}).reverse().map((key) => {
-                const totalExpense = calculateTotalExpenses(monthCategory, "2024", "2024-11")
-                const forecastedValue = forecasted_data?.[key] || 0;
-                const percentage = forecastedValue !== 0 ? calculatePercentage(totalExpense,forecastedValue) : 0;
-                return (
-                  <>
-                    <li
-                      key={key}
-                      className="flex flex-col p-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100"
-                    >
-                      {/* Wrap the toggleMonth call inside an anonymous function */}
-                      <div className="flex justify-between cursor-pointer" onClick={() => toggleMonth(key)}>
-                        <span className="font-semibold text-lg">{key}</span>
-                        <span className={`font-medium flex items-center space-x-1 ${percentage > 0 ? "text-green-500" : "text-red-500"}`}>
-                          {forecastedValue === 0 ? "N/A" : `${percentage}%`}
-                          {forecastedValue !== 0 && (percentage >= 0 ? (
-                            <HiArrowSmUp className="w-6 h-6" />
-                          ) : (
-                            <HiArrowSmDown className="w-6 h-6" />
-                          ))}
-                        </span>
-                      </div>
-                    </li>
-                    <hr />
-                  </>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-      </div>
+      
+      
       <div className="w-full h-auto border rounded-lg p-4 transition-all duration-300">
         <div
           className="flex justify-between items-center cursor-pointer"
           onClick={() => toggleSection("top")}
           >
-          <h2 className="font-bold text-lg">Top Expenses - <span className="font-normal italic">2024</span></h2>
+          <h2 className="font-bold text-lg">Categorical Expenses</h2>
           <span className={`${openSections.top ? 'rotate-180' : ''} transition-all duration-300`}><IoIosArrowDown size={20}/></span>
         </div>
         {openSections.top && (
           <div className="mt-4">
             <ul className="mt-2 border-t pt-2 list-disc list-inside space-y-2">
-              {Object.keys(monthCategory["2024"] || {}).map((monthId) => {
-                const monthData = monthCategory["2024"][monthId];
-                const categoryTotals = {};
-                Object.entries(monthData).forEach(([category, subcategories]) => {
-                  let categoryAmount = 0;
-                  Object.values(subcategories).forEach((amount) => {
-                    categoryAmount += amount; 
-                  });
-                  if (categoryTotals[category]) {
-                    categoryTotals[category] += categoryAmount;
-                  } else {
-                    categoryTotals[category] = categoryAmount;
-                  }
-                });
-                const sortedCategories = Object.entries(categoryTotals)
-                  .sort(([, a], [, b]) => b - a) 
-                  .map(([category, totalAmount]) => ({ category, totalAmount }));
-                return sortedCategories.map(({ category, totalAmount }) => (
-                  <li key={category} className="list-none p-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
-                    <div className="flex items-center justify-between text-sm">
-                      <p className="font-semibold truncate">{category}</p>
-                      <p className="font-medium">{formatToPeso(totalAmount)}</p>
-                    </div>
-                  </li>
-                ));
-              })}
+            {Object.keys(monthCategory || {}).map((monthKey) => (
+              <li key={monthKey} className="flex flex-col p-2 border-gray-300 rounded-lg bg-gray-50 hover:bg-gray-100">
+                  <div className="flex justify-between items-center cursor-pointer" onClick={() => toggleYearMonth(monthKey)}>
+                    <span className="font-semibold text-lg">{monthKey}</span>
+                    {/* <span className="text-green-500 font-medium">{formatToPeso(yearlyExpense[year])}</span> */}
+                  </div>
+                  {yearmonth[monthKey] && (
+                      <ul className="mt-2 space-y-1 pl-4 border-t">
+                        {Object.entries(monthCategory[monthKey] || {}).map(([category, amount]) => {
+                          // Handle categories with | separator and newlines
+                          const formattedCategory = category.split("|")[0];
+                          return (
+                            <li key={category} className="flex justify-between items-center text-gray-700">
+                              <span>{formattedCategory}</span>
+                              <span className="text-gray-500">{formatToPeso(amount)}</span>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+              </li>
+            ))}
             </ul>
           </div>
         )}
