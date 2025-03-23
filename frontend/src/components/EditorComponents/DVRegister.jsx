@@ -235,16 +235,19 @@ const DVRegister = () => {
         .map(Number) // Convert strings to numbers
         .reduce((acc, num) => acc + num, 0); // Sum up numbers
     };
-    
-    console.log(sumOfASA());
 
     const sumOfGross = () => {
         const ASA = Object.entries(documents).map((item,) => {
             const val1 = eval(item[1].data.amount + item[1].data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             const val2 = eval(item[1].data.amount + item[1].data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
-
-            return item[1].data.amount - tval
+            let gsisGross = 0 
+            if(item[1].data.activeTab === 'GSIS') {
+                gsisGross = parseFloat(item[1].data.amount) + parseFloat(item[1].data.stamp) + parseFloat(item[1].data.dst) + parseFloat(item[1].data.vat12)
+                return parseFloat(gsisGross) - val1
+            } else {
+                return item[1].data.amount - tval
+            }
         })
         return ASA.reduce((sum, num) => sum + num, 0);
     }
@@ -254,8 +257,11 @@ const DVRegister = () => {
             const val1 = eval(item[1].data.amount + item[1].data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             const val2 = eval(item[1].data.amount + item[1].data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
             const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
-
-            return tval
+            if(item[1].data.activeTab === 'GSIS') {
+                return parseFloat(val1)
+            } else {
+                return tval
+            }
         })
         return ASA.reduce((sum, num) => sum + num, 0);
     }
@@ -299,6 +305,8 @@ const DVRegister = () => {
             cashReleases: formatToPeso(sumOfCash())
         })
     }, [documents])
+
+    console.log(documents)
 
   return (
     <section className="w-full h-full p-2 text-gray-500 relative flex flex-col">

@@ -41,20 +41,30 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
       };
 
   const val1 = eval(DV[1].data.amount + DV[1].data.TT_formula1).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  const val2 = eval(DV[1].data.amount + DV[1].data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  const val2 = eval(DV[1].data.amount + DV[1].data.TT_formula2).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
   const tval = parseFloat(val1.replace(/,/g, '')) + parseFloat(val2.replace(/,/g, ''))
   const total_val = tval.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
 
   const adue = DV[1].data.amount - tval
-
+  let gsisGross = 0 
+  if(DV[1].data.activeTab === 'GSIS') {
+    gsisGross = parseFloat(DV[1].data.amount) + parseFloat(DV[1].data.stamp) + parseFloat(DV[1].data.dst) + parseFloat(DV[1].data.vat12)
+  }
+  const gsisNet = parseFloat(gsisGross) - val1
+  
+  console.log(DV)
   const ASAamount = DV[1].data.ASA ? Object.values(DV[1].data.ASA) : [];
   const sumOfASA = (ASA) => {
-    let sum = 0
-    for(let i = 0; i < ASA.length; i++) {
-      sum += ASA[i]
+    if(ASA.length > 0){
+      let sum = 0
+      for(let i = 0; i < ASA.length; i++) {
+        sum += ASA[i]
+      }
+      return formatToPeso(sum)
+    } else {
+      return '--'
     }
-    return formatToPeso(sum)
   }
 
   return (
@@ -114,8 +124,8 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
           <div className='w-5/6 flex flex-col sm:flex-row'>
             <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ASA-1st: </span>{DV[1].data.ADAfirst ? formatToPeso(DV[1].data.ADAfirst) : '--'}</p>
             <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>ADA-2nd: </span>{DV[1].data.ADASecond ? formatToPeso(DV[1].data.ADASecond) : '--'}</p>
-            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>{formatToPeso(adue)}</p>
-            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BIR-Others: </span>{formatToPeso(floatTotal_val)}</p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash: </span>{formatToPeso(DV[1].data.activeTab !== 'GSIS' ? adue : gsisNet)}</p>
+            <p className='w-full sm:w-1/3 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>BIR-Others: </span>{formatToPeso(DV[1].data.activeTab !== 'GSIS' ? floatTotal_val : val1)}</p>
           </div>
         )}
         {counter === 5 && (
@@ -124,12 +134,12 @@ const DVRegisterItems = ({DV, index, counter, modal}) => {
             <div className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'>
               <span className='font-normal block sm:hidden'>ASA Releases: </span>
               <div className="flex flex-col">
-                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) ? ASAamount.map((amount, index) => (
+                {(DV[1].data.activeTab === 'To Payment' || DV[1].data.activeTab === 'GSIS' || DV[1].data.activeTab === 'Meralco' || DV[1].data.activeTab === 'Others' && DV[1].data.ORSBURS) && ASAamount.length > 0 ? ASAamount.map((amount, index) => (
                   <p key={index}>{formatToPeso(amount)}</p>
                 )) : '--'}
               </div>
             </div>
-            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash Totals: </span>{sumOfASA(ASAamount)}</p>
+            <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash Totals: </span>{formatToPeso(DV[1].data.amount)}</p>
             <p className='w-full sm:w-1/4 flex items-center justify-start sm:justify-center gap-2 font-semibold'><span className='font-normal block sm:hidden'>Cash Releases: </span>{formatToPeso(DV[1].data.amount)}</p>
           </div>
         )}
