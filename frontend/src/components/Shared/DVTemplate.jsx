@@ -13,6 +13,7 @@ const DVTemplate = ({document}) => {
   const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
   
   const adue = document?.amount - tval
+  console.log(document)
   const amount_due = adue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
@@ -29,8 +30,10 @@ const DVTemplate = ({document}) => {
   const meralcoGross = parseFloat(document?.meralcoVAT || 0) + parseFloat(document?.meralcoNONVAT || 0)
   const meralcoTax = parseFloat(meralcoTax5 || 0) + parseFloat(meralcoTax2 || 0)
   console.log(meralcoTax)
-  const meralcoAmountDue = meralcoGross - meralcoTax
+  const meralcoAmountDue = parseFloat(document?.amount) - meralcoTax
 
+  //GSIS with BUR
+  //amountDue_gsis
 
   useEffect(() => {
     if(user && user.role) {
@@ -182,27 +185,27 @@ const DVTemplate = ({document}) => {
             document?.activeTab === 'Meralco' && (
               <div className='py-1 flex flex-col px-2 text-sm sm:text-base 2xl:text-lg'>
                 <div className='w-full h-auto flex items-start justify-center'>
-                  <p className='text-gray-500 w-2/5'>Amount</p>
-                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(meralcoGross)}`}</p>
-                </div>
-                <div className='w-full h-auto flex items-start justify-center'>
-                  <p className='text-gray-500 w-2/5'>Tax Base</p>
-                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(document?.meralcoVAT)}`}</p>
+                  <p className='text-gray-500 w-2/5'>Gross Amount</p>
+                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(document?.amount)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
                   <p className='text-gray-500 w-2/5'>VAT</p>
-                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(document?.amount)}`}</p>
+                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(document?.meralcoVAT)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
                   <p className='text-gray-500 w-2/5'>NON VAT</p>
                   <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(document?.meralcoNONVAT)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
-                  <p className='text-gray-500 w-2/5'>Tax(5%)</p>
+                  <p className='text-gray-500 w-2/5'>Total Tax base</p>
+                  <p className='text-customFontColor font-medium w-3/5'>{`${formatToPeso(meralcoGross)}`}</p>
+                </div>
+                <div className='w-full h-auto flex items-start justify-center'>
+                  <p className='text-gray-500 w-2/5'>Tax Base(5%)</p>
                   <p className='text-customFontColor font-medium w-3/5' key={'key3'}>{`${formatToPeso(document?.meralcoVAT)} ${document?.TT_formula1.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${formatToPeso(meralcoTax5)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
-                  <p className='text-gray-500 w-2/5'>Tax(2%)</p>
+                  <p className='text-gray-500 w-2/5'>Tax Base(2%)</p>
                   <p className='text-customFontColor font-medium w-3/5' key={'key4'}>{`${formatToPeso(document?.meralcoVAT)} + ${formatToPeso(document?.meralcoNONVAT)} ${document?.TT_formula2.replace(/\*/g, ' x ').replace(/\//g, ' / ').replace(/\+/g, ' + ').replace(/\-/g, ' - ')} = ${formatToPeso(meralcoTax2)}`}</p>
                 </div>
                 <div className='w-full h-auto flex items-start justify-center'>
@@ -420,18 +423,35 @@ const DVTemplate = ({document}) => {
               <p className='w-2/5'>Paticulars:</p>
               <p className='w-3/5 text-customFontColor font-medium'>{document?.particular}</p>
             </div>
-            <div className='w-full h-auto flex items-start justify-center'>
-              <p className='w-2/5'>Amount:</p>
-              <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
-            </div>
+            {/* amount */}
+            {document?.activeTab === 'GSIS' && (
+              <div className='w-full h-auto flex items-start justify-center'>
+                <p className='w-2/5'>Amount:</p>
+                <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(gross_gsis)}`}</p>
+              </div>
+            )}
+
+            {document?.activeTab !== 'GSIS' && (
+              <div className='w-full h-auto flex items-start justify-center'>
+                <p className='w-2/5'>Amount:</p>
+                <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(document?.amount)}`}</p>
+              </div>
+            )}
             
+            {/* amount due */}
             {document?.activeTab === 'Meralco' && (
               <div className='w-full h-auto flex items-start justify-center'>
                 <p className='w-2/5'>Amount Due:</p>
                 <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(meralcoAmountDue)}`}</p>
               </div>
             )}
-            {document?.activeTab !== 'Meralco' && (
+            {document?.activeTab === 'GSIS' && (
+              <div className='w-full h-auto flex items-start justify-center'>
+                <p className='w-2/5'>Amount Due:</p>
+                <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(amountDue_gsis)}`}</p>
+              </div>
+            )}
+            {(document?.activeTab !== 'Meralco' && document?.activeTab !== 'GSIS') && (
               <div className='w-full h-auto flex items-start justify-center'>
                 <p className='w-2/5'>Amount Due:</p>
                 <p className='w-3/5 text-customFontColor font-medium'>{`${formatToPeso(floatAmountDue)}`}</p>

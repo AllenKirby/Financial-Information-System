@@ -775,9 +775,9 @@ const downloadDV = async(req, res) => {
 
 const downloadGSIS = async(req, res) => {
   const { data } = req.body
-  console.log(data)
+  console.log('download gsis')
   try {
-    const templatePath = path.join(__dirname, '..', 'templates', 'GSIS.xlsx'); 
+    const templatePath = path.join(__dirname, '..', 'templates', data.ORSBURS ? 'GSISwithBUR.xlsx' : 'GSIS.xlsx'); 
     const workbook = await XlsxPopulate.fromFileAsync(templatePath);
 
     //GSIS computation
@@ -869,6 +869,20 @@ const downloadGSIS = async(req, res) => {
     workbook.sheet('Sheet1').cell("M140").value(data.NF_name)
     workbook.sheet('Sheet1').cell("M141").value(data.NF_office)
     workbook.sheet('Sheet1').cell("K134").value(`${toWords(parseFloat(val1)).charAt(0).toUpperCase() + toWords(parseFloat(val1)).slice(1)} pesos${val1_decimal > 0 ? ` and ${val1_decimal}/100` : ''}`)
+
+    //BUR
+    if(data.ORSBURS) {
+      workbook.sheet('Sheet1').cell("D172").value(data.payee)
+      workbook.sheet('Sheet1').cell("D176").value(data.address)
+      workbook.sheet('Sheet1').cell("P168").value(`Serial No.: ${data.ORSBURS}`)
+      workbook.sheet('Sheet1').cell("P169").value(`Fund Cluster: ${data.fund}`)
+      workbook.sheet('Sheet1').cell("P170").value(`Date: ${convertDate(data.date)}`)
+      workbook.sheet('Sheet1').cell("P181").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      workbook.sheet('Sheet1').cell("P195").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      // workbook.sheet('Sheet1').cell("P187").value(amount_due)
+      workbook.sheet('Sheet1').cell("D181").value(data.particular)
+      workbook.sheet('Sheet1').cell("A181").value(data.RC)
+    }
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');

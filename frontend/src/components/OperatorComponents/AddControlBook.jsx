@@ -13,7 +13,7 @@ const AddControlBook = (props) => {
     const { AddControlBook, updateControlBook, isLoading, error } = useFundingHook()
     const { user } = useAuthContext()
     
-    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', fundCluster: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: ''})
+    const [controlBookData, setControlBookData] = useState({ASANo: '', date: '', SARONo: '', fundCluster: '', TotalASA: 0, description: '', RO: 0, FO: 0, endDate: '', GAA: ''})
     const [errorFlag, setErrorFlag] = useState(false)
 
 
@@ -26,7 +26,8 @@ const AddControlBook = (props) => {
                 TotalASA: controlBook.TotalASA || 0,
                 fundCluster: controlBook.FundCluster || '',
                 description: controlBook.description || '',
-                endDate: formatDateforUpdate(controlBook.endDate) || ''
+                endDate: formatDateforUpdate(controlBook.endDate) || '',
+                GAA: controlBook.GAA || ''
             })
         }
     }, [controlBook, flag])
@@ -187,8 +188,8 @@ const AddControlBook = (props) => {
                     <label className="font-semibold">GAA</label>
                     <input 
                         type="text"
-                        // value={controlBookData.endDate}
-                        // onChange={(e) => setControlBookData({...controlBookData, endDate: e.target.value})}
+                        value={controlBookData.GAA}
+                        onChange={(e) => setControlBookData({...controlBookData, GAA: e.target.value})}
                         className={`${user.role === '3' ? 'focus:outline-fundingBlueGreen' : 'focus:outline-preparerPrimary'} w-full px-4 py-2 rounded-lg border-2 transition-all duration-500`}/>
                 </div>
             </div>

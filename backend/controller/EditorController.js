@@ -2,7 +2,7 @@ const {admin, db, rtdb}  = require('../config/firebase');
 const { doc } = require('firebase/firestore')
 const XlsxPopulate = require('xlsx-populate');
 const path = require('path')
-const { encryptObj } = require('./functions');
+const { encryptObj, decrypt } = require('./functions');
 
 const { 
     addComments,
@@ -292,10 +292,16 @@ const deleteDV = async(req, res) => {
             const date = recordData['date']
             const accCategory = recordData['accCategory']
             const fund = recordData['fund']
+            // console.log(recordData)
             // await addOnCategoryPerMonth(amount, optionalAmount, accCategory, date, 'subtract')
             // await addOnClusterAmount(amount, fund, date, 'subtract')
-
+            const payee = decrypt(recordData['payee'], recordData['iv'])
+            const dateTimeCollection = getDateTime()
+            const dispName = req.user.name;
+            const logs = `${payee}!${recordData['DV']}!Deleted By ${dispName}!${dateTimeCollection}!Deleted`
+            
             await db.collection('records').doc(id).delete();
+            await setHistoryLogs(dateTimeCollection, logs)
             res.status(200).json({ message: 'Document successfully deleted' })
         }else{
             res.status(404).json({ message: 'Document Not Fuund' })
@@ -320,6 +326,8 @@ const updateDV = async(req, res) => {
         birParticular,
         updatedAt: dateTimeCollection
     }
+
+    console.log(dvData)
 
     try {
         const docref = db.collection('records').doc(id)

@@ -175,7 +175,7 @@ const ViewDocument = () => {
       confirmButtonText: "Yes, delete it!",
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await deleteDV(idStatus.id);
+        const res = await deleteDV(idStatus.id);    
         if (res) {
           Swal.fire({
             title: "Deleted!",

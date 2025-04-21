@@ -4,12 +4,15 @@ import { collection, onSnapshot } from "firebase/firestore"
 import { firestore } from "../../config/firebase-config"
 
 import { useSuperAdminHook } from "../../hooks/useSuperAdminHook";
+import axios from "axios";
 
 const AccessControl = () => {
   //state
   const [roles, setRoles] = useState([]);
   //hooks
   const {changeAccess, isLoading, error} = useSuperAdminHook()
+
+  const apiURL = import.meta.env.VITE_API_URL
 
   useEffect(() => {
     const q = collection(firestore, 'Roles');
@@ -54,8 +57,40 @@ const AccessControl = () => {
     );
   };
 
+  const [isDownloading, setIsDownloading] = useState(false);
+  const downloadJSON = async () => {
+    setIsDownloading(true);
+    try{
+      const res = await axios.get(`${apiURL}/superadmin/export`, {
+        withCredentials:true
+      })
+      // const data = res.data;
+      // console.log(data)
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res.data, null, 2));
+      const downloadAnchorNode = document.createElement('a');
+      downloadAnchorNode.setAttribute("href", dataStr);
+      downloadAnchorNode.setAttribute("download", "firestore_export.json");
+      document.body.appendChild(downloadAnchorNode); // required for Firefox
+      downloadAnchorNode.click();
+      downloadAnchorNode.remove();
+    }catch(error){
+      console.error('Error downloading JSON:', error);
+    } finally {
+      setIsDownloading(false);
+    }
+  }
+
   return (
     <section className="w-full h-full p-3 text-gray-500">
+      <div className="w-full flex justify-end gap-2">
+        <button
+        disabled={isDownloading}
+          onClick={downloadJSON} 
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >{isDownloading ? 'Exporting...' : 'Export'}</button>
+
+        <button className="px-4 py-2 border border-2 border-blue-500 text-blue-500 rounded hover:bg-slate-200 hover:text-blue-700">Import</button>
+      </div>
       <div className="w-full h-auto p-2">
         <p className="text-superAdminBlue text-sm font-semibold">This page allows the Super Admin to manage access control by assigning roles, permissions, and granted features with descriptions for specific tasks.</p>
       </div>

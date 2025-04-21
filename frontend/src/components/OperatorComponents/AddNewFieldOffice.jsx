@@ -274,10 +274,22 @@ const AddNewFieldOffice = (props) => {
     };
 
     
+    const formatToPeso = (value) => {
+        return new Intl.NumberFormat("en-PH", {
+            style: "currency",
+            currency: "PHP",
+        }).format(value);
+    };
 
   return (
     <form onClick={(e) => e.stopPropagation()} onSubmit={flag ? handleUpdate : handleSubmit} className="w-3/4 md:w-2/4 lg:w-1/4 h-auto bg-white p-3 rounded-lg">
-        <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>{flag ? 'Edit Project' : 'Add Project'}</h1>
+        <h1 className={`${user.role === '3' ? 'text-fundingBlueGreen' : 'text-preparerPrimary'} px-3 text-2xl font-semibold`}>
+            {flag ? 
+                Choice === 'project' ?'Edit Project': 'Edit Utility' 
+                :    
+                Choice === 'project' ? 'Add Project' : 'Add Utility'
+            }
+        </h1>
         <div className='w-full h-auto p-3'>
             <div className="w-full mt-2">
                 <label>Project Name</label>
@@ -323,7 +335,7 @@ const AddNewFieldOffice = (props) => {
                         {tabs.length > 0 ? (
                             tabs.map((tab, index) => (
                             <option key={index} value={tab.title} amount={tab.amount} disabled={(parseFloat(tab.amount) - parseFloat(usedAmountPerTab[tab.title] || 0)) === 0}>
-                                {tab.title} {parseFloat(tab.amount) - parseFloat(usedAmountPerTab[tab.title] || 0)}  
+                                {tab.title} {formatToPeso(parseFloat(tab.amount) - parseFloat(usedAmountPerTab[tab.title] || 0))}  
                             </option>
                             ))
                         ) : (

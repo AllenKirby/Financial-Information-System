@@ -32,12 +32,39 @@ const AddTab = (props) => {
 
 
     const handleInputChange = (index, key, value) => {
-        setTabs((prevTab) => 
-            prevTab.map((tab, i) =>{
-                return i === index ? {...tab, [key]: value} : tab 
-            })
-        )
+        // setTabs((prevTab) => 
+        //     prevTab.map((tab, i) =>{
+        //         return i === index ? {...tab, [key]: value} : tab 
+        //     })
+        // )
+        if (value === "") {
+            setTabs(prev => 
+                prev.map((tab, i) => i === index ? { ...tab, [key]: "" } : tab)
+            );
+            return;
+        }
+        if (key === "amount") {
+            const numericValue = value.replace(/,/g, "");
+            if (!isNaN(numericValue)) {
+                setTabs(prevTab =>
+                    prevTab.map((tab, i) =>
+                        i === index ? { ...tab, [key]: numericValue } : tab
+                    )
+                );
+            }
+        } else {
+            setTabs(prevTab =>
+                prevTab.map((tab, i) =>
+                    i === index ? { ...tab, [key]: value } : tab
+                )
+            );
+        }
     }
+
+    const formatNumberWithCommas = (value) => {
+        if (!value) return "";
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    };
 
     const addRow = (index) => {
         if(index < tabs.length - 1){
@@ -101,10 +128,11 @@ const AddTab = (props) => {
                             <input
                                 required
                                 onChange={(e) => handleInputChange(index, "amount", e.target.value)}
-                                value={tab.amount === 0 ? '' : tab.amount}
+                                // value={tab.amount === 0 ? '' : tab.amount}
+                                value={formatNumberWithCommas(tab.amount)}
                                 placeholder='0'
                                 className='w-2/5 px-4 py-2 rounded-lg border-2 transition-all duration-500'
-                                type="number"/>
+                                type="text"/>
                             <button
                                 type='button'
                                 onClick={() => addRow(index)}
