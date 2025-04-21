@@ -1145,7 +1145,7 @@ const appendDataToSheet = async (req, res) => {
   }
 
   const addControlBook = async(req, res) => {
-    const { ASANo, date, SARONo, TotalASA, fundCluster, description, endDate } = req.body.data
+    const { ASANo, date, SARONo, TotalASA, fundCluster, description, endDate, GAA } = req.body.data
 
     const dateTimeCollection = getDateTime();
     const finalASANo = `${ASANo}|${createAcronym(description)}!${fundCluster}`
@@ -1161,6 +1161,7 @@ const appendDataToSheet = async (req, res) => {
         RO: TotalASA,
         FO: 0,
         endDate: endDate,
+        GAA: GAA,
         leftBudget: TotalASA,
         prevMonthFO: 0,
         prevMonthRO: 0,
@@ -1627,7 +1628,7 @@ const deleteFieldOffice = async(req, res) => {
 
 const deleteASA_COB = async(req, res) => {
     const { id } = req.params
-    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA, tabStatus] = id.split('!')
+    const [ASANo,cluster, docId, docIdCluster, projectName, RO, totalASA, tabStatus, utilized_budget] = id.split('!')
     
     const ASAid = `${ASANo}!${cluster}`
     const documentID = `${docId}!${docIdCluster}`
@@ -1646,10 +1647,9 @@ const deleteASA_COB = async(req, res) => {
             const leftBudget = parseFloat(controlBook.data().leftBudget);
             const FO = parseFloat(controlBook.data().FO)
             const updatedBudget = leftBudget + parseASA;
-            const updatedFO = FO - parseASA
+            const updatedFO = FO - utilized_budget
 
             const items = parseFloat(controlBook.data().items || 0)
-
             await controlBookRef.update({
                 leftBudget: updatedBudget,
                 items: items - 1,

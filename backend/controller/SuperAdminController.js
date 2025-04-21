@@ -199,6 +199,49 @@ const getAllAccounts = async (req, res) => {
     }
   }
 
+  const getDocumentWithSubcollections = async(docSnap) => {
+    const data = docSnap.data() || {};
+    const subcollections = await docSnap.ref.listCollections();
+
+    for (const subCol of subcollections) {
+      const subSnap = await subCol.get();
+      const subDocs = {};
+
+      for (const subDoc of subSnap.docs) {
+        subDocs[subDoc.id] = await getDocumentWithSubcollections(subDoc); // recurse
+      }
+
+      data[subCol.id] = subDocs; // nest under subcollection name
+    }
+
+    return data;
+  }
+
+  
+
+  const exportDATA = async(req, res) => {
+    try{
+      const collections = await db.listCollections();
+      const allData = {};
+
+      for (const collection of collections) {
+        const snapshot = await collection.get();
+        const collectionData = {};
+    
+        for (const doc of snapshot.docs) {
+          collectionData[doc.id] = await getDocumentWithSubcollections(doc);
+        }
+    
+        allData[collection.id] = collectionData;
+      }
+
+      res.status(200).json(allData)
+    }catch(error){
+      console.log("error exporting data....",error)
+    }
+  }
+
+
   module.exports = {
     getAllAccounts,
     disableAccount,
@@ -207,4 +250,5 @@ const getAllAccounts = async (req, res) => {
     retrieveRoles,
     changeAccess,
     deleteRequest,
+    exportDATA,
   };

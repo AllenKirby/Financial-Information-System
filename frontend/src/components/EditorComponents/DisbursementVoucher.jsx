@@ -109,10 +109,11 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
   //redux
   const permission = useSelector((state) => state.permission)
 
-  console.log(tab)
+  console.log(document)
 
   useEffect(() => {
     if (flag && document) {
+      console.log(document)
       setPayeeData((prevData) => {
         const updatedData = {
           ...prevData,
@@ -491,7 +492,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
       payee_data: updatedPayeeData,
       bir_data: birData
     }
-
+    console.log(data)
     const pData = {
       payee: payeeData.payee,
       tin: payeeData.TIN,
@@ -646,7 +647,23 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
       await handleUpdateDV()
     } else if(activeTab === 'BUR') {
       await updateBUR()
+    } else if(activeTab === 'Meralco'){
+      console.log('update meralco')
+      await updateMeralco()
+    } else if(activeTab === 'GSIS'){
+      console.log('update GSIS')
+    } else if(activeTab === 'Others'){
+      console.log('update others')
     }
+  }
+
+  const updateMeralco = async() => {
+    const updatedPayeeData = dataForMeralco()
+    const data = {
+      payee_data: updatedPayeeData,
+      bir_data: birData
+    }
+    console.log(data)
   }
 
   const updateBUR = async() => {
@@ -673,8 +690,8 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
     console.log('updating')
     const updatedPayeeData = {
       ...payeeData,
-      TT_formula1: gross.value2,
-      TT_formula2: gross.value3,
+      TT_formula1: gross.value2 !== '' ? gross.value2 : document.TT_formula1,
+      TT_formula2: gross.value3 !== '' ? gross.value2 : document.TT_formula2,
       accCategory: formFields.map(arr => Object.values(arr)[0]),
       accTitle: formFields.map(arr => Object.values(arr)[1]),
       accCode: formFields.map(arr => Object.values(arr)[2]),
@@ -685,6 +702,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
       payee_data: updatedPayeeData,
       bir_data: birData
     }
+    console.log(data)
     const res = await updateDV(data, document.DVKey)
     if(res){
       Swal.fire({
@@ -870,6 +888,31 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
+  const formatNumberWithCommas_amount = (rawValue) => {
+
+    if (rawValue === 0) return '';
+
+    let value = rawValue.toString();
+    if (!value) return "";
+
+    const [integerPart, decimalPart] = value.split(".");
+    const cleanedInteger = integerPart.replace(/\D/g, "");
+    const formattedInteger = cleanedInteger.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    return decimalPart !== undefined ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+
+    // let value = rawValue === 0 ? '' : rawValue.toString()
+    // if (!value) return "";
+    // return value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
+  const formatNumberWithCommas_amount_optional = (value) => {
+    if (!value) return '';
+    const [integer, decimal] = value.toString().split('.');
+    const formattedInteger = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return decimal !== undefined ? `${formattedInteger}.${decimal}` : formattedInteger;
+  }
+
   const handleAmountChange = (e) => {
     let value = e.target.value.replace(/,/g, "");
 
@@ -885,6 +928,67 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
       });
     }
   };
+
+  const handleAmountChange_amount = (e) => {
+    let value = e.target.value.replace(/,/g, "");
+
+    if (value === "") {
+      setPayeeData({
+        ...payeeData,
+        amount: '',
+      })
+      return;
+    }
+
+    
+    if (!isNaN(value)) {
+      setPayeeData({
+        ...payeeData,
+        amount: value,
+      })
+    }
+  };
+
+  const handleAmountChange_GSIS = (e, key) => {
+    let value = e.target.value.replace(/,/g, "");
+
+    if (value === "") {
+      setGSIS({
+        ...gsis,
+        [key]: '',
+      })
+      return;
+    }
+
+    
+    if (!isNaN(value)) {
+      setGSIS({
+        ...gsis,
+        [key]: value,
+      })
+    }
+
+  }
+
+  const handleAmountChange_meralco = (e, key) => {
+    let value = e.target.value.replace(/,/g, "");
+
+    if (value === "") {
+      setMeralco({
+        ...meralco,
+        [key]: '',
+      })
+      return;
+    }
+
+    
+    if (!isNaN(value)) {
+      setMeralco({
+        ...meralco,
+        [key]: value,
+      })
+    }
+  }
 
   const [numindex, setNumindex] = useState(0)
 
@@ -1691,17 +1795,19 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                         className={`${
                           user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                         } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                        type="number"
-                        step="0.01"
+                        type="text"
+                        // step="0.01"
                         //disabled={isDisabled && !permission.data.permission}
                         placeholder="0"
-                        value={payeeData.amount === 0 ? '' : payeeData.amount}
-                        onChange={(e) =>
-                          setPayeeData({
-                            ...payeeData,
-                            amount: parseFloat(e.target.value),
-                          })
-                        }
+                        // value={payeeData.amount === 0 ? '' : payeeData.amount}
+                        value={payeeData.amount === 0 ? '' : formatNumberWithCommas_amount(payeeData.amount)}
+                        // onChange={(e) =>
+                        //   setPayeeData({
+                        //     ...payeeData,
+                        //     amount: parseFloat(e.target.value),
+                        //   })
+                        // }
+                        onChange={handleAmountChange_amount}
                         required
                       />
                     </div>
@@ -1811,11 +1917,14 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                                 className={`${
                                   user?.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'
                                 } text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                                type="number"
-                                //disabled={(isDisabled && !permission.data.permission) || optionalAmount}
+                                type="text"
+                                disabled={formFields.length <= 1 }
                                 placeholder="0"
-                                value={field.amount === 0 ? '' : field.amount}
-                                onChange={(e) => handleFieldChange(index, 'amount', e.target.value)}
+                                value={field.amount === 0 ? '' : formatNumberWithCommas_amount_optional(field.amount)}
+                                onChange={(e) => {
+                                  const raw = e.target.value.replace(/,/g, '');
+                                  handleFieldChange(index, 'amount', raw)
+                                }}
                               />
                               <button
                                 className={`text-${index === formFields.length - 1 ? 'customgreen' : 'red-500'} rounded-full text-3xl ${
@@ -1845,12 +1954,13 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     <label className='text-gray-500'>PREMIUM</label>
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number" 
+                      type="text" 
                       step='0.01'
                       //disabled={isDisabled && !permission.data.permission}
-                      onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
+                      // onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
+                      onChange={handleAmountChange_amount}
                       placeholder='0'
-                      value={payeeData.amount === 0 ? '' : payeeData.amount}
+                      value={payeeData.amount === 0 ? '' : formatNumberWithCommas_amount(payeeData.amount)}
                       required  />
                   </div>
                   <div className='w-full sm:w-1/2 flex flex-col'>
@@ -1868,10 +1978,11 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     <label className='text-gray-500 text-sm'>DOC. STAMP - DST Premium</label>
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number" 
+                      type="text" 
                       //disabled={isDisabled && !permission.data.permission}
-                      value={gsis.stamp === 0 ? '' : gsis.stamp}
-                      onChange={(e) => setGSIS({...gsis, stamp: parseFloat(e.target.value)})}
+                      value={gsis.stamp === 0 ? '' : formatNumberWithCommas_amount(gsis.stamp)}
+                      // onChange={(e) => setGSIS({...gsis, stamp: parseFloat(e.target.value)})}
+                      onChange={(e) => handleAmountChange_GSIS(e, 'stamp')}
                       placeholder='0'
                       required  />
                   </div>
@@ -1879,10 +1990,11 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     <label className='text-gray-500'>DST (COC)</label>
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number" 
+                      type="text" 
                       //disabled={isDisabled && !permission.data.permission}
-                      value={gsis.dst === 0 ? '' : gsis.dst}
-                      onChange={(e) => setGSIS({...gsis, dst: parseFloat(e.target.value)})}
+                      value={gsis.dst === 0 ? '' : formatNumberWithCommas_amount(gsis.dst)}
+                      // onChange={(e) => setGSIS({...gsis, dst: parseFloat(e.target.value)})}
+                      onChange={(e) => handleAmountChange_GSIS(e, 'dst')}
                       placeholder='0'
                       required  />
                   </div>
@@ -1890,10 +2002,11 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     <label className='text-gray-500'>VAT 12%</label>
                     <input 
                       className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                      type="number" 
+                      type="text" 
                       //disabled={isDisabled && !permission.data.permission}
-                      value={gsis.vat12 === 0 ? '' : gsis.vat12}
-                      onChange={(e) => setGSIS({...gsis, vat12: parseFloat(e.target.value)})}
+                      value={gsis.vat12 === 0 ? '' : formatNumberWithCommas_amount(gsis.vat12)}
+                      // onChange={(e) => setGSIS({...gsis, vat12: parseFloat(e.target.value)})}
+                      onChange={(e) => handleAmountChange_GSIS(e, 'vat12')}
                       placeholder='0'
                       required  />
                   </div>
@@ -1908,14 +2021,18 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     {/* TIN AND VAT */}
                     <div className='w-full flex gap-2 mt-2'>
                       <div className='w-1/2'>
-                        <label className='text-gray-500'>Tax Base</label>
+                        <label className='text-gray-500'>Gross Amount</label>
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                          type="number" 
+                          type="text" 
                           //disabled={isDisabled && !permission.data.permission}
-                          value={meralco.meralcoVAT === 0 ? '' : meralco.meralcoVAT}
-                          onChange={(e) => setMeralco({...meralco, meralcoVAT: parseFloat(e.target.value)})}
+                          // value={meralco.meralcoVAT === 0 ? '' : formatNumberWithCommas_amount_optional(meralco.meralcoVAT)}
+                          // // onChange={(e) => setMeralco({...meralco, meralcoVAT: parseFloat(e.target.value)})}
+                          // onChange={(e) => handleAmountChange_meralco(e, 'meralcoVAT')}
+                          // placeholder='0'
+                          onChange={handleAmountChange_amount}
                           placeholder='0'
+                          value={payeeData.amount === 0 ? '' : formatNumberWithCommas_amount_optional(payeeData.amount)}
                           required  />
                       </div>
                       <div className='w-full sm:w-1/2 flex flex-col'>
@@ -1933,22 +2050,27 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                         <label className='text-gray-500'>VAT</label>
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                          type="number" 
+                          type="text" 
                           step='0.01'
                           //disabled={isDisabled && !permission.data.permission}
-                          onChange={(e) => setPayeeData({...payeeData, amount: parseFloat(e.target.value)})}
+                          // onChange={handleAmountChange_amount}
+                          // placeholder='0'
+                          // value={payeeData.amount === 0 ? '' : formatNumberWithCommas_amount_optional(payeeData.amount)}
+                          value={meralco.meralcoVAT === 0 ? '' : formatNumberWithCommas_amount_optional(meralco.meralcoVAT)}
+                          // onChange={(e) => setMeralco({...meralco, meralcoVAT: parseFloat(e.target.value)})}
+                          onChange={(e) => handleAmountChange_meralco(e, 'meralcoVAT')}
                           placeholder='0'
-                          value={payeeData.amount === 0 ? '' : payeeData.amount}
                           required  />
                       </div>
                       <div className='w-1/2'>
                         <label className='text-gray-500'>NON VAT</label>
                         <input 
                           className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
-                          type="number" 
+                          type="text" 
                           //disabled={isDisabled && !permission.data.permission}
-                          value={meralco.meralcoNONVAT === 0 ? '' : meralco.meralcoNONVAT}
-                          onChange={(e) => setMeralco({...meralco, meralcoNONVAT: parseFloat(e.target.value)})}
+                          value={meralco.meralcoNONVAT === 0 ? '' : formatNumberWithCommas_amount_optional(meralco.meralcoNONVAT)}
+                          // onChange={(e) => setMeralco({...meralco, meralcoNONVAT: parseFloat(e.target.value)})}
+                          onChange={(e) => handleAmountChange_meralco(e, 'meralcoNONVAT')}
                           placeholder='0'
                           required  />
                       </div>

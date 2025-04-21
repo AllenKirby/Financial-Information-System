@@ -79,7 +79,7 @@ const FieldOffices = (props) => {
 
   const deleteASA = async(e) => {
     e.stopPropagation()
-    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}`
+    const id = `${ASANo}!${fieldOfficeID}!${fieldOffice.projectName}!${fieldOffice.RO}!${fieldOffice.ASA}!${fieldOffice.tabStatus}!${fieldOffice.FO}`
     
     Swal.fire({
       title: "Are you sure?",
