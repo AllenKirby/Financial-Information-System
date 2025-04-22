@@ -397,7 +397,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
       ...payeeData,
       ...meralco,
       ...defaultVal,
-      activeTab: activeTab
+      activeTab: activeTab,
     };
     return updatedPayeeData
   }
@@ -643,27 +643,14 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
 
   const handleUpdate = async(e) => {
     e.preventDefault()
-    if(activeTab === 'To Payment') {
+    if(activeTab === 'To Payment' || activeTab === 'Meralco'||activeTab === 'GSIS') {
+      console.log('to payment and meralco')
       await handleUpdateDV()
     } else if(activeTab === 'BUR') {
       await updateBUR()
-    } else if(activeTab === 'Meralco'){
-      console.log('update meralco')
-      await updateMeralco()
-    } else if(activeTab === 'GSIS'){
-      console.log('update GSIS')
-    } else if(activeTab === 'Others'){
+    }else if(activeTab === 'Others'){
       console.log('update others')
     }
-  }
-
-  const updateMeralco = async() => {
-    const updatedPayeeData = dataForMeralco()
-    const data = {
-      payee_data: updatedPayeeData,
-      bir_data: birData
-    }
-    console.log(data)
   }
 
   const updateBUR = async() => {
@@ -686,8 +673,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
     }
   }
 
-  const handleUpdateDV = async() => {
-    console.log('updating')
+  const dataForDV_update = () => {
     const updatedPayeeData = {
       ...payeeData,
       TT_formula1: gross.value2 !== '' ? gross.value2 : document.TT_formula1,
@@ -698,6 +684,20 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
       optionalAmount: formFields.map(arr => Object.values(arr)[3])
       
     };
+    return updatedPayeeData
+  }
+
+
+  const handleUpdateDV = async() => {
+    console.log('updating')
+    let updatedPayeeData;
+    if(activeTab === 'To Payment'){
+      updatedPayeeData = dataForDV_update()
+    }else if(activeTab === 'Meralco'){
+      updatedPayeeData = dataForMeralco()
+    }else if(activeTab === 'GSIS'){
+      updatedPayeeData = dataForGSIS()
+    }
     const data = {
       payee_data: updatedPayeeData,
       bir_data: birData
@@ -1241,6 +1241,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     onChange={(e) => setPayeeData({...payeeData, fund: e.target.value})}
                     value={payeeData.fund}
                     //disabled={isDisabled && !permission.data.permission}
+                    disabled={flag}
                     required
                     //value
                   >
@@ -1316,7 +1317,7 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                   <input 
                     className={`${user.role === '4' ? 'focus:outline-preparerPrimary' : 'focus:outline-fundingBlueGreen'} text-gray-500 w-full px-4 py-2 rounded-md border-2`}
                     type="text" 
-                    // disabled={true}
+                    disabled={true}
                     value={payeeData.DV}
                     onChange={(e) => setPayeeData({...payeeData, DV: e.target.value})}
                     required  />
