@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useAuthContext } from '../../hooks/useAuthContext'
 
 const DVTemplate = ({document}) => {
+  console.log(document)
   const {user} = useAuthContext() 
   const [fontColor, setFontColor] = useState('')
   //computations
@@ -13,7 +14,6 @@ const DVTemplate = ({document}) => {
   const floatTotal_val = parseFloat(total_val.replace(/,/g, ''))
   
   const adue = document?.amount - tval
-  console.log(document)
   const amount_due = adue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
   const floatAmountDue = parseFloat(amount_due.replace(/,/g, ''))
