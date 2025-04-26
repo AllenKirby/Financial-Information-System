@@ -579,7 +579,7 @@ const getDecimal = (num) => {
 const downloadGSIS_Refund = async(req, res) => {
   const { data } = req.body
   try{
-    const templatePath = path.join(__dirname, '..', 'templates', data.ORSBURS ? 'GSISRefund.xlsx' : 'GSISRefund.xlsx'); 
+    const templatePath = path.join(__dirname, '..', 'templates', data.ORSBURS ? 'GSISRefund_BUR.xlsx' : 'GSISRefund.xlsx'); 
     const workbook = await XlsxPopulate.fromFileAsync(templatePath);
 
     const amount = parseFloat(data.amount)
@@ -632,6 +632,18 @@ const downloadGSIS_Refund = async(req, res) => {
     workbook.sheet('Sheet1').cell("M52").value(data.agencyHead_office)
     workbook.sheet('Sheet1').cell("K58").value('LBP 0242-1107-57')
 
+    if(data.ORSBURS) {
+      workbook.sheet('Sheet1').cell("D82").value(data.payee)
+      workbook.sheet('Sheet1').cell("D86").value(data.address)
+      workbook.sheet('Sheet1').cell("P78").value(`Serial No.: ${data.ORSBURS}`)
+      workbook.sheet('Sheet1').cell("P79").value(`Date: ${convertDate(data.date)}`)
+      workbook.sheet('Sheet1').cell("P80").value(`Fund Cluster: ${data.fund}`)
+      workbook.sheet('Sheet1').cell("P91").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      workbook.sheet('Sheet1').cell("P105").value(parseFloat(data.amount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))
+      // workbook.sheet('Sheet1').cell("P187").value(amount_due)
+      workbook.sheet('Sheet1').cell("D91").value(data.particular)
+      workbook.sheet('Sheet1').cell("A91").value(data.RC)
+    }
 
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', 'attachment; filename=protected-template.xlsx');

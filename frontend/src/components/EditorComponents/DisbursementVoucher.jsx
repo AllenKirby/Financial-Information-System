@@ -1108,7 +1108,8 @@ const DisbursementVoucher = ({modal, document = {}, flag, tab}) => {
                     disabled={['GSIS', 'Meralco'].includes(activeTab)}
                     type="text"
                     pattern="^[a-zA-Z\s'-]+$"
-                    value={['GSIS', 'Meralco'].includes(activeTab) ? activeTab : ['GSIS', 'Meralco'].includes(payeeData.payee) ? '' : payeeData.payee}
+                    // value={['GSIS', 'Meralco'].includes(activeTab) ? activeTab : ['GSIS', 'Meralco'].includes(payeeData.payee) ? '' : payeeData.payee}
+                    value={['GSIS', 'Meralco'].includes(activeTab) ? activeTab : payeeData.payee}
                     minLength="2"
                     maxLength="50"
                     onChange={handleChangePayee}

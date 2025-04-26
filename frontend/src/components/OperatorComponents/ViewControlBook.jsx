@@ -142,7 +142,8 @@ const ViewControlBook = () => {
   const [RO_balance, setRO] = useState(0)
   useEffect(() => {
     if(cluster === '501 COB'){
-      const res = parseFloat(ControlBook.data.leftBudget) - parseFloat(ControlBook.data.IMO_budget || 0)
+      console.log(ControlBook.data.RO, ControlBook.data.IMO_budget)
+      const res = parseFloat(ControlBook.data.RO) - parseFloat(ControlBook.data.IMO_budget || 0)
       setRO(res)
     }else{
       const released = parseFloat(ControlBook.data.IMO_budget || 0)

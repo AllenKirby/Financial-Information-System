@@ -199,6 +199,8 @@ const getAllAccounts = async (req, res) => {
     }
   }
 
+
+  // ------- EXPORT DATA ----------------
   const getDocumentWithSubcollections = async(docSnap) => {
     const data = docSnap.data() || {};
     const subcollections = await docSnap.ref.listCollections();
@@ -240,7 +242,130 @@ const getAllAccounts = async (req, res) => {
       console.log("error exporting data....",error)
     }
   }
+  // ----------------- EXPORT DATA ------------------------
 
+  // ------------------- IMPORT DATA ---------------------
+
+  // const splitDocAndSubcollections = (docData) => {
+  //   try{
+  //     const docFields = {};
+  //     const subcollections = {};
+    
+  //     for (const [key, value] of Object.entries(docData)) {
+  //       if (
+  //         typeof value === 'object' &&
+  //         value !== null &&
+  //         !Array.isArray(value) &&
+  //         Object.values(value).every(v => typeof v === 'object')
+  //       ) {
+  //         subcollections[key] = value;
+  //       } else {
+  //         docFields[key] = value;
+  //       }
+  //     }
+    
+  //     return { docFields, subcollections };
+  //   }catch(error){
+  //     console.error('Error splitDocAndSubcollections:', error);
+  //   }
+  // };
+
+  // const writeDocumentWithSubcollections = async (docRef, data) => {
+  //   try{
+  //     const { subcollections, docFields } = splitDocAndSubcollections(data);
+  
+  //     console.log('Writing docFields for:', docRef.path);
+  //     await docRef.set(docFields);
+  //     console.log('Written docFields for:', docRef.path);
+
+  //     for (const [subColName, subDocs] of Object.entries(subcollections)) {
+  //       console.log('Subcollection:', subColName);
+  //       for (const [subDocId, subDocData] of Object.entries(subDocs)) {
+  //         // console.log('Subdoc:', subDocId);
+  //         // const subDocRef = docRef.collection(subColName).doc(subDocId);
+  //         // await writeDocumentWithSubcollections(subDocRef, subDocData);
+  //         try {
+  //           const subDocRef = docRef.collection(subColName).doc(subDocId);
+  //           await writeDocumentWithSubcollections(subDocRef, subDocData);
+  //         } catch (e) {
+  //           console.error(`Failed to write subdoc ${subColName}/${subDocId}:`, e);
+  //         }
+  //       }
+  //     }
+  //   }catch(error){
+  //     console.error('Error writeDocumentWithSubcollections:', error);
+  //   }
+  // };
+
+  // const importDATA = async (req, res) => {
+  //   try{
+  //     console.log('Importing...')
+  //     if (!req.file) {
+  //       return res.status(400).send('No file uploaded');
+  //     }
+  //     const jsonString = req.file.buffer.toString('utf8');
+  //     const data = JSON.parse(jsonString);
+      
+  //     for (const [collectionName, docs] of Object.entries(data)) {
+  //       const collectionRef = db.collection(collectionName);
+  //       console.log(collectionName)
+    
+  //       for (const [docId, docData] of Object.entries(docs)) {
+  //         console.log(docId)
+  //         await writeDocumentWithSubcollections(collectionRef.doc(docId), docData);
+  //       }
+  //     }
+  //     console.log('Import Succesfully!')
+  //     res.status(200).send('Import successful');
+  //   }catch(error){
+  //     console.error('Error importing data:', error);
+  //     res.status(500).send('Import failed');
+  //   }
+  // };
+
+  const importDATA_func = async (req, res) => {
+    try{
+      console.log('Importing...')
+      if (!req.file) {
+        return res.status(400).send('No file uploaded');
+      }
+      const jsonData = JSON.parse(req.file.buffer.toString('utf-8'));
+      await importData(jsonData);
+      console.log('Import Succesfully!')
+      res.status(200).send('Import successful');
+    }catch(error){
+      console.error('Error importing data:', error);
+      res.status(500).send('Import failed');
+    }
+  };
+
+  async function importData(data, parentRef = null) {
+    for (const [collectionName, docs] of Object.entries(data)) {
+      const colRef = parentRef ? parentRef.collection(collectionName) : admin.firestore().collection(collectionName);
+  
+      for (const [docId, docData] of Object.entries(docs)) {
+        const { ...fields } = docData;
+        const subcollections = {};
+  
+        // Separate subcollections from fields
+        for (const key in fields) {
+          if (typeof fields[key] === 'object' && fields[key] !== null && !Array.isArray(fields[key]) && Object.keys(fields[key]).every(k => typeof fields[key][k] === 'object')) {
+            subcollections[key] = fields[key];
+            delete fields[key];
+          }
+        }
+  
+        const docRef = colRef.doc(docId);
+        await docRef.set(fields);
+  
+        // Recurse into subcollections
+        await importData(subcollections, docRef);
+      }
+    }
+  }
+  
+
+  // ------------------- IMPORT DATA ---------------------
 
   module.exports = {
     getAllAccounts,
@@ -251,4 +376,5 @@ const getAllAccounts = async (req, res) => {
     changeAccess,
     deleteRequest,
     exportDATA,
+    importDATA_func
   };

@@ -1,5 +1,7 @@
 const express = require('express');
+const multer = require('multer');
 const SuperAdminRouter = express.Router();
+const upload = multer({ storage: multer.memoryStorage() });
 const setRole = require('../middleware/Role');
 const { getAllAccounts, 
         disableAccount, 
@@ -8,7 +10,8 @@ const { getAllAccounts,
         retrieveRoles,
         changeAccess,
         deleteRequest,
-        exportDATA } = require('../controller/SuperAdminController')
+        exportDATA,
+        importDATA_func } = require('../controller/SuperAdminController')
 
 SuperAdminRouter.use(setRole([0]))
 
@@ -20,5 +23,6 @@ SuperAdminRouter.get('/roles', retrieveRoles)
 SuperAdminRouter.patch('/changePermission/:id', changeAccess)
 SuperAdminRouter.delete('/deleteRequest/:id', deleteRequest)
 SuperAdminRouter.get('/export', exportDATA)
+SuperAdminRouter.post('/import', upload.single('file'), importDATA_func)
 
 module.exports = SuperAdminRouter;

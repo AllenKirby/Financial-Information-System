@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Swal from 'sweetalert2'
 import { collection, onSnapshot } from "firebase/firestore"
 import { firestore } from "../../config/firebase-config"
@@ -80,6 +80,36 @@ const AccessControl = () => {
     }
   }
 
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      console.log('importing')
+      const res = await axios.post(`${apiURL}/superadmin/import`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+        withCredentials: true
+      });
+      console.log(res.status, res.data)
+      alert('Import successful!');
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Import failed.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <section className="w-full h-full p-3 text-gray-500">
       <div className="w-full flex justify-end gap-2">
@@ -89,7 +119,14 @@ const AccessControl = () => {
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >{isDownloading ? 'Exporting...' : 'Export'}</button>
 
-        <button className="px-4 py-2 border border-2 border-blue-500 text-blue-500 rounded hover:bg-slate-200 hover:text-blue-700">Import</button>
+        <button onClick={handleClick} disabled={isUploading} className="px-4 py-2 border border-2 border-blue-500 text-blue-500 rounded hover:bg-slate-200 hover:text-blue-700">{isUploading ? 'Uploading...' : 'Import'}</button>
+        <input
+        type="file"
+        accept=".json"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
       </div>
       <div className="w-full h-auto p-2">
         <p className="text-superAdminBlue text-sm font-semibold">This page allows the Super Admin to manage access control by assigning roles, permissions, and granted features with descriptions for specific tasks.</p>
