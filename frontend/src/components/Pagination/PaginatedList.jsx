@@ -48,7 +48,7 @@ const PaginatedList = ({ items, type = '', activeTab = '', paginationFor, counte
             </Suspense>
         </div>
         {paginationFor === 'DVRegister' && (
-            <div className='w-full py-2 font-bold px-10 flex items-center justify-between border-t-2'>
+            <div className='w-full h-auto py-2 font-bold px-10 flex items-center justify-between border-t-2'>
                 <p className='w-1/6'>Total</p>
                 {counter === 3 && ( <p className='w-1/5 text-center'>{total.ASA}</p> )}
                 {counter === 4 && ( 

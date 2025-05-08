@@ -363,7 +363,7 @@ const DVRegister = () => {
                 </div>
             </div>
         </div>
-        <div className="w-full flex-1 py-2">
+        <div className="w-full flex-1 overflow-y-auto py-2">
             <div className="w-full h-full flex flex-col">
                 <div className="w-auto h-auto rounded-lg flex items-center justify-between bg-gray-100 text-gray-400 text-sm">
                     <button onClick={decrement} disabled={counter === 1} className="w-fit px-2 h-full"><MdNavigateBefore size={24}/></button>

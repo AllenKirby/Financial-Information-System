@@ -60,6 +60,7 @@ const forReleasing = async(req, res) => {
 
     newDvData = {
         ...payeeData,
+        amount: parseFloat(amount.toFixed(2)),
         date: formatDate(date),
         DV: finalizeDVNo.DV,
         DVKey: DVKey,
@@ -104,6 +105,7 @@ const forDV = async (req, res) => {
 
     newDvData = {
         ...payeeData,
+        amount: parseFloat(amount.toFixed(2)),
         date: formatDate(date),
         DV: finalizeDVNo.DV,
         DVKey: DVKey,
@@ -183,6 +185,7 @@ const forOthers = async(req, res) => {
 
     newDvData = {
         ...payeeData,
+        amount: parseFloat(amount.toFixed(2)),
         date: formatDate(date),
         DV: finalizeDVNo.DV,
         DVKey: DVKey,
